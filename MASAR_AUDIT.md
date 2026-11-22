@@ -158,6 +158,11 @@
 5. **افتراضيات مش متأكد منها من Adobe:** Inner Glow blur=8 (مسار) وألوان الـ Glow (أبيض)، Round Corners=20، Roughen/Zig Zag/Twist/Offset، مدى Pucker & Bloat (Adobe: ‎-200% إلى 200%؛ ما اتأكدتش إن dialog مسار بيدعم نفس المدى).
 **المرجع:** [Distort and transform effects](https://helpx.adobe.com/illustrator/desktop/manage-objects/reshape-transform-objects/distort-and-transform-effects-in-illustrator.html).
 
+## 5-ط) build 175/176 — Live Path Effects (معمارية غير مدمّرة)
+**اتعمل:** كل تأثيرات الـ path (Convert to Shape ×3، Pucker & Bloat، Roughen، Transform، Tweak، Twist، Zig Zag، Offset Path، Round Corners، Scribble، الـ15 Warp) بقت **live**: بتتخزن في `data-fx` كـ `{t:'px',k,P}` (P فيها الإعدادات والـ seed فالنتيجة ثابتة)، والـ path الأصلي بيفضل زي ما هو وقابل للتعديل (مخفي لكن بيستجيب للماوس)، والنتيجة بتترسم في overlay `g[data-pxo]` بيتعاد بناؤه تلقائياً لما الـ path أو قايمة التأثيرات تتغير. بتظهر في Appearance وبتتعدّل (دبل كليك) وتتعطّل بالعين وتتحذف وتتكرر، Undo/Redo، Apply Last Effect بيضيفه تأثير جديد، ترتيب التأثيرات، Transform بنسخ live، Save/Load، تصدير SVG (النتيجة بس)، Object > **Expand Appearance** (جديد: بيخبز النتيجة لـ paths حقيقية).
+**إصلاح جانبي مهم:** الـ live effects (حتى Drop Shadow وباقي الـ filters) كانت **بتضيع** عند Group/Ungroup وCopy/Paste — دلوقتي بتفضل.
+**لسه:** (1) نقر مرة واحدة على اسم التأثير في Appearance (حالياً دبل كليك)؛ (2) Mode في Drop Shadow/Glow؛ (3) الـ filter effects بتتعرض بس على الـ objects العليا (جوه group لسه بتتحفظ لكن مش بتترسم لحد الـ Ungroup)؛ (4) الـ path effects على Groups/النصوص؛ (5) إعادة ترتيب الـ path effects مع الـ filter effects (كلهم بنفس الترتيب الداخلي: path ثم filters)؛ (6) التأثيرات الناقصة: Free Distort، Outline Object/Stroke، Pathfinder، Photoshop effects…
+
 ## 5-ج) تخصيص الواجهة (مقارنة بـ Illustrator)
 **موجود وشغال (اتختبر بماوس حقيقي):** سحب تاب بانل لليسار/اليمين/عايم، دمج بانلز كتابات، إغلاق/فتح من Window، حفظ التخطيط بعد reload، Workspaces (Essentials, Essentials Classic, Typography, Painting) + New Workspace + Reset، Edit Toolbar، Toolbar عمودين/عمود، Tab/Shift+Tab، 4 ثيمات.
 **ناقص:** Keyboard Shortcuts editor (Ctrl+Alt+Shift+K) — تخصيص الاختصارات؛ Workspaces الجاهزة الباقية (3D, Automation, Layout, Motion, Printing, Tracing, Web…)؛ قايمة إظهار/إخفاء عناصر الـ Control bar؛ Control bar overflow menu؛ UI Scale في Preferences؛ تخصيص قوائم السياق/البانل.

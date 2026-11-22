@@ -1,0 +1,11 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),pg=H.pg;pg.setDefaultTimeout(5000);
+await H.key('m');await H.drag(300,200,420,280);await H.key('v');
+await pg.locator('#mbar button:text-is("Effect")').click();await pg.locator('.mdd button',{hasText:'Stylize'}).first().hover();await pg.locator('.msub button',{hasText:'Drop Shadow'}).first().click();await pg.waitForTimeout(250);await pg.click('.fxb button.pri');await pg.waitForTimeout(300);
+await H.key('m');await H.drag(100,100,160,160);await H.key('v');await pg.keyboard.press('Control+a');await pg.keyboard.press('Control+g');await pg.waitForTimeout(300);
+console.log('grouped: objs',await pg.evaluate(()=>objs.map(o=>({fx:o.g.dataset.fx||'',html:o.g.innerHTML.slice(0,260)}))));
+await pg.keyboard.press('Control+Shift+g');await pg.waitForTimeout(300);
+console.log('ungrouped:',await pg.evaluate(()=>objs.map(o=>({fx:o.g.dataset.fx||'',filter:o.g.getAttribute('filter')||''}))));
+await pg.keyboard.press('Control+c');await pg.keyboard.press('Control+v');await pg.waitForTimeout(300);
+console.log('after copy/paste:',await pg.evaluate(()=>objs.map(o=>({fx:(o.g.dataset.fx||'').slice(0,20),filter:o.g.getAttribute('filter')||''}))));
+await H.b.close()})();

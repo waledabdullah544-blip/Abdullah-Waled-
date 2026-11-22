@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 174</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 176</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -722,7 +722,7 @@ function parseD(d){
   }
   return S.length?S:null}
 function spD(S){return S.map(sp=>{const P=sp.pts;let d='M'+r3(P[0].x)+' '+r3(P[0].y);for(let k=1;k<P.length;k++)d+=seg(P[k-1],P[k]);if(sp.closed&&P.length>1){const c=seg(P[P.length-1],P[0]);if(c[0]==='C')d+=c}if(sp.closed)d+='Z';return d}).join('')}
-const eps=ob=>[...ob.g.querySelectorAll('path:not([data-bo]):not([data-sao])')].filter(p=>p.getAttribute('data-tpath')!=='frame'||(typeof DSM==='function'&&DSM(tool)&&!p.hasAttribute('transform')));
+const eps=ob=>{const X=ob.g.querySelector(':scope > g[data-pxo]');return[...ob.g.querySelectorAll('path:not([data-bo]):not([data-sao])')].filter(p=>!(X&&X.contains(p))&&(p.getAttribute('data-tpath')!=='frame'||(typeof DSM==='function'&&DSM(tool)&&!p.hasAttribute('transform'))))};/* a live path effect draws its result in a g[data-pxo] overlay; the tools edit the original paths */
 function getSP(pe){const d=pe.getAttribute('d')||'';if(pe.__sp===undefined||(pe.__spd!==undefined&&pe.__spd!==d))pe.__sp=parseD(d);pe.__spd=d;return pe.__sp}
 function writeSP(pe){const _d=spD(pe.__sp);pe.setAttribute('d',_d);pe.__spd=_d;pe.removeAttribute('data-shape');pe.removeAttribute('data-p');pe.removeAttribute('data-lcb');pe.removeAttribute('data-lcr');pe.removeAttribute('data-cu');pe.removeAttribute('data-xf')}
 function touch(ob){if(ob.g.querySelector('path[data-tprev]'))tprSync(ob);if(ob.__nest){if(ob.__par&&ob.__par.g.isConnected)touch(ob.__par);return}if(ob.g.querySelector('[data-bc]')&&typeof brRender==='function')brRender(ob);if(!ob.__in&&!ob.__ar&&!ted_s){const fr=ob.g.querySelector('path[data-tpath="frame"]');if(fr&&ob.__fd!==undefined&&fr.getAttribute('d')!==ob.__fd&&typeof areaReflow==='function'){areaReflow(ob);return}if(fr)ob.__fd=fr.getAttribute('d')}ob.bb=BBX(ob);apply(ob)}
@@ -2009,7 +2009,7 @@ const hexOf=c=>{c=(c||'').trim();if(/^#[0-9a-f]{6}$/i.test(c))return c.toLowerCa
 const dfx=nc=>{const x=DEF.sx||{};return(x.cap&&!nc?' stroke-linecap="'+x.cap+'"':'')+(x.ml?' stroke-miterlimit="'+x.ml+'"':'')+(x.dash?' stroke-dasharray="'+x.dash+'"':'')+(x.sa?' data-sa="'+x.sa+'"':'')+(x.ars?' data-ars="'+x.ars+'"':'')+(x.are?' data-are="'+x.are+'"':'')+(x.arss?' data-arss="'+x.arss+'"':'')+(x.ares?' data-ares="'+x.ares+'"':'')+(x.aral?' data-aral="'+x.aral+'"':'')+(x.wp?' data-wp="'+x.wp+'"':'')+(x.wpf?' data-wpf="1"':'')+(x.wpx?' data-wpx="1"':'')};
 const closedStyle=()=>'fill="'+DEF.fill+'"'+(DEF.stroke!=='none'?' stroke="'+DEF.stroke+'" stroke-width="'+DEF.sw+'" stroke-linejoin="'+((DEF.sx&&DEF.sx.join)||'round')+'"'+dfx():'');
 const openStyle=()=>'fill="none" stroke="'+(DEF.stroke!=='none'?DEF.stroke:'#000000')+'" stroke-width="'+(DEF.stroke!=='none'?DEF.sw:1)+'" stroke-linejoin="'+((DEF.sx&&DEF.sx.join)||'round')+'" stroke-linecap="'+((DEF.sx&&DEF.sx.cap)||'round')+'"'+dfx(1);
-const fillables=o=>[...o.g.querySelectorAll('path:not([data-tpath]):not([data-bo]):not([data-sao]):not([data-tprev]),text,rect,ellipse')];
+const fillables=o=>{const X=o.g.querySelector(':scope > g[data-pxo]'),L=[...o.g.querySelectorAll('path:not([data-tpath]):not([data-bo]):not([data-sao]):not([data-tprev]),text,rect,ellipse')];return X?L.filter(e=>!X.contains(e)):L};
 function normalizeObj(o){const m=o.m;if(m.sx!==1||m.sy!==1||m.tx!==0||m.ty!==0)bakeAffine(o,[1,0,0,1,0,0])}
 function styleOf(o){const e=fillables(o)[0];if(!e)return null;const op=parseFloat(e.getAttribute('opacity'));
   const R={fill:(gradOf(e,'data-grad')?gradOf(e,'data-grad').s[0][1]:(e.getAttribute('fill')||'#000000')),stroke:e.getAttribute('stroke')||'none',sw:parseFloat(e.getAttribute('stroke-width'))||0,op:Math.round((isNaN(op)?1:op)*100)};
@@ -3090,18 +3090,18 @@ const isGroup=o=>!!o.g.querySelector(':scope > g[data-mem]');
 function groupSel(){const L=objs.filter(o=>sel.has(o));if(!L.length)return;if(ted_s)finishText();
   L.forEach(o=>{if(!o.g.querySelector('[data-th]'))normalizeObj(o)});
   const at=objs.indexOf(L[L.length-1])-(L.length-1),G=el('g',{});
-  L.forEach(o=>{const m=el('g',{'data-mem':'1'});if(o.nm)m.setAttribute('data-nm',o.nm);if(o.g.hasAttribute('data-clipm'))m.setAttribute('data-clipmask','1');if(o.g.getAttribute('transform')&&!(o.m.sx===1&&o.m.sy===1&&o.m.tx===0&&o.m.ty===0))m.setAttribute('transform',o.g.getAttribute('transform'));[...o.g.childNodes].forEach(n=>m.appendChild(n));G.appendChild(m)});
+  L.forEach(o=>{const m=el('g',{'data-mem':'1'});if(o.nm)m.setAttribute('data-nm',o.nm);if(o.g.dataset.fx){m.setAttribute('data-fx',o.g.dataset.fx);if(o.g.dataset.pxon)m.setAttribute('data-pxon','1')}if(o.g.hasAttribute('data-clipm'))m.setAttribute('data-clipmask','1');if(o.g.getAttribute('transform')&&!(o.m.sx===1&&o.m.sy===1&&o.m.tx===0&&o.m.ty===0))m.setAttribute('transform',o.g.getAttribute('transform'));[...o.g.childNodes].forEach(n=>m.appendChild(n));G.appendChild(m)});
   objs=objs.filter(o=>!sel.has(o));const o={g:G,bb:null,m:{sx:1,sy:1,tx:0,ty:0}};G.__o=o;objs.splice(Math.max(0,at),0,o);layer.replaceChildren(...objs.map(q=>q.g));touch(o);sel=new Set([o]);dsSel=new Set();commit();draw()}
 function ungroupSel(){const out=[];objs.filter(o=>sel.has(o)&&isGroup(o)).forEach(G=>{const at=objs.indexOf(G),gm={...G.m};
-    const N=[...G.g.children].map(k=>{const g=el('g',{});if(k.matches('g[data-mem]')){if(k.getAttribute('transform'))[...k.children].forEach(c=>{const t=k.getAttribute('transform')+(c.getAttribute('transform')?' '+c.getAttribute('transform'):'');c.setAttribute('transform',t)});[...k.childNodes].forEach(n=>g.appendChild(n))}else g.appendChild(k);const o={g,bb:null,m:{...gm}};if(k.getAttribute&&k.getAttribute('data-nm'))o.nm=k.getAttribute('data-nm');g.__o=o;return o});
+    const N=[...G.g.children].map(k=>{const g=el('g',{});if(k.matches('g[data-mem]')){if(k.getAttribute('data-fx')){g.dataset.fx=k.getAttribute('data-fx');if(k.getAttribute('data-pxon'))g.dataset.pxon='1'}if(k.getAttribute('transform'))[...k.children].forEach(c=>{const t=k.getAttribute('transform')+(c.getAttribute('transform')?' '+c.getAttribute('transform'):'');c.setAttribute('transform',t)});[...k.childNodes].forEach(n=>g.appendChild(n))}else g.appendChild(k);const o={g,bb:null,m:{...gm}};if(k.getAttribute&&k.getAttribute('data-nm'))o.nm=k.getAttribute('data-nm');g.__o=o;return o});
     objs.splice(at,1,...N);out.push(...N)});
   if(!out.length)return;layer.replaceChildren(...objs.map(q=>q.g));out.forEach(o=>{touch(o)});sel=new Set(out);dsSel=new Set();commit();draw()}
 let CLIP=null;
-function copySel(){const L=objs.filter(o=>sel.has(o));if(!L.length)return false;CLIP={items:L.map(o=>({html:o.g.innerHTML,m:{...o.m},rot:o.g.dataset.rot||null,gen:o.g.dataset.gen||null}))};
+function copySel(){const L=objs.filter(o=>sel.has(o));if(!L.length)return false;CLIP={items:L.map(o=>({html:o.g.innerHTML,m:{...o.m},rot:o.g.dataset.rot||null,gen:o.g.dataset.gen||null,fx:o.g.dataset.fx||null}))};
   try{const svg='<svg xmlns="http://www.w3.org/2000/svg">'+L.map(o=>'<g transform="'+(o.g.getAttribute('transform')||'')+'">'+o.g.innerHTML+'</g>').join('')+'</svg>';navigator.clipboard&&navigator.clipboard.writeText(svg).catch(()=>{})}catch(_){}return true}
 function delSel(){const ths=[...sel].map(o=>{const t=o.g.querySelector('text[data-th]');return t&&t.getAttribute('data-th')}).filter(Boolean);objs=objs.filter(o=>!sel.has(o));layer.replaceChildren(...objs.map(o=>o.g));sel=new Set();ths.forEach(th=>{if(storyFrames(th).length)storyReflow(th)})}
 function pasteClip(mode){if(!CLIP)return;if(ted_s)finishText();const ref=objs.filter(o=>sel.has(o));
-  const items=CLIP.items.map(it=>{const o=add(it.html);o.m={...it.m};if(it.rot)o.g.dataset.rot=it.rot;if(it.gen)o.g.dataset.gen=it.gen;apply(o);return o});
+  const items=CLIP.items.map(it=>{const o=add(it.html);o.m={...it.m};if(it.rot)o.g.dataset.rot=it.rot;if(it.gen)o.g.dataset.gen=it.gen;if(it.fx){o.g.dataset.fx=it.fx;if(/"px"/.test(it.fx)&&o.g.querySelector(':scope > g[data-pxo]'))o.g.dataset.pxon='1';try{fxUpd(o)}catch(_){}}apply(o);return o});
   objs=objs.filter(o=>!items.includes(o));
   if(mode==='center'){const u=uni(items),r=cv.getBoundingClientRect(),cx=(r.width/2-px)/z,cy=(r.height/2-py)/z,dx=cx-(u.x+u.w/2),dy=cy-(u.y+u.h/2);items.forEach(o=>{o.m.tx+=dx;o.m.ty+=dy;apply(o)})}
   /* Paste in Front: right above the selection (else on top) · Paste in Back: right below it (else at the bottom) */
@@ -3184,7 +3184,7 @@ let ISO=null;
 function isoBar(on){let b=document.getElementById('isob');if(!b){b=document.createElement('div');b.id='isob';b.innerHTML='<button type="button" title="Exit Isolation Mode">◀</button><span>Layer 1 &nbsp;›&nbsp; <b>&lt;Group&gt;</b></span>';document.body.appendChild(b);b.querySelector('button').onclick=()=>isoExit()}
   if(on){const r=cv.getBoundingClientRect();b.style.left=r.left+'px';b.style.top=r.top+'px';b.style.width=r.width+'px';b.style.display='flex'}else b.style.display='none'}
 function isoEnter(G){if(ISO||!isGroup(G))return;if(ted_s)finishText();const at=objs.indexOf(G),gm={...G.m};
-  const N=[...G.g.children].map(k=>{const g=el('g',{});if(k.hasAttribute('data-clipmask'))g.setAttribute('data-clipm','1');if(k.matches('g[data-mem]')){if(k.getAttribute('transform'))[...k.children].forEach(c=>c.setAttribute('transform',k.getAttribute('transform')+(c.getAttribute('transform')?' '+c.getAttribute('transform'):'')));[...k.childNodes].forEach(n=>g.appendChild(n))}else g.appendChild(k);const o={g,bb:null,m:{...gm}};if(k.getAttribute&&k.getAttribute('data-nm'))o.nm=k.getAttribute('data-nm');g.__o=o;return o});
+  const N=[...G.g.children].map(k=>{const g=el('g',{});if(k.hasAttribute('data-clipmask'))g.setAttribute('data-clipm','1');if(k.matches('g[data-mem]')){if(k.getAttribute('data-fx')){g.dataset.fx=k.getAttribute('data-fx');if(k.getAttribute('data-pxon'))g.dataset.pxon='1'}if(k.getAttribute('transform'))[...k.children].forEach(c=>c.setAttribute('transform',k.getAttribute('transform')+(c.getAttribute('transform')?' '+c.getAttribute('transform'):'')));[...k.childNodes].forEach(n=>g.appendChild(n))}else g.appendChild(k);const o={g,bb:null,m:{...gm}};if(k.getAttribute&&k.getAttribute('data-nm'))o.nm=k.getAttribute('data-nm');g.__o=o;return o});
   objs.splice(at,1,...N);layer.replaceChildren(...objs.map(q=>q.g));N.forEach(touch);
   const out=objs.filter(o=>!N.includes(o));out.forEach(o=>{o.g.dataset.iso='1';o.g.style.opacity='.35'});
   ISO={out:new Set(out),h0:hi,G,clip:N.some(o=>o.g.hasAttribute('data-clipm'))};sel=new Set();dsSel=new Set();isoBar(true);draw()}
@@ -6533,7 +6533,7 @@ function clipMake(){const L=objs.filter(o=>sel.has(o)&&pick(o));if(L.length<2)re
   /* the clipping path loses its fill and stroke (Illustrator) */
   mk.g.querySelectorAll('path,rect,ellipse,circle,polygon,polyline,line,text').forEach(e=>{e.setAttribute('fill','none');e.setAttribute('stroke','none');e.removeAttribute('data-grad');e.removeAttribute('data-grads');e.removeAttribute('opacity')});
   const bi=objs.indexOf(mk),at=objs.filter((x,i)=>i<bi&&!L.includes(x)).length,G=el('g',{});
-  L.forEach(o=>{const m=el('g',{'data-mem':'1'});if(o.nm)m.setAttribute('data-nm',o.nm);if(o===mk)m.setAttribute('data-clipmask','1');
+  L.forEach(o=>{const m=el('g',{'data-mem':'1'});if(o.nm)m.setAttribute('data-nm',o.nm);if(o.g.dataset.fx){m.setAttribute('data-fx',o.g.dataset.fx);if(o.g.dataset.pxon)m.setAttribute('data-pxon','1')}if(o===mk)m.setAttribute('data-clipmask','1');
     if(o.g.getAttribute('transform')&&!(o.m.sx===1&&o.m.sy===1&&o.m.tx===0&&o.m.ty===0))m.setAttribute('transform',o.g.getAttribute('transform'));
     [...o.g.childNodes].forEach(n=>m.appendChild(n));G.appendChild(m)});
   objs=objs.filter(o=>!L.includes(o));const o={g:G,bb:null,m:{sx:1,sy:1,tx:0,ty:0}};G.__o=o;objs.splice(at,0,o);
@@ -6541,7 +6541,7 @@ function clipMake(){const L=objs.filter(o=>sel.has(o)&&pick(o));if(L.length<2)re
 function clipRelease(){const G=objs.filter(o=>sel.has(o)&&clipMG(o));if(!G.length)return false;const out=[];
   G.forEach(Go=>{const at=objs.indexOf(Go),gm={...Go.m};
     const N=[...Go.g.children].map(k=>{const g=el('g',{});
-      if(k.matches('g[data-mem]')){if(k.getAttribute('transform'))[...k.children].forEach(c=>{c.setAttribute('transform',k.getAttribute('transform')+(c.getAttribute('transform')?' '+c.getAttribute('transform'):''))});[...k.childNodes].forEach(n=>g.appendChild(n))}else g.appendChild(k);
+      if(k.matches('g[data-mem]')){if(k.getAttribute('data-fx')){g.dataset.fx=k.getAttribute('data-fx');if(k.getAttribute('data-pxon'))g.dataset.pxon='1'}if(k.getAttribute('transform'))[...k.children].forEach(c=>{c.setAttribute('transform',k.getAttribute('transform')+(c.getAttribute('transform')?' '+c.getAttribute('transform'):''))});[...k.childNodes].forEach(n=>g.appendChild(n))}else g.appendChild(k);
       const o={g,bb:null,m:{...gm}};if(k.getAttribute&&k.getAttribute('data-nm'))o.nm=k.getAttribute('data-nm');g.__o=o;return o});
     objs.splice(at,1,...N);out.push(...N);Go.g.removeAttribute('clip-path')});
   layer.replaceChildren(...objs.map(q=>q.g));out.forEach(touch);syncClips();sel=new Set(out);dsSel=new Set();commit();draw();return true}
@@ -6897,7 +6897,7 @@ function fileLoadMasar(D){if(ISO)isoExit();objs.slice().forEach(o=>o.g.remove())
   D.objs.forEach(r=>{const g=el('g',{});for(const k in r.a)g.setAttribute(k,r.a[k]);g.innerHTML=r.h;layer.appendChild(g);const o={g,bb:null,m:{sx:1,sy:1,tx:0,ty:0,...r.m},ly:r.ly,nm:r.nm,lh:r.lh};g.__o=o;o.bb=BBX(o);apply(o);objs.push(o)});
   if(typeof gdRestore==='function'&&D.gd)gdRestore(D.gd);commit();draw();if(window.dkSaved)dkSaved()}
 function fileSVGString(){if(ISO)isoExit();const XS=new XMLSerializer(),md=document.getElementById('mdefs'),defs=md?[...md.childNodes].map(n=>XS.serializeToString(n)).join(''):'';
-  const body=objs.filter(o=>o.g.style.display!=='none'&&!o.nop).map(o=>{const c=o.g.cloneNode(true);c.removeAttribute('data-iso');c.querySelectorAll('[data-hf]').forEach(e=>e.setAttribute('fill','none'));c.querySelectorAll('[data-hs]').forEach(e=>e.setAttribute('stroke','none'));['data-lytpl','data-lyol','data-lydim'].forEach(a=>c.removeAttribute(a));return XS.serializeToString(c)}).join('\n');
+  const body=objs.filter(o=>o.g.style.display!=='none'&&!o.nop).map(o=>{const c=o.g.cloneNode(true);c.removeAttribute('data-iso');{const w=c.querySelector(':scope > g[data-pxo]');if(w){[...c.children].forEach(k=>{if(k!==w)k.remove()});while(w.firstChild)c.insertBefore(w.firstChild,w);w.remove();c.removeAttribute('data-pxon')}}c.querySelectorAll('[data-hf]').forEach(e=>e.setAttribute('fill','none'));c.querySelectorAll('[data-hs]').forEach(e=>e.setAttribute('stroke','none'));['data-lytpl','data-lyol','data-lydim'].forEach(a=>c.removeAttribute(a));return XS.serializeToString(c)}).join('\n');
   return'<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600"><defs>'+defs+'</defs>\n'+body+'\n</svg>'}
 function fileExportSVG(){fileDownload(new Blob([fileSVGString()],{type:'image/svg+xml'}),'masar-artwork.svg');tb5Msg('Exported masar-artwork.svg')}
 function fileExportPNG(){const s=fileSVGString(),img=new Image(),u=URL.createObjectURL(new Blob([s],{type:'image/svg+xml'}));
@@ -7097,9 +7097,9 @@ DK.setGeom=(g,o)=>{Object.assign(g,o);clampG(g);geom(g);save()};
 const FXN={ds:'Drop Shadow',og:'Outer Glow',ig:'Inner Glow',gb:'Gaussian Blur',fe:'Feather'};
 const FXD={ds:{t:'ds',o:75,dx:7,dy:7,b:5,c:'#000000'},og:{t:'og',o:75,dx:0,dy:0,b:5,c:'#ffffff'},ig:{t:'ig',o:75,b:8,c:'#ffffff',ctr:0},gb:{t:'gb',r:5},fe:{t:'fe',r:10}};
 const FXS={ds:[['Opacity (%)','o',0,100],['X Offset (px)','dx',-500,500],['Y Offset (px)','dy',-500,500],['Blur (px)','b',0,200],['Color','c']],og:[['Opacity (%)','o',0,100],['Blur (px)','b',0,200],['Color','c']],ig:[['Opacity (%)','o',0,100],['Blur (px)','b',0,200],['Color','c'],['Glow from Center','ctr','chk']],gb:[['Radius (px)','r',0,500]],fe:[['Feather Radius (px)','r',0,500]]};
-let FXLAST=null;
+let FXLAST=null;window.fxName=x=>x.t==='px'&&window.PX&&PX[x.k]?PX[x.k].n:(FXN[x.t]||x.t);
 function fxList(o){try{const a=JSON.parse(o.g.dataset.fx||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
-function fxUpd(o){const L0=fxList(o),L=L0.filter(e=>!e.off),md=document.getElementById('mdefs');if(!md)return;const id='fx'+oid(o);let f=md.querySelector('#'+id);
+function fxUpd(o){const L0=fxList(o),L=L0.filter(e=>!e.off&&e.t!=='px'),md=document.getElementById('mdefs');if(!md)return;const id='fx'+oid(o);let f=md.querySelector('#'+id);
   if(!L0.length){o.g.removeAttribute('filter');delete o.g.dataset.fx;if(f)f.remove();return}
   if(!L.length){o.g.removeAttribute('filter');if(f)f.remove();return}
   const sx=Math.abs(o.m.sx)||1,sy=Math.abs(o.m.sy)||1;if(!f){f=el('filter',{id});md.appendChild(f)}
@@ -7125,7 +7125,7 @@ function dkModal(title,bodyHtml,btns){const bg=document.createElement('div');bg.
   btns.forEach(b=>{const x=document.createElement('button');x.type='button';x.textContent=b.t;x.className=b.p?'pri':'';x.dataset.k=b.k||b.t;x.onclick=()=>{if(b.f&&b.f(box)===false)return;close()};ft.appendChild(x)});
   const kd=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();const c=btns.find(b=>b.c);if(c&&c.f)c.f(box);close()}else if(e.key==='Enter'&&e.target.tagName!=='BUTTON'){const p=btns.find(b=>b.p);if(p){e.preventDefault();e.stopPropagation();if(!p.f||p.f(box)!==false)close()}}};
   addEventListener('keydown',kd,true);document.body.appendChild(bg);return{box,close}}
-function fxDlg(kind,ed){const T=fxTargets();if(!T.length)return;let base0=ed!=null?fxList(T[0])[ed]:null;if(ed!=null&&!base0)return;kind=ed!=null?base0.t:kind;
+function fxDlg(kind,ed){const T=fxTargets();if(!T.length)return;if(ed!=null){const e0=fxList(T[0])[ed];if(e0&&e0.t==='px'&&window.pxEdit){window.pxEdit(ed);return}}let base0=ed!=null?fxList(T[0])[ed]:null;if(ed!=null&&!base0)return;kind=ed!=null?base0.t:kind;
   const spec=FXS[kind],def=base0||(FXLAST&&FXLAST.t===kind?FXLAST:FXD[kind]),old=T.map(o=>o.g.dataset.fx||'');
   const rows=spec.map(f=>f[1]==='c'?'<label>'+f[0]+'<input type="color" data-f="c" value="'+def.c+'"></label>':f[2]==='chk'?'<label class="fxp"><input type="checkbox" data-f="'+f[1]+'"'+(def[f[1]]?' checked':'')+'> '+f[0]+'</label>':'<label>'+f[0]+'<input type="number" data-f="'+f[1]+'" min="'+f[2]+'" max="'+f[3]+'" step="1" value="'+def[f[1]]+'"></label>').join('')+'<label class="fxp"><input type="checkbox" id="fxpv" checked> Preview</label>';
   const read=box=>{const p={t:kind};spec.forEach(f=>{const i=box.querySelector('[data-f="'+f[1]+'"]');if(f[1]==='c')p.c=i.value;else if(f[2]==='chk')p[f[1]]=i.checked?1:0;else{let v=parseFloat(i.value);if(isNaN(v))v=def[f[1]];p[f[1]]=Math.max(f[2],Math.min(f[3],v))}});return p};
@@ -7264,16 +7264,52 @@ const PX={
  conv:{n:'Convert to Shape',spec:[S_('shape','Shape',[['rect','Rectangle'],['rr','Rounded Rectangle'],['ell','Ellipse']]),S_('mode','Size',[['abs','Absolute (extra px)'],['rel','Relative (extra %)']]),N('w','Extra width',-5000,5000,1),N('h','Extra height',-5000,5000,1),N('r','Corner radius (px)',0,1000,1)],def:{shape:'rect',mode:'abs',w:0,h:0,r:10},fn:(o,P)=>convShape(o,P)},
  xf:{n:'Transform Effect',spec:[N('sx','Scale horizontal (%)',-1000,1000,1),N('sy','Scale vertical (%)',-1000,1000,1),N('mx','Move horizontal (px)',-5000,5000,1),N('my','Move vertical (px)',-5000,5000,1),N('ang','Rotate (deg)',-3600,3600,1),C_('rx','Reflect X'),C_('ry','Reflect Y'),N('n','Copies',0,200,1)],def:{sx:100,sy:100,mx:0,my:0,ang:0,rx:0,ry:0,n:0},fn:(o,P)=>xformFx(o,P),noPrev:1}};
 const LASTV={};
-const targets=()=>[...sel].filter(pick);
+const targets=()=>[...sel].filter(o=>pick(o)&&!isText(o)&&!isGroup(o));/* path effects work on paths and shapes (not on text or groups) */
 function runAll(kind,P,T){return T.map(o=>PX[kind].fn(o,P)).some(Boolean)}
-function pxApply(kind,P){const T=targets();if(!T.length)return false;const ch=runAll(kind,{...P,seed:(Math.random()*1e9)|0},T);if(ch){window.PXLAST={kind,P};LASTV[kind]=P;if(PX[kind].noPrev){sel=new Set(sel)}commit();draw()}return ch}
-function pxDlg(kind,useLast){const T=targets();if(!T.length)return;const D=PX[kind],def={...D.def,...(LASTV[kind]||{})},old=T.map(o=>({h:o.g.innerHTML,m:{...o.m},an:[...o.g.getAttributeNames()]}));
-  const rows=D.spec.map(f=>f.t==='n'?'<label>'+f.l+'<input type="number" data-f="'+f.k+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" value="'+def[f.k]+'"></label>':f.t==='s'?'<label>'+f.l+'<select data-f="'+f.k+'">'+f.opts.map(op=>'<option value="'+op[0]+'"'+(String(def[f.k])===String(op[0])?' selected':'')+'>'+op[1]+'</option>').join('')+'</select></label>':'<label class="fxp"><input type="checkbox" data-f="'+f.k+'"'+(def[f.k]?' checked':'')+'> '+f.l+'</label>').join('')+(D.noPrev?'':'<label class="fxp"><input type="checkbox" id="pxpv" checked> Preview</label>');
-  const seed=(Math.random()*1e9)|0,read=box=>{const P={seed};D.spec.forEach(f=>{const i=box.querySelector('[data-f="'+f.k+'"]');if(f.t==='n'){let v=parseFloat(i.value);if(isNaN(v))v=def[f.k];P[f.k]=Math.max(f.min,Math.min(f.max,v))}else if(f.t==='s')P[f.k]=(/^-?\d+(\.\d+)?$/.test(i.value)&&f.k!=='vert')?+i.value:i.value;else P[f.k]=i.checked?1:0});return P};
-  const back=()=>{T.forEach((o,i)=>{o.g.innerHTML=old[i].h;o.m={...old[i].m};o.bb=BBX(o);apply(o)})};
-  const prev=box=>{if(D.noPrev)return;back();if(box.querySelector('#pxpv').checked)runAll(kind,read(box),T);draw()};
-  const M=dkModal(D.n,rows,[{t:'Cancel',c:1,f:()=>{if(!D.noPrev){back();draw()}}},{t:'OK',p:1,f:box=>{const P=read(box);if(!D.noPrev)back();const ch=runAll(kind,P,T);if(ch){LASTV[kind]=P;window.PXLAST={kind,P};commit()}draw()}}]);
+/* ======= non-destructive path effects =======
+   An effect is stored in the object's data-fx list as {t:'px',k:kind,P} (P holds its settings and the random seed).
+   The object's own paths stay as they are and remain editable; the result is drawn in a g[data-pxo] overlay that is rebuilt from a copy of the paths
+   whenever the paths or the effect list change. The original paths stay in place, hidden but still hit-testable. */
+const pxEnts=o=>fxList(o).filter(e=>e.t==='px'&&PX[e.k]);
+const pxBase=o=>[...o.g.children].filter(c=>!c.hasAttribute('data-pxo'));
+const pxSig=o=>JSON.stringify(pxEnts(o).filter(e=>!e.off))+'|'+pxBase(o).map(c=>c.outerHTML).join('');
+function pxXfM(q,P){const b=wbox(q),cx=b.x+b.w/2,cy=b.y+b.h/2,a=-P.ang*Math.PI/180,c=Math.cos(a),s=Math.sin(a),sx=P.sx/100*(P.rx?-1:1),sy=P.sy/100*(P.ry?-1:1);
+  return k=>{let A=[1,0,0,1,0,0];const one=[c*sx,s*sx,-s*sy,c*sy,0,0];for(let i=0;i<k;i++)A=mulAff(one,A);return mulAff([1,0,0,1,cx+P.mx*k,cy+P.my*k],mulAff(A,[1,0,0,1,-cx,-cy]))}}
+function pxReplay(o){
+  o.g.querySelectorAll(':scope > g[data-pxo]').forEach(w=>w.remove());
+  const base=pxBase(o),L=pxEnts(o).filter(e=>!e.off);
+  if(!L.length||isText(o)||isGroup(o)||!base.length){base.forEach(c=>{if(c.getAttribute('visibility')==='hidden'&&c.getAttribute('pointer-events')==='all'){c.removeAttribute('visibility');c.removeAttribute('pointer-events')}});delete o.g.dataset.pxon;o.__pxs=null;if(base.length)o.bb=BBX(o);return}
+  const wrap=el('g',{'data-pxo':'1','pointer-events':'none'});o.g.appendChild(wrap);
+  const newQ=src=>{const g=el('g',{});src.forEach(c=>{const k=c.cloneNode(true);k.removeAttribute('visibility');k.removeAttribute('pointer-events');g.appendChild(k)});wrap.appendChild(g);const q={g,bb:null,m:{sx:1,sy:1,tx:0,ty:0},ly:o.ly,nm:o.nm,lh:0,__pxq:1};g.__o=q;q.bb=BBX(q);return q};
+  const Q=[newQ(base)];
+  L.forEach(e=>{try{
+    if(e.k==='xf'){const P=e.P,n=Math.max(0,Math.round(P.n)),M=pxXfM(Q[0],P);
+      if(n===0)bakeAffine(Q[0],M(1));else{const src=Q.slice();for(let k=1;k<=n;k++)src.forEach(q0=>{const c=newQ([...q0.g.children]);bakeAffine(c,M(k));Q.push(c)})}}
+    else Q.slice().forEach(q=>PX[e.k].fn(q,{...e.P}))}catch(_){}});
+  base.forEach(c=>{c.setAttribute('visibility','hidden');c.setAttribute('pointer-events','all')});
+  o.g.dataset.pxon='1';o.bb=BBX(o);o.__pxs=pxSig(o)}
+function pxSyncAll(){try{objs.forEach(o=>{const f=o.g.dataset.fx,on=o.g.dataset.pxon,lc=o.g.lastElementChild;if(!on&&!(f&&f.indexOf('"px"')>=0)&&!(lc&&lc.hasAttribute&&lc.hasAttribute('data-pxo')))return;if(pxSig(o)!==o.__pxs)pxReplay(o)})}catch(_){}}
+const _drPx=draw;draw=function(){pxSyncAll();return _drPx.apply(this,arguments)};
+/* Object > Expand Appearance: the effect result becomes the object's real paths (copies of the Transform effect become separate objects) */
+window.pxExpand=function(L){const T=(L||[...sel]).filter(o=>o.g.dataset&&o.g.dataset.pxon);if(!T.length)return false;
+  T.forEach(o=>{const w=o.g.querySelector(':scope > g[data-pxo]');if(!w||!w.firstChild)return;const gs=[...w.children],first=gs[0];pxBase(o).forEach(c=>c.remove());
+    while(first.firstChild)o.g.insertBefore(first.firstChild,w);
+    const extra=gs.slice(1).map(g=>{const ng=el('g',{});for(const at of o.g.attributes){if(/^(transform|id|data-fx|data-pxon)$/.test(at.name))continue;ng.setAttribute(at.name,at.value)}while(g.firstChild)ng.appendChild(g.firstChild);layer.appendChild(ng);const q={g:ng,bb:null,m:{...o.m},ly:o.ly,nm:o.nm,lh:0};ng.__o=q;q.bb=BBX(q);apply(q);return q});
+    w.remove();const rest=fxList(o).filter(e=>e.t!=='px');if(rest.length)o.g.dataset.fx=JSON.stringify(rest);else delete o.g.dataset.fx;fxUpd(o);delete o.g.dataset.pxon;o.__pxs=null;o.bb=BBX(o);apply(o);
+    if(extra.length)objs.splice(objs.indexOf(o)+1,0,...extra)});
+  layer.replaceChildren(...objs.map(q=>q.g));commit();draw();return true};
+function pxApply(kind,P){const T=targets();if(!T.length)return false;const P2={...P,seed:(Math.random()*1e9)|0};
+  T.forEach(o=>{const L=fxList(o);L.push({t:'px',k:kind,P:P2});o.g.dataset.fx=JSON.stringify(L);fxUpd(o)});window.PXLAST={kind,P};LASTV[kind]=P;commit();draw();return true}
+function pxDlg(kind,ed){const T=targets();if(!T.length)return;const D=PX[kind],cur=typeof ed==='number'?fxList(T[0])[ed]:null,def={...D.def,...(LASTV[kind]||{}),...(cur&&cur.t==='px'?cur.P:{})},old=T.map(o=>o.g.dataset.fx);
+  const rows=D.spec.map(f=>f.t==='n'?'<label>'+f.l+'<input type="number" data-f="'+f.k+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" value="'+def[f.k]+'"></label>':f.t==='s'?'<label>'+f.l+'<select data-f="'+f.k+'">'+f.opts.map(op=>'<option value="'+op[0]+'"'+(String(def[f.k])===String(op[0])?' selected':'')+'>'+op[1]+'</option>').join('')+'</select></label>':'<label class="fxp"><input type="checkbox" data-f="'+f.k+'"'+(def[f.k]?' checked':'')+'> '+f.l+'</label>').join('')+'<label class="fxp"><input type="checkbox" id="pxpv" checked> Preview</label>';
+  const seed=(cur&&cur.P&&cur.P.seed)||((Math.random()*1e9)|0),read=box=>{const P={seed};D.spec.forEach(f=>{const i=box.querySelector('[data-f="'+f.k+'"]');if(f.t==='n'){let v=parseFloat(i.value);if(isNaN(v))v=def[f.k];P[f.k]=Math.max(f.min,Math.min(f.max,v))}else if(f.t==='s')P[f.k]=(/^-?\d+(\.\d+)?$/.test(i.value)&&f.k!=='vert')?+i.value:i.value;else P[f.k]=i.checked?1:0});return P};
+  const back=()=>T.forEach((o,i)=>{if(old[i]===undefined)delete o.g.dataset.fx;else o.g.dataset.fx=old[i];fxUpd(o)});
+  const put=P=>T.forEach((o,i)=>{const L=old[i]?JSON.parse(old[i]):[];if(typeof ed==='number'&&L[ed]&&L[ed].t==='px')L[ed]={...L[ed],P};else L.push({t:'px',k:kind,P});o.g.dataset.fx=JSON.stringify(L);fxUpd(o)});
+  const prev=box=>{back();if(box.querySelector('#pxpv').checked)put(read(box));draw()};
+  const M=dkModal(D.n,rows,[{t:'Cancel',c:1,f:()=>{back();draw()}},{t:'OK',p:1,f:box=>{const P=read(box);back();put(P);LASTV[kind]=P;window.PXLAST={kind,P};commit();draw()}}]);
   M.box.addEventListener('input',()=>prev(M.box));M.box.addEventListener('change',()=>prev(M.box));prev(M.box);const f0=M.box.querySelector('input,select');if(f0)f0.focus()}
+window.pxEdit=i=>{const T=targets();const e=T.length&&fxList(T[0])[i];if(e&&e.t==='px')pxDlg(e.k,i)};
+window.pxSyncAll=pxSyncAll;
 window.PX=PX;window.pxDlg=pxDlg;window.pxApply=pxApply;window.PXLAST=null;window.pxPre=(kind,patch)=>{LASTV[kind]={...(LASTV[kind]||{}),...patch};pxDlg(kind)};
 window.pxApplyLast=()=>{if(window.PXLAST)pxApply(window.PXLAST.kind,window.PXLAST.P)};window.pxLastDlg=()=>{if(window.PXLAST)pxDlg(window.PXLAST.kind)};
 window.WSTY=WSTY;
@@ -7892,7 +7928,7 @@ function refresh(){if(P.style.display==='none')return;const L=T();vis('#prNone',
   const S=styleOf(L[0])||{fill:'none',stroke:'none',sw:0,op:100};const f=$p('#prF'),s=$p('#prS');f.style.background=S.fill==='none'?'':hexOf(S.fill);f.classList.toggle('none',S.fill==='none');s.style.background='';s.style.boxShadow=S.stroke==='none'?'':'inset 0 0 0 3px '+hexOf(S.stroke);s.classList.toggle('none',S.stroke==='none');
   setv('#prsw',S.sw);setv('#prop',S.op);
   {const f0=fillables(L[0])[0]||document.createElementNS(NS,'g'),gf=gradOf(f0,'data-grad'),gs=gradOf(f0,'data-grads'),fi=$p('#prFi'),si=$p('#prSi');fi.classList.toggle('none',S.fill==='none'&&!gf);fi.style.background=gf?gradCss(gf):(S.fill==='none'?'':hexOf(S.fill));si.classList.toggle('none',S.stroke==='none'&&!gs);si.style.background=gs?gradCss(gs):'';si.style.boxShadow=(S.stroke==='none'||gs)?'':'inset 0 0 0 4px '+(/^#/.test(S.stroke)?hexOf(S.stroke):'#888')+',inset 0 0 0 5px #fff'}
-  const FX=window.fxList?fxList(L[0]):[];$p('#prFxl').innerHTML=FX.map((x,i)=>'<div class="pr prfx" data-i="'+i+'"><span style="flex:1;cursor:pointer" title="Click to edit">'+FXN[x.t]+'</span><button type="button" class="pb" data-del="'+i+'" title="Remove effect" style="min-width:20px;height:20px;padding:0">×</button></div>').join('');
+  const FX=window.fxList?fxList(L[0]):[];$p('#prFxl').innerHTML=FX.map((x,i)=>'<div class="pr prfx" data-i="'+i+'"><span style="flex:1;cursor:pointer" title="Click to edit">'+fxName(x)+'</span><button type="button" class="pb" data-del="'+i+'" title="Remove effect" style="min-width:20px;height:20px;padding:0">×</button></div>').join('');
   const tx=L.every(isText);vis('#prTxt',tx);if(tx){const t0=L[0].g.querySelector('text'),ff=$p('#prff'),src=$('#ff');if(ff.options.length!==src.options.length)ff.innerHTML=src.innerHTML;if(document.activeElement!==ff)ff.value=src.value;setv('#prfs',$('#fs').value)}
   const G=L.some(isGroup),C=L.some(o=>clipMG(o));$p('#qU').disabled=!G;$p('#qG').disabled=!L.some(pick);$p('#qM').disabled=L.filter(pick).length<2;$p('#qR').disabled=!C;$p('#qO').disabled=L.some(o=>isGroup(o)||isText(o));
   if(window.alRefresh)alRefresh();const need=AL.to==='art'?1:2,kOK=AL.to!=='key'||!!(AL.key&&L.includes(AL.key));P.querySelectorAll('#pral [data-al]').forEach(b=>b.disabled=L.filter(pick).length<need||!kOK)}
@@ -8065,7 +8101,7 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Path',sub:()=>[{t:'Join',k:'Ctrl+J',f:()=>pjJoin(),en:anySel},{t:'Average…',k:'Ctrl+Alt+J',f:pjAverage,en:anySel},{t:'Remove Anchor Points',f:anRemove,en:()=>dsSel.size>0}]},
     {t:'Clipping Mask',sub:()=>[{t:'Make',k:'Ctrl+7',f:clipMake,en:S},{t:'Release',k:'Ctrl+Alt+7',f:clipRelease,en:S}]},
     {t:'Compound Path',sub:()=>[{t:'Make',k:'Ctrl+8',f:makeCompound,en:S},{t:'Release',k:'Ctrl+Alt+8',f:releaseCompound,en:S}]},sep,
-    {t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
+    {t:'Expand Appearance',f:()=>window.pxExpand(),en:()=>[...sel].some(o=>o.g.dataset&&o.g.dataset.pxon)},{t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
    ['Type',()=>[
     {t:'Font',sub:()=>fontItems(),en:txHas},{t:'Size',sub:()=>[6,8,9,10,11,12,14,18,21,24,30,36,48,60,72].map(n=>({t:String(n),f:()=>setTxSize(n),en:txHas}))},sep,
     {t:'Area Type Options…',f:()=>openToolOpts(txObjs().some(o=>o.g.querySelector('text[data-vert]'))?'vat':'at'),en:hasArea},
@@ -8403,7 +8439,7 @@ function opmMake(){const L=pfList();if(L.length<2){msg('Make Mask: select two or
   const mk=L[L.length-1];if(!mk.g.querySelector('path,rect,ellipse,circle,polygon,polyline,line,text')){return false}
   L.forEach(o=>{if(!o.g.querySelector('[data-th]'))normalizeObj(o)});
   const bi=objs.indexOf(mk),at=objs.filter((x,i)=>i<bi&&!L.includes(x)).length,G=el('g',{});
-  L.forEach(o=>{const m=el('g',{'data-mem':'1'});if(o.nm)m.setAttribute('data-nm',o.nm);if(o===mk){m.setAttribute('data-opmask','1');m.setAttribute('data-opclip','1');m.setAttribute('display','none')}
+  L.forEach(o=>{const m=el('g',{'data-mem':'1'});if(o.nm)m.setAttribute('data-nm',o.nm);if(o.g.dataset.fx){m.setAttribute('data-fx',o.g.dataset.fx);if(o.g.dataset.pxon)m.setAttribute('data-pxon','1')}if(o===mk){m.setAttribute('data-opmask','1');m.setAttribute('data-opclip','1');m.setAttribute('display','none')}
     if(o.g.getAttribute('transform')&&!(o.m.sx===1&&o.m.sy===1&&o.m.tx===0&&o.m.ty===0))m.setAttribute('transform',o.g.getAttribute('transform'));[...o.g.childNodes].forEach(n=>m.appendChild(n));G.appendChild(m)});
   objs=objs.filter(o=>!sel.has(o));const o={g:G,bb:null,m:{sx:1,sy:1,tx:0,ty:0}};G.__o=o;objs.splice(Math.max(0,at),0,o);layer.replaceChildren(...objs.map(q=>q.g));touch(o);sel=new Set([o]);dsSel=new Set();syncOpm();commit();draw();return true}
 function opmRelease(){const G=[...sel].filter(o=>!!opmOf(o));if(!G.length)return false;
@@ -8452,7 +8488,7 @@ function apBuild(){const L=tsel(),o=L[0];
   h+=row('stroke',!R.hs,'Stroke',chip(R.S.stroke,R.gS,'stroke'),R.S.stroke==='none'?'None':(+R.S.sw||0)+' px');
   h+=row('fill',!R.hf,'Fill',chip(R.S.fill==='none'&&!R.gF?'none':R.S.fill,R.gF,'fill'),R.gF?'Gradient':(R.S.fill==='none'?'None':''));
   h+='<div class="apr'+(APK==='op'?' on':'')+'" data-k="op"><span class="apn" style="margin-left:24px">Opacity</span><span class="apv">'+(R.S.op===100&&R.bm==='normal'?'Default':R.S.op+'% '+(BM.find(b=>b[0]===R.bm)||BM[0])[1])+'</span></div>';
-  R.fx.forEach((x,i)=>{h+='<div class="apr fx'+(APK==='fx'&&APFX===i?' on':'')+'" data-k="fx" data-i="'+i+'"><button type="button" class="apey'+(x.off?'':' on')+'" data-eyefx="'+i+'" title="Show / hide effect">'+EYE+'</button><span class="apn">'+(fxN[x.t]||x.t)+'</span><span class="fxi">fx</span></div>'});
+  R.fx.forEach((x,i)=>{h+='<div class="apr fx'+(APK==='fx'&&APFX===i?' on':'')+'" data-k="fx" data-i="'+i+'"><button type="button" class="apey'+(x.off?'':' on')+'" data-eyefx="'+i+'" title="Show / hide effect">'+EYE+'</button><span class="apn">'+(window.fxName?fxName(x):(fxN[x.t]||x.t))+'</span><span class="fxi">fx</span></div>'});
   h+='</div><div class="apf"><button type="button" data-ap="addstroke" title="Add New Stroke">'+SV('<path d="M3 13L13 3" stroke-width="2.2"/>')+'</button><button type="button" data-ap="addfill" title="Add New Fill">'+SV('<rect x="3" y="3" width="10" height="10" fill="currentColor"/>')+'</button><button type="button" data-ap="fx" title="Add New Effect">'+SV('<path d="M3 13l3-8h4M5 9h4M9 13l4-5M13 13L9 8"/>')+'</button><span class="sp"></span><button type="button" data-ap="clear" title="Clear Appearance">'+SV('<circle cx="8" cy="8" r="5.5"/><path d="M4 12L12 4"/>')+'</button><button type="button" data-ap="dup" title="Duplicate Selected Item">'+SV('<rect x="2" y="2" width="8" height="8"/><rect x="6" y="6" width="8" height="8" fill="var(--panel)"/>')+'</button><button type="button" data-ap="del" title="Delete Selected Item">'+SV('<path d="M3 4.5h10M6 4.5V3h4v1.5M4.5 4.5l.7 9h5.6l.7-9"/>')+'</button></div>';
   AP.innerHTML=h;AP.querySelector('[data-ap="dup"]').disabled=!(APK==='fx'&&APFX>=0&&R.fx[APFX]);AP.querySelector('[data-ap="del"]').disabled=APK==='op'||(APK==='fx'&&!(APFX>=0&&R.fx[APFX]))}
 function apRefresh(){if(AP.style.display==='none')return;const L=tsel(),o=L[0];let sg='';
