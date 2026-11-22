@@ -221,3 +221,13 @@
 - **إصلاح:** Ctrl+Alt+B كان بيتفسّر Paste in Back — اتصلح.
 - لسه ناقص في Blend: ترتيب z-order الافتراضي للـsteps عند أكتر من 3 keys مش متأكد منه 100%، والبلند على نصوص/gradients (الـsteps بتاخد gradient أقرب key بدون تداخل).
 - اختبار: tests/bl.js و tests/bl2.js (24 فحص).
+
+## 5-ع) Build 200 — فحص وإصلاح لوحة Layers
+**اتفحصت بـ 3 سكربتات (tests/lyprobe*.js) ثم اتصلح الآتي (tests/layers3.js، 27 فحص):**
+1. مسح لير فيه شغل كان بيمسح بدون تأكيد ← دلوقتي بيسأل (Yes/No)؛ اللير الفاضي بيتمسح علطول.
+2. Shift+click على صفوف الأوبجكتات كان بيعمل toggle ← بقى بيحدد المدى كله (Ctrl للإضافة/الحذف الفردي).
+3. السحب لتحت في عمود العين/القفل كان مش شغال ← بيطبق نفس الحالة على كل صف بتعدي عليه (وخطوة undo واحدة).
+4. Alt+drag لصف أوبجكت كان بينقل ← بقى بينسخ.
+5. قايمة اللوحة: اتضاف Hide/Show Others و Lock/Unlock Others و Paste Remembers Layers (فعلية: اللصق بيرجع للير الأصلي أو بيعمله) و Panel Options (Row Size 12–100، Thumbnails للـLayers/Groups/Objects، Show Layers Only، بتتحفظ).
+6. زر Filter (By Object: Paths/Text/Groups/Clipping Masks — By State: Hidden/Locked).
+- لسه ناقص: Save Selection و Collect for Export (محتاجين لوحة Asset Export)، Alt+drag لنسخ لير كامل، Locate Layer لما Show Layers Only شغال.
