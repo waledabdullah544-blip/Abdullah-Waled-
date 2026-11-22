@@ -139,6 +139,10 @@
 **Color Picker (168):** دبل كليك على Fill/Stroke (الـ Toolbox أو الـ Color panel) → dialog: Color field + Hue slider بأزرار الراديو H/S/B/R/G/B، حقول HSB/RGB/CMYK/Hex، New/Current، Only Web Colors مع تحذير الـ cube، زر Color Swatches مع بحث وColor Models للرجوع، OK/Cancel/Enter/Esc. ناقص: Out of Gamut (يحتاج ICC) والقطّارة داخل الـ dialog.
 **Type menu (169):** Font، Size، Area Type Options…، Type on a Path (5 effects + Options…)، Threaded Text، Change Case (4 أنماط)، Smart Punctuation… (ligatures/quotes/spaces/dashes/ellipses/fractions، Selected أو Entire Document)، Create Outlines، Fill With Placeholder Text. كلها بتمر عبر جلسة محرر النص (Undo/Redo صح). ناقص: Glyphs، Fit Headline، Resolve Missing Fonts، Find Font، Show Hidden Characters، Type Orientation، Optical Margin Alignment، Preferences > Type.
 
+## 5-و) build 170 — File / Preferences
+**اتصلّح:** Save As… (Ctrl+Shift+S) وSave a Copy… (Ctrl+Alt+S)، أول Ctrl+S على مستند غير مسمى يفتح Save As ثم Ctrl+S يحفظ بنفس الاسم، اسم المستند بيظهر في التاب، File>New بيسأل عن الحفظ لو فيه تعديلات (Cancel/Don't Save/Save) ويرجّع الاسم Untitled-1، Export PNG بخيارات (Resolution 72/150/300 وBackground) بدل المقاس الثابت (72 ppi = مقاس الـ artboard 800×600)، الملفات بتتسمى باسم المستند، Preferences > General (Keyboard Increment وShow Tool Tips شغالين فعلاً، Shift+سهم = 10× الزيادة).
+**لسه:** New Document dialog وHome Screen (Illustrator بيفتح مستند جديد في تاب منفصل)، Place وRevert وDocument Setup وPrint، باقي صفحات Preferences، Save بيحمّل ملف جديد (المتصفح مش بيستبدل الملف).
+
 ## 5-ج) تخصيص الواجهة (مقارنة بـ Illustrator)
 **موجود وشغال (اتختبر بماوس حقيقي):** سحب تاب بانل لليسار/اليمين/عايم، دمج بانلز كتابات، إغلاق/فتح من Window، حفظ التخطيط بعد reload، Workspaces (Essentials, Essentials Classic, Typography, Painting) + New Workspace + Reset، Edit Toolbar، Toolbar عمودين/عمود، Tab/Shift+Tab، 4 ثيمات.
 **ناقص:** Keyboard Shortcuts editor (Ctrl+Alt+Shift+K) — تخصيص الاختصارات؛ Workspaces الجاهزة الباقية (3D, Automation, Layout, Motion, Printing, Tracing, Web…)؛ قايمة إظهار/إخفاء عناصر الـ Control bar؛ Control bar overflow menu؛ UI Scale في Preferences؛ تخصيص قوائم السياق/البانل.
