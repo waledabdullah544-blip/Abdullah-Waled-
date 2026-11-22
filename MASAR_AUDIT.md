@@ -231,3 +231,9 @@
 5. قايمة اللوحة: اتضاف Hide/Show Others و Lock/Unlock Others و Paste Remembers Layers (فعلية: اللصق بيرجع للير الأصلي أو بيعمله) و Panel Options (Row Size 12–100، Thumbnails للـLayers/Groups/Objects، Show Layers Only، بتتحفظ).
 6. زر Filter (By Object: Paths/Text/Groups/Clipping Masks — By State: Hidden/Locked).
 - لسه ناقص: Save Selection و Collect for Export (محتاجين لوحة Asset Export)، Alt+drag لنسخ لير كامل، Locate Layer لما Show Layers Only شغال.
+
+## 5-ف) Build 202 — بحث الـLayers + Appearance متعدد الـFills/Strokes
+- **Layers:** حقل "Search All" اتنقل لأعلى اللوحة (زي إليستريتور) + زر Filter جنبه؛ زر Locate Object في الفوتر بقى أيقونة عدسة. تحديد عنصر ثم الضغط على العدسة (في الفوتر أو داخل الحقل) يظهره في اللوحة من غير كتابة اسم.
+- **Appearance:** بقى يدعم أكتر من Fill/Stroke للأوبجكت الواحد: Add New Stroke / Add New Fill تضيف عنصر فوق المحدد، Duplicate / Delete Selected Item، سحب الصفوف لإعادة الترتيب (حتى بين الـStroke والـFill)، لون ووزن وOpacity لكل عنصر، قايمة اللوحة (Add New Fill/Stroke/Effect، Duplicate Item، Remove Item، Clear Appearance، Reduce to Basic Appearance). مخزّن في `data-aps` ومرسوم كمسارات مصاحبة `data-apx` (بتتحرك وبتتنسخ وبتتحفظ وبتتعمل لها Undo). tests/ap.js (14 فحص).
+- لسه ناقص في Appearance: Gradient/Pattern في العناصر الإضافية، Blend Mode لكل عنصر في الواجهة، Redefine Graphic Style (محتاجة لوحة Graphic Styles)، New Art Has Basic Appearance، ترتيب الـEffects بين العناصر.
+- **UI:** منع تحديد النص العشوائي في كل الواجهة (user-select:none ما عدا حقول الإدخال).

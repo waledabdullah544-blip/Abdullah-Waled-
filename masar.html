@@ -250,7 +250,7 @@ nav button:focus-visible{outline:1px solid var(--brand)}
 #cv.cp{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M6 22L14 6l8 16' stroke='white' stroke-width='4.4' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 22L14 6l8 16' stroke='black' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") 14 6,crosshair}
 #cv.ctv{cursor:default!important}
 #cv.pcv{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Cpath d='M6 22L14 6l8 16' stroke='white' stroke-width='4.4' stroke-linecap='round' fill='none'/%3E%3Cpath d='M6 22L14 6l8 16' stroke='black' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E") 14 6,crosshair}
-#cv{width:100%;height:100%;display:block;touch-action:none;user-select:none;cursor:default}
+html,body{-webkit-user-select:none;user-select:none}input,textarea,select,[contenteditable=true],.fxb input,.selok{-webkit-user-select:text;user-select:text}#cv{width:100%;height:100%;display:block;touch-action:none;user-select:none;cursor:default}
 #cv.m{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2724%27%20height%3D%2724%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cg%20fill%3D%27none%27%20stroke-linecap%3D%27round%27%3E%3Cpath%20d%3D%27M12%203v18M3%2012h18%27%20stroke%3D%27white%27%20stroke-width%3D%273.4%27%2F%3E%3Cpath%20d%3D%27M12%203v18M3%2012h18%27%20stroke%3D%27black%27%20stroke-width%3D%271.2%27%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E") 12 12,crosshair}
 #cv.vsc{cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2728%27%20height%3D%2728%27%20viewBox%3D%270%200%2028%2028%27%3E%3Cpath%20d%3D%27M4%202.2V19.6L8.6%2015.3L11.7%2022L14.5%2020.7L11.5%2014.1H17.6Z%27%20fill%3D%27black%27%20stroke%3D%27white%27%20stroke-width%3D%272.2%27%20stroke-linejoin%3D%27round%27%20paint-order%3D%27stroke%27%2F%3E%3C%2Fsvg%3E") 4 2,default}
 #cv.vsc.vso:not(.h):not(.hg):not(.zi):not(.zo):not(.spc){cursor:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%2728%27%20height%3D%2728%27%20viewBox%3D%270%200%2028%2028%27%3E%3Cpath%20d%3D%27M4%202.2V19.6L8.6%2015.3L11.7%2022L14.5%2020.7L11.5%2014.1H17.6Z%27%20fill%3D%27black%27%20stroke%3D%27white%27%20stroke-width%3D%272.2%27%20stroke-linejoin%3D%27round%27%20paint-order%3D%27stroke%27%2F%3E%3Crect%20x%3D%2718%27%20y%3D%2717%27%20width%3D%276%27%20height%3D%276%27%20fill%3D%27white%27%20stroke%3D%27white%27%20stroke-width%3D%272.4%27%2F%3E%3Crect%20x%3D%2718%27%20y%3D%2717%27%20width%3D%276%27%20height%3D%276%27%20fill%3D%27black%27%2F%3E%3C%2Fsvg%3E") 4 2,default}
@@ -354,7 +354,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 .dkpn .pt{color:var(--mute);margin:12px 0 4px}
 /* Layers */
 .lyr .lcb{width:4px;align-self:stretch;margin:0 3px 0 2px;flex:none}
-.lyf{gap:3px!important;margin-top:6px}.lyf .lysr{flex:1;min-width:60px;display:flex;align-items:center;gap:4px;height:26px;border:1px solid var(--line);border-radius:2px;background:var(--field);padding:0 6px;color:var(--mute)}
+.lyf{gap:3px!important;margin-top:6px}.lyf.lyh{margin:0 0 6px}.lyf .lysr{flex:1;min-width:60px;display:flex;align-items:center;gap:4px;height:26px;border:1px solid var(--line);border-radius:2px;background:var(--field);padding:0 6px;color:var(--mute)}
 .lyf .lysr input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:inherit;outline:none;height:22px;padding:0}
 .lyf .lyi{width:26px;height:26px;padding:0;display:grid;place-items:center;flex:none;border:1px solid transparent;border-radius:3px;background:none;color:var(--ink);cursor:pointer}.lyf .lyi:hover:not(:disabled){background:var(--hov)}.lyf .lyi:disabled{opacity:.35;cursor:default}
 #lycnt{display:none}
@@ -379,7 +379,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 #app .apl{min-height:120px;border:1px solid var(--line);background:var(--field);overflow:auto;max-height:240px}
 #app .apr{display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-bottom:1px solid var(--line);cursor:default;user-select:none}#app .apr:hover{background:var(--hov)}#app .apr.on{background:var(--on)}
 #app .apr .apey{width:18px;height:18px;padding:0;border:0;background:none;color:var(--ink);display:grid;place-items:center;flex:none}#app .apr .apey:not(.on){opacity:.35}
-#app .apr .apn{min-width:48px;text-decoration:underline dotted;text-underline-offset:3px}#app .apr .apv{margin-left:auto;color:var(--mute);white-space:nowrap}
+#app .apr input.apw,#app .apr input.apo{width:46px;height:20px;box-sizing:border-box;margin-left:4px;padding:0 3px;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:2px;font:inherit;font-size:11px}#app .apr input.apo{width:42px}#app.apdrag .apr{cursor:grabbing}#app .apr.dropa{box-shadow:inset 0 2px 0 #1473E6}#app .apr.dropb{box-shadow:inset 0 -2px 0 #1473E6}#app .apr .apn{min-width:48px;text-decoration:underline dotted;text-underline-offset:3px}#app .apr .apv{margin-left:auto;color:var(--mute);white-space:nowrap}
 #app .apr .apc{width:20px;height:18px;border:1px solid var(--line);border-radius:2px;padding:0;flex:none}#app .apr .apc.none{background:linear-gradient(to top right,transparent 46%,#e03131 47%,#e03131 53%,transparent 54%),#fff}
 #app .apr.fx{padding-left:30px}#app .apr .fxi{font-style:italic;font-weight:600;color:var(--mute);margin-left:auto}
 #app .apf{display:flex;align-items:center;gap:2px;margin-top:6px}#app .apf .sp{flex:1}#app .apf button{width:26px;height:26px;padding:0;display:grid;place-items:center;border:1px solid transparent;border-radius:3px;background:none;color:var(--ink);cursor:pointer}#app .apf button:hover:not(:disabled){background:var(--hov)}#app .apf button:disabled{opacity:.35}
@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 200</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 202</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -722,7 +722,7 @@ function parseD(d){
   }
   return S.length?S:null}
 function spD(S){return S.map(sp=>{const P=sp.pts;let d='M'+r3(P[0].x)+' '+r3(P[0].y);for(let k=1;k<P.length;k++)d+=seg(P[k-1],P[k]);if(sp.closed&&P.length>1){const c=seg(P[P.length-1],P[0]);if(c[0]==='C')d+=c}if(sp.closed)d+='Z';return d}).join('')}
-const eps=ob=>{const X=ob.g.querySelector(':scope > g[data-pxo]');return[...ob.g.querySelectorAll('path:not([data-bo]):not([data-sao])')].filter(p=>!(X&&X.contains(p))&&(p.getAttribute('data-tpath')!=='frame'||(typeof DSM==='function'&&DSM(tool)&&!p.hasAttribute('transform'))))};/* a live path effect draws its result in a g[data-pxo] overlay; the tools edit the original paths */
+const eps=ob=>{const X=ob.g.querySelector(':scope > g[data-pxo]');return[...ob.g.querySelectorAll('path:not([data-bo]):not([data-sao]):not([data-apx])')].filter(p=>!(X&&X.contains(p))&&(p.getAttribute('data-tpath')!=='frame'||(typeof DSM==='function'&&DSM(tool)&&!p.hasAttribute('transform'))))};/* a live path effect draws its result in a g[data-pxo] overlay; the tools edit the original paths */
 function getSP(pe){const d=pe.getAttribute('d')||'';if(pe.__sp===undefined||(pe.__spd!==undefined&&pe.__spd!==d))pe.__sp=parseD(d);pe.__spd=d;return pe.__sp}
 function writeSP(pe){const _d=spD(pe.__sp);pe.setAttribute('d',_d);pe.__spd=_d;pe.removeAttribute('data-shape');pe.removeAttribute('data-p');pe.removeAttribute('data-lcb');pe.removeAttribute('data-lcr');pe.removeAttribute('data-cu');pe.removeAttribute('data-xf')}
 function touch(ob){if(ob.g.querySelector('path[data-tprev]'))tprSync(ob);if(ob.__nest){if(ob.__par&&ob.__par.g.isConnected)touch(ob.__par);return}if(ob.g.querySelector('[data-bc]')&&typeof brRender==='function')brRender(ob);if(!ob.__in&&!ob.__ar&&!ted_s){const fr=ob.g.querySelector('path[data-tpath="frame"]');if(fr&&ob.__fd!==undefined&&fr.getAttribute('d')!==ob.__fd&&typeof areaReflow==='function'){areaReflow(ob);return}if(fr)ob.__fd=fr.getAttribute('d')}ob.bb=BBX(ob);apply(ob)}
@@ -1867,7 +1867,7 @@ function ftFit(P,Q){const d=(P[1][0]-P[0][0])*(P[2][1]-P[0][1])-(P[2][0]-P[0][0]
   const sv=(a0,a1,a2)=>{const A=((a1-a0)*(P[2][1]-P[0][1])-(a2-a0)*(P[1][1]-P[0][1]))/d,C=((a2-a0)*(P[1][0]-P[0][0])-(a1-a0)*(P[2][0]-P[0][0]))/d;return[A,C,a0-A*P[0][0]-C*P[0][1]]};
   const X=sv(Q[0][0],Q[1][0],Q[2][0]),Y=sv(Q[0][1],Q[1][1],Q[2][1]);return[X[0],Y[0],X[1],Y[1],X[2],Y[2]]}
 /* bake a non-affine point map into an object: every anchor and handle goes through f (live shapes become plain paths, like Illustrator) */
-function ftLiveText(o){return!!o.g.querySelector('text')&&!o.g.querySelector('path:not([data-tpath]):not([data-tprev]):not([data-bo]):not([data-sao]),rect,ellipse,image,line,polygon,polyline,circle')}
+function ftLiveText(o){return!!o.g.querySelector('text')&&!o.g.querySelector('path:not([data-tpath]):not([data-tprev]):not([data-bo]):not([data-sao]):not([data-apx]),rect,ellipse,image,line,polygon,polyline,circle')}
 let FTTXT=false;
 function bakeMap(ob,f){
   if(ftLiveText(ob)){FTTXT=true;return}/* Illustrator cannot distort live type with Free Transform: it stays as it is until it is outlined */
@@ -2009,7 +2009,7 @@ const hexOf=c=>{c=(c||'').trim();if(/^#[0-9a-f]{6}$/i.test(c))return c.toLowerCa
 const dfx=nc=>{const x=DEF.sx||{};return(x.cap&&!nc?' stroke-linecap="'+x.cap+'"':'')+(x.ml?' stroke-miterlimit="'+x.ml+'"':'')+(x.dash?' stroke-dasharray="'+x.dash+'"':'')+(x.sa?' data-sa="'+x.sa+'"':'')+(x.ars?' data-ars="'+x.ars+'"':'')+(x.are?' data-are="'+x.are+'"':'')+(x.arss?' data-arss="'+x.arss+'"':'')+(x.ares?' data-ares="'+x.ares+'"':'')+(x.aral?' data-aral="'+x.aral+'"':'')+(x.wp?' data-wp="'+x.wp+'"':'')+(x.wpf?' data-wpf="1"':'')+(x.wpx?' data-wpx="1"':'')};
 const closedStyle=()=>'fill="'+DEF.fill+'"'+(DEF.stroke!=='none'?' stroke="'+DEF.stroke+'" stroke-width="'+DEF.sw+'" stroke-linejoin="'+((DEF.sx&&DEF.sx.join)||'round')+'"'+dfx():'');
 const openStyle=()=>'fill="none" stroke="'+(DEF.stroke!=='none'?DEF.stroke:'#000000')+'" stroke-width="'+(DEF.stroke!=='none'?DEF.sw:1)+'" stroke-linejoin="'+((DEF.sx&&DEF.sx.join)||'round')+'" stroke-linecap="'+((DEF.sx&&DEF.sx.cap)||'round')+'"'+dfx(1);
-const fillables=o=>{const X=o.g.querySelector(':scope > g[data-pxo]'),L=[...o.g.querySelectorAll('path:not([data-tpath]):not([data-bo]):not([data-sao]):not([data-tprev]),text,rect,ellipse')];return X?L.filter(e=>!X.contains(e)):L};
+const fillables=o=>{const X=o.g.querySelector(':scope > g[data-pxo]'),L=[...o.g.querySelectorAll('path:not([data-tpath]):not([data-bo]):not([data-sao]):not([data-apx]):not([data-tprev]),text,rect,ellipse')];return X?L.filter(e=>!X.contains(e)):L};
 function normalizeObj(o){const m=o.m;if(m.sx!==1||m.sy!==1||m.tx!==0||m.ty!==0)bakeAffine(o,[1,0,0,1,0,0])}
 function styleOf(o){const e=fillables(o)[0];if(!e)return null;const op=parseFloat(e.getAttribute('opacity'));
   const R={fill:(gradOf(e,'data-grad')?gradOf(e,'data-grad').s[0][1]:(e.getAttribute('fill')||'#000000')),stroke:e.getAttribute('stroke')||'none',sw:parseFloat(e.getAttribute('stroke-width'))||0,op:Math.round((isNaN(op)?1:op)*100)};
@@ -7505,7 +7505,7 @@ const EYE='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="c
 const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const LI=d=>'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';
 const P=document.createElement('div');P.id='lyp';P.className='dkpn';P.style.display='none';document.body.appendChild(P);
-P.innerHTML='<div class="lyl" id="lyl"></div><div id="lyind"></div><div class="lyf"><span id="lycnt"></span><label class="lysr" title="Search layers by name">'+LI('<circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/>')+'<input id="lySrch" type="text" aria-label="Search layers" autocomplete="off"><button type="button" class="lyx" id="lyClr" title="Clear search (Esc)" aria-label="Clear search" style="display:none">&times;</button></label><button type="button" class="lyi" id="lyFlt" title="Filter (by object type / state)" aria-label="Filter">'+LI('<path d="M2 3h12L9.5 8.5V13l-3-1.5V8.5z"/>')+'</button><button type="button" class="lyi" id="lyLoc" title="Locate Object" aria-label="Locate Object">'+LI('<circle cx="8" cy="8" r="4"/><path d="M8 1.5v3M8 11.5v3M1.5 8h3M11.5 8h3"/>')+'</button><button type="button" class="lyi" id="lyClip" title="Make / Release Clipping Mask" aria-label="Make / Release Clipping Mask">'+LI('<rect x="2" y="2" width="8" height="8"/><circle cx="10" cy="10" r="4"/>')+'</button><button type="button" class="lyi" id="lySub" title="Create New Sublayer (Alt+click: options)" aria-label="Create New Sublayer">'+LI('<path d="M3 2h6l3 3v9H3z"/><path d="M9 2v3h3"/><path d="M6 10.5h4M8 8.5v4"/>')+'</button><button type="button" class="lyi" id="lyNew" title="Create New Layer (Alt+click: Layer Options)" aria-label="Create New Layer">'+LI('<path d="M3 2h6l3 3v9H3z"/><path d="M9 2v3h3"/>')+'</button><button type="button" class="lyi" id="lyDel" title="Delete Selection" aria-label="Delete Selection">'+LI('<path d="M3 4.5h10M6 4.5V3h4v1.5M4.5 4.5l.7 9h5.6l.7-9"/>')+'</button><button type="button" class="lyi" id="lyMenu" title="Layers panel menu" aria-label="Layers panel menu">&#9776;</button></div>';
+P.innerHTML='<div class="lyf lyh"><label class="lysr" title="Search layers by name">'+LI('<circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/>')+'<input id="lySrch" type="text" aria-label="Search layers" placeholder="Search All" autocomplete="off"><button type="button" class="lyx" id="lyClr" title="Clear search (Esc)" aria-label="Clear search" style="display:none">&times;</button></label><button type="button" class="lyi" id="lyFlt" title="Filter (by object type / state)" aria-label="Filter">'+LI('<path d="M2 3h12L9.5 8.5V13l-3-1.5V8.5z"/>')+'</button></div><div class="lyl" id="lyl"></div><div id="lyind"></div><div class="lyf"><span id="lycnt"></span><button type="button" class="lyi" id="lyLoc" title="Locate Object" aria-label="Locate Object">'+LI('<circle cx="6.8" cy="6.8" r="4.3"/><path d="M10 10l4.2 4.2"/>')+'</button><button type="button" class="lyi" id="lyClip" title="Make / Release Clipping Mask" aria-label="Make / Release Clipping Mask">'+LI('<rect x="2" y="2" width="8" height="8"/><circle cx="10" cy="10" r="4"/>')+'</button><button type="button" class="lyi" id="lySub" title="Create New Sublayer (Alt+click: options)" aria-label="Create New Sublayer">'+LI('<path d="M3 2h6l3 3v9H3z"/><path d="M9 2v3h3"/><path d="M6 10.5h4M8 8.5v4"/>')+'</button><button type="button" class="lyi" id="lyNew" title="Create New Layer (Alt+click: Layer Options)" aria-label="Create New Layer">'+LI('<path d="M3 2h6l3 3v9H3z"/><path d="M9 2v3h3"/>')+'</button><button type="button" class="lyi" id="lyDel" title="Delete Selection" aria-label="Delete Selection">'+LI('<path d="M3 4.5h10M6 4.5V3h4v1.5M4.5 4.5l.7 9h5.6l.7-9"/>')+'</button><button type="button" class="lyi" id="lyMenu" title="Layers panel menu" aria-label="Layers panel menu">&#9776;</button></div>';
 const LS=P.querySelector('#lyl');let LYK='L',lySig='',lyEdit=null,lyDrag=null,lySup=false;
 const SRCH=P.querySelector('#lySrch');{const mg=P.querySelector('.lysr svg');if(mg){mg.style.cursor='pointer';mg.title='Locate Object (select an object, then click: it is shown in the panel)';mg.addEventListener('click',e=>{if(!SRCH.value.trim()&&sel.size){e.preventDefault();e.stopPropagation();setTimeout(()=>window.lyLocate&&window.lyLocate(),0)}})}}
 const SQ=()=>((SRCH&&SRCH.value)||'').trim().toLowerCase();
@@ -7539,7 +7539,7 @@ function lyKind(o){const g=o.g;
   if(g.querySelector(':scope > g[data-mem]'))return'<Group>';
   const t=g.firstElementChild&&g.firstElementChild.tagName==='text'?g.firstElementChild:null;
   if(t){let s=(t.getAttribute('data-raw')||t.textContent||'').replace(/\s+/g,' ').trim();if(s)return s.length>28?s.slice(0,28)+'…':s;return'<Type>'}
-  const ps=[...g.querySelectorAll('path:not([data-tpath]):not([data-bo]):not([data-sao]):not([data-tprev])')];
+  const ps=[...g.querySelectorAll('path:not([data-tpath]):not([data-bo]):not([data-sao]):not([data-apx]):not([data-tprev])')];
   if(ps.length===1&&!ps[0].hasAttribute('data-shape')){try{const S=getSP(ps[0]);if(S&&S.length>1)return'<Compound Path>'}catch(_){}}
   let n;try{n=typeName(o)}catch(_){n='Path'}if(n==='Rounded Rectangle')n='Rectangle';if(n==='Clip Group')n='Clip Group';
   return'<'+n+'>'}
@@ -8069,12 +8069,12 @@ function buildFor(ob,p,idx){const S=getSP(p)||[],stk=p.getAttribute('stroke')||'
     made.push(mk('path',{'data-sao':'a',d:h.a[1],transform:t2,...at}))}));
   return made}
 function saSync(ob){const g=ob.g;if(g.querySelector('rect[data-sa],ellipse[data-sa],rect[data-ars],ellipse[data-ars],rect[data-are],ellipse[data-are],rect[data-wp],ellipse[data-wp],rect[data-wpts],ellipse[data-wpts]'))ensurePath(ob);
-  const mains=[...g.querySelectorAll('path:not([data-sao]):not([data-bo])')].filter(wantsOverlay),olds=[...g.querySelectorAll('[data-sao]')];
+  const mains=[...g.querySelectorAll('path:not([data-sao]):not([data-apx]):not([data-bo])')].filter(wantsOverlay),olds=[...g.querySelectorAll('[data-sao]')];
   if(!mains.length&&!olds.length)return;
   const sig=mains.map(sigOf).join('§'),haveClip=mains.every((p,i)=>!p.getAttribute('data-sa')||document.getElementById('sac-'+oid(ob)+'-'+i));
   if(g.__sasig===sig&&g.querySelectorAll('[data-sao]').length===g.__saN&&haveClip)return;
   olds.forEach(e=>e.remove());let n=0;
-  [...g.querySelectorAll('path:not([data-sao]):not([data-bo])')].forEach((p,i)=>{
+  [...g.querySelectorAll('path:not([data-sao]):not([data-apx]):not([data-bo])')].forEach((p,i)=>{
     if(!wantsOverlay(p)){if(p.hasAttribute('data-sao-so')){const v=p.getAttribute('data-sao-so');if(v)p.setAttribute('stroke-opacity',v);else p.removeAttribute('stroke-opacity');p.removeAttribute('data-sao-so')}return}
     const mm=buildFor(ob,p,mains.indexOf(p));
     if(!mm.length){if(p.hasAttribute('data-sao-so')){const v=p.getAttribute('data-sao-so');if(v)p.setAttribute('stroke-opacity',v);else p.removeAttribute('stroke-opacity');p.removeAttribute('data-sao-so')}return}
@@ -8679,7 +8679,7 @@ DK.reg('transparency','Transparency',PNI('<rect x="3" y="3" width="12" height="1
 /* ======================= Appearance panel (Window > Appearance, Shift+F6) ======================= */
 const AP=document.createElement('div');AP.id='app';AP.className='dkpn';AP.style.display='none';document.body.appendChild(AP);
 const EYE='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3"/></svg>';
-let APK='stroke',APSIG='',APFX=-1;
+let APK='stroke',APSIG='',APFX=-1,APXID=null;
 const fxN=typeof FXN!=='undefined'?FXN:{};
 function apRows(o){const f=fillables(o)[0];if(!f)return null;const S=styleOf(o),gF=gradOf(f,'data-grad'),gS=gradOf(f,'data-grads'),fl=f.getAttribute('data-hf')!==null?f.getAttribute('fill'):S.fill;
   return{S,gF,gS,hf:f.hasAttribute('data-hf'),hs:f.hasAttribute('data-hs'),fx:fxList(o),bm:blendOf(o),isG:isGroup(o)}}
@@ -8690,31 +8690,66 @@ function apBuild(){const L=tsel(),o=L[0];
   const chip=(c,g,k)=>'<button type="button" class="apc'+(c==='none'&&!g?' none':'')+'" data-chip="'+k+'" title="'+(k==='fill'?'Fill':'Stroke')+' colour" style="'+(g?'background:'+gradCss(g):(c&&c!=='none'?'background:'+c:''))+'"></button>';
   const row=(k,eyeOn,label,chipH,val)=>'<div class="apr'+(APK===k?' on':'')+'" data-k="'+k+'"><button type="button" class="apey'+(eyeOn?' on':'')+'" data-eye="'+k+'" title="Show / hide">'+EYE+'</button><span class="apn">'+label+'</span>'+chipH+'<span class="apv">'+val+'</span></div>';
   let h='<div class="aph"><i></i><span>'+nm+'</span></div><div class="apl">';
-  h+=row('stroke',!R.hs,'Stroke',chip(R.S.stroke,R.gS,'stroke'),R.S.stroke==='none'?'None':(+R.S.sw||0)+' px');
-  h+=row('fill',!R.hf,'Fill',chip(R.S.fill==='none'&&!R.gF?'none':R.S.fill,R.gF,'fill'),R.gF?'Gradient':(R.S.fill==='none'?'None':''));
+  {const e0=fillables(o)[0],IL=window.APX?APX.get(o):['S0','F0'],pc=v=>Math.round((v==null||v===''||isNaN(parseFloat(v))?1:parseFloat(v))*100),
+     sOp=pc(e0.getAttribute('data-apx-so')!==null?e0.getAttribute('data-apx-so'):(e0.getAttribute('data-sao-so')!==null?e0.getAttribute('data-sao-so'):e0.getAttribute('stroke-opacity'))),fOp=pc(e0.getAttribute('data-apx-fo')!==null?e0.getAttribute('data-apx-fo'):e0.getAttribute('fill-opacity'));
+   const wIn=(v,id)=>'<input class="apw" type="number" min="0" step="0.5" value="'+v+'" data-w="'+id+'" title="Stroke weight (px)">',oIn=(v,id)=>'<input class="apo" type="number" min="0" max="100" step="1" value="'+v+'" data-o="'+id+'" title="Opacity (%)">';
+   const xrow=(k,id,eyeOn,label,chipH,val,on)=>'<div class="apr'+(on?' on':'')+'" data-k="'+k+'"'+(id?' data-id="'+id+'"':'')+'><button type="button" class="apey'+(eyeOn?' on':'')+'" data-eye="'+(id?'x:'+id:k)+'" title="Show / hide">'+EYE+'</button><span class="apn" title="Drag to reorder">'+label+'</span>'+chipH+'<span class="apv">'+val+'</span></div>';
+   const xchip=(it)=>'<button type="button" class="apc'+(!it.c||it.c==='none'?' none':'')+'" data-chip="x:'+it.id+'" title="'+(it.k==='f'?'Fill':'Stroke')+' colour" style="'+(it.c&&it.c!=='none'?'background:'+it.c:'')+'"></button>';
+   IL.forEach(it=>{
+     if(it==='S0')h+=xrow('stroke',null,!R.hs,'Stroke',chip(R.S.stroke,R.gS,'stroke'),R.S.stroke==='none'?'None':wIn(+R.S.sw||0,'S0')+oIn(sOp,'S0'),APK==='stroke');
+     else if(it==='F0')h+=xrow('fill',null,!R.hf,'Fill',chip(R.S.fill==='none'&&!R.gF?'none':R.S.fill,R.gF,'fill'),R.gF?'Gradient':(R.S.fill==='none'?'None':oIn(fOp,'F0')),APK==='fill');
+     else h+=xrow('x',it.id,it.vis!==false,it.k==='f'?'Fill':'Stroke',xchip(it),(it.k==='s'?wIn(it.w==null?1:it.w,it.id):'')+oIn(it.op==null?100:it.op,it.id),APK==='x'&&APXID===it.id)})}
   h+='<div class="apr'+(APK==='op'?' on':'')+'" data-k="op"><span class="apn" style="margin-left:24px">Opacity</span><span class="apv">'+(R.S.op===100&&R.bm==='normal'?'Default':R.S.op+'% '+(BM.find(b=>b[0]===R.bm)||BM[0])[1])+'</span></div>';
   R.fx.forEach((x,i)=>{h+='<div class="apr fx'+(APK==='fx'&&APFX===i?' on':'')+'" data-k="fx" data-i="'+i+'"><button type="button" class="apey'+(x.off?'':' on')+'" data-eyefx="'+i+'" title="Show / hide effect">'+EYE+'</button><span class="apn">'+(window.fxName?fxName(x):(fxN[x.t]||x.t))+'</span><span class="fxi">fx</span></div>'});
   h+='</div><div class="apf"><button type="button" data-ap="addstroke" title="Add New Stroke">'+SV('<path d="M3 13L13 3" stroke-width="2.2"/>')+'</button><button type="button" data-ap="addfill" title="Add New Fill">'+SV('<rect x="3" y="3" width="10" height="10" fill="currentColor"/>')+'</button><button type="button" data-ap="fx" title="Add New Effect">'+SV('<path d="M3 13l3-8h4M5 9h4M9 13l4-5M13 13L9 8"/>')+'</button><span class="sp"></span><button type="button" data-ap="clear" title="Clear Appearance">'+SV('<circle cx="8" cy="8" r="5.5"/><path d="M4 12L12 4"/>')+'</button><button type="button" data-ap="dup" title="Duplicate Selected Item">'+SV('<rect x="2" y="2" width="8" height="8"/><rect x="6" y="6" width="8" height="8" fill="var(--panel)"/>')+'</button><button type="button" data-ap="del" title="Delete Selected Item">'+SV('<path d="M3 4.5h10M6 4.5V3h4v1.5M4.5 4.5l.7 9h5.6l.7-9"/>')+'</button></div>';
-  AP.innerHTML=h;AP.querySelector('[data-ap="dup"]').disabled=!(APK==='fx'&&APFX>=0&&R.fx[APFX]);AP.querySelector('[data-ap="del"]').disabled=APK==='op'||(APK==='fx'&&!(APFX>=0&&R.fx[APFX]))}
+  AP.innerHTML=h;AP.querySelector('[data-ap="dup"]').disabled=!((APK==='fx'&&APFX>=0&&R.fx[APFX])||APK==='x'||APK==='stroke'||APK==='fill');AP.querySelector('[data-ap="del"]').disabled=APK==='op'||(APK==='fx'&&!(APFX>=0&&R.fx[APFX]))}
 function apRefresh(){if(AP.style.display==='none')return;const L=tsel(),o=L[0];let sg='';
-  if(o){const R=apRows(o);sg=R?JSON.stringify([oid(o),R.S.fill,R.S.stroke,R.S.sw,R.S.op,R.gF,R.gS,R.hf,R.hs,R.fx,R.bm,APK,APFX,(document.getElementById('ctl')||{}).textContent]):'x'}
+  if(o){const R=apRows(o);sg=R?JSON.stringify([oid(o),R.S.fill,R.S.stroke,R.S.sw,R.S.op,R.gF,R.gS,R.hf,R.hs,R.fx,R.bm,APK,APFX,APXID,window.APX?APX.get(o):0,(function(){const e0=fillables(o)[0];return e0?[e0.getAttribute('stroke-opacity'),e0.getAttribute('fill-opacity'),e0.getAttribute('stroke-width')]:0})(),(document.getElementById('ctl')||{}).textContent]):'x'}
   if(sg===APSIG&&AP.firstChild)return;APSIG=sg;apBuild()}
 function apEach(fn){const L=tsel();if(!L.length)return false;L.forEach(o=>{normalizeObj(o);fillables(o).forEach(e=>fn(e,o))});commit();draw();return true}
 AP.addEventListener('click',e=>{const b=e.target.closest('button'),row=e.target.closest('.apr');
+  if(b&&b.dataset.eye&&/^x:/.test(b.dataset.eye)){const id=b.dataset.eye.slice(2);tsel().forEach(o=>{const L=APX.get(o),it=L.find(x=>x&&x.id===id);if(it){it.vis=it.vis===false?true:false;APX.set(o,L)}});commit();draw();APSIG='';apRefresh();return}
   if(b&&b.dataset.eye){const k=b.dataset.eye,a=k==='stroke'?'data-hs':'data-hf';apEach(x=>{if(x.hasAttribute(a))x.removeAttribute(a);else x.setAttribute(a,'1')});APSIG='';apRefresh();return}
   if(b&&b.dataset.eyefx!==undefined){const i=+b.dataset.eyefx;tsel().forEach(o=>{const L=fxList(o);if(L[i]){L[i].off=L[i].off?0:1;if(!L[i].off)delete L[i].off;o.g.dataset.fx=JSON.stringify(L);fxUpd(o)}});commit();draw();APSIG='';apRefresh();return}
+  if(b&&b.dataset.chip&&/^x:/.test(b.dataset.chip)){const id=b.dataset.chip.slice(2),o=tsel()[0],it=o&&APX.get(o).find(x=>x&&x.id===id);if(!it)return;APK='x';APXID=id;openSw(it.k==='f'?'fill':'stroke',b,'co');APXT={o,id,k:it.k};return}
   if(b&&b.dataset.chip){openSw(b.dataset.chip,b);return}
   if(b&&b.dataset.ap){const a=b.dataset.ap;
-    if(a==='addstroke'){applyStyle({stroke:DEF.stroke!=='none'?DEF.stroke:'#000000',sw:Math.max(1,DEF.sw||1)},true)}
-    else if(a==='addfill'){applyStyle({fill:DEF.fill!=='none'?DEF.fill:'#cccccc'},true)}
+    if(a==='addstroke'||a==='addfill'){const k=a==='addstroke'?'s':'f',L0=tsel();let did=false;L0.forEach(o=>{try{normalizeObj(o);ensurePath(o)}catch(_){}});L0.forEach(o=>{if(!APX.base(o)){return}const S=styleOf(o),own=k==='s'?S.stroke==='none':S.fill==='none';
+        if(own){did=true;return}/* the path has no stroke / fill of its own: the first one goes there (below) */
+        const L=APX.get(o);let at=APK==='x'&&APXID?L.findIndex(x=>x&&x.id===APXID):APK==='stroke'?L.indexOf('S0'):APK==='fill'?L.indexOf('F0'):0;if(at<0)at=0;
+        const nw=k==='s'?{id:APX.id(),k:'s',c:DEF.stroke!=='none'?DEF.stroke:'#000000',w:Math.max(1,DEF.sw||1),op:100}:{id:APX.id(),k:'f',c:DEF.fill!=='none'?DEF.fill:'#cccccc',op:100};
+        L.splice(at,0,nw);APX.set(o,L);APK='x';APXID=nw.id;did=true});
+      if(L0.some(o=>{const S=styleOf(o);return k==='s'?S.stroke==='none':S.fill==='none'}))applyStyle(k==='s'?{stroke:DEF.stroke!=='none'?DEF.stroke:'#000000',sw:Math.max(1,DEF.sw||1)}:{fill:DEF.fill!=='none'?DEF.fill:'#cccccc'},true);
+      else if(did){commit();draw()}}
     else if(a==='fx'){const r=b.getBoundingClientRect(),F=k=>()=>window.fxDlg&&fxDlg(k),Q=k=>()=>window.pxDlg&&pxDlg(k),en=tsel().length>0;window.pmPopup([{t:'Stylize',k:'',en:false},{t:'Drop Shadow…',f:F('ds'),en},{t:'Inner Glow…',f:F('ig'),en},{t:'Outer Glow…',f:F('og'),en},{t:'Feather…',f:F('fe'),en},{sep:1},{t:'Blur: Gaussian Blur…',f:F('gb'),en},{sep:1},{t:'Path Effects (applied to the path)',en:false},{t:'Round Corners…',f:Q('round'),en},{t:'Offset Path…',f:Q('off'),en},{t:'Roughen…',f:Q('rough'),en},{t:'Zig Zag…',f:Q('zig'),en}],r.left,r.bottom+2)}
-    else if(a==='clear'){const L=tsel();if(L.length){L.forEach(o=>{normalizeObj(o);fillables(o).forEach(e=>{e.setAttribute('fill','none');e.setAttribute('stroke','none');['data-grad','data-grads','data-hf','data-hs','opacity'].forEach(q=>e.removeAttribute(q));e.style.removeProperty('mix-blend-mode');if(!e.getAttribute('style'))e.removeAttribute('style')});delete o.g.dataset.fx;fxUpd(o)});commit();draw()}}
+    else if(a==='clear'){const L=tsel();if(L.length){L.forEach(o=>{normalizeObj(o);if(window.APX)APX.reduce(o);fillables(o).forEach(e=>{e.removeAttribute('fill-opacity');e.removeAttribute('stroke-opacity');e.setAttribute('fill','none');e.setAttribute('stroke','none');['data-grad','data-grads','data-hf','data-hs','opacity'].forEach(q=>e.removeAttribute(q));e.style.removeProperty('mix-blend-mode');if(!e.getAttribute('style'))e.removeAttribute('style')});delete o.g.dataset.fx;fxUpd(o)});commit();draw()}}
+    else if(a==='reduce'){tsel().forEach(o=>{normalizeObj(o);if(window.APX)APX.reduce(o);fillables(o).forEach(e=>{['opacity','fill-opacity','stroke-opacity','data-hf','data-hs'].forEach(q=>e.removeAttribute(q));e.style.removeProperty('mix-blend-mode')})});const n=tsel().length?fxList(tsel()[0]).length:0;for(let i=0;i<n;i++)fxRemove(0);commit();draw()}
+    else if(a==='dup'&&(APK==='x'||APK==='stroke'||APK==='fill')){const o=tsel()[0];if(o){try{normalizeObj(o);ensurePath(o)}catch(_){}}if(o&&APX.base(o)){const L=APX.get(o);let at,src;if(APK==='x'){at=L.findIndex(x=>x&&x.id===APXID);src=L[at]}else{const e0=fillables(o)[0];at=L.indexOf(APK==='stroke'?'S0':'F0');src=APK==='stroke'?{k:'s',c:e0.getAttribute('stroke')||'none',w:parseFloat(e0.getAttribute('stroke-width'))||1,cap:e0.getAttribute('stroke-linecap')||undefined,join:e0.getAttribute('stroke-linejoin')||undefined,dash:e0.getAttribute('stroke-dasharray')||undefined,op:100}:{k:'f',c:e0.getAttribute('fill')||'none',op:100}}
+        if(src&&at>=0){const nw={...src,id:APX.id()};L.splice(at,0,nw);APX.set(o,L);APK='x';APXID=nw.id;commit();draw()}}}
     else if(a==='dup'){tsel().forEach(o=>{const L=fxList(o);if(APFX>=0&&L[APFX]){L.splice(APFX+1,0,{...L[APFX]});o.g.dataset.fx=JSON.stringify(L);fxUpd(o)}});commit();draw()}
-    else if(a==='del'){if(APK==='stroke')applyStyle({stroke:'none'},true);else if(APK==='fill')applyStyle({fill:'none'},true);else if(APK==='fx'&&APFX>=0){fxRemove(APFX);APFX=-1}}
+    else if(a==='del'){if(APK==='x'){tsel().forEach(o=>{const L=APX.get(o),i=L.findIndex(x=>x&&x.id===APXID);if(i>=0){L.splice(i,1);APX.set(o,L)}});APK='stroke';APXID=null;commit();draw()}else if(APK==='stroke')applyStyle({stroke:'none'},true);else if(APK==='fill')applyStyle({fill:'none'},true);else if(APK==='fx'&&APFX>=0){fxRemove(APFX);APFX=-1}}
     APSIG='';apRefresh();return}
-  if(row){APK=row.dataset.k;APFX=row.dataset.k==='fx'?+row.dataset.i:-1;if(APK==='fx'&&window.fxDlg&&(e.detail>1||e.target.closest('.apn'))&&!e.target.closest('button')){fxDlg(null,APFX)}/* Illustrator: a click on the effect's name opens its options */APSIG='';apRefresh()}});
+  if(e.target.closest('input'))return;
+  if(row){APK=row.dataset.k;APXID=row.dataset.k==='x'?row.dataset.id:null;APFX=row.dataset.k==='fx'?+row.dataset.i:-1;if(APK==='fx'&&window.fxDlg&&(e.detail>1||e.target.closest('.apn'))&&!e.target.closest('button')){fxDlg(null,APFX)}/* Illustrator: a click on the effect's name opens its options */APSIG='';apRefresh()}});
 AP.addEventListener('dblclick',e=>{const row=e.target.closest('.apr');if(!row||e.target.closest('button'))return;if(row.dataset.k==='fx'&&window.fxDlg)fxDlg(null,+row.dataset.i);else if(row.dataset.k==='op')DK.open('transparency')});
-DK.reg('appearance','Appearance',PNI('<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 10h16M4 15h16"/>'),AP,{dw:300,open:()=>{AP.style.display='block';APSIG='';apRefresh()},close:()=>{AP.style.display='none'},refresh:apRefresh});
+/* per-item weight / opacity, drag to reorder, colour of an extra item */
+let APXT=null;
+AP.addEventListener('change',e=>{const t=e.target;if(!t.dataset||(t.dataset.w===undefined&&t.dataset.o===undefined))return;const id=t.dataset.w!==undefined?t.dataset.w:t.dataset.o,v=parseFloat(t.value);if(isNaN(v))return;
+  if(id==='S0'||id==='F0'){if(t.dataset.w!==undefined)applyStyle({sw:Math.max(0,v)},true);else apEach(x=>{const a=id==='S0'?'stroke-opacity':'fill-opacity',b=id==='S0'?'data-apx-so':'data-apx-fo';const val=Math.max(0,Math.min(100,v))/100;if(x.hasAttribute(b))x.setAttribute(b,val);else if(id==='S0'&&x.hasAttribute('data-sao-so'))x.setAttribute('data-sao-so',val);else x.setAttribute(a,val);if(val===1&&!x.hasAttribute(b))x.removeAttribute(a)})}
+  else tsel().forEach(o=>{const L=APX.get(o),it=L.find(x=>x&&x.id===id);if(!it)return;if(t.dataset.w!==undefined)it.w=Math.max(0,v);else it.op=Math.max(0,Math.min(100,v));APX.set(o,L)});
+  if(id!=='S0'&&id!=='F0'||t.dataset.o!==undefined){commit();draw()}APSIG='';apRefresh()});
+{let dr=null;AP.addEventListener('pointerdown',e=>{if(e.button!==0)return;const n=e.target.closest('.apn'),row=n&&n.closest('.apr');if(!row||!/^(stroke|fill|x)$/.test(row.dataset.k))return;dr={row,sy:e.clientY,on:false}});
+  document.addEventListener('pointermove',e=>{if(!dr)return;if(!dr.on){if(Math.abs(e.clientY-dr.sy)<5)return;dr.on=true;AP.classList.add('apdrag')}const t=document.elementFromPoint(e.clientX,e.clientY),r=t&&t.closest&&t.closest('#app .apr');AP.querySelectorAll('.apr.dropa,.apr.dropb').forEach(x=>x.classList.remove('dropa','dropb'));
+    if(r&&r!==dr.row&&/^(stroke|fill|x)$/.test(r.dataset.k)){const b=r.getBoundingClientRect();r.classList.add(e.clientY<b.top+b.height/2?'dropa':'dropb');dr.t=r;dr.after=e.clientY>=b.top+b.height/2}else dr.t=null});
+  document.addEventListener('pointerup',()=>{const d=dr;dr=null;AP.classList.remove('apdrag');AP.querySelectorAll('.apr.dropa,.apr.dropb').forEach(x=>x.classList.remove('dropa','dropb'));if(!d||!d.on||!d.t)return;
+    const key=r=>r.dataset.k==='stroke'?'S0':r.dataset.k==='fill'?'F0':r.dataset.id,o=tsel()[0];if(!o||!window.APX||!APX.base(o))return;let L=APX.get(o);const mv=key(d.row),tg=key(d.t);if(mv===tg)return;
+    const it=L.find(x=>x===mv||(x&&x.id===mv));L=L.filter(x=>x!==it);let at=L.findIndex(x=>x===tg||(x&&x.id===tg));if(d.after)at++;L.splice(at,0,it);APX.set(o,L);commit();draw();APSIG='';apRefresh()})}
+{const _as=applyStyle;applyStyle=function(P,done){if(!APXT)return _as.apply(this,arguments);const o=APXT.o,L=APX.get(o),it=L.find(x=>x&&x.id===APXT.id);if(!it){APXT=null;return _as.apply(this,arguments)}
+    const c=it.k==='f'?P.fill:P.stroke;if(c!==undefined){it.c=c;DEF[it.k==='f'?'fill':'stroke']=c}if(P.sw!==undefined&&it.k==='s')it.w=P.sw;if(P.op!==undefined)it.op=P.op;APX.set(o,L);if(done)commit();draw();fsRefresh();APSIG='';apRefresh()};
+  const _tc=targetColor;targetColor=function(){if(APXT){const it=APX.get(APXT.o).find(x=>x&&x.id===APXT.id);if(it)return it.c||'none'}return _tc.apply(this,arguments)};
+  const _os=openSw;openSw=function(){APXT=null;return _os.apply(this,arguments)};
+  new MutationObserver(()=>{if(swp.style.display==='none')APXT=null}).observe(swp,{attributes:true,attributeFilter:['style']})}
+DK.reg('appearance','Appearance',PNI('<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 10h16M4 15h16"/>'),AP,{dw:300,menu:()=>{const A=a=>()=>{const b=AP.querySelector('[data-ap="'+a+'"]');if(b&&!b.disabled)b.click()},has=tsel().length>0;return[{t:'Add New Fill',f:A('addfill'),en:has},{t:'Add New Stroke',f:A('addstroke'),en:has},{t:'Add New Effect…',f:A('fx'),en:has},{sep:1},{t:'Duplicate Item',f:A('dup'),en:has},{t:'Remove Item',f:A('del'),en:has},{sep:1},{t:'Clear Appearance',f:A('clear'),en:has},{t:'Reduce to Basic Appearance',f:A('reduce'),en:has}]},open:()=>{AP.style.display='block';APSIG='';apRefresh()},close:()=>{AP.style.display='none'},refresh:apRefresh});
 window.apRefresh=apRefresh;
 
 /* ======================= Align Dashes: re-fit the dash pattern when the path changes ======================= */
@@ -9602,6 +9637,42 @@ addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!e.altKey||e.code!=='
       if(e.altKey)bnOptions(doit);else doit();return false},
     move:()=>{},up:()=>{},esc:()=>clear()});
   cv.addEventListener('pointermove',e=>{if(tool!=='bl'||PDOWN||st)return;const o=bnTop(e);if(first)return;peng.replaceChildren();if(o){const b=wbox(o);peng.append(el('rect',{x:b.x,y:b.y,width:b.w,height:b.h,fill:'none',stroke:'#4F80FF','stroke-width':1/z,'pointer-events':'none'}))}})}
+
+/* ---------- Appearance: several fills and strokes per object ----------
+   The first path of an object carries data-aps = the stack of its attributes, top to bottom: 'S0' (the path's own stroke), 'F0' (its own fill) and extra items
+   {id,k:'f'|'s',c,w,op,bm,vis,cap,join,dash}. Extra items are drawn as companion paths (data-apx) above / below the path; an extra item between the stroke and the fill
+   makes the path's own stroke (or fill) drawn by a companion too (the path's own paint is hidden by a zero opacity). */
+{const NS2='http://www.w3.org/2000/svg';
+  const apxBase=o=>{if(!o||!o.g)return null;const e=fillables(o)[0];return e&&e.tagName==='path'?e:null};
+  const apxId=()=>'a'+Math.random().toString(36).slice(2,8);
+  function apxGet(o){const e=apxBase(o);if(!e)return['S0','F0'];let L=null;try{L=JSON.parse(e.getAttribute('data-aps')||'null')}catch(_){}if(!Array.isArray(L))L=['S0','F0'];if(!L.includes('S0'))L.push('S0');if(!L.includes('F0'))L.push('F0');return L}
+  function apxSet(o,L){const e=apxBase(o);if(!e)return;if(L.length===2&&L[0]==='S0'&&L[1]==='F0')e.removeAttribute('data-aps');else e.setAttribute('data-aps',JSON.stringify(L))}
+  const hasOv=e=>e.hasAttribute('data-sa')||e.hasAttribute('data-ars')||e.hasAttribute('data-are')||e.hasAttribute('data-wp')||e.hasAttribute('data-wpts')||e.hasAttribute('data-bc');
+  function apxRestore(e){['fill','stroke'].forEach(k=>{const a='data-apx-'+(k==='fill'?'fo':'so');if(e.hasAttribute(a)){const v=e.getAttribute(a);if(v)e.setAttribute(k+'-opacity',v);else e.removeAttribute(k+'-opacity');e.removeAttribute(a)}})}
+  function apxRender(o){const e=apxBase(o);if(!e)return;const par=e.parentNode;[...par.children].forEach(x=>{if(x.hasAttribute&&x.hasAttribute('data-apx'))x.remove()});
+    const raw=e.getAttribute('data-aps');if(!raw){apxRestore(e);return}
+    const L=apxGet(o),iS=L.indexOf('S0'),iF=L.indexOf('F0'),lo=Math.min(iS,iF),hi=Math.max(iS,iF),between=L.some((x,i)=>typeof x==='object'&&i>lo&&i<hi),ov=hasOv(e);
+    const hideS=between&&iS<iF&&!ov,hideF=between&&iF<iS;
+    apxRestore(e);
+    if(hideS){e.setAttribute('data-apx-so',e.getAttribute('stroke-opacity')||'');e.setAttribute('stroke-opacity','0')}
+    if(hideF){e.setAttribute('data-apx-fo',e.getAttribute('fill-opacity')||'');e.setAttribute('fill-opacity','0')}
+    const base=()=>{const p=document.createElementNS(NS2,'path');p.setAttribute('d',e.getAttribute('d'));['transform','fill-rule','clip-rule'].forEach(a=>{const v=e.getAttribute(a);if(v)p.setAttribute(a,v)});p.setAttribute('data-apx','1');p.setAttribute('pointer-events','none');return p};
+    const mkItem=it=>{const p=base();if(it.k==='f'){p.setAttribute('fill',it.c||'none');p.setAttribute('stroke','none')}else{p.setAttribute('fill','none');p.setAttribute('stroke',it.c||'none');p.setAttribute('stroke-width',it.w==null?1:it.w);if(it.cap)p.setAttribute('stroke-linecap',it.cap);p.setAttribute('stroke-linejoin',it.join||'miter');if(it.dash)p.setAttribute('stroke-dasharray',it.dash)}
+      if(it.op!=null&&it.op<100)p.setAttribute('opacity',it.op/100);if(it.bm&&it.bm!=='normal')p.style.mixBlendMode=it.bm;if(it.vis===false)p.setAttribute('display','none');return p};
+    const mkPrim=k=>{const p=base();if(k==='S0'){['stroke','stroke-width','stroke-linecap','stroke-linejoin','stroke-miterlimit','stroke-dasharray'].forEach(a=>{const v=e.getAttribute(a);if(v!=null)p.setAttribute(a,v)});p.setAttribute('fill','none');const so=e.getAttribute('data-apx-so');if(so)p.setAttribute('stroke-opacity',so);if(e.hasAttribute('data-hs'))p.setAttribute('display','none')}
+      else{p.setAttribute('fill',e.getAttribute('fill')||'none');p.setAttribute('stroke','none');const fo=e.getAttribute('data-apx-fo');if(fo)p.setAttribute('fill-opacity',fo);if(e.hasAttribute('data-hf'))p.setAttribute('display','none')}
+      const op=e.getAttribute('opacity');if(op)p.setAttribute('opacity',op);return p};
+    /* bottom → top; the path itself stands where its lowest own paint is */
+    const order=L.slice().reverse(),before=[],after=[];let seen=false;
+    order.forEach(it=>{if(it==='S0'||it==='F0'){if((it==='S0'&&hideS)||(it==='F0'&&hideF)){(seen?after:before).push(mkPrim(it))}else if(!seen&&(!hideS&&!hideF||it==='F0'&&hideS||it==='S0'&&hideF)){seen=true}return}
+      (seen?after:before).push(mkItem(it))});
+    before.forEach(n=>par.insertBefore(n,e));let at=e;after.forEach(n=>{at.after(n);at=n})}
+  const sigOf=e=>['d','transform','data-aps','fill','stroke','stroke-width','stroke-linecap','stroke-linejoin','stroke-miterlimit','stroke-dasharray','opacity','data-hf','data-hs','fill-rule'].map(a=>e.getAttribute(a)||'').join('|');
+  function apxAll(){objs.forEach(o=>{const e=apxBase(o);if(!e){return}const has=e.hasAttribute('data-aps');if(!has&&!o.g.__apxs&&!o.g.querySelector('[data-apx]'))return;const sg=sigOf(e);if(o.g.__apxs===sg&&(has||!o.g.querySelector('[data-apx]')))return;
+    try{apxRender(o)}catch(err){console.error(err)}o.g.__apxs=has?sigOf(e):undefined})}
+  {const _d=draw;draw=function(){apxAll();return _d.apply(this,arguments)}}
+  window.APX={get:apxGet,set:(o,L)=>{apxSet(o,L);o.g.__apxs=undefined},id:apxId,base:apxBase,render:apxRender,reduce:o=>{const e=apxBase(o);if(!e)return;e.removeAttribute('data-aps');apxRender(o);o.g.__apxs=undefined}};
+}
 
 /*TOOLS-END*/
 })();
