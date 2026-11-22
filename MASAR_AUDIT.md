@@ -163,6 +163,10 @@
 **إصلاح جانبي مهم:** الـ live effects (حتى Drop Shadow وباقي الـ filters) كانت **بتضيع** عند Group/Ungroup وCopy/Paste — دلوقتي بتفضل.
 **لسه:** (1) ~~نقر مرة واحدة على اسم التأثير~~ اتعمل في build 177؛ (2) Mode في Drop Shadow/Glow؛ (3) الـ filter effects بتتعرض بس على الـ objects العليا (جوه group لسه بتتحفظ لكن مش بتترسم لحد الـ Ungroup)؛ (4) الـ path effects على Groups/النصوص؛ (5) إعادة ترتيب الـ path effects مع الـ filter effects (كلهم بنفس الترتيب الداخلي: path ثم filters)؛ (6) التأثيرات الناقصة: Free Distort، Outline Object/Stroke، Pathfinder، Photoshop effects…
 
+## 5-ي) build 178 — Mode في Drop Shadow / Glow
+**اتعمل:** Drop Shadow: Mode (16 mode، الافتراضي Multiply) + خيار Shadow = Color أو **Darkness** (لون الـ object ممزوج بأسود بنسبة %). Outer Glow: Mode (الافتراضي Screen). Inner Glow: Mode (الافتراضي Screen) بـ feBlend على الـ object. الظل/التوهج بأي Mode غير Normal بيترسم كـ layer مستقل ورا الشغل بـ `mix-blend-mode` فبيتمازج مع اللي تحته (اتأكدت: أحمر Multiply على أزرق = #330000). Mode=Normal بيفضل جوه فلتر الـ object. بيشتغل مع Undo/Redo وCopy/Paste وGroup/Ungroup وSave/Load وتصدير SVG وحذف التأثير.
+**ملاحظة:** الـ effects القديمة المحفوظة (من غير Mode) بتفضل Normal زي ما كانت.
+
 ## 5-ج) تخصيص الواجهة (مقارنة بـ Illustrator)
 **موجود وشغال (اتختبر بماوس حقيقي):** سحب تاب بانل لليسار/اليمين/عايم، دمج بانلز كتابات، إغلاق/فتح من Window، حفظ التخطيط بعد reload، Workspaces (Essentials, Essentials Classic, Typography, Painting) + New Workspace + Reset، Edit Toolbar، Toolbar عمودين/عمود، Tab/Shift+Tab، 4 ثيمات.
 **ناقص:** Keyboard Shortcuts editor (Ctrl+Alt+Shift+K) — تخصيص الاختصارات؛ Workspaces الجاهزة الباقية (3D, Automation, Layout, Motion, Printing, Tracing, Web…)؛ قايمة إظهار/إخفاء عناصر الـ Control bar؛ Control bar overflow menu؛ UI Scale في Preferences؛ تخصيص قوائم السياق/البانل.

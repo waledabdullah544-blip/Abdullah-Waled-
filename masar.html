@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 177</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 178</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -3101,7 +3101,7 @@ function copySel(){const L=objs.filter(o=>sel.has(o));if(!L.length)return false;
   try{const svg='<svg xmlns="http://www.w3.org/2000/svg">'+L.map(o=>'<g transform="'+(o.g.getAttribute('transform')||'')+'">'+o.g.innerHTML+'</g>').join('')+'</svg>';navigator.clipboard&&navigator.clipboard.writeText(svg).catch(()=>{})}catch(_){}return true}
 function delSel(){const ths=[...sel].map(o=>{const t=o.g.querySelector('text[data-th]');return t&&t.getAttribute('data-th')}).filter(Boolean);objs=objs.filter(o=>!sel.has(o));layer.replaceChildren(...objs.map(o=>o.g));sel=new Set();ths.forEach(th=>{if(storyFrames(th).length)storyReflow(th)})}
 function pasteClip(mode){if(!CLIP)return;if(ted_s)finishText();const ref=objs.filter(o=>sel.has(o));
-  const items=CLIP.items.map(it=>{const o=add(it.html);o.m={...it.m};if(it.rot)o.g.dataset.rot=it.rot;if(it.gen)o.g.dataset.gen=it.gen;if(it.fx){o.g.dataset.fx=it.fx;if(/"px"/.test(it.fx)&&o.g.querySelector(':scope > g[data-pxo]'))o.g.dataset.pxon='1';try{fxUpd(o)}catch(_){}}apply(o);return o});
+  const items=CLIP.items.map(it=>{const o=add(it.html);o.m={...it.m};if(it.rot)o.g.dataset.rot=it.rot;if(it.gen)o.g.dataset.gen=it.gen;if(it.fx){o.g.dataset.fx=it.fx;if(o.g.querySelector(':scope > g[data-pxo]'))o.g.dataset.pxon='1';try{fxUpd(o)}catch(_){}}apply(o);return o});
   objs=objs.filter(o=>!items.includes(o));
   if(mode==='center'){const u=uni(items),r=cv.getBoundingClientRect(),cx=(r.width/2-px)/z,cy=(r.height/2-py)/z,dx=cx-(u.x+u.w/2),dy=cy-(u.y+u.h/2);items.forEach(o=>{o.m.tx+=dx;o.m.ty+=dy;apply(o)})}
   /* Paste in Front: right above the selection (else on top) · Paste in Back: right below it (else at the bottom) */
@@ -7095,24 +7095,34 @@ DK.setGeom=(g,o)=>{Object.assign(g,o);clampG(g);geom(g);save()};
    Live effects: the list of effects is kept on the object (data-fx) and rendered with a real SVG <filter> (in #mdefs) referenced by the object's group.
    Sizes are in artboard pixels (they stay the same when the object is scaled). The effects are part of undo / redo, Save and the SVG / PNG export. */
 const FXN={ds:'Drop Shadow',og:'Outer Glow',ig:'Inner Glow',gb:'Gaussian Blur',fe:'Feather'};
-const FXD={ds:{t:'ds',o:75,dx:7,dy:7,b:5,c:'#000000'},og:{t:'og',o:75,dx:0,dy:0,b:5,c:'#ffffff'},ig:{t:'ig',o:75,b:8,c:'#ffffff',ctr:0},gb:{t:'gb',r:5},fe:{t:'fe',r:10}};
-const FXS={ds:[['Opacity (%)','o',0,100],['X Offset (px)','dx',-500,500],['Y Offset (px)','dy',-500,500],['Blur (px)','b',0,200],['Color','c']],og:[['Opacity (%)','o',0,100],['Blur (px)','b',0,200],['Color','c']],ig:[['Opacity (%)','o',0,100],['Blur (px)','b',0,200],['Color','c'],['Glow from Center','ctr','chk']],gb:[['Radius (px)','r',0,500]],fe:[['Feather Radius (px)','r',0,500]]};
+const FXD={ds:{t:'ds',m:'multiply',o:75,dx:7,dy:7,b:5,k:'c',c:'#000000',dk:100},og:{t:'og',m:'screen',o:75,dx:0,dy:0,b:5,c:'#ffffff'},ig:{t:'ig',m:'screen',o:75,b:8,c:'#ffffff',ctr:0},gb:{t:'gb',r:5},fe:{t:'fe',r:10}};
+const FXM=[['normal','Normal'],['multiply','Multiply'],['screen','Screen'],['overlay','Overlay'],['soft-light','Soft Light'],['hard-light','Hard Light'],['color-dodge','Color Dodge'],['color-burn','Color Burn'],['darken','Darken'],['lighten','Lighten'],['difference','Difference'],['exclusion','Exclusion'],['hue','Hue'],['saturation','Saturation'],['color','Color'],['luminosity','Luminosity']];
+const FXS={ds:[['Mode','m','sel',FXM],['Opacity (%)','o',0,100],['X Offset (px)','dx',-500,500],['Y Offset (px)','dy',-500,500],['Blur (px)','b',0,200],['Shadow','k','sel',[['c','Color'],['d','Darkness (object colour + black)']]],['Color','c'],['Darkness (%)','dk',0,100]],og:[['Mode','m','sel',FXM],['Opacity (%)','o',0,100],['Blur (px)','b',0,200],['Color','c']],ig:[['Mode','m','sel',FXM],['Opacity (%)','o',0,100],['Blur (px)','b',0,200],['Color','c'],['Glow from Center','ctr','chk']],gb:[['Radius (px)','r',0,500]],fe:[['Feather Radius (px)','r',0,500]]};
 let FXLAST=null;window.fxName=x=>x.t==='px'&&window.PX&&PX[x.k]?PX[x.k].n:(FXN[x.t]||x.t);
 function fxList(o){try{const a=JSON.parse(o.g.dataset.fx||'[]');return Array.isArray(a)?a:[]}catch(e){return[]}}
-function fxUpd(o){const L0=fxList(o),L=L0.filter(e=>!e.off&&e.t!=='px'),md=document.getElementById('mdefs');if(!md)return;const id='fx'+oid(o);let f=md.querySelector('#'+id);
+const fxBl=e=>(e.t==='ds'||e.t==='og')&&e.m&&e.m!=='normal';/* shadows and outer glows with a blend mode are drawn as their own layer (so they blend with the artwork behind) */
+function fxUpd(o){const L0=fxList(o),md=document.getElementById('mdefs');if(!md)return;const oi=oid(o),id='fx'+oi;md.querySelectorAll('filter[id^="fxs'+oi+'_"]').forEach(x=>x.remove());
+  let f=md.querySelector('#'+id);
   if(!L0.length){o.g.removeAttribute('filter');delete o.g.dataset.fx;if(f)f.remove();return}
-  if(!L.length){o.g.removeAttribute('filter');if(f)f.remove();return}
-  const sx=Math.abs(o.m.sx)||1,sy=Math.abs(o.m.sy)||1;if(!f){f=el('filter',{id});md.appendChild(f)}
-  let s='',cur='SourceGraphic',k=0,mx=0,my=0;const q=v=>+(+v).toFixed(4);
-  L.forEach(e=>{k++;const r='r'+k;
-    if(e.t==='gb'){s+='<feGaussianBlur in="'+cur+'" stdDeviation="'+q(e.r/sx)+' '+q(e.r/sy)+'" result="'+r+'"/>';cur=r;mx+=3*e.r;my+=3*e.r}
-    else if(e.t==='ds'||e.t==='og'){s+='<feGaussianBlur in="'+cur+'" stdDeviation="'+q(e.b/sx)+' '+q(e.b/sy)+'" result="'+r+'b"/><feOffset in="'+r+'b" dx="'+q(e.dx/sx)+'" dy="'+q(e.dy/sy)+'" result="'+r+'o"/><feFlood flood-color="'+e.c+'" flood-opacity="'+q(e.o/100)+'" result="'+r+'f"/><feComposite in="'+r+'f" in2="'+r+'o" operator="in" result="'+r+'s"/><feMerge result="'+r+'"><feMergeNode in="'+r+'s"/><feMergeNode in="'+cur+'"/></feMerge>';cur=r;mx+=3*e.b+Math.abs(e.dx);my+=3*e.b+Math.abs(e.dy)}
-    else if(e.t==='ig'){const q2=q(e.b/sx)+' '+q(e.b/sy);s+=(e.ctr?'<feGaussianBlur in="SourceAlpha" stdDeviation="'+q2+'" result="'+r+'a"/>':'<feComponentTransfer in="SourceAlpha" result="'+r+'n"><feFuncA type="table" tableValues="1 0"/></feComponentTransfer><feGaussianBlur in="'+r+'n" stdDeviation="'+q2+'" result="'+r+'a"/>')+'<feFlood flood-color="'+e.c+'" flood-opacity="'+q(e.o/100)+'" result="'+r+'f"/><feComposite in="'+r+'f" in2="'+r+'a" operator="in" result="'+r+'g"/><feComposite in="'+r+'g" in2="SourceAlpha" operator="in" result="'+r+'h"/><feMerge result="'+r+'"><feMergeNode in="'+cur+'"/><feMergeNode in="'+r+'h"/></feMerge>';cur=r}
-    else if(e.t==='fe'){const h=Math.max(.01,e.r/2);s+='<feMorphology in="SourceAlpha" operator="erode" radius="'+q(h/sx)+' '+q(h/sy)+'" result="'+r+'e"/><feGaussianBlur in="'+r+'e" stdDeviation="'+q(h/sx)+' '+q(h/sy)+'" result="'+r+'a"/><feComposite in="'+cur+'" in2="'+r+'a" operator="in" result="'+r+'"/>';cur=r}});
-  const bb=o.bb,ex=mx/sx+4,ey=my/sy+4;f.setAttribute('filterUnits','userSpaceOnUse');f.setAttribute('x',q(bb.x-ex));f.setAttribute('y',q(bb.y-ey));f.setAttribute('width',q(bb.width+2*ex));f.setAttribute('height',q(bb.height+2*ey));
-  f.setAttribute('color-interpolation-filters','sRGB');f.innerHTML=s;o.g.setAttribute('filter','url(#'+id+')')}
+  const L=L0.filter(e=>!e.off&&e.t!=='px'),bl=L.filter(fxBl),inl=L.filter(e=>!fxBl(e));
+  const sx=Math.abs(o.m.sx)||1,sy=Math.abs(o.m.sy)||1,q=v=>+(+v).toFixed(4);
+  /* the shadow itself (no artwork): coloured flood, or the object's colour darkened */
+  const shadow=(e,r)=>{const bx=q(e.b/sx)+' '+q(e.b/sy),dx=q(e.dx/sx),dy=q(e.dy/sy);
+    if(e.k==='d'){const d=q(1-(e.dk==null?100:e.dk)/100),a=q(e.o/100);return'<feColorMatrix in="SourceGraphic" type="matrix" values="'+d+' 0 0 0 0 0 '+d+' 0 0 0 0 0 '+d+' 0 0 0 0 0 '+a+' 0" result="'+r+'c"/><feGaussianBlur in="'+r+'c" stdDeviation="'+bx+'" result="'+r+'b"/><feOffset in="'+r+'b" dx="'+dx+'" dy="'+dy+'" result="'+r+'"/>'}
+    return'<feGaussianBlur in="SourceAlpha" stdDeviation="'+bx+'" result="'+r+'b"/><feOffset in="'+r+'b" dx="'+dx+'" dy="'+dy+'" result="'+r+'o"/><feFlood flood-color="'+e.c+'" flood-opacity="'+q(e.o/100)+'" result="'+r+'f"/><feComposite in="'+r+'f" in2="'+r+'o" operator="in" result="'+r+'"/>'};
+  const region=(F,mx,my)=>{const bb=o.bb,ex=mx/sx+4,ey=my/sy+4;F.setAttribute('filterUnits','userSpaceOnUse');F.setAttribute('x',q(bb.x-ex));F.setAttribute('y',q(bb.y-ey));F.setAttribute('width',q(bb.width+2*ex));F.setAttribute('height',q(bb.height+2*ey));F.setAttribute('color-interpolation-filters','sRGB')};
+  if(!inl.length){o.g.removeAttribute('filter');if(f)f.remove()}
+  else{if(!f){f=el('filter',{id});md.appendChild(f)}
+    let s='',cur='SourceGraphic',k=0,mx=0,my=0;
+    inl.forEach(e=>{k++;const r='r'+k;
+      if(e.t==='gb'){s+='<feGaussianBlur in="'+cur+'" stdDeviation="'+q(e.r/sx)+' '+q(e.r/sy)+'" result="'+r+'"/>';cur=r;mx+=3*e.r;my+=3*e.r}
+      else if(e.t==='ds'||e.t==='og'){s+=shadow(e,r+'s')+'<feMerge result="'+r+'"><feMergeNode in="'+r+'s"/><feMergeNode in="'+cur+'"/></feMerge>';cur=r;mx+=3*e.b+Math.abs(e.dx);my+=3*e.b+Math.abs(e.dy)}
+      else if(e.t==='ig'){const q2=q(e.b/sx)+' '+q(e.b/sy);s+=(e.ctr?'<feGaussianBlur in="SourceAlpha" stdDeviation="'+q2+'" result="'+r+'a"/>':'<feComponentTransfer in="SourceAlpha" result="'+r+'n"><feFuncA type="table" tableValues="1 0"/></feComponentTransfer><feGaussianBlur in="'+r+'n" stdDeviation="'+q2+'" result="'+r+'a"/>')+'<feFlood flood-color="'+e.c+'" flood-opacity="'+q(e.o/100)+'" result="'+r+'f"/><feComposite in="'+r+'f" in2="'+r+'a" operator="in" result="'+r+'g"/><feComposite in="'+r+'g" in2="SourceAlpha" operator="in" result="'+r+'h"/>'+(e.m&&e.m!=='normal'?'<feBlend in="'+r+'h" in2="'+cur+'" mode="'+e.m+'" result="'+r+'"/>':'<feMerge result="'+r+'"><feMergeNode in="'+cur+'"/><feMergeNode in="'+r+'h"/></feMerge>');cur=r}
+      else if(e.t==='fe'){const h=Math.max(.01,e.r/2);s+='<feMorphology in="SourceAlpha" operator="erode" radius="'+q(h/sx)+' '+q(h/sy)+'" result="'+r+'e"/><feGaussianBlur in="'+r+'e" stdDeviation="'+q(h/sx)+' '+q(h/sy)+'" result="'+r+'a"/><feComposite in="'+cur+'" in2="'+r+'a" operator="in" result="'+r+'"/>';cur=r}});
+    region(f,mx,my);f.innerHTML=s;if(bl.length)o.g.removeAttribute('filter');else o.g.setAttribute('filter','url(#'+id+')')}
+  bl.forEach((e,k)=>{const F=el('filter',{id:'fxs'+oi+'_'+k});md.appendChild(F);region(F,3*e.b+Math.abs(e.dx),3*e.b+Math.abs(e.dy));F.innerHTML=shadow(e,'sh')})}
 function fxAll(){const md=document.getElementById('mdefs');if(!md)return;const used=new Set();
-  objs.forEach(o=>{if(o.g.dataset.fx){fxUpd(o);if(fxList(o).some(e=>!e.off))used.add('fx'+oid(o))}else if(o.g.hasAttribute('filter')&&/#fx\d/.test(o.g.getAttribute('filter')))o.g.removeAttribute('filter')});
+  objs.forEach(o=>{if(o.g.dataset.fx){fxUpd(o);const Lx=fxList(o).filter(e=>!e.off&&e.t!=='px');if(Lx.some(e=>!fxBl(e)))used.add('fx'+oid(o));Lx.filter(fxBl).forEach((e,k)=>used.add('fxs'+oid(o)+'_'+k))}else if(o.g.hasAttribute('filter')&&/#fx\d/.test(o.g.getAttribute('filter')))o.g.removeAttribute('filter')});
   [...md.querySelectorAll('filter[id^="fx"]')].forEach(f=>{if(!used.has(f.id))f.remove()})}
 function fxTargets(){return[...sel].filter(pick)}
 function fxPush(p){const T=fxTargets();if(!T.length)return false;T.forEach(o=>{const L=fxList(o);L.push({...p});o.g.dataset.fx=JSON.stringify(L);fxUpd(o)});commit();draw();return true}
@@ -7127,12 +7137,12 @@ function dkModal(title,bodyHtml,btns){const bg=document.createElement('div');bg.
   addEventListener('keydown',kd,true);document.body.appendChild(bg);return{box,close}}
 function fxDlg(kind,ed){const T=fxTargets();if(!T.length)return;if(ed!=null){const e0=fxList(T[0])[ed];if(e0&&e0.t==='px'&&window.pxEdit){window.pxEdit(ed);return}}let base0=ed!=null?fxList(T[0])[ed]:null;if(ed!=null&&!base0)return;kind=ed!=null?base0.t:kind;
   const spec=FXS[kind],def=base0||(FXLAST&&FXLAST.t===kind?FXLAST:FXD[kind]),old=T.map(o=>o.g.dataset.fx||'');
-  const rows=spec.map(f=>f[1]==='c'?'<label>'+f[0]+'<input type="color" data-f="c" value="'+def.c+'"></label>':f[2]==='chk'?'<label class="fxp"><input type="checkbox" data-f="'+f[1]+'"'+(def[f[1]]?' checked':'')+'> '+f[0]+'</label>':'<label>'+f[0]+'<input type="number" data-f="'+f[1]+'" min="'+f[2]+'" max="'+f[3]+'" step="1" value="'+def[f[1]]+'"></label>').join('')+'<label class="fxp"><input type="checkbox" id="fxpv" checked> Preview</label>';
-  const read=box=>{const p={t:kind};spec.forEach(f=>{const i=box.querySelector('[data-f="'+f[1]+'"]');if(f[1]==='c')p.c=i.value;else if(f[2]==='chk')p[f[1]]=i.checked?1:0;else{let v=parseFloat(i.value);if(isNaN(v))v=def[f[1]];p[f[1]]=Math.max(f[2],Math.min(f[3],v))}});return p};
+  const rows=spec.map(f=>f[1]==='c'?'<label>'+f[0]+'<input type="color" data-f="c" value="'+def.c+'"></label>':f[2]==='sel'?'<label>'+f[0]+'<select data-f="'+f[1]+'">'+f[3].map(op=>'<option value="'+op[0]+'"'+((def[f[1]]||f[3][0][0])===op[0]?' selected':'')+'>'+op[1]+'</option>').join('')+'</select></label>':f[2]==='chk'?'<label class="fxp"><input type="checkbox" data-f="'+f[1]+'"'+(def[f[1]]?' checked':'')+'> '+f[0]+'</label>':'<label>'+f[0]+'<input type="number" data-f="'+f[1]+'" min="'+f[2]+'" max="'+f[3]+'" step="1" value="'+(def[f[1]]==null?FXD[kind][f[1]]:def[f[1]])+'"></label>').join('')+'<label class="fxp"><input type="checkbox" id="fxpv" checked> Preview</label>';
+  const read=box=>{const p={t:kind};spec.forEach(f=>{const i=box.querySelector('[data-f="'+f[1]+'"]');if(f[1]==='c')p.c=i.value;else if(f[2]==='sel')p[f[1]]=i.value;else if(f[2]==='chk')p[f[1]]=i.checked?1:0;else{let v=parseFloat(i.value);if(isNaN(v))v=def[f[1]];if(v==null||isNaN(v))v=f[2];p[f[1]]=Math.max(f[2],Math.min(f[3],v))}});return p};
   const put=(box,on)=>{const p=read(box);T.forEach((o,i)=>{let L=old[i]?JSON.parse(old[i]):[];if(on){if(ed!=null){if(L[ed])L[ed]={...p}}else L.push({...p})}
     if(L.length)o.g.dataset.fx=JSON.stringify(L);else delete o.g.dataset.fx;fxUpd(o)});draw()};
   const M=dkModal(FXN[kind],rows,[{t:'Cancel',c:1,f:box=>{put(box,false)}},{t:'OK',p:1,f:box=>{put(box,true);FXLAST=read(box);window.PXLAST=null;commit();draw()}}]);
-  const live=()=>{put(M.box,M.box.querySelector('#fxpv').checked)};M.box.addEventListener('input',live);M.box.querySelector('#fxpv').addEventListener('change',live);live();
+  const live=()=>{const kk=M.box.querySelector('[data-f="k"]');if(kk){const dsel=kk.value==='d',cc=M.box.querySelector('[data-f="c"]'),dd=M.box.querySelector('[data-f="dk"]');if(cc)cc.disabled=dsel;if(dd)dd.disabled=!dsel}put(M.box,M.box.querySelector('#fxpv').checked)};M.box.addEventListener('input',live);M.box.querySelector('#fxpv').addEventListener('change',live);live();
   const f0=M.box.querySelector('input');if(f0)f0.focus()}
 addEventListener('keydown',e=>{if(e.target&&/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)||ted_s)return;
   if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e.code==='KeyE'){e.preventDefault();e.stopImmediatePropagation();if(e.altKey)fxLastDlg();else fxApplyLast()}},true);
@@ -7272,13 +7282,14 @@ function runAll(kind,P,T){return T.map(o=>PX[kind].fn(o,P)).some(Boolean)}
    whenever the paths or the effect list change. The original paths stay in place, hidden but still hit-testable. */
 const pxEnts=o=>fxList(o).filter(e=>e.t==='px'&&PX[e.k]);
 const pxBase=o=>[...o.g.children].filter(c=>!c.hasAttribute('data-pxo'));
-const pxSig=o=>JSON.stringify(pxEnts(o).filter(e=>!e.off))+'|'+pxBase(o).map(c=>c.outerHTML).join('');
+const pxSig=o=>(o.g.dataset.fx||'')+'|'+pxBase(o).map(c=>c.outerHTML).join('');
+const pxBlended=o=>fxList(o).filter(e=>!e.off&&fxBl(e));
 function pxXfM(q,P){const b=wbox(q),cx=b.x+b.w/2,cy=b.y+b.h/2,a=-P.ang*Math.PI/180,c=Math.cos(a),s=Math.sin(a),sx=P.sx/100*(P.rx?-1:1),sy=P.sy/100*(P.ry?-1:1);
   return k=>{let A=[1,0,0,1,0,0];const one=[c*sx,s*sx,-s*sy,c*sy,0,0];for(let i=0;i<k;i++)A=mulAff(one,A);return mulAff([1,0,0,1,cx+P.mx*k,cy+P.my*k],mulAff(A,[1,0,0,1,-cx,-cy]))}}
 function pxReplay(o){
   o.g.querySelectorAll(':scope > g[data-pxo]').forEach(w=>w.remove());
-  const base=pxBase(o),L=pxEnts(o).filter(e=>!e.off);
-  if(!L.length||isText(o)||isGroup(o)||!base.length){base.forEach(c=>{if(c.getAttribute('visibility')==='hidden'&&c.getAttribute('pointer-events')==='all'){c.removeAttribute('visibility');c.removeAttribute('pointer-events')}});delete o.g.dataset.pxon;o.__pxs=null;if(base.length)o.bb=BBX(o);return}
+  const base=pxBase(o),L=pxEnts(o).filter(e=>!e.off),BL=pxBlended(o);
+  if((!L.length&&!BL.length)||isText(o)||isGroup(o)||!base.length){base.forEach(c=>{if(c.getAttribute('visibility')==='hidden'&&c.getAttribute('pointer-events')==='all'){c.removeAttribute('visibility');c.removeAttribute('pointer-events')}});delete o.g.dataset.pxon;o.__pxs=pxSig(o);if(base.length)o.bb=BBX(o);return}
   const wrap=el('g',{'data-pxo':'1','pointer-events':'none'});o.g.appendChild(wrap);
   const newQ=src=>{const g=el('g',{});src.forEach(c=>{const k=c.cloneNode(true);k.removeAttribute('visibility');k.removeAttribute('pointer-events');g.appendChild(k)});wrap.appendChild(g);const q={g,bb:null,m:{sx:1,sy:1,tx:0,ty:0},ly:o.ly,nm:o.nm,lh:0,__pxq:1};g.__o=q;q.bb=BBX(q);return q};
   const Q=[newQ(base)];
@@ -7286,13 +7297,17 @@ function pxReplay(o){
     if(e.k==='xf'){const P=e.P,n=Math.max(0,Math.round(P.n)),M=pxXfM(Q[0],P);
       if(n===0)bakeAffine(Q[0],M(1));else{const src=Q.slice();for(let k=1;k<=n;k++)src.forEach(q0=>{const c=newQ([...q0.g.children]);bakeAffine(c,M(k));Q.push(c)})}}
     else Q.slice().forEach(q=>PX[e.k].fn(q,{...e.P}))}catch(_){}});
+  if(BL.length){/* shadows / outer glows with a blend mode: one layer behind the artwork each, blended with whatever is below; the artwork keeps the remaining effects */
+    const oi=oid(o),art=Q.map(q=>q.g),inline=fxList(o).some(e=>!e.off&&e.t!=='px'&&!fxBl(e));
+    if(inline)art.forEach(g=>g.setAttribute('filter','url(#fx'+oi+')'));
+    BL.forEach((e,k)=>{Q.forEach(q=>{const sg=el('g',{'data-fxs':'1','filter':'url(#fxs'+oi+'_'+k+')','style':'mix-blend-mode:'+e.m});[...q.g.children].forEach(c=>sg.appendChild(c.cloneNode(true)));wrap.insertBefore(sg,art[0])})})}
   base.forEach(c=>{c.setAttribute('visibility','hidden');c.setAttribute('pointer-events','all')});
   o.g.dataset.pxon='1';o.bb=BBX(o);o.__pxs=pxSig(o)}
-function pxSyncAll(){try{objs.forEach(o=>{const f=o.g.dataset.fx,on=o.g.dataset.pxon,lc=o.g.lastElementChild;if(!on&&!(f&&f.indexOf('"px"')>=0)&&!(lc&&lc.hasAttribute&&lc.hasAttribute('data-pxo')))return;if(pxSig(o)!==o.__pxs)pxReplay(o)})}catch(_){}}
+function pxSyncAll(){try{objs.forEach(o=>{const f=o.g.dataset.fx,on=o.g.dataset.pxon,lc=o.g.lastElementChild;if(!on&&!f&&!(lc&&lc.hasAttribute&&lc.hasAttribute('data-pxo')))return;if(pxSig(o)!==o.__pxs)pxReplay(o)})}catch(_){}}
 const _drPx=draw;draw=function(){pxSyncAll();return _drPx.apply(this,arguments)};
 /* Object > Expand Appearance: the effect result becomes the object's real paths (copies of the Transform effect become separate objects) */
-window.pxExpand=function(L){const T=(L||[...sel]).filter(o=>o.g.dataset&&o.g.dataset.pxon);if(!T.length)return false;
-  T.forEach(o=>{const w=o.g.querySelector(':scope > g[data-pxo]');if(!w||!w.firstChild)return;const gs=[...w.children],first=gs[0];pxBase(o).forEach(c=>c.remove());
+window.pxExpand=function(L){const T=(L||[...sel]).filter(o=>o.g.dataset&&o.g.dataset.pxon&&fxList(o).some(e=>e.t==='px'));if(!T.length)return false;
+  T.forEach(o=>{const w=o.g.querySelector(':scope > g[data-pxo]');if(!w||!w.firstChild)return;const gs=[...w.children].filter(g=>!g.hasAttribute('data-fxs')),first=gs[0];[...w.querySelectorAll(':scope > g[data-fxs]')].forEach(x=>x.remove());pxBase(o).forEach(c=>c.remove());
     while(first.firstChild)o.g.insertBefore(first.firstChild,w);
     const extra=gs.slice(1).map(g=>{const ng=el('g',{});for(const at of o.g.attributes){if(/^(transform|id|data-fx|data-pxon)$/.test(at.name))continue;ng.setAttribute(at.name,at.value)}while(g.firstChild)ng.appendChild(g.firstChild);layer.appendChild(ng);const q={g:ng,bb:null,m:{...o.m},ly:o.ly,nm:o.nm,lh:0};ng.__o=q;q.bb=BBX(q);apply(q);return q});
     w.remove();const rest=fxList(o).filter(e=>e.t!=='px');if(rest.length)o.g.dataset.fx=JSON.stringify(rest);else delete o.g.dataset.fx;fxUpd(o);delete o.g.dataset.pxon;o.__pxs=null;o.bb=BBX(o);apply(o);
@@ -8101,7 +8116,7 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Path',sub:()=>[{t:'Join',k:'Ctrl+J',f:()=>pjJoin(),en:anySel},{t:'Average…',k:'Ctrl+Alt+J',f:pjAverage,en:anySel},{t:'Remove Anchor Points',f:anRemove,en:()=>dsSel.size>0}]},
     {t:'Clipping Mask',sub:()=>[{t:'Make',k:'Ctrl+7',f:clipMake,en:S},{t:'Release',k:'Ctrl+Alt+7',f:clipRelease,en:S}]},
     {t:'Compound Path',sub:()=>[{t:'Make',k:'Ctrl+8',f:makeCompound,en:S},{t:'Release',k:'Ctrl+Alt+8',f:releaseCompound,en:S}]},sep,
-    {t:'Expand Appearance',f:()=>window.pxExpand(),en:()=>[...sel].some(o=>o.g.dataset&&o.g.dataset.pxon)},{t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
+    {t:'Expand Appearance',f:()=>window.pxExpand(),en:()=>[...sel].some(o=>o.g.dataset&&o.g.dataset.pxon&&fxList(o).some(e=>e.t==='px'))},{t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
    ['Type',()=>[
     {t:'Font',sub:()=>fontItems(),en:txHas},{t:'Size',sub:()=>[6,8,9,10,11,12,14,18,21,24,30,36,48,60,72].map(n=>({t:String(n),f:()=>setTxSize(n),en:txHas}))},sep,
     {t:'Area Type Options…',f:()=>openToolOpts(txObjs().some(o=>o.g.querySelector('text[data-vert]'))?'vat':'at'),en:hasArea},
