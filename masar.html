@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 179</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 185</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -7286,6 +7286,87 @@ function outlineStrokeObj(o){if(isGroup(o)||isText(o))return false;normalizeObj(
 /* ---- Free Distort: the four corners of the bounding box move independently (offsets in % of the box) ---- */
 function fdSP(sp,P,bb){const W=bb.w||1,H=bb.h||1,c=(x,y)=>[x,y],TL=[bb.x+P.tlx/100*W,bb.y+P.tly/100*H],TR=[bb.x+bb.w+P.trx/100*W,bb.y+P.try/100*H],BL=[bb.x+P.blx/100*W,bb.y+bb.h+P.bly/100*H],BR=[bb.x+bb.w+P.brx/100*W,bb.y+bb.h+P.bry/100*H];
   return mapSP(sp,(x,y)=>{const u=(x-bb.x)/W,v=(y-bb.y)/H;return[(1-u)*(1-v)*TL[0]+u*(1-v)*TR[0]+(1-u)*v*BL[0]+u*v*BR[0],(1-u)*(1-v)*TL[1]+u*(1-v)*TR[1]+(1-u)*v*BL[1]+u*v*BR[1]]},true)}
+/* ======= Object > Path operations (Reverse, Add Anchor Points, Simplify, Offset, Clean Up, Split Into Grid, Divide Objects Below, Make Pixel Perfect, Trim Marks) ======= */
+const spAll=(o,fn)=>{if(isGroup(o)||isText(o))return false;normalizeObj(o);ensurePath(o);let ch=false;eps(o).forEach(pe=>{const S=getSP(pe);if(!S||!S.length)return;const R=fn(S,pe);if(R){pe.__sp=R;writeSP(pe);ch=true}});if(ch){o.bb=BBX(o);touch(o)}return ch};
+const opReverse=o=>spAll(o,S=>S.map(sp=>({closed:sp.closed,pts:revP(sp.pts.map(cp))})));
+const opAddAnchors=o=>spAll(o,S=>S.map(sp=>{const P=sp.pts.map(cp),n=P.length,cnt=sp.closed?n:n-1,out=[],L=(p,q)=>[(p[0]+q[0])/2,(p[1]+q[1])/2];
+  for(let k=0;k<cnt;k++){const A=P[k],B=P[(k+1)%n];if(!(A.o||B.i)){out.push(A,Pt((A.x+B.x)/2,(A.y+B.y)/2));continue}
+    const c=[[A.x,A.y],A.o||[A.x,A.y],B.i||[B.x,B.y],[B.x,B.y]],p01=L(c[0],c[1]),p12=L(c[1],c[2]),p23=L(c[2],c[3]),p012=L(p01,p12),p123=L(p12,p23),M=L(p012,p123);
+    A.o=(p01[0]!==A.x||p01[1]!==A.y)?p01.map(R3):null;B.i=(p23[0]!==B.x||p23[1]!==B.y)?p23.map(R3):null;out.push(A,{x:R3(M[0]),y:R3(M[1]),i:p012.map(R3),o:p123.map(R3)})}
+  if(!sp.closed)out.push(P[n-1]);return{closed:sp.closed,pts:out}}));
+const spCount=S=>S.reduce((a,sp)=>a+sp.pts.length,0);
+/* Simplify: P = {prec:0..100 (Simplify curve), ang:0..180 (corner point angle threshold), straight:bool} */
+function rdpPts(P,tol){if(P.length<3)return P;const a=P[0],b=P[P.length-1];let m=-1,mi=0;const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1e-9;
+  for(let i=1;i<P.length-1;i++){const d=Math.abs((P[i][0]-a[0])*dy-(P[i][1]-a[1])*dx)/L;if(d>m){m=d;mi=i}}
+  if(m<=tol)return[a,b];return rdpPts(P.slice(0,mi+1),tol).slice(0,-1).concat(rdpPts(P.slice(mi),tol))}
+function simplifySP(sp,P,bb){if(sp.pts.length<(sp.closed?3:3))return sp;const tol=Math.max(.05,(1-P.prec/100)*.008*Math.max(bb.w,bb.h,10));
+  const pl=resample(sp,Math.max(.4,tol/2),true),n=pl.length;if(n<4)return sp;
+  const ang=i=>{const a=pl[(i+n-1)%n],b=pl[i],c=pl[(i+1)%n],v1=[a.x-b.x,a.y-b.y],v2=[c.x-b.x,c.y-b.y],l1=Math.hypot(...v1),l2=Math.hypot(...v2);if(l1<1e-9||l2<1e-9)return 180;return Math.acos(Math.max(-1,Math.min(1,(v1[0]*v2[0]+v1[1]*v2[1])/(l1*l2))))*180/Math.PI};
+  const splits=[];for(let i=0;i<n;i++){const e=!sp.closed&&(i===0||i===n-1);if(e||(pl[i].sharp&&ang(i)<=P.ang+.5))splits.push(i)}/* Adobe: corners sharper than the threshold stay (default 90°) */
+  const pts=pl.map(p=>[p.x,p.y]);let runs=[];
+  if(sp.closed){if(!splits.length){const h=n>>1;runs.push({a:0,b:h,sm:true},{a:h,b:n,sm:true})}else{for(let k=0;k<splits.length;k++){const s=splits[k],e=splits[(k+1)%splits.length];runs.push({a:s,b:e<=s?e+n:e})}}}
+  else for(let k=0;k+1<splits.length;k++)runs.push({a:splits[k],b:splits[k+1]});
+  const T=v=>V2.norm(v),nodes=[];
+  runs.forEach((r,ri)=>{const seg=[];for(let i=r.a;i<=r.b;i++)seg.push(pts[i%n]);if(seg.length<2)return;
+    if(P.straight){rdpPts(seg,tol).forEach((q,j)=>{if(ri>0&&j===0&&nodes.length)return;nodes.push({x:R3(q[0]),y:R3(q[1]),i:null,o:null})});return}
+    const tg=i=>T(V2.sub(pts[(i+1)%n],pts[(i-1+n)%n])),t1=r.sm?tg(r.a):T(V2.sub(seg[1],seg[0])),t2=r.sm?V2.mul(tg(r.b%n),-1):T(V2.sub(seg[seg.length-2],seg[seg.length-1]));
+    const cs=fitCubic(seg,0,seg.length-1,t1,t2,tol);
+    if(!nodes.length||!(ri>0))nodes.push({x:R3(cs[0][0][0]),y:R3(cs[0][0][1]),i:null,o:null});
+    cs.forEach(c=>{const l=nodes[nodes.length-1];l.o=(c[1][0]!==l.x||c[1][1]!==l.y)?c[1].map(R3):null;nodes.push({x:R3(c[3][0]),y:R3(c[3][1]),i:(c[2][0]!==c[3][0]||c[2][1]!==c[3][1])?c[2].map(R3):null,o:null})})});
+  if(nodes.length<2)return sp;
+  if(sp.closed){const f=nodes[0],l=nodes[nodes.length-1];if(Math.hypot(f.x-l.x,f.y-l.y)<1e-3){f.i=l.i;nodes.pop()}}
+  return{closed:sp.closed,pts:nodes}}
+function opSimplifyCount(o,P){normalizeObj(o);let before=0,after=0;const pes=eps(o).filter(pe=>getSP(pe)&&getSP(pe).length);const bb=aBox([].concat(...pes.map(pe=>getSP(pe))));pes.forEach(pe=>{const S=getSP(pe);before+=spCount(S);after+=spCount(S.map(sp=>simplifySP(sp,P,bb)))});return{before,after}}
+const opSimplify=(o,P)=>{if(isGroup(o)||isText(o))return false;normalizeObj(o);ensurePath(o);const pes=eps(o).filter(pe=>getSP(pe)&&getSP(pe).length);if(!pes.length)return false;const bb=aBox([].concat(...pes.map(pe=>getSP(pe))));let ch=false;
+  pes.forEach(pe=>{const S=getSP(pe),R=S.map(sp=>simplifySP(sp,P,bb));if(spCount(R)!==spCount(S)||P.straight){pe.__sp=R;writeSP(pe);ch=true}});if(ch){o.bb=BBX(o);touch(o)}return ch};
+/* a new object with the same attributes as o (without its live effect overlay) */
+function opClone(o){const g=el('g',{});for(const at of o.g.attributes){if(/^(transform|id|data-fx|data-pxon)$/.test(at.name))continue;g.setAttribute(at.name,at.value)}
+  [...o.g.children].filter(c=>!c.hasAttribute('data-pxo')).forEach(c=>{const k=c.cloneNode(true);k.removeAttribute('visibility');k.removeAttribute('pointer-events');g.appendChild(k)});layer.appendChild(g);
+  const n={g,bb:null,m:{...o.m},ly:o.ly,nm:o.nm,lh:0};g.__o=n;n.bb=BBX(n);apply(n);return n}
+function opOffsetCopy(o,P){if(isGroup(o)||isText(o))return null;const n=opClone(o);normalizeObj(n);if(!PX.off.fn(n,{...P})){n.g.remove();return null}objs.splice(objs.indexOf(o)+1,0,n);return n}
+/* Clean Up: stray points, unpainted objects, empty text paths */
+const paintOf=o=>{const e=fillables(o);return e.some(x=>{const f=x.getAttribute('fill'),s=x.getAttribute('stroke'),sw=parseFloat(x.getAttribute('stroke-width')||1);return(f&&f!=='none')||x.hasAttribute('data-grad')||(s&&s!=='none'&&sw>0)||(x.tagName==='text'&&(!f||f!=='none'))})};
+function opCleanFind(O){const r={stray:[],unpainted:[],emptyText:[]};objs.forEach(o=>{if(o.g.dataset.lock||o.g.style.display==='none')return;
+  if(isText(o)){const t=o.g.querySelector('text'),raw=t?(t.getAttribute('data-raw')||''):'';if(O.emptyText&&raw.trim()==='')r.emptyText.push(o);return}
+  if(isGroup(o))return;const pes=eps(o).filter(pe=>getSP(pe));
+  if(O.stray&&pes.length&&pes.every(pe=>getSP(pe).every(sp=>sp.pts.length<2||(sp.pts.length===2&&Math.hypot(sp.pts[0].x-sp.pts[1].x,sp.pts[0].y-sp.pts[1].y)<1e-6)))){r.stray.push(o);return}
+  if(O.unpainted&&fillables(o).length&&!paintOf(o))r.unpainted.push(o)});return r}
+function opClean(O){const r=opCleanFind(O),all=new Set([...r.stray,...r.unpainted,...r.emptyText]);if(!all.size)return 0;objs=objs.filter(o=>!all.has(o));all.forEach(o=>o.g.remove());sel=new Set([...sel].filter(o=>!all.has(o)));layer.replaceChildren(...objs.map(q=>q.g));return all.size}
+/* Split Into Grid: the object is replaced by rows x columns rectangles that keep its appearance */
+function opGrid(o,G){if(isGroup(o)||isText(o))return null;normalizeObj(o);ensurePath(o);const pes=eps(o).filter(pe=>getSP(pe)&&getSP(pe).length);if(!pes.length)return null;const b=aBox([].concat(...pes.map(pe=>getSP(pe)))),src=fillables(o)[0],out=[];
+  const TW=G.total?G.total[0]:b.w,TH=G.total?G.total[1]:b.h,rh=(TH-G.rg*(G.rows-1))/G.rows,cw=(TW-G.cg*(G.cols-1))/G.cols;if(!(rh>0&&cw>0))return null;
+  for(let r=0;r<G.rows;r++)for(let c=0;c<G.cols;c++){const n=opClone(o);[...n.g.children].forEach(x=>x.remove());const pe=document.createElementNS('http://www.w3.org/2000/svg','path');
+    if(src)[...src.attributes].forEach(a=>{if(!/^(d|x|y|width|height|cx|cy|rx|ry|r|points|transform|data-.*)$/.test(a.name))pe.setAttribute(a.name,a.value)});
+    const x0=b.x+c*(cw+G.cg),y0=b.y+r*(rh+G.rg);pe.__sp=[{closed:true,pts:[Pt(x0,y0),Pt(x0+cw,y0),Pt(x0+cw,y0+rh),Pt(x0,y0+rh)]}];writeSP(pe);n.g.appendChild(pe);n.bb=BBX(n);apply(n);out.push(n)}
+  const at=objs.indexOf(o);objs.splice(at,1,...out);o.g.remove();return out}
+/* Divide Objects Below: the selected closed path cuts every object under it, then it is removed */
+function opDivideBelow(cut){if(isGroup(cut)||isText(cut))return null;normalizeObj(cut);ensurePath(cut);const pes=eps(cut).filter(pe=>getSP(pe)&&getSP(pe).some(sp=>sp.closed&&sp.pts.length>2));if(!pes.length)return null;
+  const C=boolFlat(cut),ci=objs.indexOf(cut),made=[];let any=false;
+  objs.slice(0,ci).forEach(t=>{if(isGroup(t)||isText(t)||t.g.dataset.lock||t.g.style.display==='none'||!t.g.querySelector('path,rect,ellipse'))return;const T=boolFlat(t),I=boolOp('inter',T,C);if(boolEmpty(I))return;const D=boolOp('diff',T,C);
+    const a=opClone(t);boolApply(a,I,t);made.push([t,a]);any=true;if(!boolEmpty(D)){const b=opClone(t);boolApply(b,D,t);made.push([t,b])}});
+  if(!any)return null;const res=[];made.forEach(([t,n])=>{res.push(n)});
+  const uniq=[...new Set(made.map(m=>m[0]))];uniq.forEach(t=>{const pieces=made.filter(m=>m[0]===t).map(m=>m[1]),at=objs.indexOf(t);objs.splice(at,1,...pieces);t.g.remove()});
+  const k=objs.indexOf(cut);if(k>=0)objs.splice(k,1);cut.g.remove();layer.replaceChildren(...objs.map(q=>q.g));return res}
+/* Make Pixel Perfect: anchors of straight segments go to the pixel grid (stroke edges too, for odd stroke weights) */
+function opPixel(o){if(isGroup(o)||isText(o))return false;normalizeObj(o);ensurePath(o);let ch=false;
+  eps(o).forEach(pe=>{const S=getSP(pe);if(!S)return;const sw=pe.getAttribute('stroke')&&pe.getAttribute('stroke')!=='none'?parseFloat(pe.getAttribute('stroke-width')||1):0,off=sw>0&&Math.round(sw)%2===1?.5:0;
+    const R=S.map(sp=>({closed:sp.closed,pts:sp.pts.map(q=>{const nx=Math.round(q.x-off)+off,ny=Math.round(q.y-off)+off,dx=nx-q.x,dy=ny-q.y,n=cp(q);n.x=R3(nx);n.y=R3(ny);if(n.i)n.i=[R3(n.i[0]+dx),R3(n.i[1]+dy)];if(n.o)n.o=[R3(n.o[0]+dx),R3(n.o[1]+dy)];return n})}));pe.__sp=R;writeSP(pe);ch=true});
+  if(ch){o.bb=BBX(o);touch(o)}return ch}
+/* Create Trim Marks around the selection (or the artboard): eight 0.25 px registration lines */
+function opTrimMarks(b){const len=18,gap=9,x0=b.x,y0=b.y,x1=b.x+b.w,y1=b.y+b.h,L=(a,c,d,e)=>({closed:false,pts:[Pt(a,c),Pt(d,e)]});
+  const S=[L(x0-gap-len,y0,x0-gap,y0),L(x0,y0-gap-len,x0,y0-gap),L(x1+gap,y0,x1+gap+len,y0),L(x1,y0-gap-len,x1,y0-gap),L(x0-gap-len,y1,x0-gap,y1),L(x0,y1+gap,x0,y1+gap+len),L(x1+gap,y1,x1+gap+len,y1),L(x1,y1+gap,x1,y1+gap+len)];
+  const o=add('<path d="M0 0" fill="none" stroke="#000000" stroke-width="0.25" data-trim="1"/>');const pe=o.g.querySelector('path');pe.__sp=S;writeSP(pe);o.bb=BBX(o);apply(o);return o}
+/* Expand > Gradient: the gradient fill becomes N filled slices (strips for a linear gradient, rings for a radial one) */
+function polyRing(poly){const Sg=poly.map((a,i)=>{const b=poly[(i+1)%poly.length];return{c:[a,a,b,b],cv:false}});return{pts:poly.map((q,i)=>[q[0],q[1],i]),S:Sg,cnt:Sg.length}}
+function opExpandGradient(o,N){if(isGroup(o)||isText(o))return null;normalizeObj(o);const src=fillables(o)[0];if(!src)return null;const g=gradOf(src,'data-grad');if(!g||!g.p||!g.s||g.s.length<2)return null;
+  ensurePath(o);const T=boolFlat(o);if(boolEmpty(T))return null;const p=g.p,out=[],R=5000;N=Math.max(2,Math.min(255,Math.round(N)));
+  const make=(F,col)=>{const n=opClone(o);boolApply(n,F,o);const e=fillables(n)[0];if(e){e.setAttribute('fill',col);e.removeAttribute('data-grad');e.setAttribute('stroke','none');e.removeAttribute('data-grads')}out.push(n)};
+  if(g.t!=='r'){const ax=[p[2]-p[0],p[3]-p[1]],L=Math.hypot(ax[0],ax[1])||1,u=[ax[0]/L,ax[1]/L],nv=[-u[1],u[0]],q=(s,w)=>[p[0]+u[0]*s+nv[0]*w,p[1]+u[1]*s+nv[1]*w];
+    for(let i=0;i<N;i++){const s0=i===0?-R:L*i/N,s1=i===N-1?R:L*(i+1)/N,F=boolOp('inter',T,{rings:[polyRing([q(s0,-R),q(s1,-R),q(s1,R),q(s0,R)])],rule:'nonzero'});if(!boolEmpty(F))make(F,gradColorAt(g,(i+.5)/N))}}
+  else{const cx=p[0],cy=p[1],Rr=Math.hypot(p[2]-p[0],p[3]-p[1])||1,circ=r=>{const a=[];for(let k=0;k<96;k++){const th=k*2*Math.PI/96;a.push([cx+Math.cos(th)*r,cy+Math.sin(th)*r])}return a};
+    for(let i=0;i<N;i++){const r0=Rr*i/N,r1=i===N-1?R:Rr*(i+1)/N;let band={rings:[polyRing(circ(r1))],rule:'nonzero'};if(i>0)band=boolOp('diff',band,{rings:[polyRing(circ(r0))],rule:'nonzero'});const F=boolOp('inter',T,band);if(!boolEmpty(F))make(F,gradColorAt(g,(i+.5)/N))}}
+  if(!out.length)return null;const at=objs.indexOf(o);objs.splice(at,1,...out);o.g.remove();return out}
+window.OP={box:o=>{normalizeObj(o);ensurePath(o);const pes=eps(o).filter(pe=>getSP(pe)&&getSP(pe).length);return pes.length?aBox([].concat(...pes.map(pe=>getSP(pe)))):null},outlineStroke:outlineStrokeObj,expandGradient:opExpandGradient,reverse:opReverse,addAnchors:opAddAnchors,simplify:opSimplify,simplifyCount:opSimplifyCount,offsetCopy:opOffsetCopy,cleanFind:opCleanFind,clean:opClean,grid:opGrid,divideBelow:opDivideBelow,pixel:opPixel,trimMarks:opTrimMarks,clone:opClone};
 /* ---- registry + dialog ---- */
 const N=(k,l,min,max,step)=>({k,l,t:'n',min,max,step:step||1}),S_=(k,l,opts)=>({k,l,t:'s',opts}),C_=(k,l)=>({k,l,t:'k'});
 const ABS=[[0,'Relative'],[1,'Absolute']],PTS=[[0,'Corner'],[1,'Smooth']];
@@ -7636,7 +7717,7 @@ document.addEventListener('pointerup',()=>{if(!lyDrag)return;const d=lyDrag;lyDr
   if(ok){lySig='';commitAll()}});
 /* ---- registration ---- */
 DK.reg('layers','Layers','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 12.5l9 5 9-5"/><path d="M3 16.5l9 5 9-5"/></svg>',P,{dw:300,dh:300,menu:()=>lyMenuList().map(x=>x?{t:esc(x[0]),f:x[1],en:x[2]!==false,c:!!x[3]}:{sep:1}),open:()=>{P.style.display='block';lySig='';refresh()},close:()=>{P.style.display='none'},refresh});
-window.lyLocate=()=>locate();window.lyRefresh=()=>{lySig='';refresh()};window.lyNewLayer=newLayer;window.lyDelLayer=delLayer;
+window.lyLocate=()=>locate();window.lySendToCurrent=L=>{if(!L.length)return false;L.forEach(o=>{o.ly=LAYACT});objs=objs.filter(o=>!L.includes(o)).concat(L);layer.replaceChildren(...objs.map(q=>q.g));commitAll();sel=new Set(L);draw();return true};window.lyRefresh=()=>{lySig='';refresh()};window.lyNewLayer=newLayer;window.lyDelLayer=delLayer;
 })();
 
 /* ---------------------------------------------------------------- Align (Shift+F7) ---------------------------------------------------------------- */
@@ -8145,15 +8226,15 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Keyboard Shortcuts…',k:'Ctrl+Alt+Shift+K',f:()=>window.openKeyboardShortcuts()},sep,
     {t:'Preferences',sub:()=>[{t:'General…',k:'Ctrl+K',f:()=>window.prefOpen('gen')},{t:'User Interface…',f:()=>window.prefOpen('ui')}]}]],
    ['Object',()=>[
-    {t:'Transform',sub:()=>[{t:'Transform Again',k:'Ctrl+D',f:transformAgain,en:()=>S()&&!!LASTXF},sep,{t:'Move…',k:'Ctrl+Shift+M',f:openMoveDlg,en:S},{t:'Rotate…',f:()=>openDlg('ro'),en:S},{t:'Reflect…',f:()=>openDlg('rf'),en:S},{t:'Scale…',f:()=>openDlg('sl'),en:S},{t:'Shear…',f:()=>openDlg('sh'),en:S}]},
-    {t:'Arrange',sub:()=>[{t:'Bring to Front',k:'Ctrl+Shift+]',f:()=>arrange('front'),en:S},{t:'Bring Forward',k:'Ctrl+]',f:()=>arrange('fwd'),en:S},{t:'Send Backward',k:'Ctrl+[',f:()=>arrange('bwd'),en:S},{t:'Send to Back',k:'Ctrl+Shift+[',f:()=>arrange('back'),en:S}]},sep,
+    {t:'Transform',sub:()=>[{t:'Transform Again',k:'Ctrl+D',f:transformAgain,en:()=>S()&&!!LASTXF},sep,{t:'Move…',k:'Ctrl+Shift+M',f:openMoveDlg,en:S},{t:'Rotate…',f:()=>openDlg('ro'),en:S},{t:'Reflect…',f:()=>openDlg('rf'),en:S},{t:'Scale…',f:()=>openDlg('sl'),en:S},{t:'Shear…',f:()=>openDlg('sh'),en:S},sep,{t:'Transform Each…',k:'Ctrl+Alt+Shift+D',f:()=>window.openTransformEach(),en:S},{t:'Reset Bounding Box',f:()=>window.resetBounding(),en:S}]},
+    {t:'Arrange',sub:()=>[{t:'Bring to Front',k:'Ctrl+Shift+]',f:()=>arrange('front'),en:S},{t:'Bring Forward',k:'Ctrl+]',f:()=>arrange('fwd'),en:S},{t:'Send Backward',k:'Ctrl+[',f:()=>arrange('bwd'),en:S},{t:'Send to Back',k:'Ctrl+Shift+[',f:()=>arrange('back'),en:S},sep,{t:'Send to Current Layer',f:()=>window.sendToCurrentLayer(),en:S}]},sep,
     {t:'Group',k:'Ctrl+G',f:groupSel,en:S},{t:'Ungroup',k:'Ctrl+Shift+G',f:ungroupSel,en:hasGrp},
     {t:'Lock',sub:()=>[{t:'Selection',k:'Ctrl+2',f:lockSel,en:S},{t:'Unlock All',k:'Ctrl+Alt+2',f:unlockAll}]},
     {t:'Hide',sub:()=>[{t:'Selection',k:'Ctrl+3',f:hideSel,en:S},{t:'Show All',k:'Ctrl+Alt+3',f:showAll}]},sep,
-    {t:'Path',sub:()=>[{t:'Join',k:'Ctrl+J',f:()=>pjJoin(),en:anySel},{t:'Average…',k:'Ctrl+Alt+J',f:pjAverage,en:anySel},{t:'Outline Stroke',f:()=>window.pxOutlineStroke(),en:S},{t:'Remove Anchor Points',f:anRemove,en:()=>dsSel.size>0}]},
+    {t:'Path',sub:()=>[{t:'Join',k:'Ctrl+J',f:()=>pjJoin(),en:anySel},{t:'Average…',k:'Ctrl+Alt+J',f:pjAverage,en:anySel},sep,{t:'Outline Stroke',f:()=>window.pxOutlineStroke(),en:S},{t:'Offset Path…',f:()=>window.openOffsetPath(),en:S},sep,{t:'Reverse Path Direction',f:()=>window.pathReverse(),en:S},{t:'Simplify…',f:()=>window.openSimplify(),en:S},{t:'Add Anchor Points',f:()=>window.pathAddAnchors(),en:S},{t:'Remove Anchor Points',f:anRemove,en:()=>dsSel.size>0},sep,{t:'Divide Objects Below',f:()=>window.pathDivideBelow(),en:S},{t:'Split Into Grid…',f:()=>window.openSplitGrid(),en:S},{t:'Clean Up…',f:()=>window.openCleanUp()}]},
     {t:'Clipping Mask',sub:()=>[{t:'Make',k:'Ctrl+7',f:clipMake,en:S},{t:'Release',k:'Ctrl+Alt+7',f:clipRelease,en:S}]},
     {t:'Compound Path',sub:()=>[{t:'Make',k:'Ctrl+8',f:makeCompound,en:S},{t:'Release',k:'Ctrl+Alt+8',f:releaseCompound,en:S}]},sep,
-    {t:'Expand Appearance',f:()=>window.pxExpand(),en:()=>[...sel].some(o=>o.g.dataset&&o.g.dataset.pxon&&fxList(o).some(e=>e.t==='px'))},{t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
+    {t:'Expand…',f:()=>window.openExpand(),en:S},{t:'Expand Appearance',f:()=>window.pxExpand(),en:()=>[...sel].some(o=>o.g.dataset&&o.g.dataset.pxon&&fxList(o).some(e=>e.t==='px'))},{t:'Make Pixel Perfect',f:()=>window.pathPixel(),en:S},{t:'Create Trim Marks',f:()=>window.createTrimMarks()},sep,{t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
    ['Type',()=>[
     {t:'Font',sub:()=>fontItems(),en:txHas},{t:'Size',sub:()=>[6,8,9,10,11,12,14,18,21,24,30,36,48,60,72].map(n=>({t:String(n),f:()=>setTxSize(n),en:txHas}))},sep,
     {t:'Area Type Options…',f:()=>openToolOpts(txObjs().some(o=>o.g.querySelector('text[data-vert]'))?'vat':'at'),en:hasArea},
@@ -8463,7 +8544,7 @@ P.addEventListener('click',e=>{const b=e.target.closest('button[data-pf]');if(!b
 function pfRefresh(){if(P.style.display==='none')return;const L=pfList(),ok=L.length>=2&&L.every(pfOK);
   P.querySelectorAll('button[data-pf]').forEach(b=>{const k=b.dataset.pf;b.disabled=k==='expand'?!L.some(pfExpandable):k==='outline'?!(L.length>=1&&L.every(pfOK)):!ok})}
 DK.reg('pathfinder','Pathfinder',PNI('<rect x="3" y="3" width="11" height="11"/><rect x="10" y="10" width="11" height="11"/>'),P,{dw:300,open:()=>{P.style.display='block';pfRefresh()},close:()=>{P.style.display='none'},refresh:pfRefresh});
-window.pfOp=pfOp;
+window.pfOp=pfOp;window.pfExpandable=pfExpandable;
 
 /* ======================= Opacity masks (SVG mask, luminosity) ======================= */
 const MNS='http://www.w3.org/2000/svg';let OPN=0;const OPID=new WeakMap();
@@ -8815,6 +8896,96 @@ window.openKeyboardShortcuts=()=>{if(document.querySelector('.fxm.ksm0'))return;
     e.stopPropagation()};
   addEventListener('keydown',kd,true);document.body.appendChild(bg);draw()};
 addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.altKey&&e.shiftKey&&e.code==='KeyK'){e.preventDefault();e.stopImmediatePropagation();window.openKeyboardShortcuts()}},true);
+})();
+</script>
+<script>
+/* ===================== Object menu dialogs: Transform Each, Offset Path, Simplify, Clean Up, Split Into Grid, Expand ===================== */
+(()=>{
+const css=document.createElement('style');css.textContent='.oug{display:grid;grid-template-columns:auto 1fr;gap:6px 10px;align-items:center}.oug h5{grid-column:1/3;margin:6px 0 0;font-size:12px;color:var(--mute)}.oug input[type=number]{width:80px}.oui{margin-top:6px;color:var(--mute)}.oux{display:flex;gap:14px;flex-wrap:wrap}';document.head.appendChild(css);
+const selected=()=>[...sel].filter(o=>pick(o));
+const snapAll=L=>L.map(o=>({o,h:o.g.innerHTML,m:{...o.m}}));
+const restore=A=>A.forEach(a=>{a.o.g.innerHTML=a.h;a.o.m={...a.m};a.o.bb=BBX(a.o);apply(a.o)});
+const num=(box,k,d)=>{const v=parseFloat(box.querySelector('[data-k="'+k+'"]').value);return isFinite(v)?v:d};
+const chkv=(box,k)=>box.querySelector('[data-k="'+k+'"]').checked;
+const msg=t=>{try{tb5Msg(t)}catch(_){}};
+const mul32=a=>()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+/* ---- Transform Each ---- */
+window.openTransformEach=()=>{const L=selected();if(!L.length)return;const old=snapAll(L),seed=(Math.random()*1e9)|0;
+  const REFS=[['tl','Top left',0,0],['t','Top',.5,0],['tr','Top right',1,0],['l','Left',0,.5],['c','Center',.5,.5],['r','Right',1,.5],['bl','Bottom left',0,1],['b','Bottom',.5,1],['br','Bottom right',1,1]];
+  const body='<div class="oug"><h5>Scale</h5><label>Horizontal</label><span><input type="number" data-k="sx" value="100" step="1"> %</span><label>Vertical</label><span><input type="number" data-k="sy" value="100" step="1"> %</span>'+
+   '<h5>Move</h5><label>Horizontal</label><span><input type="number" data-k="mx" value="0" step="1"> px</span><label>Vertical</label><span><input type="number" data-k="my" value="0" step="1"> px</span>'+
+   '<h5>Rotate</h5><label>Angle</label><span><input type="number" data-k="ang" value="0" step="1"> °</span>'+
+   '<h5>Options</h5><label>Reference point</label><select data-k="ref">'+REFS.map(r=>'<option value="'+r[0]+'"'+(r[0]==='c'?' selected':'')+'>'+r[1]+'</option>').join('')+'</select>'+
+   '<label>Reflect</label><span class="oux"><label><input type="checkbox" data-k="rx"> X</label><label><input type="checkbox" data-k="ry"> Y</label></span><label></label><label><input type="checkbox" data-k="rand"> Random</label></div><label class="fxp"><input type="checkbox" id="oupv" data-k="pv" checked> Preview</label>';
+  const read=box=>({sx:num(box,'sx',100),sy:num(box,'sy',100),mx:num(box,'mx',0),my:num(box,'my',0),ang:num(box,'ang',0),ref:box.querySelector('[data-k="ref"]').value,rx:chkv(box,'rx'),ry:chkv(box,'ry'),rand:chkv(box,'rand')});
+  const go=(P,copy)=>{const R=mul32(seed),rf=REFS.find(r=>r[0]===P.ref)||REFS[4];let T=L;
+    if(copy){T=L.map(o=>{const n=OP.clone(o);objs.splice(objs.indexOf(o)+1,0,n);return n})}
+    T.forEach(t=>{const b=wbox(t),ox=b.x+rf[2]*b.w,oy=b.y+rf[3]*b.h,r=P.rand?R():1,fx=P.rand?R():1,fy=P.rand?R():1,fa=P.rand?R():1;
+      const sx=(100+(P.sx-100)*r)/100*(P.rx?-1:1),sy=(100+(P.sy-100)*r)/100*(P.ry?-1:1),mx=P.mx*fx,my=P.my*fy,a=-P.ang*fa*Math.PI/180;
+      const S=[sx,0,0,sy,ox-sx*ox,oy-sy*oy],Rt=rotAff(a,ox,oy),A=mulAff([1,0,0,1,mx,my],mulAff(Rt,S));bakeAffine(t,A)});
+    if(copy){layer.replaceChildren(...objs.map(q=>q.g));sel=new Set(T)}};
+  const prev=box=>{restore(old);if(box.querySelector('#oupv').checked)go(read(box),false);draw()};
+  const M=dkModal('Transform Each',body,[{t:'Cancel',c:1,f:()=>{restore(old);draw()}},{t:'Copy',f:box=>{restore(old);go(read(box),true);commit();draw()}},{t:'OK',p:1,f:box=>{restore(old);go(read(box),false);commit();draw()}}]);
+  M.box.addEventListener('input',()=>prev(M.box));M.box.addEventListener('change',()=>prev(M.box));M.box.querySelector('input').focus()};
+/* ---- Offset Path (new path next to the original) ---- */
+window.openOffsetPath=()=>{const L=selected().filter(o=>!isGroup(o)&&!isText(o));if(!L.length){msg('Offset Path: select a path or a shape');return}let copies=[];
+  const body='<div class="oug"><label>Offset</label><span><input type="number" data-k="d" value="10" step="1"> px</span><label>Joins</label><select data-k="join"><option value="miter">Miter</option><option value="round">Round</option><option value="bevel">Bevel</option></select><label>Miter limit</label><span><input type="number" data-k="ml" value="4" min="1" step="0.5"></span></div><label class="fxp"><input type="checkbox" id="oupv" data-k="pv" checked> Preview</label>';
+  const clear=()=>{copies.forEach(c=>{const i=objs.indexOf(c);if(i>=0)objs.splice(i,1);c.g.remove()});copies=[]};
+  const go=box=>{clear();const P={d:num(box,'d',10),join:box.querySelector('[data-k="join"]').value,ml:Math.max(1,num(box,'ml',4))};L.forEach(o=>{const n=OP.offsetCopy(o,P);if(n)copies.push(n)});layer.replaceChildren(...objs.map(q=>q.g))};
+  const prev=box=>{clear();if(box.querySelector('#oupv').checked)go(box);layer.replaceChildren(...objs.map(q=>q.g));draw()};
+  const M=dkModal('Offset Path',body,[{t:'Cancel',c:1,f:()=>{clear();layer.replaceChildren(...objs.map(q=>q.g));draw()}},{t:'OK',p:1,f:box=>{go(box);sel=new Set(copies);commit();draw()}}]);
+  M.box.addEventListener('input',()=>prev(M.box));M.box.addEventListener('change',()=>prev(M.box));prev(M.box);M.box.querySelector('input').focus()};
+/* ---- Simplify ---- */
+window.openSimplify=()=>{const L=selected().filter(o=>!isGroup(o)&&!isText(o));if(!L.length){msg('Simplify: select a path');return}const old=snapAll(L);let orig=[];L.forEach(o=>{normalizeObj(o);ensurePath(o);eps(o).forEach(pe=>orig.push(pe.getAttribute('d')))});
+  const body='<div class="oug"><label>Simplify Curve</label><span><input type="range" data-k="prec" min="0" max="100" value="50"> <b data-o="precv">50</b>%</span><label>Corner Point Angle Threshold</label><span><input type="range" data-k="ang" min="0" max="180" value="90"> <b data-o="angv">90</b>°</span><label></label><label><input type="checkbox" data-k="straight"> Convert to Straight Lines</label><label></label><label><input type="checkbox" data-k="show"> Show Original Path</label></div><div class="oui" data-o="info"></div><label class="fxp"><input type="checkbox" id="oupv" data-k="pv" checked> Preview</label>';
+  const read=box=>({prec:num(box,'prec',50),ang:num(box,'ang',90),straight:chkv(box,'straight')});
+  const showOrig=on=>{peng.replaceChildren(...(on?orig.map(d=>el('path',{d,fill:'none',stroke:'#808080','stroke-width':1/z,'pointer-events':'none'})):[]))};
+  const info=box=>{let b=0,a=0;const P=read(box);L.forEach(o=>{const c=OP.simplifyCount(o,P);b+=c.before;a+=c.after});box.querySelector('[data-o="info"]').textContent='Original: '+b+' points   New: '+a+' points';box.querySelector('[data-o="precv"]').textContent=P.prec;box.querySelector('[data-o="angv"]').textContent=P.ang};
+  const prev=box=>{restore(old);L.forEach(o=>{normalizeObj(o)});info(box);if(box.querySelector('#oupv').checked)L.forEach(o=>OP.simplify(o,read(box)));showOrig(chkv(box,'show'));draw()};
+  const M=dkModal('Simplify',body,[{t:'Cancel',c:1,f:()=>{restore(old);showOrig(false);draw()}},{t:'OK',p:1,f:box=>{restore(old);L.forEach(o=>OP.simplify(o,read(box)));showOrig(false);commit();draw()}}]);
+  M.box.addEventListener('input',()=>prev(M.box));M.box.addEventListener('change',()=>prev(M.box));prev(M.box)};
+/* ---- Clean Up ---- */
+window.openCleanUp=()=>{const body='<div class="oug" style="grid-template-columns:1fr"><label><input type="checkbox" data-k="stray" checked> Stray Points</label><label><input type="checkbox" data-k="unpainted" checked> Unpainted Objects</label><label><input type="checkbox" data-k="emptyText" checked> Empty Text Paths</label></div><div class="oui" data-o="info"></div>';
+  const O=box=>({stray:chkv(box,'stray'),unpainted:chkv(box,'unpainted'),emptyText:chkv(box,'emptyText')});
+  const info=box=>{const r=OP.cleanFind(O(box));box.querySelector('[data-o="info"]').textContent=(r.stray.length+r.unpainted.length+r.emptyText.length)+' object(s) will be deleted'};
+  const M=dkModal('Clean Up',body,[{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{const n=OP.clean(O(box));if(n){commit();draw()}msg(n?n+' object(s) deleted':'Nothing to clean up')}}]);
+  M.box.addEventListener('change',()=>info(M.box));info(M.box)};
+/* ---- Split Into Grid ---- */
+window.openSplitGrid=()=>{const L=selected().filter(o=>!isGroup(o)&&!isText(o));if(L.length!==1){msg('Split Into Grid: select one path or shape');return}const o=L[0],b=OP.box(o),old=snapAll([o]);let made=null;if(!b){msg('Split Into Grid: select one path or shape');return}
+  const body='<div class="oug"><h5>Rows</h5><label>Number</label><input type="number" data-k="rows" value="2" min="1" max="100"><label>Height</label><span><input type="number" data-k="rh" step="0.1"> px</span><label>Gutter</label><span><input type="number" data-k="rg" value="0" min="0" step="0.1"> px</span><label>Total</label><span><input type="number" data-k="rt" value="'+(+b.h.toFixed(3))+'" step="0.1"> px</span>'+
+   '<h5>Columns</h5><label>Number</label><input type="number" data-k="cols" value="2" min="1" max="100"><label>Width</label><span><input type="number" data-k="cw" step="0.1"> px</span><label>Gutter</label><span><input type="number" data-k="cg" value="0" min="0" step="0.1"> px</span><label>Total</label><span><input type="number" data-k="ct" value="'+(+b.w.toFixed(3))+'" step="0.1"> px</span>'+
+   '<label></label><label><input type="checkbox" data-k="guides"> Add Guides</label></div><label class="fxp"><input type="checkbox" id="oupv" data-k="pv" checked> Preview</label>';
+  const f=(box,k)=>box.querySelector('[data-k="'+k+'"]'),setv=(box,k,v)=>{const e=f(box,k);if(document.activeElement!==e)e.value=+(+v).toFixed(3)};
+  const recalc=(box,from)=>{for(const [n,h,g,t] of [['rows','rh','rg','rt'],['cols','cw','cg','ct']]){const N=Math.max(1,Math.round(num(box,n,1))),G=Math.max(0,num(box,g,0));
+      if(from===h)setv(box,t,num(box,h,0)*N+G*(N-1));else setv(box,h,(num(box,t,0)-G*(N-1))/N)}};
+  const G=box=>({rows:Math.max(1,Math.round(num(box,'rows',2))),cols:Math.max(1,Math.round(num(box,'cols',2))),rg:Math.max(0,num(box,'rg',0)),cg:Math.max(0,num(box,'cg',0)),rt:num(box,'rt',b.h),ct:num(box,'ct',b.w)});
+  const apply_=box=>{const g=G(box);const B={...b};/* the grid keeps the object's top-left corner and takes the Total sizes */const T=OP.grid(o,{rows:g.rows,cols:g.cols,rg:g.rg,cg:g.cg,total:[g.ct,g.rt]});return T};
+  const prev=box=>{restore(old);if(made){made.forEach(n=>{const i=objs.indexOf(n);if(i>=0)objs.splice(i,1);n.g.remove()});made=null}if(!objs.includes(o)){objs.splice(Math.min(old.idx||objs.length,objs.length),0,o);layer.appendChild(o.g)}
+    if(box.querySelector('#oupv').checked){made=apply_(box)}layer.replaceChildren(...objs.map(q=>q.g));draw()};
+  const idx=objs.indexOf(o);old.idx=idx;
+  const M=dkModal('Split Into Grid',body,[{t:'Cancel',c:1,f:()=>{if(made){made.forEach(n=>{const i=objs.indexOf(n);if(i>=0)objs.splice(i,1);n.g.remove()});made=null}if(!objs.includes(o))objs.splice(Math.min(idx,objs.length),0,o);restore(old);layer.replaceChildren(...objs.map(q=>q.g));draw()}},
+    {t:'OK',p:1,f:box=>{if(made){made.forEach(n=>{const i=objs.indexOf(n);if(i>=0)objs.splice(i,1);n.g.remove()});made=null}if(!objs.includes(o))objs.splice(Math.min(idx,objs.length),0,o);restore(old);const g=G(box),T=OP.grid(o,{rows:g.rows,cols:g.cols,rg:g.rg,cg:g.cg,total:[g.ct,g.rt]});
+      if(T&&chkv(box,'guides')){const rhh=(g.rt-g.rg*(g.rows-1))/g.rows,cww=(g.ct-g.cg*(g.cols-1))/g.cols;for(let r=0;r<g.rows;r++){gdOne('h',b.y+r*(rhh+g.rg));gdOne('h',b.y+r*(rhh+g.rg)+rhh)}for(let c=0;c<g.cols;c++){gdOne('v',b.x+c*(cww+g.cg));gdOne('v',b.x+c*(cww+g.cg)+cww)}if(typeof gdDraw==='function')gdDraw()}
+      layer.replaceChildren(...objs.map(q=>q.g));if(T){sel=new Set(T);commit()}draw()}}]);
+  const rcAll=(box,from)=>{recalc(box,from)};recalc(M.box,'rt');recalc(M.box,'ct');
+  M.box.addEventListener('input',e=>{const k=e.target.dataset.k;recalc(M.box,(k==='rh'||k==='cw')?k:'rt');prev(M.box)});
+  prev(M.box)};
+/* ---- Expand ---- */
+window.openExpand=()=>{const L=selected();if(!L.length)return;const body='<div class="oug" style="grid-template-columns:1fr"><label><input type="checkbox" data-k="obj" checked> Object</label><label><input type="checkbox" data-k="fill" checked> Fill</label><label><input type="checkbox" data-k="stroke" checked> Stroke</label><label>Gradient: Specify <input type="number" data-k="steps" value="255" min="2" max="255" style="width:70px"> steps</label></div>';
+  dkModal('Expand',body,[{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{const o_=chkv(box,'obj'),fl=chkv(box,'fill'),st=chkv(box,'stroke'),N=num(box,'steps',255);let ch=false;
+    if(o_){const k=window.pfOp&&window.pfExpandable&&[...sel].some(x=>window.pfExpandable(x));if(k){ch=window.pfOp('expand')||ch}}
+    const out=[];[...sel].forEach(o=>{let cur=[o];
+      if(fl){const R=OP.expandGradient(o,N);if(R){cur=R;ch=true}}
+      if(st)cur.forEach(c=>{if(OP.outlineStroke(c))ch=true});out.push(...cur)});
+    layer.replaceChildren(...objs.map(q=>q.g));sel=new Set(out.filter(q=>objs.includes(q)));if(ch)commit();draw();if(!ch)msg('Expand: nothing to expand')}}])};
+/* ---- simple commands ---- */
+window.resetBounding=()=>{const L=selected();if(!L.length)return;L.forEach(o=>{delete o.g.dataset.rot});try{SELROT=null}catch(_){}draw()};
+window.sendToCurrentLayer=()=>{const L=selected();if(L.length&&window.lySendToCurrent)window.lySendToCurrent(L)};
+const each=(fn,label)=>{const L=selected().filter(o=>!isGroup(o)&&!isText(o));if(!L.length){msg(label+': select a path or a shape');return}let ch=false;L.forEach(o=>{if(fn(o))ch=true});if(ch){commit();draw()}else msg(label+': nothing changed')};
+window.pathReverse=()=>each(o=>OP.reverse(o),'Reverse Path Direction');window.pathAddAnchors=()=>each(o=>OP.addAnchors(o),'Add Anchor Points');window.pathPixel=()=>each(o=>OP.pixel(o),'Make Pixel Perfect');
+window.pathDivideBelow=()=>{const L=selected();if(L.length!==1){msg('Divide Objects Below: select one closed path');return}const R=OP.divideBelow(L[0]);if(R){sel=new Set(R);commit();draw()}else msg('Divide Objects Below: nothing below the selected closed path')};
+window.createTrimMarks=()=>{const L=selected(),b=L.length?uni(L):{x:0,y:0,w:800,h:600},o=OP.trimMarks(b);sel=new Set([o]);commit();draw()};
+addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||(typeof ted_s!=='undefined'&&ted_s))return;if((e.ctrlKey||e.metaKey)&&e.altKey&&e.shiftKey&&e.code==='KeyD'){e.preventDefault();e.stopImmediatePropagation();window.openTransformEach()}},true);
 })();
 </script>
 </body>
