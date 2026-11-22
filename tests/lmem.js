@@ -1,0 +1,14 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(5000);
+await pg.click('.tb .tt:text-is("Layers")');
+await H.key('m');await H.drag(100,100,160,160);await H.drag(200,100,260,160);await H.key('v');await pg.keyboard.press('Control+a');await pg.keyboard.press('Control+g');await pg.waitForTimeout(200);
+const rows=()=>pg.evaluate(()=>[...document.querySelectorAll('#lyl .lyr')].map(r=>r.dataset.k+':'+r.querySelector('.nm').textContent+(r.classList.contains('sel')?'^':'')));
+console.log('rows',JSON.stringify(await rows()));
+await pg.evaluate(()=>{const g=[...document.querySelectorAll('#lyl .lyr.O')][0];const a=g.querySelector('.ar');a&&a.click()});await pg.waitForTimeout(150);
+const r1=await rows();console.log('expanded',JSON.stringify(r1));
+const m=pg.locator('#lyl .lyr.C .nm').first();await m.click();await pg.waitForTimeout(300);
+const s=await pg.evaluate(()=>({sel:sel.size,iso:!!ISO,w:(b=>b.w)(wbox([...sel][0]))}));
+chk('Clicking a member row selects the MEMBER (width 60, not the 160 group)',s.sel===1&&Math.abs(s.w-60)<2,s);
+await pg.keyboard.press('Escape');await pg.waitForTimeout(200);const g=await pg.evaluate(()=>({n:objs.length,iso:!!ISO}));chk('Esc leaves isolation; the group is intact (1 object)',g.n===1&&!g.iso,g);
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();

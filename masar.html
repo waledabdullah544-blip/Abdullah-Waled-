@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 171</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 172</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -7509,7 +7509,7 @@ P.addEventListener('click',e=>{if(lySup){lySup=false;return}const b=e.target.clo
     if(b&&b.classList.contains('ey')){m.style.display=m.style.display==='none'?'':'none';commitAll();return}
     if(b&&b.classList.contains('ar')){if(LYGX.has(key))LYGX.delete(key);else LYGX.add(key);lySig='';refresh();return}
     if(b&&b.classList.contains('tg')){lyMember(id,row.dataset.p);return}
-    if(SQ()&&!e.shiftKey&&!e.ctrlKey&&!e.metaKey){lyMember(id,row.dataset.p);return}
+    if(!e.shiftKey&&!e.ctrlKey&&!e.metaKey){if(lyMember(id,row.dataset.p))return}/* a member row selects that member itself (Illustrator), not its group */
     const top=objs.find(x=>oid(x)===id);if(top){LYK='O';LYCUR=key;setSel([top],false)}return}
   if(b&&b.classList.contains('ey')){if(k==='L'){if(e.ctrlKey||e.metaKey){if(e.altKey){const oth=LAYERS.filter(x=>x.id!==id),all=oth.every(x=>x.prv===false);oth.forEach(x=>x.prv=all?true:false)}else l.prv=l.prv===false?true:false}else if(e.altKey){const solo=LAYERS.every(x=>x.id===id||!x.vis)&&l.vis;LAYERS.forEach(x=>{x.vis=solo?true:x.id===id})}else l.vis=!l.vis;lyApply();sel=new Set([...sel].filter(pick));commitAll()}
     else{o.g.style.display=o.g.style.display==='none'?'':'none';if(o.g.style.display==='none')o.lh=0;sel=new Set([...sel].filter(pick));commitAll()}return}
