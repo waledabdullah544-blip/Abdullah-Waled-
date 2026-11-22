@@ -242,3 +242,9 @@
 - اتشال حقل الكتابة؛ بقى في زر بحث (عدسة) في الفوتر: حدد عنصر واضغط عليه ← اللير يتفتح والصف يظهر ويومّض (ظاهر حتى لو جوه جروب/لير مقفول/القايمة طويلة). الزر رمادي لو مفيش تحديد. Filter اتنقل للفوتر.
 - Alt+click على اسم لير يحدد كل شغله؛ Alt+drag للير ينسخه بشغله.
 - tests/layers4.js
+
+## 5-ق) Build 204 — إكمال ناقص الـLayers
+- **Save Selection** زر في فوتر Layers (يفتح نفس ديالوج Select › Save Selection).
+- **Collect for Export**: زر في الفوتر + Object › Collect for Export (As Single Asset / As Multiple Assets) + لوحة جديدة **Asset Export** (Window): قايمة الأصول بمصغّرات، إعادة تسمية بدبل-كليك، Scale (0.5x–4x) وFormat (PNG/JPEG/WebP/SVG) لكل أصل، Export All / Export…، Remove. التصدير حقيقي (يرسم SVG على canvas ← ملف، اسمه `name@2x.jpg`). الحالة محفوظة في الأوبجكت (`data-ax`) فتعدّي على Undo/Copy/الملف.
+- **Locate Layer** لما Show Layers Only شغال (الزر بيتغير اسمه ويومّض صف الـLayer).
+- ملحوظة: لوحة Asset Export فيها تبويب Assets فقط (تبويب Artboards بيستنى الـmulti-Artboard). tests/layers5.js (12 فحص).
