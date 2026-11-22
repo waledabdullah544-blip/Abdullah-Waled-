@@ -15,6 +15,9 @@ Owner: Abdullah Walid (Egyptian Arabic speaker, graphic designer). Talk to him i
 - App UI colours = measured Illustrator UI colours (Dark default; Medium Dark/Medium Light/Light derived). UI accent #1473E6, canvas selection #4F80FF, 27 Illustrator layer colours. Toggle buttons are plain grey (never blue). Do not tint the UI with the logo colours except the Layers selected row = logo blue #123E78.
 - Logo (final, from the owner's Canva PDF): rounded tile #123E78 + gold Eye of Horus #F0C374 with pen-anchor motif, no white background. Used in control bar (30x30), favicon, apple-touch-icon, About.
 
+- **Every NEW tool/panel added** must match Illustrator 100% (behaviour, cursors, modifiers, shortcut, options dialog on double-click/Enter) AND ship with its tooltip help card (entry in `TIPS`: name, shortcut, description, mouse/modifier hints, like Illustrator's tool tip) plus `TNAME`/`HINT` status-bar text. A tool without its help card is not done.
+- Phase plan and gap list: see `MASAR_AUDIT.md` (Phase A = audit existing tools first, then B…K).
+
 ## Architecture cheat-sheet
 - Canvas `#cv` / `#world` / `#layer` / `#selg`; objects in `objs[]` as `{g,bb,m}`; helpers `commit()/snap()/restore()`, `setTool`, `info()` (selection/control-bar refresh), `wbox`/`fitAll`, `aiAlert`, `DK` (dock system: DK.reg, DK.reset), `SGON` (smart guides), `LYC`/`LCN` (layer colours).
 - Theme: CSS variables (`--bg --panel --field --line --ai --sel --on --on2 --on3 …`), Preferences > User Interface (4 themes), stored in localStorage `masar.ui.v1` (always try/catch).
