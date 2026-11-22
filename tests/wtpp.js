@@ -1,0 +1,13 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(6000);
+await H.key('\\');await H.drag(300,300,600,300);
+await pg.evaluate(()=>{const p=objs[0].g.querySelector('path');p.setAttribute('stroke','#000');p.setAttribute('stroke-width','10');sel=new Set([objs[0]]);draw();const k=Object.keys(DK).filter(x=>/open|show/i.test(x));window.__k=k;try{DK.open('properties')}catch(e){}prRefresh()});
+const vis=()=>pg.evaluate(()=>{const w=document.getElementById('prWpr');return w&&w.style.display!=='none'});
+chk('hidden for a plain stroke with Selection tool',!(await vis()),await pg.evaluate('window.__k'));
+await pg.keyboard.press('Shift+w');await pg.waitForTimeout(150);chk('shown while Width tool is active',await vis(),null);
+await pg.evaluate(()=>{const s=document.getElementById('prwp');s.value='p1';s.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(150);
+chk('choosing a profile applies it',await pg.evaluate(()=>objs[0].g.querySelector('path:not([data-sao])').getAttribute('data-wp'))==='p1',null);
+await pg.keyboard.press('v');await pg.waitForTimeout(150);chk('stays visible for a path with a profile',await vis(),null);
+await pg.evaluate(()=>{const s=document.getElementById('prwp');s.value='';s.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(150);chk('Uniform removes it and hides the row',!(await vis()),null);
+console.log(res.join('\n'),H.errs);await H.b.close()})();

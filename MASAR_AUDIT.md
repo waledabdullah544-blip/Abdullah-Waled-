@@ -213,3 +213,4 @@
 - كارت شرح + كيرسر + سطر الحالة + اختصار Shift+W في Keyboard Shortcuts. الأداة أول عنصر في فلاي-أوت Width/Warp.
 - Build 196: أزرار Add to Profiles / Delete Profile في Stroke › Profile (البروفايلات المحفوظة في localStorage وبتتطبق على أي مسار)، وFlip Along/Across شغالين على النقاط المخصصة. Width Tool Options: ما اتأكدش من أدوبي إنه موجود فمااتعملش (مش هنحط ديالوج وهمي).
 - اختبار: `tests/wt.js` (21 فحص ناجح).
+- Build 197: قايمة Width Profile في Properties panel (بتظهر مع أداة Width أو مسار عليه بروفايل) — بنفس البروفايلات المحفوظة.

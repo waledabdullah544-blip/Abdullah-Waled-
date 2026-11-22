@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 196</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 197</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8069,6 +8069,7 @@ P.innerHTML='<div id="prNone"><div class="pt" style="margin-top:0">Document</div
  '<div class="pt">Appearance</div>'+
  '<div class="pap"><i class="pai" id="prFi"></i><span class="pal">Fill</span><button type="button" class="pb prchip" id="prF" title="Fill"></button></div>'+
  '<div class="pap"><i class="pai" id="prSi"></i><span class="pal">Stroke</span><button type="button" class="pb prchip" id="prS" title="Stroke"></button>'+unitIn('prsw','px','0.5','0')+'</div>'+
+ '<div class="pap" id="prWpr" style="display:none"><span class="pal">Width Profile</span><select id="prwp" class="prfxs" style="flex:1;min-width:0" title="Width Profile" aria-label="Width Profile"></select></div>'+
  '<div class="pap"><span class="pal">Opacity</span>'+unitIn('prop','%','1','0','100')+'<select id="prFxa" class="prfxs" title="Add Effect (fx)" aria-label="Add Effect"><option value="">fx</option><option value="ds">Drop Shadow…</option><option value="ig">Inner Glow…</option><option value="og">Outer Glow…</option><option value="gb">Gaussian Blur…</option><option value="fe">Feather…</option></select></div>'+
  '<div id="prFxl"></div>'+
  '<div id="prTxt"><div class="pt">Type</div><div class="pr"><select id="prff" style="flex:1;min-width:0"></select><input id="prfs" type="number" min="1" step="1" style="width:60px"></div><div class="pr">'+tg('prCh','Character…')+tg('prPa','Paragraph…')+'</div></div>'+
@@ -8085,6 +8086,9 @@ function refresh(){if(P.style.display==='none')return;const L=T();vis('#prNone',
   setv('#prr',(Math.round(-rotOf(L[0])*180/Math.PI*100)/100)||0);
   const S=styleOf(L[0])||{fill:'none',stroke:'none',sw:0,op:100};const f=$p('#prF'),s=$p('#prS');f.style.background=S.fill==='none'?'':hexOf(S.fill);f.classList.toggle('none',S.fill==='none');s.style.background='';s.style.boxShadow=S.stroke==='none'?'':'inset 0 0 0 3px '+hexOf(S.stroke);s.classList.toggle('none',S.stroke==='none');
   setv('#prsw',S.sw);setv('#prop',S.op);
+  {const f1=fillables(L[0])[0],cw=f1&&f1.getAttribute('data-wpts'),pw=f1&&f1.getAttribute('data-wp'),show=S.stroke!=='none'&&(tool==='wt'||!!cw||!!pw),w=$p('#prWpr');w.style.display=show?'':'none';
+    if(show){const sl=$p('#prwp'),W=window.STWP||{},UPl=window.stProfiles?stProfiles():[];let v=pw||'';if(cw&&!pw){v='__c';try{const key=a=>a.map(q=>[+q[0].toFixed(3),+q[1].toFixed(3),+q[2].toFixed(3)]).join(';'),cur=key(JSON.parse(cw)),i=UPl.findIndex(u=>key(u.pts)===cur);if(i>=0)v='u:'+i}catch(_){}}
+      sl.innerHTML='<option value="">Uniform</option>'+(v==='__c'?'<option value="__c">Custom</option>':'')+Object.keys(W).map(k=>'<option value="'+k+'">'+W[k][0]+'</option>').join('')+(UPl.length?'<optgroup label="Saved profiles">'+UPl.map((u,i)=>'<option value="u:'+i+'">'+u.name.replace(/</g,'&lt;')+'</option>').join('')+'</optgroup>':'');sl.value=v}}
   {const f0=fillables(L[0])[0]||document.createElementNS(NS,'g'),gf=gradOf(f0,'data-grad'),gs=gradOf(f0,'data-grads'),fi=$p('#prFi'),si=$p('#prSi');fi.classList.toggle('none',S.fill==='none'&&!gf);fi.style.background=gf?gradCss(gf):(S.fill==='none'?'':hexOf(S.fill));si.classList.toggle('none',S.stroke==='none'&&!gs);si.style.background=gs?gradCss(gs):'';si.style.boxShadow=(S.stroke==='none'||gs)?'':'inset 0 0 0 4px '+(/^#/.test(S.stroke)?hexOf(S.stroke):'#888')+',inset 0 0 0 5px #fff'}
   const FX=window.fxList?fxList(L[0]):[];$p('#prFxl').innerHTML=FX.map((x,i)=>'<div class="pr prfx" data-i="'+i+'"><span style="flex:1;cursor:pointer" title="Click to edit">'+fxName(x)+'</span><button type="button" class="pb" data-del="'+i+'" title="Remove effect" style="min-width:20px;height:20px;padding:0">×</button></div>').join('');
   const tx=L.every(isText);vis('#prTxt',tx);if(tx){const t0=L[0].g.querySelector('text'),ff=$p('#prff'),src=$('#ff');if(ff.options.length!==src.options.length)ff.innerHTML=src.innerHTML;if(document.activeElement!==ff)ff.value=src.value;setv('#prfs',$('#fs').value)}
@@ -8099,6 +8103,7 @@ function box(chg){const L=T();if(!L.length)return;const u=uni(L);let x=parseFloa
 $p('#prLk').addEventListener('click',()=>{LINK=!LINK;$p('#prLk').classList.toggle('on',LINK)});
 $p('#prr').addEventListener('change',()=>{const L=T();if(!L.length)return;const nv=parseFloat($p('#prr').value);if(isNaN(nv))return;const cur=-rotOf(L[0])*180/Math.PI,d=(nv-cur)*Math.PI/180;if(Math.abs(d)<1e-9)return;
   const u=uni(L);xfSel(rotAff(-d,u.x+REF[0]*u.w,u.y+REF[1]*u.h),false);refresh()});
+$p('#prwp').addEventListener('change',()=>{const v=$p('#prwp').value;if(v==='__c')return;const sp=document.getElementById('stPf');if(!sp)return;sp.value=v;sp.dispatchEvent(new Event('change',{bubbles:true}));refresh()});
 $p('#prsw').addEventListener('change',()=>{const v=parseFloat($p('#prsw').value);if(v>=0)applyStyle({sw:v},true)});
 $p('#prop').addEventListener('change',()=>{const v=parseFloat($p('#prop').value);if(v>=0&&v<=100)applyStyle({op:v},true)});
 $p('#prF').addEventListener('click',e=>openSw('fill',e.currentTarget));$p('#prS').addEventListener('click',e=>openSw('stroke',e.currentTarget));
@@ -9333,7 +9338,7 @@ function wtDialog(h,adj0){const pe=h.pe,o=h.o,hb=h.hb||wtHB(pe);let A=wtGet(pe),
 addTool({id:'wt',name:'Width Tool',key:'Shift+W',svg:'<path d="M3 12h4c2 0 3-6 5-6s3 6 5 6h4"/><path d="M3 12h4c2 0 3 6 5 6s3-6 5-6h4" opacity=".55"/>',after:'sh',
   hint:'Width · drag on a stroke to widen it · Alt+drag: one side only · Shift+click: select more width points · Delete: remove · double-click: Width Point Edit',
   cursor:'<path d="M6 12h12M9 8l-3 4 3 4M15 8l3 4-3 4"/>',
-  enter:()=>{WT.cur=null;wtDraw()},leave:()=>{peng.replaceChildren()},
+  enter:()=>{WT.cur=null;wtDraw();window.prRefresh&&prRefresh()},leave:()=>{peng.replaceChildren();window.prRefresh&&setTimeout(prRefresh,0)},
   card:{d:'Creates strokes of variable width and saves them as profiles that you can reapply to other paths',m:['Drag on a stroke: a width point is created and the stroke widens (or narrows) symmetrically','Alt+drag a handle: change one side only (non-uniform)','Drag the diamond: move the width point along the path — Alt+drag copies it, Shift+drag moves all selected points','Shift+click: select several width points · Delete: remove the selected points','Double-click a width point: Width Point Edit (Side 1 / Side 2 / Adjust Adjoining Width Points; Shift+double-click ticks it)','Stroke panel › Profile: Uniform removes the variable width; Weight scales all width points'],
     demo:A=>'<path d="M30 64H230" stroke="#8E6CEF" stroke-width="8" stroke-linecap="round" fill="none"/><path fill="#8E6CEF">'+A.A('d','M30 60H230V68H30Z;M30 60H100C115 60 125 44 130 44S145 60 160 60H230V68H160C145 68 135 84 130 84S115 68 100 68H30Z;M30 60H100C115 60 125 44 130 44S145 60 160 60H230V68H160C145 68 135 84 130 84S115 68 100 68H30Z;M30 60H230V68H30Z','0;.4;.9;1')+'</path><g>'+A.MV('130 64;130 44;130 44;130 64','0;.4;.9;1')+A.CUR('#111')+'</g>'}});
 {let hit=null,mode=null,bk=null,mv=false,dup=false;
