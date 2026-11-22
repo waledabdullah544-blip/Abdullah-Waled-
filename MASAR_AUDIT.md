@@ -211,5 +211,5 @@
 - **اتعملت:** Width Tool كاملة: drag على الاستروك يعمل width point متماثل، Alt+drag جنب واحد، سحب المقبض يغيّر العرض، سحب الـ diamond يحرّك النقطة على المسار (Alt = نسخ، Shift = تحريك المحدد كله)، Shift+click تحديد أكتر من نقطة، Delete يمسح، double-click يفتح Width Point Edit (Side 1 / Side 2 / Total / Adjust Adjoining Width Points، Shift+double-click يفعّل الخيار).
 - النقاط متخزنة في `data-wpts` كنسب من نص عرض الاستروك → تغيير Weight بيكبّرها كلها؛ Stroke › Profile بيعرض "Custom" و"Uniform" بيمسحها؛ بتشتغل على المسارات المقفولة والمفتوحة وعلى شكل Rect/Ellipse (بيتحول لمسار) وعلى أكتر من subpath.
 - كارت شرح + كيرسر + سطر الحالة + اختصار Shift+W في Keyboard Shortcuts. الأداة أول عنصر في فلاي-أوت Width/Warp.
-- لسه ناقص من نفس الأداة: حفظ Profile مخصص في قائمة Profile وفلاي (Add to Profiles)، Width Tool Options.
+- Build 196: أزرار Add to Profiles / Delete Profile في Stroke › Profile (البروفايلات المحفوظة في localStorage وبتتطبق على أي مسار)، وFlip Along/Across شغالين على النقاط المخصصة. Width Tool Options: ما اتأكدش من أدوبي إنه موجود فمااتعملش (مش هنحط ديالوج وهمي).
 - اختبار: `tests/wt.js` (21 فحص ناجح).

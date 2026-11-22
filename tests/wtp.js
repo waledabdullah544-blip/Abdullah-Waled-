@@ -1,0 +1,15 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(6000);const run=async(n,f)=>{try{await f()}catch(e){chk(n+' (threw)',false,String(e).slice(0,300))}};
+const mk=async(i)=>{await pg.evaluate(()=>{});};
+await run('profiles',async()=>{await H.key('\\');await H.drag(300,300,600,300);await H.key('\\');await H.drag(300,400,600,400);
+ await pg.evaluate(()=>{objs.forEach(o=>{const p=o.g.querySelector('path');p.setAttribute('stroke','#000');p.setAttribute('stroke-width','10')});objs[0].g.querySelector('path').setAttribute('data-wpts','[[0.3,3,1,0,"a"],[0.7,1,3,0,"b"]]');sel=new Set([objs[0]]);draw();DK.open('stroke');stRefresh()});
+ await pg.click('#stPfa');await pg.waitForTimeout(200);chk('dialog opens',/Profile Name/.test(await pg.evaluate(()=>document.querySelector('.fxb').innerText)),null);
+ await pg.fill('.fxb input[data-k="n"]','Mine');await pg.click('.fxb button.pri');await pg.waitForTimeout(200);
+ chk('saved + selected',await pg.evaluate(()=>document.getElementById('stPf').value)==='u:0',await pg.evaluate(()=>document.getElementById('stPf').value));
+ await pg.evaluate(()=>{sel=new Set([objs[1]]);draw();stRefresh();const s=document.getElementById('stPf');s.value='u:0';s.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(200);
+ const w=await pg.evaluate(()=>objs[1].g.querySelector('path:not([data-sao])').getAttribute('data-wpts'));chk('applied to another path',w&&JSON.parse(w).length===2,w);
+ await pg.click('#stPfx');await pg.waitForTimeout(100);const f=JSON.parse(await pg.evaluate(()=>objs[1].g.querySelector('path:not([data-sao])').getAttribute('data-wpts')));chk('Flip Across swaps sides',f[0][1]===1&&f[0][2]===3,f);
+ await pg.evaluate(()=>{stRefresh();const s=document.getElementById('stPf');s.value='u:0';s.dispatchEvent(new Event('change',{bubbles:true}));stRefresh()});await pg.click('#stPfd');await pg.waitForTimeout(150);
+ chk('Delete Profile removes it and the points',await pg.evaluate(()=>stProfiles().length)===0&&!(await pg.evaluate(()=>objs[1].g.querySelector('path:not([data-sao])').getAttribute('data-wpts'))),null)});
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();
