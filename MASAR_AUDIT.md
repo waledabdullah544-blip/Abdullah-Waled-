@@ -127,6 +127,7 @@
 
 ## 5-د) نتائج التدقيق العميق (Layers / Color / Text) — build 166
 **Layers — اتصلّح:** Ctrl+click على العين = Outline/Preview للـ layer (أيقونة العين بتتحول لبؤبؤ مفرغ)؛ Alt+Ctrl+click = Outline Others؛ Alt+click على القفل = قفل/فتح باقي الـ layers؛ عناوين القائمة بتتبدل (Show All / Unlock All / Preview All)؛ Outline Others؛ Release to Layers (Sequence/Build) [اسم الـ sublayers غير موثّق عند Adobe → "Layer N"]. 
+**Layers — build 167:** زرار العدسة (Locate Object) بيشتغل من غير كتابة اسم: حدد العنصر واضغط العدسة فيظهر ويتحدد في القايمة (بيفتح الـ layer المقفولة)، ولو محدد أكتر من عنصر بيظهر الأعلى ترتيباً (حسب Adobe).
 **Layers — لسه:** Paste Remembers Layers، Panel Options (حجم الصفوف)، تأكيد الحذف عند حذف layer فيها artwork (مش مؤكد من Adobe). 
 **Layers — شغّال ومطابق:** New Layer/Sublayer، اللون الافتراضي الثاني Red، الطبقة النشطة، العين وAlt للـ solo، القفل، Layer Options (كل الحقول: Name/Color(27)/Template/Lock/Show/Print/Preview/Dim Images)، السحب لنقل object وإعادة ترتيب layers، Duplicate، Template، Target circle، Search، قايمة البانل.
 **Color — شغّال ومطابق:** Color panel (RGB/HSB/CMYK/Grayscale/Web Safe، شرائط الـ sliders، Hex، Spectrum، None/White/Black)، Invert وComplement (أرقام صحيحة)، X/Shift+X/D//، Swatches (أسماء Illustrator الافتراضية).

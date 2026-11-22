@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 166</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 167</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -7322,7 +7322,8 @@ const LI=d=>'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke=
 const P=document.createElement('div');P.id='lyp';P.className='dkpn';P.style.display='none';document.body.appendChild(P);
 P.innerHTML='<div class="lyl" id="lyl"></div><div id="lyind"></div><div class="lyf"><span id="lycnt"></span><label class="lysr" title="Search layers by name">'+LI('<circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/>')+'<input id="lySrch" type="text" aria-label="Search layers" autocomplete="off"><button type="button" class="lyx" id="lyClr" title="Clear search (Esc)" aria-label="Clear search" style="display:none">&times;</button></label><button type="button" class="lyi" id="lyLoc" title="Locate Object" aria-label="Locate Object">'+LI('<circle cx="8" cy="8" r="4"/><path d="M8 1.5v3M8 11.5v3M1.5 8h3M11.5 8h3"/>')+'</button><button type="button" class="lyi" id="lyClip" title="Make / Release Clipping Mask" aria-label="Make / Release Clipping Mask">'+LI('<rect x="2" y="2" width="8" height="8"/><circle cx="10" cy="10" r="4"/>')+'</button><button type="button" class="lyi" id="lySub" title="Create New Sublayer (Alt+click: options)" aria-label="Create New Sublayer">'+LI('<path d="M3 2h6l3 3v9H3z"/><path d="M9 2v3h3"/><path d="M6 10.5h4M8 8.5v4"/>')+'</button><button type="button" class="lyi" id="lyNew" title="Create New Layer (Alt+click: Layer Options)" aria-label="Create New Layer">'+LI('<path d="M3 2h6l3 3v9H3z"/><path d="M9 2v3h3"/>')+'</button><button type="button" class="lyi" id="lyDel" title="Delete Selection" aria-label="Delete Selection">'+LI('<path d="M3 4.5h10M6 4.5V3h4v1.5M4.5 4.5l.7 9h5.6l.7-9"/>')+'</button><button type="button" class="lyi" id="lyMenu" title="Layers panel menu" aria-label="Layers panel menu">&#9776;</button></div>';
 const LS=P.querySelector('#lyl');let LYK='L',lySig='',lyEdit=null,lyDrag=null,lySup=false;
-const SRCH=P.querySelector('#lySrch'),SQ=()=>((SRCH&&SRCH.value)||'').trim().toLowerCase();
+const SRCH=P.querySelector('#lySrch');{const mg=P.querySelector('.lysr svg');if(mg){mg.style.cursor='pointer';mg.title='Locate Object (select an object, then click: it is shown in the panel)';mg.addEventListener('click',e=>{if(!SRCH.value.trim()&&sel.size){e.preventDefault();e.stopPropagation();setTimeout(()=>window.lyLocate&&window.lyLocate(),0)}})}}
+const SQ=()=>((SRCH&&SRCH.value)||'').trim().toLowerCase();
 const hl=s=>{s=String(s);const q=SQ();if(!q)return esc(s);const lo=s.toLowerCase();let o='',i=0,k;while((k=lo.indexOf(q,i))>=0){o+=esc(s.slice(i,k))+'<mark class="lymk">'+esc(s.slice(k,k+q.length))+'</mark>';i=k+q.length}return o+esc(s.slice(i))};
 function lyClrSync(){const c=P.querySelector('#lyClr');if(c)c.style.display=SRCH.value?'':'none'}
 function lyClear(){if(!SRCH.value)return;SRCH.value='';lyClrSync();lySig='';refresh()}
@@ -7465,7 +7466,7 @@ function flattenArt(){let t=lyBy(LAYACT)||LAYERS[0];while(t.par)t=lyBy(t.par);if
   if(LAYERS.length<2&&!hid.length)return false;
   if(hid.length)dkModal('Flatten Artwork','Hidden artwork exists. Discard the hidden artwork?',[{t:'Cancel',c:1},{t:'No',f:()=>{go(false)}},{t:'Yes',p:1,f:()=>{go(true)}}]);else go(false);return true}
 function reverseOrder(){const L=objs.filter(o=>sel.has(o));if(L.length<2)return false;const idx=L.map(o=>objs.indexOf(o)),R=L.slice().reverse();idx.forEach((i,k)=>{objs[i]=R[k]});layer.replaceChildren(...objs.map(q=>q.g));commitAll();return true}
-function locate(){const o=[...sel][0];if(!o)return;let l=lyBy(o.ly);while(l){LYCL.delete(l.id);l=lyBy(l.par)}lySig='';refresh();const r=LS.querySelector('.lyr.sel');if(r)r.scrollIntoView({block:'nearest'})}
+function locate(){const o=[...sel].sort((a,b)=>objs.indexOf(b)-objs.indexOf(a))[0];if(!o)return;if(SRCH&&SRCH.value){SRCH.value='';lySig=''}let l=lyBy(o.ly);while(l){LYCL.delete(l.id);l=lyBy(l.par)}lySig='';refresh();const r=LS.querySelector('.lyr.sel');if(r)r.scrollIntoView({block:'nearest'})}
 /* Release to Layers (Sequence / Build): every object of the target layer goes to its own sublayer; Build keeps adding the earlier objects (duplicates) to the following layers */
 function releaseLayers(build){const t=lyBy(LAYACT)||LAYERS[0];if(!t)return;const O=objsOf(t.id);if(O.length<2){tb5Msg('Select a layer with at least two objects');return}
   const L=O.map((o,i)=>{const id=++lyId,l={id,name:'Layer '+(++lyN),color:LYC[(id-1)%LYC.length],vis:true,lock:false,par:t.id,at:i};LAYERS.push(l);return l});
@@ -7538,7 +7539,7 @@ document.addEventListener('pointerup',()=>{if(!lyDrag)return;const d=lyDrag;lyDr
   if(ok){lySig='';commitAll()}});
 /* ---- registration ---- */
 DK.reg('layers','Layers','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 12.5l9 5 9-5"/><path d="M3 16.5l9 5 9-5"/></svg>',P,{dw:300,dh:300,menu:()=>lyMenuList().map(x=>x?{t:esc(x[0]),f:x[1],en:x[2]!==false,c:!!x[3]}:{sep:1}),open:()=>{P.style.display='block';lySig='';refresh()},close:()=>{P.style.display='none'},refresh});
-window.lyRefresh=()=>{lySig='';refresh()};window.lyNewLayer=newLayer;window.lyDelLayer=delLayer;
+window.lyLocate=()=>locate();window.lyRefresh=()=>{lySig='';refresh()};window.lyNewLayer=newLayer;window.lyDelLayer=delLayer;
 })();
 
 /* ---------------------------------------------------------------- Align (Shift+F7) ---------------------------------------------------------------- */
