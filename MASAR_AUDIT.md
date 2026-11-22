@@ -125,6 +125,15 @@
 
 **لسه ما اتختبرش:** Blob Brush, Paintbrush+Brushes, Curvature, Add/Delete Anchor/Anchor Point, Shaper, Smooth/Path Eraser/Join, Knife, Eraser, Free Transform, Arc/Spiral/Grids, Flare, Touch Type/Area Type, Align, Pathfinder, Layers (drag/search), Appearance, Swatches/Color, Stroke options, Transparency, Smart Guides، Isolation Mode، Clipping Mask، Effects.
 
+## 5-د) نتائج التدقيق العميق (Layers / Color / Text) — build 166
+**Layers — اتصلّح:** Ctrl+click على العين = Outline/Preview للـ layer (أيقونة العين بتتحول لبؤبؤ مفرغ)؛ Alt+Ctrl+click = Outline Others؛ Alt+click على القفل = قفل/فتح باقي الـ layers؛ عناوين القائمة بتتبدل (Show All / Unlock All / Preview All)؛ Outline Others؛ Release to Layers (Sequence/Build) [اسم الـ sublayers غير موثّق عند Adobe → "Layer N"]. 
+**Layers — لسه:** Paste Remembers Layers، Panel Options (حجم الصفوف)، تأكيد الحذف عند حذف layer فيها artwork (مش مؤكد من Adobe). 
+**Layers — شغّال ومطابق:** New Layer/Sublayer، اللون الافتراضي الثاني Red، الطبقة النشطة، العين وAlt للـ solo، القفل، Layer Options (كل الحقول: Name/Color(27)/Template/Lock/Show/Print/Preview/Dim Images)، السحب لنقل object وإعادة ترتيب layers، Duplicate، Template، Target circle، Search، قايمة البانل.
+**Color — شغّال ومطابق:** Color panel (RGB/HSB/CMYK/Grayscale/Web Safe، شرائط الـ sliders، Hex، Spectrum، None/White/Black)، Invert وComplement (أرقام صحيحة)، X/Shift+X/D//، Swatches (أسماء Illustrator الافتراضية).
+**Color — ناقص/مختلف:** **Color Picker dialog (دبل كليك على Fill/Stroke) غير موجود**؛ تحويل CMYK تقريبي (Illustrator بيستخدم ICC profile → مش هيتطابق رقمياً)؛ Web Safe RGB مش واضح تأثيره؛ Gradient panel؛ Document Color Mode (RGB/CMYK).
+**Text — شغّال ومطابق:** Placeholder عند الضغط والسحب، Area vs Point، Character panel (الحجم)، Ctrl+Shift+> / <، Alt+←→ (tracking)، Alt+↑↓ (leading)، Paragraph panel (7 محاذاة + اختصاراتها Ctrl+Shift+L/C/R/J/F)، Esc/Ctrl+Enter.
+**Text — ناقص:** قايمة Type شبه فاضية (فيها Threaded Text وCreate Outlines فقط): ناقص Font, Size, Glyphs, Area Type Options, Type on a Path Options, Change Case, Fill With Placeholder Text, Show Hidden Characters (Ctrl+Alt+I), Smart Punctuation, Optical Margin Alignment, Type Orientation, Find Font؛ Preferences > Type؛ Character/Paragraph Styles؛ OpenType/Glyphs panels.
+
 ## 5-ج) تخصيص الواجهة (مقارنة بـ Illustrator)
 **موجود وشغال (اتختبر بماوس حقيقي):** سحب تاب بانل لليسار/اليمين/عايم، دمج بانلز كتابات، إغلاق/فتح من Window، حفظ التخطيط بعد reload، Workspaces (Essentials, Essentials Classic, Typography, Painting) + New Workspace + Reset، Edit Toolbar، Toolbar عمودين/عمود، Tab/Shift+Tab، 4 ثيمات.
 **ناقص:** Keyboard Shortcuts editor (Ctrl+Alt+Shift+K) — تخصيص الاختصارات؛ Workspaces الجاهزة الباقية (3D, Automation, Layout, Motion, Printing, Tracing, Web…)؛ قايمة إظهار/إخفاء عناصر الـ Control bar؛ Control bar overflow menu؛ UI Scale في Preferences؛ تخصيص قوائم السياق/البانل.

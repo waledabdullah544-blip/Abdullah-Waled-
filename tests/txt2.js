@@ -1,0 +1,17 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(4000);const run=async(n,f)=>{try{await f()}catch(e){chk(n+' (threw)',false,String(e).slice(0,170))}};
+const T=()=>pg.evaluate(()=>{const o=objs[objs.length-1];const t=o&&o.g.querySelector('text');return t?{raw:t.getAttribute('data-raw'),fs:+t.getAttribute('font-size'),kind:t.getAttribute('data-kind'),anchor:t.getAttribute('text-anchor')}:null});
+await run('placeholder',async()=>{await H.key('t');await H.click(200,200);const ted=await pg.evaluate(()=>{const e=document.getElementById('ted');return e?e.value:null});chk('Click with Type tool: placeholder text inserted & selected (Illustrator default)',/lorem/i.test(ted||''),ted);await pg.keyboard.type('Hello');await H.key('Escape');const t=await T();chk('Typing replaces the selected placeholder',t&&t.raw==='Hello',t)});
+await H.reset();
+await run('dragarea',async()=>{await H.key('t');await H.drag(100,300,300,380);const ted=await pg.evaluate(()=>{const e=document.getElementById('ted');return e?e.value:null});const t=await T();chk('Drag with Type tool creates AREA type',t&&t.kind==='ar'||t&&t.kind==='area'||(t&&t.kind!=='pt'),t);console.log('area type kind:',t&&t.kind,'placeholder:',(ted||'').slice(0,30));await H.key('Escape')});
+await H.reset();
+await run('size',async()=>{await H.key('t');await H.click(200,200);await pg.keyboard.type('Hello World');await H.key('Escape');await pg.keyboard.press('Control+t');await pg.waitForTimeout(300);
+ await pg.fill('#chsz','24');await pg.press('#chsz','Enter');await pg.waitForTimeout(150);const t=await T();chk('Character panel: size 24 applies to selected text object',t&&t.fs===24,t)});
+await run('inc',async()=>{await H.key('t');const b=await pg.evaluate(()=>{const t=objs[objs.length-1].g.querySelector('text').getBoundingClientRect();return{x:t.left+10,y:t.top+t.height/2}});await pg.mouse.click(b.x,b.y);await pg.waitForTimeout(200);await pg.keyboard.press('Control+a');
+ await pg.keyboard.press('Control+Shift+.');await pg.waitForTimeout(150);let t=await T();console.log('after Ctrl+Shift+> font-size',t&&t.fs);chk('Ctrl+Shift+> increases font size (Illustrator: +2pt)',t&&t.fs>24,t);
+ await pg.keyboard.press('Control+Shift+,');await pg.waitForTimeout(150);t=await T();chk('Ctrl+Shift+< decreases it back',t&&t.fs===24,t);
+ await pg.keyboard.press('Control+b');await pg.waitForTimeout(100);await H.key('Escape')});
+await run('align',async()=>{await pg.keyboard.press('Control+Shift+c');await pg.waitForTimeout(150);const t=await T();console.log('after Ctrl+Shift+C anchor:',t&&t.anchor,'(centered point text uses middle)')});
+await run('menu',async()=>{const items=await pg.evaluate(()=>{const m=window.MENUS;return null});});
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();

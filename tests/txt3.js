@@ -1,0 +1,14 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(4000);const run=async(n,f)=>{try{await f()}catch(e){chk(n+' (threw)',false,String(e).slice(0,170))}};
+const A=()=>pg.evaluate(()=>{const t=objs[objs.length-1].g.querySelector('text');return{trk:t.getAttribute('data-trk'),lead:t.getAttribute('data-lead'),b:t.getAttribute('font-weight'),i:t.getAttribute('font-style'),ul:t.getAttribute('data-ul'),caps:t.getAttribute('data-caps'),al:(objs[objs.length-1].g.querySelector('text').closest('g')||{}).dataset?.pa||null,html:t.outerHTML.slice(0,200)}});
+await H.key('t');await H.click(200,200);await pg.keyboard.type('Hello World Hello World');await pg.keyboard.press('Control+a');
+await run('tracking',async()=>{await pg.keyboard.press('Alt+ArrowRight');await pg.waitForTimeout(100);await pg.keyboard.press('Escape');const a=await A();chk('Alt+Right increases tracking/kerning (data-trk or kern)',!!(a.trk||/kern/.test(a.html)),a)});
+await H.key('t');await pg.evaluate(()=>{});
+await run('leading',async()=>{const b=await pg.evaluate(()=>{const t=objs[objs.length-1].g.querySelector('text').getBoundingClientRect();return{x:t.left+8,y:t.top+t.height/2}});await pg.mouse.click(b.x,b.y);await pg.waitForTimeout(200);await pg.keyboard.press('Control+a');await pg.keyboard.press('Alt+ArrowDown');await pg.waitForTimeout(100);await pg.keyboard.press('Escape');const a=await A();chk('Alt+Down increases leading',!!a.lead,a)});
+await run('bold',async()=>{const b=await pg.evaluate(()=>{const t=objs[objs.length-1].g.querySelector('text').getBoundingClientRect();return{x:t.left+8,y:t.top+t.height/2}});await H.key('t');await pg.mouse.click(b.x,b.y);await pg.waitForTimeout(200);await pg.keyboard.press('Control+a');await pg.keyboard.press('Control+Shift+b');await pg.waitForTimeout(100);await pg.keyboard.press('Escape');const a=await A();console.log('Ctrl+Shift+B result',a.b,'(Illustrator: Ctrl+Shift+B = bold? NO - Illustrator has no default bold shortcut)')});
+// Paragraph panel
+await run('para',async()=>{await H.key('v');await pg.keyboard.press('Control+Alt+t');await pg.waitForTimeout(400);const ids=await pg.evaluate(()=>[...document.querySelectorAll('#pap button,#pap input,#pap select')].map(e=>e.id||e.title||e.getAttribute('data-a')||e.textContent.trim()).slice(0,40));console.log('Paragraph controls:',JSON.stringify(ids))});
+// Type menu items
+await run('typemenu',async()=>{const items=await pg.evaluate(()=>{const b=[...document.querySelectorAll('#mbar button')].find(x=>x.textContent.trim()==='Type');b.click();return [...document.querySelectorAll('.mdd button, .msub button')].filter(x=>x.offsetParent).map(x=>x.textContent.trim())});console.log('TYPE MENU:',JSON.stringify(items));await pg.keyboard.press('Escape')});
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();

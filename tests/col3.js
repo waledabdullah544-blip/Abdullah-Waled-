@@ -1,0 +1,18 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(4000);
+const run=async(n,f)=>{try{await f()}catch(e){chk(n+' (threw)',false,String(e).slice(0,170))}};
+await H.key('m');await H.drag(300,200,420,280);await H.key('v');
+await pg.evaluate(()=>{wsApply('Essentials Classic')});await pg.waitForTimeout(400);
+const fill=()=>pg.evaluate(()=>{const o=[...sel][0];if(!o)return null;const e=o.g.querySelector('path,rect,ellipse');return{f:e.getAttribute('fill'),s:e.getAttribute('stroke'),sw:e.getAttribute('stroke-width')}});
+await run('hex',async()=>{await pg.fill('#clhex','FF8800');await pg.press('#clhex','Enter');await pg.waitForTimeout(120);const f=await fill();chk('Hex field FF8800 applies to fill',/ff8800/i.test(f.f),f)});
+await run('sliders',async()=>{const inp=pg.locator('#clsl input[type=number], #clsl input').first();await inp.fill('10');await inp.press('Enter');await pg.waitForTimeout(100);const f=await fill();chk('R field = 10 changes fill red channel',/#0a/i.test(f.f),f)});
+await run('spectrum',async()=>{const b=await pg.locator('#clsp').boundingBox();await pg.mouse.click(b.x+b.width*0.5,b.y+b.height*0.5);await pg.waitForTimeout(100);const f=await fill();chk('Click on color spectrum sets a fill',f&&f.f&&f.f.startsWith('#'),f)});
+await run('none',async()=>{await pg.click('#clN');await pg.waitForTimeout(80);const f=await fill();chk('None button sets fill none',f.f==='none',f)});
+await run('white/black',async()=>{await pg.click('#clK');await pg.waitForTimeout(80);let f=await fill();chk('Black button sets fill black',/000000|#000/i.test(f.f),f);await pg.click('#clW');await pg.waitForTimeout(80);f=await fill();chk('White button sets fill white',/ffffff|#fff/i.test(f.f),f)});
+await run('swap',async()=>{await pg.fill('#clhex','FF0000');await pg.press('#clhex','Enter');const b=await fill();await H.pg.keyboard.press('Shift+X');await pg.waitForTimeout(100);const a=await fill();chk('Shift+X swaps fill and stroke',a.f===b.s&&a.s===b.f,{b,a})});
+await run('default',async()=>{await H.key('d');await pg.waitForTimeout(100);const f=await fill();chk('D = default colors (white fill, black stroke)',/fff/i.test(f.f)&&/000/i.test(f.s),f)});
+await run('slash',async()=>{await H.key('/');await pg.waitForTimeout(100);const f=await fill();chk('/ sets none on the active (fill) box',f.f==='none',f)});
+await run('modes',async()=>{const t=await pg.evaluate(()=>{const m=document.getElementById('clm');return m?m.outerHTML.slice(0,160):'none'});console.log('mode control:',t);
+ const menu=await pg.evaluate(()=>{const btns=[...document.querySelectorAll('.tbm,.tb .m,[title="Panel menu"],.tb button')].map(b=>b.title||b.textContent.trim()).slice(0,12);return btns});console.log('panel header buttons:',JSON.stringify(menu))});
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();
