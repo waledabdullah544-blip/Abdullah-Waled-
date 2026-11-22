@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 194</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 195</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -7884,7 +7884,7 @@ P.innerHTML='<div class="str"><span class="stl">Weight:</span><input id="stw" ty
  '<div class="str"><span class="stl">Arrowheads:</span><button type="button" class="pb ddb ard" id="stAs" title="Start of path arrowhead"></button><button type="button" class="pb" id="stAsw" title="Swap Start and End Arrowheads"><svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 3.5h11M9.5 1l2.5 2.5L9.5 6M13 8.5H2M4.5 6L2 8.5 4.5 11"/></svg></button><button type="button" class="pb ddb ard" id="stAe" title="End of path arrowhead"></button></div>'+
  '<div class="str"><span class="stl">Scale:</span><input id="stSs" type="number" min="1" max="1000" step="1" value="100" class="swf1" title="Scale of the start arrowhead (%)"><button type="button" class="pb" id="stSl" title="Link Start and End Arrowhead Scale"><svg width="14" height="12" viewBox="0 0 14 12" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M5.5 8.5h-1.8a2.5 2.5 0 0 1 0-5h1.8M8.5 3.5h1.8a2.5 2.5 0 0 1 0 5H8.5M4.5 6h5"/></svg></button><input id="stSe" type="number" min="1" max="1000" step="1" value="100" class="swf1" title="Scale of the end arrowhead (%)"></div>'+
  '<div class="str"><span class="stl">Align:</span><span class="stseg"><button type="button" class="pb" data-aral="tip" title="Extend arrow tip to the end of path">'+sv('<path d="M3 8h9" stroke-width="2"/><path d="M12 3l7 5-7 5z" fill="currentColor" stroke="none"/>')+'</button><button type="button" class="pb" data-aral="ext" title="Place arrow tip at end of path">'+sv('<path d="M3 8h4" stroke-width="2"/><path d="M9 3l10 5-10 5z" fill="currentColor" stroke="none"/>')+'</button></span></div>'+
- '<div class="str"><span class="stl">Profile:</span><select id="stPf" class="spf"><option value="">Uniform</option>'+Object.keys(WP).map(k=>'<option value="'+k+'">'+WP[k][0]+'</option>').join('')+'</select><button type="button" class="pb" id="stPfl" title="Flip Along"><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 6h14M3.5 3.5L1 6l2.5 2.5M12.5 3.5L15 6l-2.5 2.5"/></svg></button><button type="button" class="pb" id="stPfx" title="Flip Across"><svg width="12" height="16" viewBox="0 0 12 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 1v14M3.5 3.5L6 1l2.5 2.5M3.5 12.5L6 15l2.5-2.5"/></svg></button></div></div>';
+ '<div class="str"><span class="stl">Profile:</span><select id="stPf" class="spf"><option value="">Uniform</option><option value="__c" hidden>Custom (Width tool)</option>'+Object.keys(WP).map(k=>'<option value="'+k+'">'+WP[k][0]+'</option>').join('')+'</select><button type="button" class="pb" id="stPfl" title="Flip Along"><svg width="16" height="12" viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M1 6h14M3.5 3.5L1 6l2.5 2.5M12.5 3.5L15 6l-2.5 2.5"/></svg></button><button type="button" class="pb" id="stPfx" title="Flip Across"><svg width="12" height="16" viewBox="0 0 12 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 1v14M3.5 3.5L6 1l2.5 2.5M3.5 12.5L6 15l2.5-2.5"/></svg></button></div></div>';
 
 const $s=s=>P.querySelector(s),DV=()=>[...P.querySelectorAll('.stdv')];
 const T=()=>[...sel].filter(pick);
@@ -7932,7 +7932,7 @@ const scl=(which)=>{const sv_=parseFloat($s(which==='s'?'#stSs':'#stSe').value);
   const f=x=>{if(which==='s'||both)set(x,'data-arss',sv_);if(which==='e'||both)set(x,'data-ares',sv_)};
   if(!eachP(f)){if(which==='s'||both)setDef('arss',sv_);if(which==='e'||both)setDef('ares',sv_)}refresh(true)};
 $s('#stSs').addEventListener('change',()=>scl('s'));$s('#stSe').addEventListener('change',()=>scl('e'));
-$s('#stPf').addEventListener('change',()=>{setAttrAll('data-wp',$s('#stPf').value,'wp')});
+$s('#stPf').addEventListener('change',()=>{if($s('#stPf').value==='__c')return;setAttrAll('data-wpts','','wpts');setAttrAll('data-wp',$s('#stPf').value,'wp')});
 function refresh(force){if(P.style.display==='none')return;const L=T(),f=L.length?fillables(L[0])[0]:null,has=!!f,D=DEF.sx;
   P.querySelectorAll('button,#stml,#std,.stdv,input,select').forEach(x=>x.disabled=false);
   const S=L.length?styleOf(L[0]):{sw:DEF.stroke==='none'?0:DEF.sw};const w=$s('#stw');if(document.activeElement!==w)w.value=S.sw;
@@ -7949,7 +7949,7 @@ function refresh(force){if(P.style.display==='none')return;const L=T(),f=L.lengt
   const as=gv('data-ars','ars',''),ae=gv('data-are','are','');$s('#stAs').innerHTML=arrIcon(as,true);$s('#stAe').innerHTML=arrIcon(ae,false);
   const ss=$s('#stSs'),se=$s('#stSe');if(document.activeElement!==ss)ss.value=gv('data-arss','arss',100);if(document.activeElement!==se)se.value=gv('data-ares','ares',100);$s('#stSl').classList.toggle('on',LNK);
   const al=gv('data-aral','aral','')||'tip';P.querySelectorAll('[data-aral]').forEach(b=>b.classList.toggle('on',b.dataset.aral===al));
-  $s('#stPf').value=gv('data-wp','wp','');$s('#stPfx').classList.toggle('on',!!gv('data-wpx','wpx',''));$s('#stPfl').classList.toggle('on',!!gv('data-wpf','wpf',''));}
+  $s('#stPf').value=gv('data-wpts','wpts','')&&!gv('data-wp','wp','')?'__c':gv('data-wp','wp','');$s('#stPfx').classList.toggle('on',!!gv('data-wpx','wpx',''));$s('#stPfl').classList.toggle('on',!!gv('data-wpf','wpf',''));}
 const stOpts=(()=>{let v=true;try{if(localStorage.getItem('masar-stopts')==='0')v=false}catch(e){}return{v}})();P.classList.toggle('sho',!stOpts.v);
 $s('#stwm').addEventListener('click',e=>{const r=e.currentTarget.getBoundingClientRect();window.pmPopup&&window.pmPopup([0.25,0.5,0.75,1,2,3,5,10,25,50,100].map(v=>({t:v+' px',f:()=>{applyStyle({sw:v},true);refresh()}})),r.left,r.bottom+2)});
 const stMenu=()=>[{t:stOpts.v?'Hide Options':'Show Options',f:()=>{stOpts.v=!stOpts.v;P.classList.toggle('sho',!stOpts.v);try{localStorage.setItem('masar-stopts',stOpts.v?'1':'0')}catch(e){}}}];
@@ -7978,15 +7978,22 @@ function tanEnd(sp){const n=sp.pts.length,A=sp.pts[n-2],B=sp.pts[n-1],t=B.i||A.o
 function samples(sp){const P=sp.pts,n=P.length,cnt=sp.closed?n:n-1,out=[];
   for(let k=0;k<cnt;k++){const A=P[k],B=P[(k+1)%n],m=(A.o||B.i)?28:Math.max(2,Math.ceil(segLen(A,B)/6));for(let j=0;j<m;j++){const q=m>1?bez(A,B,j/m):[A.x,A.y];out.push(q)}}
   if(!sp.closed){const L=P[n-1];out.push([L.x,L.y])}return out}
-function profilePoly(sp,w,fn,flip,ls,across){const S=samples(sp),n=S.length;if(n<2)return'';const cum=[0];for(let i=1;i<n;i++)cum.push(cum[i-1]+Math.hypot(S[i][0]-S[i-1][0],S[i][1]-S[i-1][1]));
+function profilePoly(sp,w,fn,flip,ls,across,raw){const S=samples(sp),n=S.length;if(n<2)return'';const cum=[0];for(let i=1;i<n;i++)cum.push(cum[i-1]+Math.hypot(S[i][0]-S[i-1][0],S[i][1]-S[i-1][1]));
   const tot=cum[n-1]+(sp.closed?Math.hypot(S[0][0]-S[n-1][0],S[0][1]-S[n-1][1]):0)||1,Lft=[],Rgt=[];
   for(let i=0;i<n;i++){const a=S[sp.closed?(i+n-1)%n:Math.max(0,i-1)],b=S[sp.closed?(i+1)%n:Math.min(n-1,i+1)];let dx=b[0]-a[0],dy=b[1]-a[1];const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;
-    let t=cum[i]/tot;if(flip)t=1-t;if(sp.closed)t=Math.abs(2*t-1)<1e-9?1:(t<.5?2*t:2-2*t);const tt=Math.max(0,Math.min(1,t)),h2=w*fn(tt),lv0=ls?ls(tt):.5,lv=across?1-lv0:lv0,hl=h2*lv,hr=h2*(1-lv);Lft.push([S[i][0]-dy*hl,S[i][1]+dx*hl]);Rgt.push([S[i][0]+dy*hr,S[i][1]-dx*hr])}
+    let t=cum[i]/tot;if(flip)t=1-t;if(sp.closed&&!raw)t=Math.abs(2*t-1)<1e-9?1:(t<.5?2*t:2-2*t);const tt=Math.max(0,Math.min(1,t)),h2=w*fn(tt),lv0=ls?ls(tt):.5,lv=across?1-lv0:lv0,hl=h2*lv,hr=h2*(1-lv);Lft.push([S[i][0]-dy*hl,S[i][1]+dx*hl]);Rgt.push([S[i][0]+dy*hr,S[i][1]-dx*hr])}
   const D=a=>a.map((q,i)=>(i?'L':'M')+f3(q[0])+' '+f3(q[1])).join('');
   return sp.closed?D(Lft)+'Z'+D(Rgt.reverse())+'Z':D(Lft)+D(Rgt.reverse().map(q=>q)).replace(/^M/,'L')+'Z'}
 const num=(v,d)=>{const x=parseFloat(v);return isNaN(x)?d:x};
-function wantsOverlay(p){return p.hasAttribute('data-sa')||p.hasAttribute('data-ars')||p.hasAttribute('data-are')||p.hasAttribute('data-wp')}
-function sigOf(p){return['d','transform','stroke','stroke-width','stroke-linecap','stroke-linejoin','stroke-miterlimit','stroke-dasharray','data-sa','data-ars','data-are','data-arss','data-ares','data-aral','data-wp','data-wpf','data-wpx','fill-rule','opacity'].map(a=>p.getAttribute(a)||'').join('|')}
+/* custom width points: data-wpts = [[t,side1,side2],...] with t = arc-length fraction (0..1) of the first sub-path and the sides as multiples of the half stroke weight */
+function wptsOf(p){try{const a=JSON.parse(p.getAttribute('data-wpts')||'null');return Array.isArray(a)&&a.length?a.slice().sort((x,y)=>x[0]-y[0]):null}catch(_){return null}}
+function wptsFn(P,closed){const Q=P.map(q=>q.slice());if(!closed){if(Q[0][0]>1e-6)Q.unshift([0,1,1]);if(Q[Q.length-1][0]<1-1e-6)Q.push([1,1,1])}
+  else{const f=Q[0],l=Q[Q.length-1];if(f[0]>1e-6)Q.unshift([0,l[1],l[2]]);if(l[0]<1-1e-6)Q.push([1,f[1],f[2]])}
+  const at=(t,k)=>{if(t<=Q[0][0])return Q[0][k];for(let i=1;i<Q.length;i++)if(t<=Q[i][0]){const a=Q[i-1],b=Q[i],u=(t-a[0])/((b[0]-a[0])||1),s=u*u*(3-2*u);return a[k]+(b[k]-a[k])*s}return Q[Q.length-1][k]};
+  return{tot:t=>Math.max(.0001,at(t,1)+at(t,2)),left:t=>{const a=Math.max(0,at(t,1)),b=Math.max(0,at(t,2));return(a+b)>0?a/(a+b):.5}}}
+window.WPTS={of:wptsOf,fn:wptsFn};
+function wantsOverlay(p){return p.hasAttribute('data-sa')||p.hasAttribute('data-ars')||p.hasAttribute('data-are')||p.hasAttribute('data-wp')||p.hasAttribute('data-wpts')}
+function sigOf(p){return['d','transform','stroke','stroke-width','stroke-linecap','stroke-linejoin','stroke-miterlimit','stroke-dasharray','data-sa','data-ars','data-are','data-arss','data-ares','data-aral','data-wp','data-wpf','data-wpx','data-wpts','fill-rule','opacity'].map(a=>p.getAttribute(a)||'').join('|')}
 function buildFor(ob,p,idx){const S=getSP(p)||[],stk=p.getAttribute('stroke')||'none',w=num(p.getAttribute('stroke-width'),0),made=[];
   if(stk==='none'||!(w>0))return made;
   const sa=p.getAttribute('data-sa')||'',ars=arw(p.getAttribute('data-ars')),are=arw(p.getAttribute('data-are')),ss=num(p.getAttribute('data-arss'),100)/100,se=num(p.getAttribute('data-ares'),100)/100,ext=p.getAttribute('data-aral')==='ext';
@@ -7999,7 +8006,9 @@ function buildFor(ob,p,idx){const S=getSP(p)||[],stk=p.getAttribute('stroke')||'
     if(are){const sc=w*se,e=sp.pts[sp.pts.length-1];if(ext){h.push({a:are,sc,pos:[e.x,e.y],dir:tanEnd(sp),sh:are[2]*sc})}else{h.push({a:are,sc,pos:[e.x,e.y],dir:tanEnd(sp),sh:0});d1=are[2]*sc}}
     return{sp:(d0||d1)?trimSP(sp,d0,d1):sp,h}});
   const dStr=sps.map(x=>spD([x.sp])).join('');
-  if(wp){made.push(mk('path',{...base,d:sps.map(x=>profilePoly(x.sp,w,wp[1],flip,wp[2],!!p.getAttribute('data-wpx'))).join(''),fill:stk,stroke:'none','fill-rule':sps.some(x=>x.sp.closed)?'evenodd':'nonzero',...(op?{'fill-opacity':op}:{})}))}
+  const wpt=wptsOf(p);
+  if(wpt){const cl=sps.some(x=>x.sp.closed);made.push(mk('path',{...base,d:sps.map((x,si)=>{const Pq=wpt.filter(q=>(q[3]||0)===si);if(!Pq.length)return profilePoly(x.sp,w/2,()=>2,false,()=>.5,false,true);const F=wptsFn(Pq,x.sp.closed);return profilePoly(x.sp,w/2,F.tot,false,F.left,false,true)}).join(''),fill:stk,stroke:'none','fill-rule':cl?'evenodd':'nonzero',...(op?{'fill-opacity':op}:{})}))}
+  else if(wp){made.push(mk('path',{...base,d:sps.map(x=>profilePoly(x.sp,w,wp[1],flip,wp[2],!!p.getAttribute('data-wpx'))).join(''),fill:stk,stroke:'none','fill-rule':sps.some(x=>x.sp.closed)?'evenodd':'nonzero',...(op?{'fill-opacity':op}:{})}))}
   else{const a={...base,d:dStr,fill:'none',stroke:stk,'stroke-width':sa?w*2:w};['stroke-linecap','stroke-linejoin','stroke-miterlimit','stroke-dasharray'].forEach(k=>{const v=p.getAttribute(k);if(v)a[k]=v});if(op)a['stroke-opacity']=op;
     if(sa){const id='sac-'+oid(ob)+'-'+idx,md=document.getElementById('mdefs');let c=document.getElementById(id);if(c)c.remove();c=mk('clipPath',{id});
       const full=spD(S),cr=p.getAttribute('fill-rule')==='evenodd'||sa==='o'?'evenodd':'nonzero';
@@ -8010,7 +8019,7 @@ function buildFor(ob,p,idx){const S=getSP(p)||[],stk=p.getAttribute('stroke')||'
     const at=h.a[3]?{fill:'none',stroke:stk,'stroke-width':1,'stroke-linejoin':'miter','stroke-linecap':'butt'}:{fill:stk,stroke:'none'};if(op)at[h.a[3]?'stroke-opacity':'fill-opacity']=op;
     made.push(mk('path',{'data-sao':'a',d:h.a[1],transform:t2,...at}))}));
   return made}
-function saSync(ob){const g=ob.g;if(g.querySelector('rect[data-sa],ellipse[data-sa],rect[data-ars],ellipse[data-ars],rect[data-are],ellipse[data-are],rect[data-wp],ellipse[data-wp]'))ensurePath(ob);
+function saSync(ob){const g=ob.g;if(g.querySelector('rect[data-sa],ellipse[data-sa],rect[data-ars],ellipse[data-ars],rect[data-are],ellipse[data-are],rect[data-wp],ellipse[data-wp],rect[data-wpts],ellipse[data-wpts]'))ensurePath(ob);
   const mains=[...g.querySelectorAll('path:not([data-sao]):not([data-bo])')].filter(wantsOverlay),olds=[...g.querySelectorAll('[data-sao]')];
   if(!mains.length&&!olds.length)return;
   const sig=mains.map(sigOf).join('§'),haveClip=mains.every((p,i)=>!p.getAttribute('data-sa')||document.getElementById('sac-'+oid(ob)+'-'+i));
@@ -8024,7 +8033,7 @@ function saSync(ob){const g=ob.g;if(g.querySelector('rect[data-sa],ellipse[data-
     p.setAttribute('stroke-opacity','0');
     let at=p;mm.forEach(e=>{at.after(e);at=e;n++})});
   g.__sasig=mains.map(sigOf).join('§');g.__saN=n}
-function saAll(){const seen=new Set();layer.querySelectorAll('path[data-sa],path[data-ars],path[data-are],path[data-wp],rect[data-sa],ellipse[data-sa],rect[data-ars],ellipse[data-ars],rect[data-are],ellipse[data-are],rect[data-wp],ellipse[data-wp],[data-sao]').forEach(e=>{const g=e.closest('#layer>g');if(g&&g.__o&&!seen.has(g)){seen.add(g);try{saSync(g.__o)}catch(_){}}});
+function saAll(){const seen=new Set();layer.querySelectorAll('path[data-sa],path[data-ars],path[data-are],path[data-wp],path[data-wpts],rect[data-wpts],ellipse[data-wpts],rect[data-sa],ellipse[data-sa],rect[data-ars],ellipse[data-ars],rect[data-are],ellipse[data-are],rect[data-wp],ellipse[data-wp],[data-sao]').forEach(e=>{const g=e.closest('#layer>g');if(g&&g.__o&&!seen.has(g)){seen.add(g);try{saSync(g.__o)}catch(_){}}});
   const md=document.getElementById('mdefs');if(md){const used=new Set([...layer.querySelectorAll('[clip-path^="url(#sac-"]')].map(e=>e.getAttribute('clip-path').slice(5,-1)));md.querySelectorAll('clipPath[id^="sac-"]').forEach(c=>{if(!used.has(c.id))c.remove()})}}
 window.saSync=saSync;window.saAll=saAll;
 const _dr=draw;draw=function(){const r=_dr.apply(this,arguments);try{saAll()}catch(_){}return r};
@@ -8480,7 +8489,7 @@ const pfList=()=>objs.filter(o=>sel.has(o)&&pick(o));
 const pfOK=o=>!isText(o)&&!isGroup(o)&&!!o.g.querySelector('path,rect,ellipse');
 const delO=o=>{o.g.remove();const i=objs.indexOf(o);if(i>=0)objs.splice(i,1);sel.delete(o)};
 const cloneO=s=>{const g=s.g.cloneNode(true),n={g,bb:s.bb,m:{...s.m},ly:s.ly};g.__o=n;g.style.visibility='';return n};
-const noStroke=o=>{fillables(o).forEach(e=>{e.setAttribute('stroke','none');e.removeAttribute('data-grads');e.removeAttribute('stroke-dasharray');e.removeAttribute('data-sa');e.removeAttribute('data-ars');e.removeAttribute('data-are');e.removeAttribute('data-wp')});o.g.querySelectorAll('[data-sao]').forEach(e=>e.remove())};
+const noStroke=o=>{fillables(o).forEach(e=>{e.setAttribute('stroke','none');e.removeAttribute('data-grads');e.removeAttribute('stroke-dasharray');e.removeAttribute('data-sa');e.removeAttribute('data-ars');e.removeAttribute('data-are');e.removeAttribute('data-wp');e.removeAttribute('data-wpts')});o.g.querySelectorAll('[data-sao]').forEach(e=>e.remove())};
 function pfOp(kind){
   const L=pfList();
   if(kind==='expand')return pfExpand(L);
@@ -9250,7 +9259,103 @@ LQT.forEach((T,i)=>{TL.tools[T.id]={};const b=addTool({id:T.id,name:T.name,key:T
     up:(p,e,m)=>{clearInterval(tick);tick=null;if(mode==='size'){lqSave();peng.replaceChildren(lqRing(p));mode=null;return}if(D&&D.some(d=>d.had)){lqFinish(D);commit();draw()}else if(D){D.forEach(d=>{touch(d.o)});draw()}D=null;mode=null;peng.replaceChildren(lqRing(p))},
     esc:()=>{clearInterval(tick);tick=null;if(D){restoreLq(D)}D=null}});
   function restoreLq(D){D.forEach(d=>{d.pe.__sp=d.subs.map(s=>s.orig);writeSP(d.pe);d.o.bb=BBX(d.o);touch(d.o)});draw()}});
-addGroup({id:'wdBtn',lab:'Warp tools',t:['wa','tw','pu','bo','sca','cry','wri']});
+/* ---------- Width Tool (Shift+W) : variable-width strokes ----------
+   A width point = [t, side1, side2, subpath, id] stored in the path's data-wpts; t = arc-length fraction, the sides are multiples of the half stroke weight, so changing the
+   Stroke weight scales every width point (as in Illustrator). The renderer is the variable-width outline in the Stroke block (buildFor / wptsFn). */
+const WT={ids:new Set(),n:0,cur:null,adj:false};
+const wtId=()=>'w'+(++WT.n).toString(36)+Math.random().toString(36).slice(2,5);
+const wtGet=pe=>{try{const a=JSON.parse(pe.getAttribute('data-wpts')||'[]');return Array.isArray(a)?a.map(q=>[q[0],q[1],q[2],q[3]||0,q[4]||(q[4]=wtId())]):[]}catch(_){return[]}};
+const wtSet=(pe,A)=>{if(A.length){A.sort((x,y)=>x[3]-y[3]||x[0]-y[0]);pe.setAttribute('data-wpts',JSON.stringify(A.map(q=>[+q[0].toFixed(5),+q[1].toFixed(4),+q[2].toFixed(4),q[3],q[4]])));pe.removeAttribute('data-wp');pe.removeAttribute('data-wpf');pe.removeAttribute('data-wpx')}else pe.removeAttribute('data-wpts')};
+function wtGeom(pe){return(getSP(pe)||[]).map((sp,si)=>{const P=sp.pts,n=P.length,cnt=sp.closed?n:n-1,S=[];if(n<2)return{si,S:[],cum:[0],L:1,closed:sp.closed};
+  for(let k=0;k<cnt;k++){const A=P[k],B=P[(k+1)%n],m=(A.o||B.i)?40:Math.max(2,Math.ceil(Math.hypot(B.x-A.x,B.y-A.y)/8));for(let j=0;j<m;j++)S.push(m>1?bez(A,B,j/m):[A.x,A.y])}
+  S.push(sp.closed?S[0]:[P[n-1].x,P[n-1].y]);const cum=[0];for(let i=1;i<S.length;i++)cum.push(cum[i-1]+Math.hypot(S[i][0]-S[i-1][0],S[i][1]-S[i-1][1]));
+  return{si,S,cum,L:cum[cum.length-1]||1,closed:sp.closed}})}
+function wtAt(g,t){const S=g.S,c=g.cum;if(S.length<2)return null;const d=Math.max(0,Math.min(1,t))*g.L;let lo=0,hi=S.length-2;while(lo<hi){const m=(lo+hi+1)>>1;if(c[m]<=d)lo=m;else hi=m-1}
+  const a=S[lo],b=S[lo+1],l=(c[lo+1]-c[lo])||1,u=Math.max(0,Math.min(1,(d-c[lo])/l));let dx=b[0]-a[0],dy=b[1]-a[1];const k=Math.hypot(dx,dy)||1;dx/=k;dy/=k;return{x:a[0]+(b[0]-a[0])*u,y:a[1]+(b[1]-a[1])*u,dx,dy}}
+function wtNear(g,q){const S=g.S,c=g.cum;let best=null;for(let i=0;i<S.length-1;i++){const a=S[i],b=S[i+1],vx=b[0]-a[0],vy=b[1]-a[1],l2=vx*vx+vy*vy||1e-9;let u=((q[0]-a[0])*vx+(q[1]-a[1])*vy)/l2;u=Math.max(0,Math.min(1,u));const x=a[0]+vx*u,y=a[1]+vy*u,dd=Math.hypot(q[0]-x,q[1]-y);
+    if(!best||dd<best.dist){const k=Math.sqrt(l2);best={dist:dd,t:(c[i]+u*(c[i+1]-c[i]))/g.L,x,y,dx:vx/k,dy:vy/k}}}return best}
+/* interpolated side values of the stroke at t (what a new width point starts with) */
+function wtVal(A,si,closed,t){const P=A.filter(q=>q[3]===si);if(!P.length)return[1,1];const F=window.WPTS.fn(P,closed),tot=F.tot(t),l=F.left(t);return[tot*l,tot*(1-l)]}
+const wtCtm=pe=>{const m=pe.getScreenCTM();return m};
+const wtLoc=(pe,e)=>{const m=wtCtm(pe);if(!m)return null;const q=new DOMPoint(e.clientX,e.clientY).matrixTransform(m.inverse());return[q.x,q.y]};
+const wtScr=(pe,x,y)=>{const q=new DOMPoint(x,y).matrixTransform(wtCtm(pe));return[q.x,q.y]};
+const wtScale=pe=>{const m=wtCtm(pe);return m?Math.hypot(m.a,m.b)||1:1};
+const wtHB=pe=>(parseFloat(pe.getAttribute('stroke-width'))||0)/2;
+function wtPaths(o){if(!o||!o.g||isText(o))return[];return eps(o).filter(pe=>(pe.getAttribute('stroke')||'none')!=='none'&&(parseFloat(pe.getAttribute('stroke-width'))||0)>0&&(getSP(pe)||[]).some(sp=>sp.pts.length>1))}
+function wtObjs(e,prep){const L=new Set();[...sel].forEach(o=>L.add(o));const t=e&&e.target&&e.target.closest&&e.target.closest('#layer>g');if(t&&t.__o)L.add(t.__o);
+  const R=[];L.forEach(o=>{if(!o||!pick(o))return;if(prep&&!isGroup(o)&&!isText(o)&&o.g.querySelector('rect,ellipse,line,polygon,polyline')){try{normalizeObj(o);ensurePath(o)}catch(_){}}wtPaths(o).forEach(pe=>R.push({o,pe}))});return R}
+/* the handle (or path) under the pointer: {k:'s1'|'s2'|'c'|'path', ...} */
+function wtHit(e,prep){const C=wtObjs(e,prep);let best=null;
+  for(const c of C){const A=wtGet(c.pe),G=wtGeom(c.pe),hb=wtHB(c.pe),s=wtScale(c.pe);
+    for(const q of A){const g=G[q[3]];if(!g)continue;const P=wtAt(g,q[0]);if(!P)continue;const nx=-P.dy,ny=P.dx,c0=wtScr(c.pe,P.x,P.y),e1=wtScr(c.pe,P.x+nx*q[1]*hb,P.y+ny*q[1]*hb),e2=wtScr(c.pe,P.x-nx*q[2]*hb,P.y-ny*q[2]*hb);
+      const dc=Math.hypot(e.clientX-c0[0],e.clientY-c0[1]),d1=Math.hypot(e.clientX-e1[0],e.clientY-e1[1]),d2=Math.hypot(e.clientX-e2[0],e.clientY-e2[1]);
+      const ext1=Math.hypot(e1[0]-c0[0],e1[1]-c0[1])>7,ext2=Math.hypot(e2[0]-c0[0],e2[1]-c0[1])>7;
+      let k=null,d=1e9;if(ext1&&d1<=7){k='s1';d=d1}if(ext2&&d2<=7&&d2<d){k='s2';d=d2}if(dc<=7&&(k===null||dc<d-1.5||!(ext1||ext2))){k='c';d=dc}
+      if(k&&(!best||d<best.d))best={...c,k,q,P,A,G,g,hb,d}}}
+  if(best)return best;
+  for(const c of C){const G=wtGeom(c.pe),hb=wtHB(c.pe),s=wtScale(c.pe),loc=wtLoc(c.pe,e);if(!loc)continue;
+    for(const g of G){if(g.S.length<2)continue;const r=wtNear(g,loc),A=wtGet(c.pe),v=wtVal(A,g.si,g.closed,r.t),tol=Math.max(6/s,hb*Math.max(v[0],v[1])*1.05);
+      if(r.dist<=tol&&(!best||r.dist*s<best.d))best={...c,k:'path',g,G,hb,r,A,d:r.dist*s}}}
+  return best}
+/* handles */
+const wtMat=pe=>{const a=peng.getScreenCTM(),b=wtCtm(pe);return a&&b?a.inverse().multiply(b):null};
+function wtDraw(e,hit){peng.replaceChildren();if(tool!=='wt')return;const s=1/z,gg=el('g',{'pointer-events':'none'});
+  const C=wtObjs(e,false),seen=new Set();C.forEach(c=>{if(seen.has(c.pe))return;seen.add(c.pe);const M=wtMat(c.pe);if(!M)return;const A=wtGet(c.pe),G=wtGeom(c.pe),hb=wtHB(c.pe),W=(x,y)=>{const q=new DOMPoint(x,y).matrixTransform(M);return[q.x,q.y]};
+    A.forEach(q=>{const g=G[q[3]];if(!g)return;const P=wtAt(g,q[0]);if(!P)return;const nx=-P.dy,ny=P.dx,c0=W(P.x,P.y),e1=W(P.x+nx*q[1]*hb,P.y+ny*q[1]*hb),e2=W(P.x-nx*q[2]*hb,P.y-ny*q[2]*hb),on=WT.ids.has(q[4]),col=on?'#1c6cff':'#4F80FF';
+      gg.append(el('path',{d:'M'+e2[0]+' '+e2[1]+'L'+e1[0]+' '+e1[1],stroke:col,'stroke-width':s,fill:'none'}));
+      [e1,e2].forEach(p=>gg.append(el('rect',{x:p[0]-3*s,y:p[1]-3*s,width:6*s,height:6*s,fill:on?col:'#fff',stroke:col,'stroke-width':s})));
+      gg.append(el('path',{d:'M'+c0[0]+' '+(c0[1]-4.5*s)+'L'+(c0[0]+4.5*s)+' '+c0[1]+'L'+c0[0]+' '+(c0[1]+4.5*s)+'L'+(c0[0]-4.5*s)+' '+c0[1]+'Z',fill:on?col:'#fff',stroke:col,'stroke-width':s}))})});
+  if(hit&&hit.k==='path'&&!hit.drag){const M=wtMat(hit.pe),P=wtAt(hit.g,hit.r.t);if(M&&P){const q=new DOMPoint(P.x,P.y).matrixTransform(M);gg.append(el('path',{d:'M'+q.x+' '+(q.y-4.5*s)+'L'+(q.x+4.5*s)+' '+q.y+'L'+q.x+' '+(q.y+4.5*s)+'L'+(q.x-4.5*s)+' '+q.y+'Z',fill:'rgba(79,128,255,.25)',stroke:'#4F80FF','stroke-width':s}))}}
+  peng.append(gg)}
+const wtRefresh=o=>{try{window.saSync(o)}catch(_){}try{o.bb=BBX(o)}catch(_){}};
+function wtDelete(){if(!WT.ids.size)return false;let ch=false;sel.forEach(o=>wtPaths(o).forEach(pe=>{const A=wtGet(pe),B=A.filter(q=>!WT.ids.has(q[4]));if(B.length!==A.length){wtSet(pe,B);wtRefresh(o);ch=true}}));WT.ids=new Set();if(ch){commit();draw()}return ch}
+addEventListener('keydown',e=>{if(tool!=='wt'||(e.key!=='Delete'&&e.key!=='Backspace')||/INPUT|TEXTAREA|SELECT/.test((e.target||{}).tagName||''))return;if(wtDelete()){e.preventDefault();e.stopImmediatePropagation()}},true);
+function wtDialog(h,adj0){const pe=h.pe,o=h.o,hb=h.hb||wtHB(pe);let A=wtGet(pe),q=A.find(z=>z[4]===h.q[4]);if(!q)return;const orig=h.orig!==undefined?h.orig:pe.getAttribute('data-wpts'),q0=q.slice();
+  const f=v=>+(+v).toFixed(2);
+  const M=dkModal('Width Point Edit','<label>Side 1<span><input type="number" data-k="a" min="0" step="0.5" value="'+f(q[1]*hb)+'" style="width:80px"> px</span></label><label>Side 2<span><input type="number" data-k="b" min="0" step="0.5" value="'+f(q[2]*hb)+'" style="width:80px"> px</span></label><label>Total Width<span><input type="number" data-k="t" min="0" step="0.5" value="'+f((q[1]+q[2])*hb)+'" style="width:80px"> px</span></label><label class="fxp"><input type="checkbox" data-k="adj"'+(adj0?' checked':'')+'> Adjust Adjoining Width Points</label>',
+   [{t:'Delete',f:()=>{wtSet(pe,A.filter(z=>z[4]!==q[4]));WT.ids.delete(q[4]);wtRefresh(o);commit();draw();wtDraw()}},{t:'Cancel',c:1,f:()=>{if(orig==null)pe.removeAttribute('data-wpts');else pe.setAttribute('data-wpts',orig);wtRefresh(o);draw();wtDraw()}},{t:'OK',p:1,f:()=>{commit();draw();wtDraw()}}]);
+  const I=k=>M.box.querySelector('[data-k="'+k+'"]'),apply=()=>{const B=wtGet(pe),z=B.find(w=>w[4]===q[4]);if(!z)return;const na=Math.max(0,parseFloat(I('a').value)||0)/(hb||1),nb=Math.max(0,parseFloat(I('b').value)||0)/(hb||1);
+    const ra=q0[1]>1e-6?na/q0[1]:1,rb=q0[2]>1e-6?nb/q0[2]:1;
+    if(I('adj').checked){const L=B.filter(w=>w[3]===z[3]),i=L.indexOf(z);[L[i-1],L[i+1]].forEach(w=>{if(!w)return;const o0=A.find(y=>y[4]===w[4]);if(o0){w[1]=Math.max(0,o0[1]*ra);w[2]=Math.max(0,o0[2]*rb)}})}
+    z[1]=na;z[2]=nb;wtSet(pe,B);wtRefresh(o);draw();wtDraw()};
+  const ia=I('a'),ib=I('b'),it=I('t');
+  ia.addEventListener('input',()=>{it.value=f((+ia.value||0)+(+ib.value||0));apply()});ib.addEventListener('input',()=>{it.value=f((+ia.value||0)+(+ib.value||0));apply()});
+  it.addEventListener('input',()=>{const T=Math.max(0,+it.value||0),s0=(+ia.value||0)+(+ib.value||0);if(s0>0){ia.value=f(T*(+ia.value||0)/s0);ib.value=f(T*(+ib.value||0)/s0)}else{ia.value=f(T/2);ib.value=f(T/2)}apply()});I('adj').addEventListener('change',apply);ia.focus();ia.select()}
+addTool({id:'wt',name:'Width Tool',key:'Shift+W',svg:'<path d="M3 12h4c2 0 3-6 5-6s3 6 5 6h4"/><path d="M3 12h4c2 0 3 6 5 6s3-6 5-6h4" opacity=".55"/>',after:'sh',
+  hint:'Width · drag on a stroke to widen it · Alt+drag: one side only · Shift+click: select more width points · Delete: remove · double-click: Width Point Edit',
+  cursor:'<path d="M6 12h12M9 8l-3 4 3 4M15 8l3 4-3 4"/>',
+  enter:()=>{WT.cur=null;wtDraw()},leave:()=>{peng.replaceChildren()},
+  card:{d:'Creates strokes of variable width and saves them as profiles that you can reapply to other paths',m:['Drag on a stroke: a width point is created and the stroke widens (or narrows) symmetrically','Alt+drag a handle: change one side only (non-uniform)','Drag the diamond: move the width point along the path — Alt+drag copies it, Shift+drag moves all selected points','Shift+click: select several width points · Delete: remove the selected points','Double-click a width point: Width Point Edit (Side 1 / Side 2 / Adjust Adjoining Width Points; Shift+double-click ticks it)','Stroke panel › Profile: Uniform removes the variable width; Weight scales all width points'],
+    demo:A=>'<path d="M30 64H230" stroke="#8E6CEF" stroke-width="8" stroke-linecap="round" fill="none"/><path fill="#8E6CEF">'+A.A('d','M30 60H230V68H30Z;M30 60H100C115 60 125 44 130 44S145 60 160 60H230V68H160C145 68 135 84 130 84S115 68 100 68H30Z;M30 60H100C115 60 125 44 130 44S145 60 160 60H230V68H160C145 68 135 84 130 84S115 68 100 68H30Z;M30 60H230V68H30Z','0;.4;.9;1')+'</path><g>'+A.MV('130 64;130 44;130 44;130 64','0;.4;.9;1')+A.CUR('#111')+'</g>'}});
+{let hit=null,mode=null,bk=null,mv=false,dup=false;
+  tlDrag('wt',{down:(p,e)=>{const h=wtHit(e,true);if(!h)return false;hit=h;mv=false;dup=false;bk=new Map();[...new Set(wtObjs(e,false).map(c=>c.pe))].forEach(pe=>bk.set(pe,pe.getAttribute('data-wpts')));
+      if(!sel.has(h.o)){sel=new Set([h.o]);WT.ids=new Set()}
+      if(h.k==='path'){mode='new';if(!e.shiftKey)WT.ids=new Set()}
+      else{mode=h.k;const id=h.q[4];if(e.shiftKey){if(WT.ids.has(id)&&false)WT.ids.delete(id);else WT.ids.add(id)}else if(!WT.ids.has(id))WT.ids=new Set([id])}
+      hit.drag=true;wtDraw(e,hit);return true},
+    move:(p,e,m)=>{if(!hit||!m)return;mv=true;const pe=hit.pe,o=hit.o,hb=hit.hb,loc=wtLoc(pe,e);if(!loc)return;let A=wtGet(pe);const si=hit.k==='path'?hit.g.si:hit.q[3],g=hit.G?hit.G[si]:wtGeom(pe)[si];
+      if(mode==='new'){const r=hit.r,nx=-r.dy,ny=r.dx,d=((loc[0]-r.x)*nx+(loc[1]-r.y)*ny)/(hb||1),base=wtVal(wtGet(pe).filter(q=>!hit.nid||q[4]!==hit.nid),si,g.closed,r.t);
+        if(!hit.nid){hit.nid=wtId();hit.A0=A.slice()}A=hit.A0.filter(q=>q[4]!==hit.nid);const ad=Math.abs(d);let a=ad,b=ad;if(e.altKey){a=d>=0?ad:base[0];b=d<0?ad:base[1]}
+        A.push([r.t,a,b,si,hit.nid]);WT.ids=new Set([hit.nid]);wtSet(pe,A);wtRefresh(o);draw();wtDraw(e,hit);return}
+      const q=A.find(z=>z[4]===hit.q[4]);if(!q)return;const sels=A.filter(z=>WT.ids.has(z[4])&&z[3]===q[3]),B0=hit.B0||(hit.B0=A.map(z=>z.slice()));const o0=B0.find(z=>z[4]===q[4]);
+      if(mode==='c'){if(e.altKey&&!dup){dup=true;const c=[o0[0],o0[1],o0[2],o0[3],wtId()];A.push(c);hit.q=c;hit.B0=null;WT.ids=new Set([c[4]]);wtSet(pe,A);A=wtGet(pe)}
+        const qq=A.find(z=>z[4]===hit.q[4]),n=wtNear(g,loc),base=(hit.B0||(hit.B0=A.map(z=>z.slice()))).find(z=>z[4]===qq[4]);let dt=n.t-(hit.t0!=null?hit.t0:(hit.t0=base[0]));
+        const mover=e.shiftKey&&WT.ids.size>1?A.filter(z=>WT.ids.has(z[4])&&z[3]===qq[3]):[qq];const bs=hit.B0;
+        let lo=-1e9,hi=1e9;mover.forEach(z=>{const b0=bs.find(y=>y[4]===z[4]);lo=Math.max(lo,-b0[0]);hi=Math.min(hi,1-b0[0])});dt=Math.max(lo,Math.min(hi,dt));
+        mover.forEach(z=>{const b0=bs.find(y=>y[4]===z[4]);z[0]=b0[0]+dt});wtSet(pe,A);wtRefresh(o);draw();wtDraw(e,hit);return}
+      const P=hit.P,nx=-P.dy,ny=P.dx,d=((loc[0]-P.x)*nx+(loc[1]-P.y)*ny)/(hb||1),side=mode==='s1'?Math.max(0,d):Math.max(0,-d),old=mode==='s1'?o0[1]:o0[2];
+      const dl=side-old;(WT.ids.size>1?A.filter(z=>WT.ids.has(z[4])):[q]).forEach(z=>{const b0=B0.find(y=>y[4]===z[4]);if(!b0)return;
+        if(mode==='s1'){z[1]=Math.max(0,b0[1]+dl);if(!e.altKey)z[2]=Math.max(0,b0[2]+dl)}else{z[2]=Math.max(0,b0[2]+dl);if(!e.altKey)z[1]=Math.max(0,b0[1]+dl)}});
+      wtSet(pe,A);wtRefresh(o);draw();wtDraw(e,hit)},
+    up:(p,e,m)=>{const h=hit;hit=null;if(!h)return;if(!mv){/* a click: only selection changes */if(mode==='new'){bk.forEach((v,pe)=>{if(v==null)pe.removeAttribute('data-wpts');else pe.setAttribute('data-wpts',v)})}if(mode==='c'&&h.q&&!e.shiftKey)WT.ids=new Set([h.q[4]]);wtDraw(e);draw();return}
+      commit();draw();wtDraw(e)},
+    esc:()=>{if(bk)bk.forEach((v,pe)=>{if(v==null)pe.removeAttribute('data-wpts');else pe.setAttribute('data-wpts',v);const ob=pe.closest('#layer>g');if(ob&&ob.__o)wtRefresh(ob.__o)});hit=null;draw();wtDraw()}});
+  cv.addEventListener('pointermove',e=>{if(tool!=='wt'||PDOWN||st||hit)return;const r=cv.getBoundingClientRect();if(e.clientX<r.left||e.clientY<r.top)return;try{wtDraw(e,wtHit(e,false))}catch(_){}});
+  cv.addEventListener('dblclick',e=>{if(tool!=='wt')return;const h=wtHit(e,true);if(!h)return;e.preventDefault();e.stopImmediatePropagation();
+    h.orig=h.pe.getAttribute('data-wpts');if(h.k==='path'){const A=wtGet(h.pe),v=wtVal(A,h.g.si,h.g.closed,h.r.t),id=wtId();A.push([h.r.t,v[0],v[1],h.g.si,id]);wtSet(h.pe,A);wtRefresh(h.o);draw();h.q=[h.r.t,v[0],v[1],h.g.si,id]}
+    if(!sel.has(h.o))sel=new Set([h.o]);WT.ids=new Set([h.q[4]]);wtDraw(e);wtDialog(h,e.shiftKey)},true)}
+
+addGroup({id:'wdBtn',lab:'Width and warp tools',t:['wt','wa','tw','pu','bo','sca','cry','wri']});
 
 
 /* ---------- Shape Builder (Shift+M) ---------- */

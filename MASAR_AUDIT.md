@@ -206,3 +206,10 @@
 | **I** | **Symbols (Sprayer family) + Graphs** | أكبر وأقل أولوية |
 | **J** | **Type menu + Glyphs + Styles + OpenType** و **Effects الناقصة** | |
 | **K** | لاحقاً: AI generation + الدفع | حسب اتفاقكم |
+
+## 5-ن) Build 195 — أداة Width (Shift+W)
+- **اتعملت:** Width Tool كاملة: drag على الاستروك يعمل width point متماثل، Alt+drag جنب واحد، سحب المقبض يغيّر العرض، سحب الـ diamond يحرّك النقطة على المسار (Alt = نسخ، Shift = تحريك المحدد كله)، Shift+click تحديد أكتر من نقطة، Delete يمسح، double-click يفتح Width Point Edit (Side 1 / Side 2 / Total / Adjust Adjoining Width Points، Shift+double-click يفعّل الخيار).
+- النقاط متخزنة في `data-wpts` كنسب من نص عرض الاستروك → تغيير Weight بيكبّرها كلها؛ Stroke › Profile بيعرض "Custom" و"Uniform" بيمسحها؛ بتشتغل على المسارات المقفولة والمفتوحة وعلى شكل Rect/Ellipse (بيتحول لمسار) وعلى أكتر من subpath.
+- كارت شرح + كيرسر + سطر الحالة + اختصار Shift+W في Keyboard Shortcuts. الأداة أول عنصر في فلاي-أوت Width/Warp.
+- لسه ناقص من نفس الأداة: حفظ Profile مخصص في قائمة Profile وفلاي (Add to Profiles)، Width Tool Options.
+- اختبار: `tests/wt.js` (21 فحص ناجح).
