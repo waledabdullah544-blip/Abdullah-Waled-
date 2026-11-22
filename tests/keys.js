@@ -1,8 +1,8 @@
 const {open}=require('./lib');
 // Illustrator default tool shortcuts (Adobe helpx "Default keyboard shortcuts") -> masar tool id for the tools Masar HAS.
-const HAVE=[['v','v'],['a','a'],['y','mw'],['q','ls'],['p','p'],['+','ap'],['-','dp'],['C','cp'],['t','t'],['T','tt'],['\\','ln'],['m','m'],['l','l'],['b','br'],['B','bb'],['n','pc'],['N','shp'],['E','er'],['c','sc'],['r','ro'],['o','rf'],['s','sl'],['e','ft'],['g','gr'],['i','ey'],['h','h'],['z','z']];
+const HAVE=[['v','v'],['a','a'],['y','mw'],['q','ls'],['p','p'],['+','ap'],['-','dp'],['C','cp'],['t','t'],['T','tt'],['\\','ln'],['m','m'],['l','l'],['b','br'],['B','bb'],['n','pc'],['N','shp'],['E','er'],['c','sc'],['r','ro'],['o','rf'],['s','sl'],['e','ft'],['g','gr'],['i','ey'],['h','h'],['z','z'],['R','wa']];
 // Illustrator shortcuts of tools Masar does NOT have yet: pressing them must NOT switch to some other tool.
-const MISSING=['M','L','P','V','w','W','R','u','k','K','j','S','O','H','A','Y'];
+const MISSING=['M','L','P','V','w','W','u','k','K','j','S','O','H','A','Y'];
 const CODE=ch=>/[a-z]/i.test(ch)?'Key'+ch.toUpperCase():({'+':'Equal','-':'Minus','\\':'Backslash'})[ch];
 (async()=>{const H=await open(),bad=[];
 const press=async(ch,m={})=>H.pg.evaluate(([k,c,m])=>document.body.dispatchEvent(new KeyboardEvent('keydown',{key:k,code:c,bubbles:true,cancelable:true,...m})),[ch,CODE(ch),m]);

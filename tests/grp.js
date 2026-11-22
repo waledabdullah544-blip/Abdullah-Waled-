@@ -1,0 +1,10 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(6000);
+chk('Eyedropper is now a flyout group leader',await pg.evaluate(()=>!!document.getElementById('eyBtn')),null);
+await pg.locator('#eyBtn').click({button:'right'});await pg.waitForTimeout(250);const items=await pg.evaluate(()=>[...document.querySelectorAll('#fg-eyBtn button[data-t]')].map(b=>b.dataset.t));chk('Right-click opens the flyout with Eyedropper and Measure',items.join()==='ey,ms',items);
+await pg.locator('#fg-eyBtn [data-t="ms"]').hover();await pg.waitForTimeout(900);const tip=await pg.evaluate(()=>{const e=document.getElementById('rtip');return e&&getComputedStyle(e).display!=='none'?e.querySelector('.rn').innerText.replace(/\s+/g,' '):null});chk('The Measure card shows from the flyout',/Measure Tool/.test(tip||''),tip);
+await pg.locator('#fg-eyBtn [data-t="ms"]').click();await pg.waitForTimeout(250);const t=await pg.evaluate(()=>[tool,document.getElementById('eyBtn').dataset.t]);chk('Picking it makes it the group tool',t[0]==='ms'&&t[1]==='ms',t);
+await pg.keyboard.press('i');await pg.waitForTimeout(150);chk('Key I still picks the Eyedropper',await pg.evaluate('tool')==='ey',await pg.evaluate('tool'));
+await pg.screenshot({path:'/tmp/claude-0/-home-user-Abdullah-Waled-/cde29aa8-aa8d-5f5f-a8e2-859061e24c77/scratchpad/tb.png',clip:{x:0,y:60,width:130,height:640}});
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();

@@ -1,0 +1,14 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(6000);
+chk('Info panel registered in the Window menu',await pg.evaluate(()=>window.PANELX.some(p=>p.id==='info')),null);
+chk('Measure tool button exists',await pg.locator('[data-t="ms"]').count()>=1,null);
+await pg.evaluate(()=>setTool('ms'));await pg.waitForTimeout(100);chk('Tool switches to ms with status text',await pg.evaluate(()=>tool==='ms'&&document.getElementById('tn').textContent==='Measure Tool'),await pg.evaluate(()=>document.getElementById('tn').textContent));
+const z=await pg.evaluate(()=>z);await H.drag(300,300,400,300);await pg.waitForTimeout(250);
+const v=await pg.evaluate(()=>({open:DK.isOpen('info'),d:document.querySelector('#infoP [data-i="d"]').textContent,a:document.querySelector('#infoP [data-i="a"]').textContent,mx:document.querySelector('#infoP [data-i="mx"]').textContent}));console.log(JSON.stringify(v));
+chk('Dragging opens the Info panel with D = distance in px',v.open&&Math.abs(parseFloat(v.d)-100/z)<.1,[v,100/z]);chk('Angle A = 0° for a horizontal line',parseFloat(v.a)===0,v.a);
+await H.drag(300,300,400,200);await pg.waitForTimeout(200);chk('Up-right diagonal = 45° (counter-clockwise, as Illustrator)',Math.abs(parseFloat(await pg.locator('#infoP [data-i="a"]').innerText())-45)<.5,await pg.locator('#infoP [data-i="a"]').innerText());
+await H.drag(300,300,400,310,['Shift']);await pg.waitForTimeout(200);chk('Shift constrains to a multiple of 45° (0°)',Math.abs(parseFloat(await pg.locator('#infoP [data-i="a"]').innerText()))<.5,await pg.locator('#infoP [data-i="a"]').innerText());
+chk('The measured line is drawn in the preview layer',await pg.evaluate(()=>document.querySelectorAll('#peng line').length)>=1,null);
+await pg.evaluate(()=>setTool('v'));await pg.waitForTimeout(150);chk('Leaving the tool clears the line and the measurement rows',await pg.evaluate(()=>document.querySelectorAll('#peng line').length)===0&&await pg.locator('#infoP [data-i="mrow"]').evaluate(e=>e.style.display==='none'),null);
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();
