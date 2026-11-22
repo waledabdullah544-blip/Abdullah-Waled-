@@ -135,6 +135,10 @@
 **Text — شغّال ومطابق:** Placeholder عند الضغط والسحب، Area vs Point، Character panel (الحجم)، Ctrl+Shift+> / <، Alt+←→ (tracking)، Alt+↑↓ (leading)، Paragraph panel (7 محاذاة + اختصاراتها Ctrl+Shift+L/C/R/J/F)، Esc/Ctrl+Enter.
 **Text — ناقص:** قايمة Type شبه فاضية (فيها Threaded Text وCreate Outlines فقط): ناقص Font, Size, Glyphs, Area Type Options, Type on a Path Options, Change Case, Fill With Placeholder Text, Show Hidden Characters (Ctrl+Alt+I), Smart Punctuation, Optical Margin Alignment, Type Orientation, Find Font؛ Preferences > Type؛ Character/Paragraph Styles؛ OpenType/Glyphs panels.
 
+## 5-هـ) build 168 / 169
+**Color Picker (168):** دبل كليك على Fill/Stroke (الـ Toolbox أو الـ Color panel) → dialog: Color field + Hue slider بأزرار الراديو H/S/B/R/G/B، حقول HSB/RGB/CMYK/Hex، New/Current، Only Web Colors مع تحذير الـ cube، زر Color Swatches مع بحث وColor Models للرجوع، OK/Cancel/Enter/Esc. ناقص: Out of Gamut (يحتاج ICC) والقطّارة داخل الـ dialog.
+**Type menu (169):** Font، Size، Area Type Options…، Type on a Path (5 effects + Options…)، Threaded Text، Change Case (4 أنماط)، Smart Punctuation… (ligatures/quotes/spaces/dashes/ellipses/fractions، Selected أو Entire Document)، Create Outlines، Fill With Placeholder Text. كلها بتمر عبر جلسة محرر النص (Undo/Redo صح). ناقص: Glyphs، Fit Headline، Resolve Missing Fonts، Find Font، Show Hidden Characters، Type Orientation، Optical Margin Alignment، Preferences > Type.
+
 ## 5-ج) تخصيص الواجهة (مقارنة بـ Illustrator)
 **موجود وشغال (اتختبر بماوس حقيقي):** سحب تاب بانل لليسار/اليمين/عايم، دمج بانلز كتابات، إغلاق/فتح من Window، حفظ التخطيط بعد reload، Workspaces (Essentials, Essentials Classic, Typography, Painting) + New Workspace + Reset، Edit Toolbar، Toolbar عمودين/عمود، Tab/Shift+Tab، 4 ثيمات.
 **ناقص:** Keyboard Shortcuts editor (Ctrl+Alt+Shift+K) — تخصيص الاختصارات؛ Workspaces الجاهزة الباقية (3D, Automation, Layout, Motion, Printing, Tracing, Web…)؛ قايمة إظهار/إخفاء عناصر الـ Control bar؛ Control bar overflow menu؛ UI Scale في Preferences؛ تخصيص قوائم السياق/البانل.

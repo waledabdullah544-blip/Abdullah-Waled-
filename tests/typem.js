@@ -1,0 +1,18 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(4000);const run=async(n,f)=>{try{await f()}catch(e){chk(n+' (threw)',false,String(e).slice(0,170))}};
+const raw=()=>pg.evaluate(()=>objs.map(o=>{const t=o.g.querySelector('text');return t?t.getAttribute('data-raw'):null}));
+const menu=async(path)=>{await pg.locator('#mbar button:text-is("Type")').click();await pg.waitForTimeout(100);
+ for(let k=0;k<path.length;k++){const last=k===path.length-1;const loc=pg.locator(k===0?'.mdd button':'.msub button',{hasText:path[k]}).first();if(last)await loc.click();else{await loc.hover();await pg.waitForTimeout(150)}}await pg.waitForTimeout(150)};
+await H.key('t');await H.click(200,200);await pg.keyboard.type('hello wORLD. this is "quoted" -- text...');console.log('raw right after typing:',JSON.stringify(await pg.evaluate(()=>document.getElementById('ted').value)));await H.key('Escape');
+const names=async()=>pg.evaluate(()=>{[...document.querySelectorAll('#mbar button')].find(x=>x.textContent.trim()==='Type').click();return [...document.querySelectorAll('.mdd button')].filter(x=>x.offsetParent).map(x=>x.textContent.replace(/[\u25b8]/g,'').trim())});
+const items=await names();console.log('TYPE MENU:',JSON.stringify(items));await pg.keyboard.press('Escape');
+await run('upper',async()=>{await menu(['Change Case','UPPERCASE']);const r=await raw();chk('Change Case > UPPERCASE',/^HELLO WORLD\./.test(r[0]),r)});
+await run('lower',async()=>{await menu(['Change Case','lowercase']);const r=await raw();chk('Change Case > lowercase',/^hello world\./.test(r[0]),r)});
+await run('title',async()=>{await menu(['Change Case','Title Case']);const r=await raw();chk('Change Case > Title Case',/^Hello World\. This Is/.test(r[0]),r)});
+await run('sentence',async()=>{await menu(['Change Case','Sentence case']);const r=await raw();chk('Change Case > Sentence case',/^Hello world\. This is/.test(r[0]),r)});
+await run('undo',async()=>{await pg.keyboard.press('Control+z');await pg.waitForTimeout(100);const r=await raw();chk('Undo reverts Change Case one step',/^Hello World\. This Is/.test(r[0]),r)});
+await run('size',async()=>{await menu(['Size','24']);const fs=await pg.evaluate(()=>+objs[0].g.querySelector('text').getAttribute('font-size'));chk('Size > 24 sets font size',fs===24,fs)});
+await run('smart',async()=>{await menu(['Smart Punctuation']);await pg.waitForTimeout(150);const t=await pg.evaluate(()=>(document.getElementById('dlg')||{}).innerText||'');console.log('Smart Punctuation dialog:',t.replace(/\s+/g,' ').slice(0,200));await pg.click('#dlg #dok');await pg.waitForTimeout(150);const r=await raw();chk('Smart Punctuation: quotes, dashes, ellipsis',/\u201cquoted\u201d/.test(r[0])&&/\u2013/.test(r[0])&&/\u2026/.test(r[0]),r)});
+await run('ph',async()=>{await menu(['Fill With Placeholder Text']);const r=await raw();chk('Fill With Placeholder Text',/^Lorem ipsum/.test(r[0]),r)});
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();

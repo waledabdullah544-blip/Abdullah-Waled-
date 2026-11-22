@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 168</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 169</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8008,6 +8008,32 @@ if(!DK.restore())wsApply('Essentials');
   document.head.appendChild(st6);
   const K=(k,o)=>()=>{document.body.dispatchEvent(new KeyboardEvent('keydown',{key:k,code:o.code||'',ctrlKey:!!o.c,shiftKey:!!o.s,altKey:!!o.a,bubbles:true,cancelable:true}))};
   const S=()=>sel.size>0,anySel=()=>sel.size>0||dsSel.size>0,hasGrp=()=>[...sel].some(o=>isGroup(o)),sep={sep:1};
+  /* ---- Type menu helpers: every edit goes through the text editor session, so undo / reflow / threads / character runs behave as when typing ---- */
+  const txObjs=()=>[...sel].filter(isText),txHas=()=>txObjs().length>0||(!!ted_s&&ted.selectionStart!==ted.selectionEnd);
+  const typeEdit=fn=>{
+    if(ted_s){const a=ted.selectionStart,b=ted.selectionEnd;if(a===b)return false;const part=ted.value.slice(a,b),nv=fn(part);if(nv===part)return false;ted.setRangeText(nv,a,b,'select');ted.dispatchEvent(new Event('input',{bubbles:true}));return true}
+    const L=txObjs();if(!L.length)return false;let any=false;
+    L.forEach(o=>{beginText(o,null,{});const v=ted.value,nv=fn(v);if(nv!==v){ted.value=nv;ted.dispatchEvent(new Event('input',{bubbles:true}));any=true}finishText()});
+    sel=new Set(L.filter(o=>o.g.isConnected));draw();return any};
+  const CASES={upper:v=>v.toUpperCase(),lower:v=>v.toLowerCase(),title:v=>v.toLowerCase().replace(/(^|[\s\-\u2014\u2013(\[{"'\u201c\u2018])([a-z\u00e0-\u00ff])/g,(m,a,b)=>a+b.toUpperCase()),
+    sentence:v=>v.toLowerCase().replace(/(^|[.!?\u2026]\s+|\n)([a-z\u00e0-\u00ff])/g,(m,a,b)=>a+b.toUpperCase())};
+  const setTxSize=n=>{const i=$('#chsz');if(!i)return;i.value=n;i.dispatchEvent(new Event('change',{bubbles:true}));i.dispatchEvent(new Event('input',{bubbles:true}))};
+  const fontItems=()=>{const f=$('#chff');if(!f)return[];return[...f.options].slice(0,80).map(o=>({t:o.textContent.trim()||o.value,c:()=>f.value===o.value,f:()=>{f.value=o.value;f.dispatchEvent(new Event('change',{bubbles:true}))},en:txHas}))};
+  const hasArea=()=>txObjs().some(o=>{const t=o.g.querySelector('text');return t&&t.getAttribute('data-kind')==='area'});
+  const hasPath=()=>{try{return tpSel().length>0}catch(_){return false}};
+  const smartPunct=()=>{const O={lig1:false,lig2:false,quotes:true,spaces:true,dashes:true,ell:true,frac:false,scope:'sel'};
+    toolDlg('Smart Punctuation',[{type:'chk',k:'lig1',label:'ff, fi, ffi Ligatures'},{type:'chk',k:'lig2',label:'ff, fl, ffl Ligatures'},{type:'chk',k:'quotes',label:'Smart Quotes'},{type:'chk',k:'spaces',label:'Smart Spaces (..)'},{type:'chk',k:'dashes',label:'En, Em Dashes (--)'},{type:'chk',k:'ell',label:'Ellipses (...)'},{type:'chk',k:'frac',label:'Expert Fractions'},{type:'sel',k:'scope',label:'Replace In',opts:[['sel','Selected Text Only'],['all','Entire Document']]}],O,v=>{
+      const fn=t=>{let r=t;
+        if(v.lig1)r=r.replace(/ffi/g,'\ufb03').replace(/ff/g,'\ufb00').replace(/fi/g,'\ufb01');
+        if(v.lig2)r=r.replace(/ffl/g,'\ufb04').replace(/fl/g,'\ufb02');
+        if(v.quotes)r=r.replace(/(^|[\s(\[{\u2014\u2013])"/g,'$1\u201c').replace(/"/g,'\u201d').replace(/(^|[\s(\[{\u2014\u2013])'/g,'$1\u2018').replace(/'/g,'\u2019');
+        if(v.spaces)r=r.replace(/ {2,}/g,' ');
+        if(v.dashes)r=r.replace(/---/g,'\u2014').replace(/--/g,'\u2013');
+        if(v.ell)r=r.replace(/\.\.\./g,'\u2026');
+        if(v.frac)r=r.replace(/\b1\/2\b/g,'\u00bd').replace(/\b1\/4\b/g,'\u00bc').replace(/\b3\/4\b/g,'\u00be');
+        return r};
+      if(v.scope==='all'){const keep=new Set(sel);sel=new Set(objs.filter(o=>isText(o)&&pick(o)));typeEdit(fn);sel=new Set([...keep].filter(o=>o.g.isConnected));draw()}else typeEdit(fn)})};
+  const placeholder=()=>{const L=txObjs();if(!L.length)return;L.forEach(o=>{const t=o.g.querySelector('text'),area=t&&t.getAttribute('data-kind')==='area';beginText(o,null,{});ted.value=area?PH_AREA:PH_PT;ted.dispatchEvent(new Event('input',{bubbles:true}));finishText()});sel=new Set(L.filter(o=>o.g.isConnected));draw()};
   const MENUS=[
    ['File',()=>[
     {t:'New',k:'Ctrl+N',f:fileNew},{t:'Open…',k:'Ctrl+O',f:fileOpen},sep,
@@ -8031,8 +8057,14 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Compound Path',sub:()=>[{t:'Make',k:'Ctrl+8',f:makeCompound,en:S},{t:'Release',k:'Ctrl+Alt+8',f:releaseCompound,en:S}]},sep,
     {t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
    ['Type',()=>[
+    {t:'Font',sub:()=>fontItems(),en:txHas},{t:'Size',sub:()=>[6,8,9,10,11,12,14,18,21,24,30,36,48,60,72].map(n=>({t:String(n),f:()=>setTxSize(n),en:txHas}))},sep,
+    {t:'Area Type Options…',f:()=>openToolOpts(txObjs().some(o=>o.g.querySelector('text[data-vert]'))?'vat':'at'),en:hasArea},
+    {t:'Type on a Path',sub:()=>[...[['r','Rainbow'],['k','Skew'],['rb','3D Ribbon'],['s','Stair Step'],['g','Gravity']].map(([x,n])=>({t:n,f:()=>{const g=tpOptGet();tpOptSet({...g,x});draw()},c:()=>hasPath()&&tpOptGet().x===x,en:hasPath})),sep,{t:'Type on a Path Options…',f:()=>openToolOpts('tp'),en:hasPath}]},
     {t:'Threaded Text',sub:()=>{const T=window.thrState([...sel]);return[{t:'Create',f:thrCreate,en:()=>!!T.create},{t:'Release Selection',f:thrRelease,en:()=>!!T.release},{t:'Remove Threading',f:thrRemove,en:()=>!!T.remove}]}},sep,
-    {t:'Create Outlines',k:'Ctrl+Shift+O',f:()=>window.outlCreate&&window.outlCreate(),en:()=>!!(window.outlState&&sel.size&&window.outlState([...sel]).ok)},sep,
+    {t:'Change Case',sub:()=>[['UPPERCASE','upper'],['lowercase','lower'],['Title Case','title'],['Sentence case','sentence']].map(([n,k])=>({t:n,f:()=>typeEdit(CASES[k]),en:txHas}))},
+    {t:'Smart Punctuation…',f:smartPunct,en:()=>txHas()||objs.some(isText)},sep,
+    {t:'Create Outlines',k:'Ctrl+Shift+O',f:()=>window.outlCreate&&window.outlCreate(),en:()=>!!(window.outlState&&sel.size&&window.outlState([...sel]).ok)},
+    {t:'Fill With Placeholder Text',f:placeholder,en:()=>txObjs().length>0},sep,
     {t:'Upload Font…',f:()=>$('#fup').click()},...($('#fsys')&&$('#fsys').style.display!=='none'?[{t:'Installed Fonts…',f:()=>$('#fsys').click()}]:[])]],
    ['Select',()=>[
     {t:'All',k:'Ctrl+A',f:()=>{sel=new Set(objs.filter(pick));draw()}},{t:'All on Active Artboard',k:'Ctrl+Alt+A',f:()=>{sel=new Set(objs.filter(pick));draw()}},{t:'Deselect',k:'Ctrl+Shift+A',f:()=>{sel=new Set();dsSel=new Set();draw()},en:anySel},sep,
