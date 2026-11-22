@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 170</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 171</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -2040,7 +2040,7 @@ function applyStyle(P,done){
       if(P.fill!==undefined){e.setAttribute('fill',P.fill);e.removeAttribute('data-grad')}
       if(P.stroke!==undefined){e.setAttribute('stroke',P.stroke);e.removeAttribute('data-grads');
         if(P.stroke!=='none'){const w=e.getAttribute('stroke-width');if(!w||w==='0')e.setAttribute('stroke-width',DEF.sw||1);e.setAttribute('stroke-linejoin','round')}}
-      if(P.sw!==undefined){e.setAttribute('stroke-width',P.sw);if(P.sw>0&&(e.getAttribute('stroke')||'none')==='none')e.setAttribute('stroke',DEF.stroke!=='none'?DEF.stroke:'#000000')}
+      if(P.sw!==undefined){e.removeAttribute('vector-effect');e.setAttribute('stroke-width',P.sw);if(P.sw>0&&(e.getAttribute('stroke')||'none')==='none')e.setAttribute('stroke',DEF.stroke!=='none'?DEF.stroke:'#000000')}
       if(P.op!==undefined)e.setAttribute('opacity',P.op/100)})});
   L.forEach(o=>{if(o.g.querySelector('[data-bc]'))touch(o)});
   if(done&&L.length)commit();
@@ -2713,6 +2713,15 @@ function boolOp(op,A,B){
     const pts=[];S.forEach((g,k)=>{const m=g.cv?segN(g.c,1.5):1;for(let j=0;j<m;j++){const q=bzP(g.c,j/m);pts.push([q[0],q[1],k+j/m])}});if(pts.length>=3)fake.rings.push({pts,S,cnt:S.length})});
   return fake}
 const boolEmpty=F=>!F.rings.length;
+/* a face made of several separate areas becomes one face per area; holes stay with the area that contains them (Pathfinder > Divide) */
+function boolSplit(F){const R=F.rings,L=F.loops;if(!R||R.length<2||!L||L.length!==R.length)return[F];
+  const inRing=(pt,r)=>{let c=0;const P=r.pts,n=P.length;for(let k=0;k<n;k++){const a=P[k],b=P[(k+1)%n];if((a[1]>pt[1])!==(b[1]>pt[1])&&pt[0]<(b[0]-a[0])*(pt[1]-a[1])/(b[1]-a[1])+a[0])c++}return c%2===1};
+  const info=R.map((r,i)=>{const P=r.pts;let a=0;for(let k=0;k<P.length;k++){const p=P[k],q=P[(k+1)%P.length];a+=p[0]*q[1]-q[0]*p[1]}return{i,area:Math.abs(a/2),pt:[(P[0][0]+P[1][0])/2,(P[0][1]+P[1][1])/2]}});
+  info.forEach(x=>{x.cont=info.filter(y=>y.i!==x.i&&y.area>x.area&&inRing(x.pt,R[y.i])).sort((p,q)=>p.area-q.area)});
+  const comp=new Map();info.filter(x=>x.cont.length%2===0).forEach(x=>comp.set(x.i,[x.i]));
+  info.filter(x=>x.cont.length%2===1).forEach(x=>{const par=x.cont[0];if(par&&comp.has(par.i))comp.get(par.i).push(x.i);else comp.set(x.i,[x.i])});
+  if(comp.size<2)return[F];
+  return[...comp.values()].map(ix=>({rings:ix.map(i=>R[i]),loops:ix.map(i=>L[i]),rule:'evenodd'}))}
 /* replace an object's geometry by a boolean result (keeps its paint) */
 function boolApply(o,F,styleFrom){const src=fillables(styleFrom||o)[0];if(boolEmpty(F)){o.g.remove();objs.splice(objs.indexOf(o),1);sel.delete(o);return null}
   const loops=F.loops||F.rings.map(r=>segsRange(r.S,0,r.cnt));const SP=loops.map(N=>({pts:N,closed:true}));
@@ -8320,6 +8329,7 @@ function pfOp(kind){
     for(const o of L){const Fo=F(o),next=[];
       faces.forEach(fc=>{const i=boolOp('inter',fc.F,Fo),d=boolOp('diff',fc.F,Fo);if(!boolEmpty(i))next.push({F:i,src:o});if(!boolEmpty(d))next.push({F:d,src:fc.src})});
       let rest=Fo;faces.forEach(fc=>{rest=boolOp('diff',rest,fc.F)});if(!boolEmpty(rest))next.push({F:rest,src:o});faces=next}
+    if(kind==='divide')faces=faces.flatMap(fc=>boolSplit(fc.F).map(F=>({F,src:fc.src})));
     const at=objs.indexOf(top)-(L.length-1);const res=[];
     const clones=faces.map(fc=>{const n=cloneO(fc.src);return{n,fc}});
     clones.forEach(({n,fc})=>{layer.appendChild(n.g);objs.push(n);const r=boolApply(n,fc.F,fc.src);if(r)res.push(r)});
@@ -8327,7 +8337,7 @@ function pfOp(kind){
     /* keep the stacking position of the original selection */
     res.forEach(o=>{objs.splice(objs.indexOf(o),1)});objs.splice(Math.max(0,Math.min(objs.length,at)),0,...res);
     res.forEach(o=>{if(kind==='divide')noStroke(o);else{const e=fillables(o)[0];if(e){const f=e.getAttribute('fill'),g=e.getAttribute('data-grad');const col=(g&&f&&f.indexOf('url')===0)?'#000000':(f&&f!=='none'?f:'#000000');
-        e.setAttribute('fill','none');e.removeAttribute('data-grad');e.setAttribute('stroke',col);e.setAttribute('stroke-width','1');e.setAttribute('stroke-linejoin','round')}}touch(o)});
+        e.setAttribute('fill','none');e.removeAttribute('data-grad');e.setAttribute('stroke',col);e.setAttribute('stroke-width','1');e.setAttribute('vector-effect','non-scaling-stroke');/* hairline: always one screen pixel, as Illustrator's 0 pt outline strokes */e.setAttribute('stroke-linejoin','round')}}touch(o)});
     group=res.length>1;return fin(res)}
   if(kind==='trim'||kind==='merge'){
     const R=L.map((o,i)=>{let r=F(o);for(let j=i+1;j<L.length;j++)r=boolOp('diff',r,F(L[j]));return r});
