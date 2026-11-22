@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 173</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 174</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -3923,7 +3923,7 @@ const tip=document.createElement('div');tip.id='rtip';tip.setAttribute('role','t
 let timer=null,hideT=null,cur=null;
 const show=(btn,t)=>{const T=TIPS[t];if(!T)return;if(window.MGEN&&MGEN.tips===false)return;cur=btn;tip.classList.remove('open');
   const ic=(btn.querySelector('svg')||{}).outerHTML||'',rows=T.m.flatMap(x=>x.split(' · ')).map(x=>{const k=x.indexOf(':');return k>0?'<div class="rr"><b>'+x[0].toUpperCase()+x.slice(1,k)+'</b><span>'+x.slice(k+1).trim()+'</span></div>':'<div class="rr"><span>'+x+'</span></div>'}).join('');
-  tip.innerHTML='<i class="rc"></i><div class="rv"><svg class="rd" width="260" height="132" viewBox="0 -6 262 132"><defs><filter id="rtsh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="1" stdDeviation="1.6" flood-opacity=".22"/></filter></defs><rect x="16" y="-1" width="230" height="124" rx="1" fill="#fff" filter="url(#rtsh)"/>'+DEMO[t]+'</svg></div><div class="rb"><div class="rn"><span class="ri">'+ic+'</span>'+T.n+(T.k?'<kbd>'+MW(T.k)+'</kbd>':'')+'</div><div class="rx">'+MW(T.d)+'</div><div class="rm">'+MW(rows)+'</div><div class="rf"><button type="button">Learn more</button></div></div>';
+  tip.innerHTML='<i class="rc"></i><div class="rv"><svg class="rd" width="260" height="132" viewBox="0 -6 262 132"><defs><filter id="rtsh" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="1" stdDeviation="1.6" flood-opacity=".22"/></filter></defs><rect x="16" y="-1" width="230" height="124" rx="1" fill="#fff" filter="url(#rtsh)"/>'+DEMO[t]+'</svg></div><div class="rb"><div class="rn"><span class="ri">'+ic+'</span>'+T.n+((window.toolKeyLabel?toolKeyLabel(t,T.k):T.k)?'<kbd>'+MW(window.toolKeyLabel?toolKeyLabel(t,T.k):T.k)+'</kbd>':'')+'</div><div class="rx">'+MW(T.d)+'</div><div class="rm">'+MW(rows)+'</div><div class="rf"><button type="button">Learn more</button></div></div>';
   tip.querySelector('button').onclick=e=>{e.stopPropagation();tip.classList.toggle('open');tip.querySelector('button').textContent=tip.classList.contains('open')?'Show less':'Learn more';place()};
   tip.style.display='block';place()};
 const place=()=>{if(!cur)return;const r=cur.getBoundingClientRect(),h=tip.offsetHeight,W2=274;let x=r.right+10,y=r.top-10,rg=false;if(x+W2>innerWidth-4){x=Math.max(4,r.left-W2-10);rg=true}if(y+h>innerHeight-4)y=Math.max(4,innerHeight-h-4);tip.style.left=x+'px';tip.style.top=y+'px';tip.classList.toggle('rgt',rg);const c=tip.querySelector('.rc');if(c)c.style.top=Math.max(10,Math.min(h-20,r.top+r.height/2-y-5))+'px'};
@@ -8054,6 +8054,7 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Cut',k:'Ctrl+X',f:()=>{if(copySel()){delSel();commit();draw()}},en:S},{t:'Copy',k:'Ctrl+C',f:copySel,en:S},{t:'Paste',k:'Ctrl+V',f:()=>pasteClip('center'),en:()=>!!CLIP},
     {t:'Paste in Front',k:'Ctrl+F',f:()=>pasteClip('front'),en:()=>!!CLIP},{t:'Paste in Back',k:'Ctrl+B',f:()=>pasteClip('back'),en:()=>!!CLIP},{t:'Paste in Place',k:'Ctrl+Shift+V',f:()=>pasteClip('inplace'),en:()=>!!CLIP},sep,
     {t:'Clear',k:'Delete',f:K('Delete',{code:'Delete'}),en:S},sep,
+    {t:'Keyboard Shortcuts…',k:'Ctrl+Alt+Shift+K',f:()=>window.openKeyboardShortcuts()},sep,
     {t:'Preferences',sub:()=>[{t:'General…',k:'Ctrl+K',f:()=>window.prefOpen('gen')},{t:'User Interface…',f:()=>window.prefOpen('ui')}]}]],
    ['Object',()=>[
     {t:'Transform',sub:()=>[{t:'Transform Again',k:'Ctrl+D',f:transformAgain,en:()=>S()&&!!LASTXF},sep,{t:'Move…',k:'Ctrl+Shift+M',f:openMoveDlg,en:S},{t:'Rotate…',f:()=>openDlg('ro'),en:S},{t:'Reflect…',f:()=>openDlg('rf'),en:S},{t:'Scale…',f:()=>openDlg('sl'),en:S},{t:'Shear…',f:()=>openDlg('sh'),en:S}]},
@@ -8682,6 +8683,50 @@ fileExportPNG=function(){const O={res:'72',bg:'transparent'};
 /* shortcuts: Save As, Save a Copy (capture: ahead of the plain Ctrl+S handler) */
 addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;if(!(e.ctrlKey||e.metaKey)||e.code!=='KeyS')return;
   if(e.shiftKey&&!e.altKey){e.preventDefault();e.stopImmediatePropagation();window.fileSaveAs()}else if(e.altKey&&!e.shiftKey){e.preventDefault();e.stopImmediatePropagation();window.fileSaveCopy()}},true);
+})();
+</script>
+<script>
+/* ===================== Keyboard Shortcuts (Edit > Keyboard Shortcuts…, Ctrl+Alt+Shift+K): tool shortcuts ===================== */
+(()=>{
+const KEY='masar.keys.v1';
+/* Illustrator's default tool shortcuts for the tools Masar has (combo = optional "Shift+" then the key) */
+const DEF={v:'V',a:'A',mw:'Y',ls:'Q',p:'P',ap:'+',dp:'-',cp:'Shift+C',cu:'Shift+~',t:'T',tt:'Shift+T',ln:'\\',m:'M',l:'L',br:'B',bb:'Shift+B',shp:'Shift+N',pc:'N',er:'Shift+E',sc:'C',ro:'R',rf:'O',sl:'S',ft:'E',gr:'G',ey:'I',h:'H',z:'Z'};
+const ORDER=['v','a','gs','mw','ls','p','ap','dp','cp','cu','t','at','tp','vt','vat','vtp','tt','ln','ar','spi','rgr','pgr','m','rr','l','po','sr','fl','br','bb','shp','pc','sm','pe','jn','er','sc','kn','ro','rf','sl','sh','ft','gr','ey','h','z'];
+const load=()=>{try{const j=JSON.parse(localStorage.getItem(KEY)||'null');return j&&typeof j==='object'?j:{}}catch(_){return{}}};
+let USER=load();/* {toolId: 'Combo' | ''(cleared)} */
+const eff=()=>{const m={};ORDER.forEach(id=>{if(id in USER){if(USER[id])m[id]=USER[id]}else if(DEF[id])m[id]=DEF[id]});return m};
+window.toolKeyLabel=(id,fallback)=>{const m=eff();return id in m?m[id]:(id in USER?'':fallback)};
+const comboOf=e=>{let k=null;if(/^Key[A-Z]$/.test(e.code))k=e.code[3];else if(/^Digit\d$/.test(e.code))k=e.code[5];else if(e.code==='Backslash')k='\\';else if(e.code==='Minus')k='-';else if(e.code==='Equal')k='=';else if(e.code==='Backquote')k='~';else if(e.code==='Slash')k='/';else if(e.code==='Comma')k=',';else if(e.code==='Period')k='.';else if(e.key&&e.key.length===1)k=e.key.toUpperCase();
+  if(!k)return null;if(e.shiftKey&&k==='=')return'+';if(e.shiftKey&&k==='Backquote')return'Shift+~';return(e.shiftKey&&!/[+~]/.test(k)?'Shift+':'')+k};
+/* tool keys: applies the user's map; defaults that were reassigned or cleared are blocked so the built-in handler does not fire them */
+addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||document.querySelector('.fxm'))return;const tg=e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||(e.target.isContentEditable))return;
+  if(typeof ted_s!=='undefined'&&ted_s||typeof st!=='undefined'&&st)return;const c=comboOf(e);if(!c||!Object.keys(USER).length)return;
+  const m=eff(),hit=Object.keys(m).find(id=>m[id]===c);
+  if(hit){e.preventDefault();e.stopImmediatePropagation();if(window.setTool)setTool(hit);return}
+  if(Object.keys(DEF).some(id=>DEF[id]===c&&id in USER)){e.preventDefault();e.stopImmediatePropagation()}},true);
+const css=document.createElement('style');css.textContent='.ksb{width:560px;max-width:96vw}.ksl{max-height:380px;overflow:auto;border:1px solid var(--line);background:var(--field)}.ksr{display:flex;align-items:center;gap:10px;height:26px;padding:0 10px;cursor:default}.ksr:hover{background:var(--hov)}.ksr.on{background:#1473E6;color:#fff}.ksr span{flex:1}.ksr kbd{min-width:70px;text-align:center;padding:1px 8px;border:1px solid var(--line);border-radius:3px;font:inherit}.ksm{min-height:34px;margin-top:8px;color:var(--mute)}.ksm.w{color:#e8a33c}';document.head.appendChild(css);
+window.openKeyboardShortcuts=()=>{if(document.querySelector('.fxm.ksm0'))return;
+  const work=JSON.parse(JSON.stringify(USER));let selId=null,pend=null,msg='';
+  const bg=document.createElement('div');bg.className='fxm ksm0';bg.innerHTML='<div class="fxb ksb" role="dialog" aria-label="Keyboard Shortcuts"><b>Keyboard Shortcuts</b><div class="fxr" style="display:block"><div style="margin-bottom:6px">Shortcuts for: <b>Tools</b>. Select a tool, then press the new key (Shift+key allowed). Esc cancels.</div><div class="ksl" id="ksl"></div><div class="ksm" id="ksm"></div></div><div class="fxf"></div></div>';
+  const box=bg.firstChild,L=box.querySelector('#ksl'),M=box.querySelector('#ksm'),ft=box.querySelector('.fxf');
+  const effW=()=>{const m={};ORDER.forEach(id=>{if(id in work){if(work[id])m[id]=work[id]}else if(DEF[id])m[id]=DEF[id]});return m};
+  const name=id=>(TNAME[id]||id).replace(/ Tool$/,'');
+  const draw=()=>{const m=effW();L.replaceChildren(...ORDER.filter(id=>TNAME[id]).map(id=>{const r=document.createElement('div');r.className='ksr'+(id===selId?' on':'');r.dataset.id=id;r.innerHTML='<span>'+name(id)+'</span><kbd>'+(id===selId&&pend!==null?'Press a key…':(m[id]||''))+'</kbd>';r.onclick=()=>{selId=id;pend=null;msg='';draw()};return r}));M.className='ksm'+(msg.startsWith('!')?' w':'');M.textContent=msg.replace(/^!/,'')};
+  const mk=(t,f,p)=>{const b=document.createElement('button');b.type='button';b.textContent=t;if(p)b.className='pri';b.onclick=f;ft.appendChild(b);return b};
+  const clearB=mk('Clear',()=>{if(selId){work[selId]='';msg='';draw()}}),defB=mk('Default',()=>{if(selId){delete work[selId];msg='';draw()}}),allB=mk('Reset All',()=>{Object.keys(work).forEach(k=>delete work[k]);msg='';draw()});
+  ft.appendChild(document.createElement('span')).style.flex='1';
+  const close=()=>{removeEventListener('keydown',kd,true);bg.remove()};
+  mk('Cancel',close);
+  mk('OK',()=>{USER=work;try{if(Object.keys(USER).length)localStorage.setItem(KEY,JSON.stringify(USER));else localStorage.removeItem(KEY)}catch(_){}close()},1);
+  const kd=e=>{if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();if(pend!==null){pend=null;draw()}else close();return}
+    if(['Shift','Control','Alt','Meta'].includes(e.key))return;
+    if(selId&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const c=comboOf(e);if(c&&e.target.tagName!=='BUTTON'||c&&e.key!=='Enter'){e.preventDefault();e.stopImmediatePropagation();
+      const m=effW(),other=Object.keys(m).find(id=>m[id]===c&&id!==selId);
+      if(other){work[other]='';msg='!"'+c+'" was assigned to '+name(other)+'; it has been moved to '+name(selId)+'.'}else msg='';
+      work[selId]=c;draw();return}}
+    e.stopPropagation()};
+  addEventListener('keydown',kd,true);document.body.appendChild(bg);draw()};
+addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.altKey&&e.shiftKey&&e.code==='KeyK'){e.preventDefault();e.stopImmediatePropagation();window.openKeyboardShortcuts()}},true);
 })();
 </script>
 </body>
