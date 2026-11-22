@@ -148,6 +148,16 @@
 **اتحقق ومفيهوش مشكلة:** Align Key Object (المفتاح ثابت + Distribute Spacing بقيمة)، Smart Guides (labels: path/anchor/intersect/center، محاذاة الحواف، snap للـ anchor)، أسهم خانة Opacity (1% و Shift = 10%)، حفظ وضع Toolbar (أعمدة/جنب/موضع).
 **لسه (بالترتيب):** تأثيرات الـ path الـ live (Zig Zag/Roughen/Offset… حالياً بتتخبز) — محتاجة معمارية effects غير مدمّرة؛ نسخة محرر الاختصارات لأوامر المنيو؛ Control bar overflow وإخفاء عناصره؛ Place/Revert/Document Setup/Print؛ باقي صفحات Preferences وUI Scale؛ Workspaces الجاهزة؛ اختيار الأعضاء المتداخلة بعمق (>1 مستوى) في Layers؛ ثم الأدوات (40) والبانلز (27) الجديدة.
 
+## 5-ح) مراجعة الـ Effects (قبل البدء في الـ live effects)
+**شغّال:** كل التأثيرات بتفتح dialog فيه Preview، Undo/Redo، Apply Last Effect (Ctrl+Shift+E) وLast Effect…، بتطبّق على كل المحدد وعلى النصوص، وأرقام Offset Path وRound Corners وConvert to Shape وTransform وWarp اتحقق منها. الـ Appearance panel فيه Stroke/Fill/Opacity وأزرار (New Stroke/Fill/Effect، Clear، Duplicate، Delete، eye للـ effect).
+**المشاكل والفروقات:**
+1. **معظم التأثيرات "متخبّزة" مش live:** اللي live بس 5 (Drop Shadow, Feather, Inner Glow, Outer Glow, Gaussian Blur). الباقي (Convert to Shape ×3، Pucker & Bloat، Roughen، Transform، Tweak، Twist، Zig Zag، Offset Path، Round Corners، Scribble، الـ15 Warp) بيغيّر الـ path نهائياً: مش بيظهر في Appearance، ومينفعش يتعدّل/يتعطّل/يتحذف/يتعاد ترتيبه (غير Undo). Illustrator: كلها live في Appearance وبتتعدّل بالضغط على اسمها.
+2. **Appearance:** فتح dialog التأثير بـ**دبل كليك** على الصف؛ Illustrator بضغطة واحدة على اسم التأثير (المسطّر).
+3. **ناقص من منيو Effect:** Free Distort (Distort & Transform فيها 6 من 7)، Path > Outline Object / Outline Stroke، Pathfinder (13 أمر)، Rasterize، Crop Marks، SVG Filters، 3D and Materials، Document Raster Effects Settings، وكل Photoshop Effects ما عدا Gaussian Blur (Blur: Radial/Smart؛ Artistic، Brush Strokes، Distort، Pixelate، Sketch، Stylize، Texture، Video، Effect Gallery).
+4. **فروق الـ dialogs:** Drop Shadow ناقصها Mode (Multiply) وDarkness/Color؛ Inner/Outer Glow ناقصها Mode (Screen)؛ Transform effect مفيهاش Preview؛ Scribble مبسّطة (ناقص Settings presets وPath Overlap وVariation)؛ القيم بالـ px بدل وحدة المستند (pt).
+5. **افتراضيات مش متأكد منها من Adobe:** Inner Glow blur=8 (مسار) وألوان الـ Glow (أبيض)، Round Corners=20، Roughen/Zig Zag/Twist/Offset، مدى Pucker & Bloat (Adobe: ‎-200% إلى 200%؛ ما اتأكدتش إن dialog مسار بيدعم نفس المدى).
+**المرجع:** [Distort and transform effects](https://helpx.adobe.com/illustrator/desktop/manage-objects/reshape-transform-objects/distort-and-transform-effects-in-illustrator.html).
+
 ## 5-ج) تخصيص الواجهة (مقارنة بـ Illustrator)
 **موجود وشغال (اتختبر بماوس حقيقي):** سحب تاب بانل لليسار/اليمين/عايم، دمج بانلز كتابات، إغلاق/فتح من Window، حفظ التخطيط بعد reload، Workspaces (Essentials, Essentials Classic, Typography, Painting) + New Workspace + Reset، Edit Toolbar، Toolbar عمودين/عمود، Tab/Shift+Tab، 4 ثيمات.
 **ناقص:** Keyboard Shortcuts editor (Ctrl+Alt+Shift+K) — تخصيص الاختصارات؛ Workspaces الجاهزة الباقية (3D, Automation, Layout, Motion, Printing, Tracing, Web…)؛ قايمة إظهار/إخفاء عناصر الـ Control bar؛ Control bar overflow menu؛ UI Scale في Preferences؛ تخصيص قوائم السياق/البانل.
