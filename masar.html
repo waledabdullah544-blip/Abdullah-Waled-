@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 176</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 177</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8507,7 +8507,7 @@ AP.addEventListener('click',e=>{const b=e.target.closest('button'),row=e.target.
     else if(a==='dup'){tsel().forEach(o=>{const L=fxList(o);if(APFX>=0&&L[APFX]){L.splice(APFX+1,0,{...L[APFX]});o.g.dataset.fx=JSON.stringify(L);fxUpd(o)}});commit();draw()}
     else if(a==='del'){if(APK==='stroke')applyStyle({stroke:'none'},true);else if(APK==='fill')applyStyle({fill:'none'},true);else if(APK==='fx'&&APFX>=0){fxRemove(APFX);APFX=-1}}
     APSIG='';apRefresh();return}
-  if(row){APK=row.dataset.k;APFX=row.dataset.k==='fx'?+row.dataset.i:-1;if(APK==='fx'&&window.fxDlg&&e.detail>1){fxDlg(null,APFX)}APSIG='';apRefresh()}});
+  if(row){APK=row.dataset.k;APFX=row.dataset.k==='fx'?+row.dataset.i:-1;if(APK==='fx'&&window.fxDlg&&(e.detail>1||e.target.closest('.apn'))&&!e.target.closest('button')){fxDlg(null,APFX)}/* Illustrator: a click on the effect's name opens its options */APSIG='';apRefresh()}});
 AP.addEventListener('dblclick',e=>{const row=e.target.closest('.apr');if(!row||e.target.closest('button'))return;if(row.dataset.k==='fx'&&window.fxDlg)fxDlg(null,+row.dataset.i);else if(row.dataset.k==='op')DK.open('transparency')});
 DK.reg('appearance','Appearance',PNI('<rect x="4" y="4" width="16" height="16" rx="1"/><path d="M4 10h16M4 15h16"/>'),AP,{dw:300,open:()=>{AP.style.display='block';APSIG='';apRefresh()},close:()=>{AP.style.display='none'},refresh:apRefresh});
 window.apRefresh=apRefresh;

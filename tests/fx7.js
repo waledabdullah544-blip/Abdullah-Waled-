@@ -1,0 +1,12 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(5000);
+await H.key('m');await H.drag(300,200,420,280);await H.key('v');await pg.evaluate(()=>DK.open('appearance'));
+const eff=async(grp,it)=>{await pg.locator('#mbar button:text-is("Effect")').click();await pg.locator('.mdd button',{hasText:grp}).first().hover();await pg.waitForTimeout(100);await pg.locator('.msub button',{hasText:it}).first().click();await pg.waitForTimeout(250);await pg.click('.fxb button.pri');await pg.waitForTimeout(300)};
+await eff('Distort & Transform','Zig Zag');await eff('Stylize','Drop Shadow');
+const nameBtn=t=>pg.locator('#app .apr',{hasText:t}).locator('.apn');
+await nameBtn('Zig Zag').click();await pg.waitForTimeout(300);chk('One click on a path effect name opens its dialog',/Zig Zag/.test(await pg.locator('.fxb b').first().innerText().catch(()=>'')),null);await pg.keyboard.press('Escape');await pg.waitForTimeout(200);
+await nameBtn('Drop Shadow').click();await pg.waitForTimeout(300);chk('One click on a filter effect name opens its dialog',/Drop Shadow/.test(await pg.locator('.fxb b').first().innerText().catch(()=>'')),null);await pg.keyboard.press('Escape');await pg.waitForTimeout(200);
+await pg.locator('#app .apr',{hasText:'Zig Zag'}).locator('.apey').click();await pg.waitForTimeout(250);chk('Clicking the eye does not open the dialog',await pg.locator('.fxb').count()===0,null);
+await pg.locator('#app .apr',{hasText:'Zig Zag'}).locator('.fxi').click();await pg.waitForTimeout(250);chk('Clicking the row (not the name) only selects it',await pg.locator('.fxb').count()===0,null);
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();
