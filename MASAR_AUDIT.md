@@ -214,3 +214,10 @@
 - Build 196: أزرار Add to Profiles / Delete Profile في Stroke › Profile (البروفايلات المحفوظة في localStorage وبتتطبق على أي مسار)، وFlip Along/Across شغالين على النقاط المخصصة. Width Tool Options: ما اتأكدش من أدوبي إنه موجود فمااتعملش (مش هنحط ديالوج وهمي).
 - اختبار: `tests/wt.js` (21 فحص ناجح).
 - Build 197: قايمة Width Profile في Properties panel (بتظهر مع أداة Width أو مسار عليه بروفايل) — بنفس البروفايلات المحفوظة.
+
+## 5-س) Build 198 — Blend (أداة W + قائمة Object › Blend)
+- **اتعمل:** Blend Tool (W): كليك على أول أوبجكت ثم التاني ← بلند حي؛ كليك على أوبجكت تالت يمدّه؛ كليك على anchor يحدد نقطة البداية؛ Alt+click يفتح Blend Options. Object › Blend: Make (Ctrl+Alt+B)، Release (Ctrl+Alt+Shift+B)، Blend Options (Smooth Color / Specified Steps / Specified Distance + Align to Page / Align to Path + Preview)، Expand، Replace Spine، Reverse Spine، Reverse Front to Back. دبل-كليك على الأيقونة = Blend Options.
+- البلند حي: لما تعدّل الـkeys (move/تعديل/تلوين) الـsteps بتتعاد، ويتحفظ في الـundo والـcopy/paste والملف (الميتا في عنصر مخفي داخل الجروب). تداخل الألوان RGB والـstroke-width والـopacity، وتساوي عدد الـanchors بتقسيم أطول segment.
+- **إصلاح:** Ctrl+Alt+B كان بيتفسّر Paste in Back — اتصلح.
+- لسه ناقص في Blend: ترتيب z-order الافتراضي للـsteps عند أكتر من 3 keys مش متأكد منه 100%، والبلند على نصوص/gradients (الـsteps بتاخد gradient أقرب key بدون تداخل).
+- اختبار: tests/bl.js و tests/bl2.js (24 فحص).

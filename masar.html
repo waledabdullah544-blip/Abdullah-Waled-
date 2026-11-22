@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 197</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 198</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -3125,7 +3125,7 @@ function transformAgain(){const X=LASTXF;if(!X||!sel.size)return;
 addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||ted_s)return;if(!(e.ctrlKey||e.metaKey))return;const k=e.key.toLowerCase(),c=e.code;let h=true;
   if(c==='KeyG'&&!e.shiftKey)groupSel();else if(c==='KeyG'&&e.shiftKey)ungroupSel();
   else if(c==='KeyC'&&!e.shiftKey&&!e.altKey)copySel();else if(c==='KeyX'&&!e.shiftKey&&!e.altKey)(copySel()&&(delSel(),commit(),draw()));
-  else if(c==='KeyV'&&e.shiftKey)pasteClip('inplace');else if(c==='KeyV')pasteClip('center');else if(c==='KeyF'&&!e.shiftKey)pasteClip('front');else if(c==='KeyB'&&!e.shiftKey)pasteClip('back');
+  else if(c==='KeyV'&&e.shiftKey)pasteClip('inplace');else if(c==='KeyV')pasteClip('center');else if(c==='KeyF'&&!e.shiftKey)pasteClip('front');else if(c==='KeyB'&&!e.shiftKey&&!e.altKey)pasteClip('back');
   else if(c==='BracketRight')arrange(e.shiftKey?'front':'fwd');else if(c==='BracketLeft')arrange(e.shiftKey?'back':'bwd');
   else if(c==='KeyD'&&!e.shiftKey)transformAgain();else h=false;
   if(h){e.preventDefault();e.stopImmediatePropagation()}},true);
@@ -8263,7 +8263,8 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Hide',sub:()=>[{t:'Selection',k:'Ctrl+3',f:hideSel,en:S},{t:'Show All',k:'Ctrl+Alt+3',f:showAll}]},sep,
     {t:'Path',sub:()=>[{t:'Join',k:'Ctrl+J',f:()=>pjJoin(),en:anySel},{t:'Average…',k:'Ctrl+Alt+J',f:pjAverage,en:anySel},sep,{t:'Outline Stroke',f:()=>window.pxOutlineStroke(),en:S},{t:'Offset Path…',f:()=>window.openOffsetPath(),en:S},sep,{t:'Reverse Path Direction',f:()=>window.pathReverse(),en:S},{t:'Simplify…',f:()=>window.openSimplify(),en:S},{t:'Add Anchor Points',f:()=>window.pathAddAnchors(),en:S},{t:'Remove Anchor Points',f:anRemove,en:()=>dsSel.size>0},sep,{t:'Divide Objects Below',f:()=>window.pathDivideBelow(),en:S},{t:'Split Into Grid…',f:()=>window.openSplitGrid(),en:S},{t:'Clean Up…',f:()=>window.openCleanUp()}]},
     {t:'Clipping Mask',sub:()=>[{t:'Make',k:'Ctrl+7',f:clipMake,en:S},{t:'Release',k:'Ctrl+Alt+7',f:clipRelease,en:S}]},
-    {t:'Compound Path',sub:()=>[{t:'Make',k:'Ctrl+8',f:makeCompound,en:S},{t:'Release',k:'Ctrl+Alt+8',f:releaseCompound,en:S}]},sep,
+    {t:'Compound Path',sub:()=>[{t:'Make',k:'Ctrl+8',f:makeCompound,en:S},{t:'Release',k:'Ctrl+Alt+8',f:releaseCompound,en:S}]},
+    {t:'Blend',sub:()=>{const B=()=>[...sel].some(o=>window.bnHas&&bnHas(o.g));return[{t:'Make',k:'Ctrl+Alt+B',f:()=>window.blendMake(),en:()=>sel.size>1},{t:'Release',k:'Ctrl+Alt+Shift+B',f:()=>window.blendRelease(),en:B},sep,{t:'Blend Options…',f:()=>window.blendOptions(),en:()=>true},{t:'Expand',f:()=>window.blendExpand(),en:B},sep,{t:'Replace Spine',f:()=>window.blendReplaceSpine(),en:()=>sel.size===2&&B()},{t:'Reverse Spine',f:()=>window.blendReverseSpine(),en:B},{t:'Reverse Front to Back',f:()=>window.blendReverseFB(),en:B}]}},sep,
     {t:'Expand…',f:()=>window.openExpand(),en:S},{t:'Expand Appearance',f:()=>window.pxExpand(),en:()=>[...sel].some(o=>o.g.dataset&&o.g.dataset.pxon&&fxList(o).some(e=>e.t==='px'))},{t:'Make Pixel Perfect',f:()=>window.pathPixel(),en:S},{t:'Create Trim Marks',f:()=>window.createTrimMarks()},sep,{t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
    ['Type',()=>[
     {t:'Font',sub:()=>fontItems(),en:txHas},{t:'Size',sub:()=>[6,8,9,10,11,12,14,18,21,24,30,36,48,60,72].map(n=>({t:String(n),f:()=>setTxSize(n),en:txHas}))},sep,
@@ -9416,6 +9417,152 @@ function sbDialog(){const M=dkModal('Shape Builder Tool Options','<label class="
 {const st=document.createElement('style');const cur=(m)=>'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M2 2L2 17L6 13.4L8.7 19.5L11 18.5L8.4 12.6L13.6 12.6Z" fill="#fff" stroke="#000" stroke-width="1.1" stroke-linejoin="round"/><g fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round"><circle cx="17" cy="18" r="5"/><path d="M23 23h6'+(m?'':'M26 20v6')+'"/></g><g fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round"><circle cx="17" cy="18" r="5"/><path d="M23 23h6'+(m?'':'M26 20v6')+'"/></g></svg>')+'") 2 2,crosshair';st.textContent='#cv.tl-sbd{cursor:'+cur(false)+' !important}#cv.tl-sbd.tl-sbd-minus{cursor:'+cur(true)+' !important}';document.head.appendChild(st)}
 
 addGroup({id:'sbBtn',lab:'Shape Builder tools',t:['sbd']});
+/* ---------- Blend Tool (W) and Object > Blend ----------
+   A blend is a group (g[data-mem] members = the key objects, in order) carrying data-blend = {m:'c'|'s'|'d', n, d, o:'page'|'path', r:0|1, rot:{keyIndex:anchor}}.
+   The intermediate steps live in g[data-bgen] children and are rebuilt whenever the keys / options / spine change (bnAll in draw / touch).
+   The spine is an optional hidden member g[data-mem][data-bspine] holding a path; without it the spine is the straight line between the key centres. */
+const BND={m:'c',n:5,d:20,o:'page'};try{Object.assign(BND,JSON.parse(localStorage.getItem('masar.blend.v1')||'{}'))}catch(_){}
+const bnSaveD=()=>{try{localStorage.setItem('masar.blend.v1',JSON.stringify(BND))}catch(_){}};
+const bnNode=g=>g&&g.querySelector?[...g.children].find(c=>c.hasAttribute&&c.hasAttribute('data-bmeta'))||null:null;
+const bnHas=g=>!!bnNode(g),bnGet=g=>{const n=bnNode(g);return n?n.getAttribute('data-bmeta'):null};
+const bnPut=(g,v)=>{let n=bnNode(g);if(v==null){if(n)n.remove();return}if(!n){n=el('g',{'data-bmeta':'','style':'display:none'});g.prepend(n)}n.setAttribute('data-bmeta',v)};
+window.bnHas=bnHas;window.bnGet=bnGet;window.bnPut=bnPut;
+const bnMeta=g=>{try{return Object.assign({m:'c',n:5,d:20,o:'page',r:0,rot:{}},JSON.parse(bnGet(g)||'null')||{})}catch(_){return null}};
+const bnIsBlend=o=>!!o&&!!o.g&&bnHas(o.g);
+const bnKeys=g=>[...g.children].filter(c=>c.matches&&c.matches('g[data-mem]')&&!c.hasAttribute('data-bspine'));
+const bnSpineEl=g=>[...g.children].find(c=>c.matches&&c.matches('g[data-bspine]'))||null;
+const bnCP=p=>({x:p.x,y:p.y,i:p.i?[p.i[0],p.i[1]]:null,o:p.o?[p.o[0],p.o[1]]:null});
+const bnClone=S=>S.map(sp=>({closed:sp.closed,pts:sp.pts.map(bnCP)}));
+const bnLen=(A,B)=>{let L=0,p=[A.x,A.y];for(let j=1;j<=12;j++){const q=bez(A,B,j/12);L+=Math.hypot(q[0]-p[0],q[1]-p[1]);p=q}return L};
+function bnSplit(P,k,closed){const n=P.length,A=P[k],B=P[(k+1)%n],H=!!(A.o||B.i),P0=[A.x,A.y],P1=A.o||P0,P2=B.i||[B.x,B.y],P3=[B.x,B.y],L=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+  const a=L(P0,P1),b=L(P1,P2),c=L(P2,P3),d=L(a,b),e=L(b,c),f=L(d,e);
+  const M={x:f[0],y:f[1],i:H?d:null,o:H?e:null};A.o=H?a:null;B.i=H?c:null;P.splice(k+1,0,M)}
+function bnGrow(sp,n){const P=sp.pts;while(P.length<n){const cnt=sp.closed?P.length:P.length-1;let bi=0,bl=-1;for(let k=0;k<cnt;k++){const l=bnLen(P[k],P[(k+1)%P.length]);if(l>bl){bl=l;bi=k}}bnSplit(P,bi,sp.closed)}}
+function bnRotate(sp,r){if(!sp.closed||!r)return;const P=sp.pts,n=P.length;r=((r%n)+n)%n;sp.pts=P.slice(r).concat(P.slice(0,r))}
+const bnMix=(a,b,t)=>a+(b-a)*t;
+function bnLerpSP(A,B,t){const out=[];for(let s=0;s<A.length;s++){const a=A[s],b=B[s];if(!b){out.push({closed:a.closed,pts:a.pts.map(bnCP)});continue}
+    const pts=a.pts.map((p,k)=>{const q=b.pts[k],x=bnMix(p.x,q.x,t),y=bnMix(p.y,q.y,t),I=(p.i||q.i)?[bnMix((p.i||[p.x,p.y])[0],(q.i||[q.x,q.y])[0],t),bnMix((p.i||[p.x,p.y])[1],(q.i||[q.x,q.y])[1],t)]:null,O=(p.o||q.o)?[bnMix((p.o||[p.x,p.y])[0],(q.o||[q.x,q.y])[0],t),bnMix((p.o||[p.x,p.y])[1],(q.o||[q.x,q.y])[1],t)]:null;return{x,y,i:I,o:O}});
+    out.push({closed:t<.5?a.closed:b.closed,pts})}return out}
+function bnMatch(SA,SB,rotA,rotB){const A=bnClone(SA),B=bnClone(SB);const m=Math.min(A.length,B.length);const a=A.slice(0,m),b=B.slice(0,m);
+  for(let s=0;s<m;s++){if(s===0){bnRotate(a[0],rotA);bnRotate(b[0],rotB)}const n=Math.max(a[s].pts.length,b[s].pts.length);bnGrow(a[s],n);bnGrow(b[s],n)}return[a,b]}
+function bnSample(S){const out=[];S.forEach(sp=>{const P=sp.pts,n=P.length,cnt=sp.closed?n:n-1;for(let k=0;k<cnt;k++){const A=P[k],B=P[(k+1)%n],m=(A.o||B.i)?16:2;for(let j=0;j<m;j++)out.push(m>1?bez(A,B,j/m):[A.x,A.y])}if(n&&!sp.closed)out.push([P[n-1].x,P[n-1].y])});return out}
+function bnBox(S){const Q=bnSample(S);if(!Q.length)return[0,0,0,0];let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;Q.forEach(q=>{x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[0]);y1=Math.max(y1,q[1])});return[x0,y0,x1,y1]}
+const bnCen=S=>{const b=bnBox(S);return[(b[0]+b[2])/2,(b[1]+b[3])/2]};
+function bnXf(S,fn){S.forEach(sp=>sp.pts.forEach(p=>{const a=fn([p.x,p.y]);p.x=a[0];p.y=a[1];if(p.i)p.i=fn(p.i);if(p.o)p.o=fn(p.o)}))}
+/* colours */
+function bnRGB(c){c=(c||'').trim();if(!c||c==='none'||/^url/.test(c))return null;let m=/^#([0-9a-f]{6})$/i.exec(c);if(m){const v=parseInt(m[1],16);return[v>>16,(v>>8)&255,v&255]}m=/^#([0-9a-f])([0-9a-f])([0-9a-f])$/i.exec(c);if(m)return[parseInt(m[1]+m[1],16),parseInt(m[2]+m[2],16),parseInt(m[3]+m[3],16)];
+  m=/^rgba?\(([^)]+)\)/i.exec(c);if(m){const a=m[1].split(',').map(parseFloat);return[a[0]|0,a[1]|0,a[2]|0]}return null}
+const bnHex=a=>'#'+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');
+const bnNum=(v,d)=>{const x=parseFloat(v);return isNaN(x)?d:x};
+function bnPaths(k){return[...k.querySelectorAll('path')].filter(p=>!p.closest('[data-sao]')&&!p.hasAttribute('data-sao')&&!p.hasAttribute('data-bo')&&!p.closest('[data-bgen]')&&(p.getAttribute('d')||'').length>1)}
+/* spine polyline helpers */
+function bnPoly(S){const Q=bnSample(S),cum=[0];for(let i=1;i<Q.length;i++)cum.push(cum[i-1]+Math.hypot(Q[i][0]-Q[i-1][0],Q[i][1]-Q[i-1][1]));return{Q,cum,L:cum[cum.length-1]||1}}
+function bnAtF(Pl,f){const{Q,cum,L}=Pl;if(Q.length<2)return{x:Q[0]?Q[0][0]:0,y:Q[0]?Q[0][1]:0,a:0};const d=Math.max(0,Math.min(1,f))*L;let lo=0,hi=Q.length-2;while(lo<hi){const m=(lo+hi+1)>>1;if(cum[m]<=d)lo=m;else hi=m-1}
+  const a=Q[lo],b=Q[lo+1],l=(cum[lo+1]-cum[lo])||1,u=Math.max(0,Math.min(1,(d-cum[lo])/l));return{x:a[0]+(b[0]-a[0])*u,y:a[1]+(b[1]-a[1])*u,a:Math.atan2(b[1]-a[1],b[0]-a[0])}}
+function bnFracOf(Pl,q){const{Q,cum,L}=Pl;let best=1e18,f=0;for(let i=0;i<Q.length-1;i++){const a=Q[i],b=Q[i+1],vx=b[0]-a[0],vy=b[1]-a[1],l2=vx*vx+vy*vy||1e-9;let u=((q[0]-a[0])*vx+(q[1]-a[1])*vy)/l2;u=Math.max(0,Math.min(1,u));const x=a[0]+vx*u,y=a[1]+vy*u,d=Math.hypot(q[0]-x,q[1]-y);if(d<best){best=d;f=(cum[i]+u*(cum[i+1]-cum[i]))/L}}return f}
+/* number of steps for a pair */
+function bnSteps(M,pa,pb,ca,cb,spineLen){const dist=spineLen!=null?spineLen:Math.hypot(cb[0]-ca[0],cb[1]-ca[1]);
+  if(M.m==='s')return Math.max(1,Math.min(1000,Math.round(M.n)||1));
+  if(M.m==='d')return Math.max(1,Math.min(1000,Math.round(dist/Math.max(.1,+M.d||1))-1));
+  let md=0;const ra=bnRGB(pa.getAttribute('fill')),rb=bnRGB(pb.getAttribute('fill')),sa=bnRGB(pa.getAttribute('stroke')),sb=bnRGB(pb.getAttribute('stroke'));
+  if(ra&&rb)md=Math.max(md,...ra.map((v,i)=>Math.abs(v-rb[i])));if(sa&&sb)md=Math.max(md,...sa.map((v,i)=>Math.abs(v-sb[i])));
+  md=Math.max(md,Math.abs(bnNum(pa.getAttribute('opacity'),1)-bnNum(pb.getAttribute('opacity'),1))*255);
+  if(md>=1)return Math.max(1,Math.min(255,Math.round(md)));return Math.max(1,Math.min(255,Math.ceil(dist)))}
+/* one step: clone of the nearer key's path with interpolated geometry and style */
+function bnStepEl(pa,pb,S,t){const src=t<.5?pa:pb,e=src.cloneNode(true);['id','data-shape','data-p','data-lcb','data-lcr','data-cu','data-tpath','data-sao','data-wpts','data-sao-so'].forEach(a=>e.removeAttribute(a));e.removeAttribute('data-nm');
+  e.setAttribute('d',spD(S));e.__sp=undefined;e.__spd=undefined;
+  const mixc=at=>{const a=bnRGB(pa.getAttribute(at)),b=bnRGB(pb.getAttribute(at));if(a&&b)e.setAttribute(at,bnHex(a.map((v,i)=>bnMix(v,b[i],t))))};mixc('fill');mixc('stroke');
+  const wa=bnNum(pa.getAttribute('stroke-width'),1),wb=bnNum(pb.getAttribute('stroke-width'),1);if(pa.getAttribute('stroke')!=='none'&&pb.getAttribute('stroke')!=='none')e.setAttribute('stroke-width',+bnMix(wa,wb,t).toFixed(3));
+  const oa=bnNum(pa.getAttribute('opacity'),1),ob=bnNum(pb.getAttribute('opacity'),1);if(oa!==ob)e.setAttribute('opacity',+bnMix(oa,ob,t).toFixed(4));
+  ['fill-opacity','stroke-opacity'].forEach(at=>{const x=bnNum(pa.getAttribute(at),1),y=bnNum(pb.getAttribute(at),1);if(x!==y)e.setAttribute(at,+bnMix(x,y,t).toFixed(4))});
+  e.removeAttribute('transform');return e}
+function bnRender(ob){const g=ob.g,M=bnMeta(g);if(!M)return;const keys=bnKeys(g);g.querySelectorAll(':scope > g[data-bgen]').forEach(x=>x.remove());g.removeAttribute('transform');
+  if(keys.length<2)return;const sp=bnSpineEl(g),sPath=sp&&bnPaths(sp)[0],spS=sPath?getSP(sPath):null,Pl=spS?bnPoly(spS):null;
+  const info=keys.map(k=>{const P=bnPaths(k);return{k,P,S:P.map(p=>getSP(p)),c:bnCen(P.length?P.map(p=>getSP(p)).flat():[])}});
+  const fr=Pl?info.map(i=>bnFracOf(Pl,i.c)):null;const out=[];
+  for(let a=0;a<keys.length-1;a++){const A=info[a],B=info[a+1];out.push(A.k);
+    if(!A.P.length||!B.P.length){continue}
+    const pairs=A.P.length===B.P.length?A.P.map((_,i)=>i):[0];const spLen=Pl?Math.abs(fr[a+1]-fr[a])*Pl.L:null;const n=bnSteps(M,A.P[0],B.P[0],A.c,B.c,spLen);
+    const gen=el('g',{'data-bgen':String(a)});const MT=pairs.map(i=>bnMatch(A.S[i],B.S[i],(M.rot||{})[a],(M.rot||{})[a+1]));
+    const steps=[];for(let i=1;i<=n;i++){const t=i/(n+1);const grp=el('g',{});
+      pairs.forEach((pi,pj)=>{const[sa,sb]=MT[pj];const S=bnLerpSP(sa,sb,t);
+        const cx=A.c[0]+(B.c[0]-A.c[0])*t,cy=A.c[1]+(B.c[1]-A.c[1])*t;
+        if(Pl){const f=bnMix(fr[a],fr[a+1],t),q=bnAtF(Pl,f),q0=bnAtF(Pl,fr[a]),dx=q.x-cx,dy=q.y-cy;
+          if(M.o==='path'){const ang=q.a-q0.a,cs=Math.cos(ang),sn=Math.sin(ang);bnXf(S,p=>{const x=p[0]-cx,y=p[1]-cy;return[q.x+x*cs-y*sn,q.y+x*sn+y*cs]})}else bnXf(S,p=>[p[0]+dx,p[1]+dy])}
+        grp.appendChild(bnStepEl(A.P[pi],B.P[pi],S,t))});steps.push(grp)}
+    if(M.r)steps.reverse();steps.forEach(s=>{[...s.children].forEach(c=>gen.appendChild(c))});out.push(gen)}
+  out.push(keys[keys.length-1]);if(sp)out.push(sp);if(M.r)out.reverse();out.forEach(n=>g.appendChild(n));
+  g.__bsig=bnSig(g)}
+const bnSig=g=>(bnGet(g)||'')+'§'+bnKeys(g).map(k=>k.innerHTML).join('§')+'§'+((bnSpineEl(g)||{}).innerHTML||'');
+function bnAll(){objs.forEach(o=>{if(!bnHas(o.g))return;const sg=bnSig(o.g);if(o.g.__bsig!==sg||!o.g.querySelector(':scope > g[data-bgen]')&&bnKeys(o.g).length>1){try{bnRender(o);o.bb=BBX(o)}catch(e){console.error(e)}}})}
+window.bnAll=bnAll;
+{const _dr2=draw;draw=function(){bnAll();return _dr2.apply(this,arguments)};const _tc2=touch;touch=function(ob){if(ob&&ob.g&&bnHas(ob.g)&&ob.g.isConnected){try{bnRender(ob)}catch(e){console.error(e)}}return _tc2.apply(this,arguments)}}
+/* make / release / expand / options / spine */
+function bnMake(opts){const L=objs.filter(o=>sel.has(o)&&pick(o)&&!isText(o));if(L.length<2){tb5Msg('Blend: select at least two objects');return false}
+  if(L.some(o=>bnIsBlend(o))&&L.length>1){tb5Msg('Blend: a blend cannot be blended again — expand it first');return false}
+  L.forEach(o=>{try{normalizeObj(o);ensurePath(o)}catch(_){}});
+  if(L.some(o=>!bnPaths(o.g).length)){tb5Msg('Blend: the objects need to contain paths');return false}
+  groupSel();const G=[...sel][0];if(!G)return false;bnPut(G.g,JSON.stringify({m:BND.m,n:BND.n,d:BND.d,o:BND.o,r:0,rot:{},...(opts||{})}));G.nm='Blend';touch(G);hist[hi]=snap();draw();return true}
+function bnKeysToObjs(G){const gm={...G.m},out=[];bnKeys(G.g).forEach(k=>{const g=el('g',{});if(k.getAttribute('data-fx')){g.dataset.fx=k.getAttribute('data-fx');if(k.getAttribute('data-pxon'))g.dataset.pxon='1'}const tr=k.getAttribute('transform');if(tr)[...k.children].forEach(c=>c.setAttribute('transform',tr+(c.getAttribute('transform')?' '+c.getAttribute('transform'):'')));[...k.childNodes].forEach(n=>g.appendChild(n));const o={g,bb:null,m:{...gm}};if(k.getAttribute('data-nm'))o.nm=k.getAttribute('data-nm');g.__o=o;out.push(o)});return out}
+function bnRelease(){const L=objs.filter(o=>sel.has(o)&&bnIsBlend(o));if(!L.length){tb5Msg('Release Blend: select a blend');return}const made=[];
+  L.forEach(G=>{const at=objs.indexOf(G),sp=bnSpineEl(G.g),kids=bnKeysToObjs(G);let spineO=null;
+    const sPath=sp&&bnPaths(sp)[0];let d;if(sPath)d=sPath.getAttribute('d');else{const c=kids.map(k=>bnCen(bnPaths(k.g).map(p=>getSP(p)).flat()));d='M'+c.map(q=>r3(q[0])+' '+r3(q[1])).join('L')}
+    const g=el('g',{});g.appendChild(el('path',{d,fill:'none',stroke:'#000','stroke-width':1}));spineO={g,bb:null,m:{sx:1,sy:1,tx:0,ty:0}};g.__o=spineO;
+    objs.splice(at,1,...kids,spineO);made.push(...kids,spineO)});
+  layer.replaceChildren(...objs.map(q=>q.g));made.forEach(o=>touch(o));sel=new Set(made);commit();draw()}
+function bnExpand(){const L=objs.filter(o=>sel.has(o)&&bnIsBlend(o));if(!L.length){tb5Msg('Expand Blend: select a blend');return}
+  L.forEach(G=>{bnRender(G);const g=G.g,sp=bnSpineEl(g);if(sp)sp.remove();
+    [...g.querySelectorAll(':scope > g[data-bgen]')].forEach(gen=>{const mem=[...gen.children].map(p=>{const m=el('g',{'data-mem':'1'});m.appendChild(p);return m});gen.replaceWith(...mem)});
+    bnPut(g,null);g.__bsig=undefined;G.nm=undefined;touch(G)});commit();draw()}
+function bnReplaceSpine(){const B=objs.filter(o=>sel.has(o)&&bnIsBlend(o)),P=objs.filter(o=>sel.has(o)&&!bnIsBlend(o));if(B.length!==1||P.length!==1){tb5Msg('Replace Spine: select a blend and one path');return}
+  const G=B[0],PO=P[0];normalizeObj(PO);ensurePath(PO);const pp=bnPaths(PO.g)[0];if(!pp){tb5Msg('Replace Spine: the second object must be a path');return}
+  const S=bnClone(getSP(pp));const old=bnSpineEl(G.g);if(old)old.remove();const mem=el('g',{'data-mem':'1','data-bspine':'1',style:'display:none'});mem.appendChild(el('path',{d:spD(S),fill:'none',stroke:'none'}));G.g.appendChild(mem);
+  objs=objs.filter(o=>o!==PO);layer.replaceChildren(...objs.map(q=>q.g));
+  /* the key objects move onto the spine */
+  const Pl=bnPoly(S),keys=bnKeys(G.g),n=keys.length;keys.forEach((k,i)=>{const f=n===1?0:i/(n-1),q=bnAtF(Pl,f),ps=bnPaths(k).map(p=>getSP(p)).flat(),c=bnCen(ps),dx=q.x-c[0],dy=q.y-c[1];bnPaths(k).forEach(p=>{const s=getSP(p);bnXf(s,v=>[v[0]+dx,v[1]+dy]);writeSP(p)})});
+  sel=new Set([G]);touch(G);commit();draw()}
+function bnReverseSpine(){const L=objs.filter(o=>sel.has(o)&&bnIsBlend(o));if(!L.length){tb5Msg('Reverse Spine: select a blend');return}
+  L.forEach(G=>{const keys=bnKeys(G.g),cs=keys.map(k=>bnCen(bnPaths(k).map(p=>getSP(p)).flat())),n=keys.length;
+    keys.forEach((k,i)=>{const t=cs[n-1-i],c=cs[i],dx=t[0]-c[0],dy=t[1]-c[1];bnPaths(k).forEach(p=>{bnXf(getSP(p),v=>[v[0]+dx,v[1]+dy]);writeSP(p)})});
+    const sp=bnSpineEl(G.g),sPath=sp&&bnPaths(sp)[0];if(sPath){const S=getSP(sPath);S.forEach(s=>{s.pts.reverse();s.pts.forEach(p=>{const t=p.i;p.i=p.o;p.o=t})});writeSP(sPath)}
+    G.g.__bsig=undefined;touch(G)});commit();draw()}
+function bnReverseFB(){const L=objs.filter(o=>sel.has(o)&&bnIsBlend(o));if(!L.length){tb5Msg('Reverse Front to Back: select a blend');return}L.forEach(G=>{const M=bnMeta(G.g);M.r=M.r?0:1;bnPut(G.g,JSON.stringify(M));touch(G)});commit();draw()}
+function bnOptions(onDone){const L=objs.filter(o=>sel.has(o)&&bnIsBlend(o)),M=L.length?bnMeta(L[0].g):BND,orig=L.map(o=>bnGet(o.g));
+  const M0=Object.assign({},M);
+  const dlg=dkModal('Blend Options','<label>Spacing<select data-k="m"><option value="c">Smooth Color</option><option value="s">Specified Steps</option><option value="d">Specified Distance</option></select></label><label>Steps<input type="number" data-k="n" min="1" max="1000" step="1" value="'+M.n+'" style="width:80px"></label><label>Distance<span><input type="number" data-k="d" min="0.1" step="1" value="'+M.d+'" style="width:80px"> pt</span></label><label>Orientation<select data-k="o"><option value="page">Align to Page</option><option value="path">Align to Path</option></select></label><label class="fxp"><input type="checkbox" id="fxpv" checked> Preview</label>',
+   [{t:'Cancel',c:1,f:()=>{L.forEach((o,i)=>{if(orig[i]==null)bnPut(o.g,null);else bnPut(o.g,orig[i]);touch(o)});draw()}},{t:'OK',p:1,f:b=>{apply(true);if(L.length){commit()}draw();if(onDone)onDone()}}]);
+  const I=k=>dlg.box.querySelector('[data-k="'+k+'"]');I('m').value=M.m;I('o').value=M.o;
+  const sync=()=>{I('n').disabled=I('m').value!=='s';I('d').disabled=I('m').value!=='d'};
+  const apply=final=>{const v={m:I('m').value,n:Math.max(1,Math.min(1000,parseInt(I('n').value)||5)),d:Math.max(.1,parseFloat(I('d').value)||20),o:I('o').value};
+    if(!L.length||final){Object.assign(BND,v);bnSaveD()}
+    if(L.length&&(final||dlg.box.querySelector('#fxpv').checked)){L.forEach(o=>{const m=bnMeta(o.g);Object.assign(m,v);bnPut(o.g,JSON.stringify(m));touch(o)});draw()}};
+  dlg.box.addEventListener('input',()=>{sync();apply(false)});dlg.box.addEventListener('change',()=>{sync();apply(false)});sync()}
+Object.assign(window,{blendMake:()=>bnMake(),blendRelease:bnRelease,blendExpand:bnExpand,blendReplaceSpine:bnReplaceSpine,blendReverseSpine:bnReverseSpine,blendReverseFB:bnReverseFB,blendOptions:()=>bnOptions()});
+addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!e.altKey||e.code!=='KeyB'||/INPUT|TEXTAREA|SELECT/.test((e.target||{}).tagName||''))return;e.preventDefault();e.stopImmediatePropagation();if(e.shiftKey)bnRelease();else bnMake()},true);
+/* the Blend tool */
+{let first=null,hl=null;const bnTop=e=>{const t=e.target&&e.target.closest&&e.target.closest('#layer>g');return t&&t.__o&&pick(t.__o)?t.__o:null};
+  const clear=()=>{first=null;peng.replaceChildren()};
+  const mark=o=>{peng.replaceChildren();if(!o)return;const b=wbox(o);peng.append(el('rect',{x:b.x,y:b.y,width:b.w,height:b.h,fill:'none',stroke:'#4F80FF','stroke-width':1/z,'stroke-dasharray':(4/z)+' '+(3/z),'pointer-events':'none'}))};
+  const anchorAt=(o,p)=>{const T=6/z;let best=null;bnPaths(o.g).forEach(pe=>getSP(pe).forEach((sp,si)=>{if(si)return;sp.pts.forEach((q,k)=>{const d=Math.hypot(q.x-p.x,q.y-p.y);if(d<=T&&(!best||d<best.d))best={d,k}})}));return best?best.k:0};
+  addTool({id:'bl',name:'Blend Tool',key:'W',svg:'<circle cx="6" cy="12" r="3.2"/><circle cx="18" cy="12" r="3.2" opacity=".9"/><circle cx="12" cy="12" r="2.2" opacity=".55"/>',after:'sbd',
+    hint:'Blend · click the first object, then the second · click more objects to extend · Alt+click: Blend Options · double-click the icon: Blend Options',
+    cursor:'<circle cx="6" cy="12" r="3"/><circle cx="18" cy="12" r="3"/><circle cx="12" cy="12" r="1.6"/>',dbl:()=>bnOptions(),
+    enter:()=>{first=null},leave:()=>{clear()},
+    card:{d:'Creates a series of objects blended between the keys you click, with steps of intermediate shape and colour',m:['Click the first object, then the second: a blend is created between them','Click more objects to add them to the blend (keys)','Click an anchor point: the blend starts from that point of the path (closed paths)','Alt+click: opens Blend Options first','Double-click the icon (or Object › Blend › Blend Options): Smooth Color / Specified Steps / Specified Distance, Align to Page / Path','Object › Blend: Make (Ctrl+Alt+B), Release (Ctrl+Alt+Shift+B), Expand, Replace Spine, Reverse Spine, Reverse Front to Back'],
+      demo:A=>'<circle cx="60" cy="64" r="16" fill="#8E6CEF"/><circle cx="200" cy="64" r="26" fill="#F6A623"/><g opacity="0">'+A.SHOW(.35,.95)+'<circle cx="88" cy="64" r="18" fill="#9d77c4"/><circle cx="116" cy="64" r="20" fill="#b07f9a"/><circle cx="144" cy="64" r="22" fill="#c28e72"/><circle cx="172" cy="64" r="24" fill="#d89a4a"/></g><g>'+A.MV('60 64;200 64;200 64','0;.4;1')+A.CUR('#111')+'</g>'}});
+  tlDrag('bl',{down:(p,e)=>{const o=bnTop(e);if(!o)return false;
+      if(!first){first=o;first.__ba=anchorAt(o,p);sel=new Set([o]);draw();mark(o);return true}
+      if(o===first){return true}
+      const second=o,a2=anchorAt(second,p);let G;
+      /* extending an existing blend: the clicked object joins as the last key */
+      if(bnIsBlend(first)&&!bnIsBlend(second)){const m=el('g',{'data-mem':'1'});normalizeObj(second);ensurePath(second);[...second.g.childNodes].forEach(n=>m.appendChild(n));if(second.nm)m.setAttribute('data-nm',second.nm);
+        const k=bnKeys(first.g),last=k[k.length-1],sp=bnSpineEl(first.g);if(sp)sp.before(m);else first.g.appendChild(m);objs=objs.filter(q=>q!==second);layer.replaceChildren(...objs.map(q=>q.g));
+        const M=bnMeta(first.g);M.rot=M.rot||{};M.rot[k.length]=a2;bnPut(first.g,JSON.stringify(M));touch(first);G=first;sel=new Set([G]);commit();draw();mark(null);first=G;first.__ba=0;return false}
+      sel=new Set([first,second]);const ra=first.__ba||0,doit=()=>{if(bnMake({rot:{0:ra,1:a2}})){first=[...sel][0];first.__ba=0;mark(first)}else clear()};
+      if(e.altKey)bnOptions(doit);else doit();return false},
+    move:()=>{},up:()=>{},esc:()=>clear()});
+  cv.addEventListener('pointermove',e=>{if(tool!=='bl'||PDOWN||st)return;const o=bnTop(e);if(first)return;peng.replaceChildren();if(o){const b=wbox(o);peng.append(el('rect',{x:b.x,y:b.y,width:b.w,height:b.h,fill:'none',stroke:'#4F80FF','stroke-width':1/z,'pointer-events':'none'}))}})}
+
 /*TOOLS-END*/
 })();
 </script>
