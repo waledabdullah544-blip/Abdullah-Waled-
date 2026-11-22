@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 178</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 179</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -7258,6 +7258,34 @@ function xformFx(o,P){if(isText(o))return false;normalizeObj(o);const b=wbox(o),
   const made=[];for(let k=1;k<=n;k++){const g=el('g',{});for(const at of o.g.attributes){if(at.name==='transform'||at.name==='id')continue;g.setAttribute(at.name,at.value)}g.innerHTML=o.g.innerHTML;layer.appendChild(g);
     const q={g,bb:null,m:{...o.m},ly:o.ly,nm:o.nm,lh:0};g.__o=q;q.bb=BBX(q);apply(q);bakeAffine(q,M(k));made.push(q)}
   const at=objs.indexOf(o);objs.splice(at,0,...made);layer.replaceChildren(...objs.map(q=>q.g));return true}
+/* ---- Outline Stroke: the stroke becomes a filled shape (caps, joins, miter limit and dashes are honoured) ---- */
+function dashRuns(pl,closed,dash){const D=dash.filter(v=>isFinite(v)&&v>=0);if(!D.length||D.every(v=>v===0))return[{pts:pl,closed}];const P=closed?pl.concat([pl[0]]):pl,runs=[];let di=0,left=D[0],on=true,cur=[P[0]];
+  for(let i=0;i+1<P.length;i++){let a=P[i],b=P[i+1],L=Math.hypot(b[0]-a[0],b[1]-a[1]);if(L<1e-9)continue;const ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L;let t=0;
+    while(L-t>left){t+=left;const q=[a[0]+ux*t,a[1]+uy*t];if(on){cur.push(q);if(cur.length>=2)runs.push({pts:cur,closed:false});cur=[]}else cur=[q];on=!on;di=(di+1)%D.length;left=Math.max(D[di],1e-6);if(left<=1e-6&&!on){}}
+    left-=L-t;if(on)cur.push(b)}
+  if(on&&cur.length>=2)runs.push({pts:cur,closed:false});return runs}
+function capPts(E,t,A,B,h,type){if(type==='square')return[[A[0]+t[0]*h,A[1]+t[1]*h],[B[0]+t[0]*h,B[1]+t[1]*h]];
+  if(type==='round'){let a0=Math.atan2(A[1]-E[1],A[0]-E[0]),a1=Math.atan2(B[1]-E[1],B[0]-E[0]),mid=Math.atan2(t[1],t[0]);const norm=x=>{while(x<=-Math.PI)x+=2*Math.PI;while(x>Math.PI)x-=2*Math.PI;return x};
+    let d=norm(a1-a0);const via=norm(mid-a0);if(d*via<0||Math.abs(via)>Math.abs(d))d=d>0?d-2*Math.PI:d+2*Math.PI;const n=Math.max(4,Math.ceil(Math.abs(d)/(Math.PI/12))),out=[];for(let i=1;i<n;i++){const a=a0+d*i/n;out.push([E[0]+Math.cos(a)*h,E[1]+Math.sin(a)*h])}return out}
+  return[]}
+function strokePolys(pts,closed,h,cap,join,ml){const P=pts.filter((q,i)=>i===0||Math.hypot(q[0]-pts[i-1][0],q[1]-pts[i-1][1])>1e-6);if(P.length<2)return[];
+  const s1=offsetPoly(P,closed,h,join,ml),s2=offsetPoly(P,closed,-h,join,ml);if(!s1||!s2)return[];
+  if(closed)return[s1,s2.slice().reverse()];
+  const n=P.length,te=[P[n-1][0]-P[n-2][0],P[n-1][1]-P[n-2][1]],ts=[P[0][0]-P[1][0],P[0][1]-P[1][1]],le=Math.hypot(te[0],te[1])||1,ls=Math.hypot(ts[0],ts[1])||1;
+  const ue=[te[0]/le,te[1]/le],us=[ts[0]/ls,ts[1]/ls],poly=s1.concat(capPts(P[n-1],ue,s1[s1.length-1],s2[s2.length-1],h,cap),s2.slice().reverse(),capPts(P[0],us,s2[0],s1[0],h,cap));return[poly]}
+function strokeOutlineF(S,w,cap,join,ml,dash){const h=w/2,rings=[];
+  S.forEach(sp=>{if(sp.pts.length<2)return;const pl=resample(sp,3).map(p=>[p.x,p.y]);dashRuns(pl,sp.closed,dash||[]).forEach(r=>strokePolys(r.pts,r.closed,h,cap,join,ml).forEach(poly=>{if(poly.length>=3){const Sg=poly.map((a,i)=>{const b=poly[(i+1)%poly.length];return{c:[a,a,b,b],cv:false}});rings.push({pts:poly.map((q,i)=>[q[0],q[1],i]),S:Sg,cnt:Sg.length})}}))});
+  if(!rings.length)return{rings:[],loops:[],rule:'nonzero'};return boolOp('union',{rings,rule:'nonzero'},{rings:[],rule:'nonzero'})}
+function outlineStrokeObj(o){if(isGroup(o)||isText(o))return false;normalizeObj(o);ensurePath(o);let did=false;
+  eps(o).filter(pe=>getSP(pe)&&getSP(pe).length).forEach(pe=>{const sw=parseFloat(pe.getAttribute('stroke-width')||1),st=pe.getAttribute('stroke');if(!st||st==='none'||!(sw>0)||pe.hasAttribute('data-hs'))return;
+    const da=(pe.getAttribute('stroke-dasharray')||'').split(/[ ,]+/).map(parseFloat).filter(v=>isFinite(v)),F=strokeOutlineF(getSP(pe),sw,pe.getAttribute('stroke-linecap')||'butt',pe.getAttribute('stroke-linejoin')||'miter',parseFloat(pe.getAttribute('stroke-miterlimit')||4),da);
+    if(boolEmpty(F))return;const np=document.createElementNS('http://www.w3.org/2000/svg','path');np.setAttribute('fill',st);np.setAttribute('fill-rule','evenodd');np.setAttribute('stroke','none');
+    const op=pe.getAttribute('opacity');if(op)np.setAttribute('opacity',op);np.__sp=(F.loops||[]).map(N=>({pts:N,closed:true}));writeSP(np);pe.after(np);
+    const fl=pe.getAttribute('fill');if(!fl||fl==='none'){pe.remove()}else pe.setAttribute('stroke','none');did=true});
+  if(did){o.bb=BBX(o);touch(o)}return did}
+/* ---- Free Distort: the four corners of the bounding box move independently (offsets in % of the box) ---- */
+function fdSP(sp,P,bb){const W=bb.w||1,H=bb.h||1,c=(x,y)=>[x,y],TL=[bb.x+P.tlx/100*W,bb.y+P.tly/100*H],TR=[bb.x+bb.w+P.trx/100*W,bb.y+P.try/100*H],BL=[bb.x+P.blx/100*W,bb.y+bb.h+P.bly/100*H],BR=[bb.x+bb.w+P.brx/100*W,bb.y+bb.h+P.bry/100*H];
+  return mapSP(sp,(x,y)=>{const u=(x-bb.x)/W,v=(y-bb.y)/H;return[(1-u)*(1-v)*TL[0]+u*(1-v)*TR[0]+(1-u)*v*BL[0]+u*v*BR[0],(1-u)*(1-v)*TL[1]+u*(1-v)*TR[1]+(1-u)*v*BL[1]+u*v*BR[1]]},true)}
 /* ---- registry + dialog ---- */
 const N=(k,l,min,max,step)=>({k,l,t:'n',min,max,step:step||1}),S_=(k,l,opts)=>({k,l,t:'s',opts}),C_=(k,l)=>({k,l,t:'k'});
 const ABS=[[0,'Relative'],[1,'Absolute']],PTS=[[0,'Corner'],[1,'Smooth']];
@@ -7272,6 +7300,9 @@ const PX={
  warp:{n:'Warp Options',spec:[S_('style','Style',WSTY),S_('vert','Orientation',[['0','Horizontal'],['1','Vertical']]),N('bend','Bend (%)',-100,100,1),N('hd','Horizontal distortion (%)',-100,100,1),N('vd','Vertical distortion (%)',-100,100,1)],def:{style:'arc',vert:'0',bend:50,hd:0,vd:0},fn:(o,P)=>eachSP(o,(S,bb)=>S.map(sp=>warpSP(sp,P,bb)))},
  scrib:{n:'Scribble Options',spec:[N('ang','Angle (deg)',-360,360,1),N('sp','Spacing (px)',.5,200,.5),N('w','Stroke width (px)',.1,50,.1),N('cv','Curviness (%)',0,100,1),N('va','Variation (%)',0,100,1)],def:{ang:-30,sp:4,w:1,cv:0,va:0},fn:(o,P)=>scribble(o,P),noPrev:0},
  conv:{n:'Convert to Shape',spec:[S_('shape','Shape',[['rect','Rectangle'],['rr','Rounded Rectangle'],['ell','Ellipse']]),S_('mode','Size',[['abs','Absolute (extra px)'],['rel','Relative (extra %)']]),N('w','Extra width',-5000,5000,1),N('h','Extra height',-5000,5000,1),N('r','Corner radius (px)',0,1000,1)],def:{shape:'rect',mode:'abs',w:0,h:0,r:10},fn:(o,P)=>convShape(o,P)},
+ ostroke:{n:'Outline Stroke',spec:[],def:{},fn:(o,P)=>outlineStrokeObj(o)},
+ outobj:{n:'Outline Object',spec:[],def:{},fn:(o,P)=>eachSP(o,S=>S)},
+ fd:{n:'Free Distort',spec:[N('tlx','TL x',-100,100,.1),N('tly','TL y',-100,100,.1),N('trx','TR x',-100,100,.1),N('try','TR y',-100,100,.1),N('blx','BL x',-100,100,.1),N('bly','BL y',-100,100,.1),N('brx','BR x',-100,100,.1),N('bry','BR y',-100,100,.1)],def:{tlx:0,tly:0,trx:0,try:0,blx:0,bly:0,brx:0,bry:0},custom:'fd',fn:(o,P)=>eachSP(o,(S,bb)=>S.map(sp=>fdSP(sp,P,bb)))},
  xf:{n:'Transform Effect',spec:[N('sx','Scale horizontal (%)',-1000,1000,1),N('sy','Scale vertical (%)',-1000,1000,1),N('mx','Move horizontal (px)',-5000,5000,1),N('my','Move vertical (px)',-5000,5000,1),N('ang','Rotate (deg)',-3600,3600,1),C_('rx','Reflect X'),C_('ry','Reflect Y'),N('n','Copies',0,200,1)],def:{sx:100,sy:100,mx:0,my:0,ang:0,rx:0,ry:0,n:0},fn:(o,P)=>xformFx(o,P),noPrev:1}};
 const LASTV={};
 const targets=()=>[...sel].filter(o=>pick(o)&&!isText(o)&&!isGroup(o));/* path effects work on paths and shapes (not on text or groups) */
@@ -7315,16 +7346,22 @@ window.pxExpand=function(L){const T=(L||[...sel]).filter(o=>o.g.dataset&&o.g.dat
   layer.replaceChildren(...objs.map(q=>q.g));commit();draw();return true};
 function pxApply(kind,P){const T=targets();if(!T.length)return false;const P2={...P,seed:(Math.random()*1e9)|0};
   T.forEach(o=>{const L=fxList(o);L.push({t:'px',k:kind,P:P2});o.g.dataset.fx=JSON.stringify(L);fxUpd(o)});window.PXLAST={kind,P};LASTV[kind]=P;commit();draw();return true}
-function pxDlg(kind,ed){const T=targets();if(!T.length)return;const D=PX[kind],cur=typeof ed==='number'?fxList(T[0])[ed]:null,def={...D.def,...(LASTV[kind]||{}),...(cur&&cur.t==='px'?cur.P:{})},old=T.map(o=>o.g.dataset.fx);
-  const rows=D.spec.map(f=>f.t==='n'?'<label>'+f.l+'<input type="number" data-f="'+f.k+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" value="'+def[f.k]+'"></label>':f.t==='s'?'<label>'+f.l+'<select data-f="'+f.k+'">'+f.opts.map(op=>'<option value="'+op[0]+'"'+(String(def[f.k])===String(op[0])?' selected':'')+'>'+op[1]+'</option>').join('')+'</select></label>':'<label class="fxp"><input type="checkbox" data-f="'+f.k+'"'+(def[f.k]?' checked':'')+'> '+f.l+'</label>').join('')+'<label class="fxp"><input type="checkbox" id="pxpv" checked> Preview</label>';
+function pxDlg(kind,ed){const T=targets();if(!T.length)return;const D=PX[kind];if(!D.spec.length){if(typeof ed!=='number')pxApply(kind,{});return}const cur=typeof ed==='number'?fxList(T[0])[ed]:null,def={...D.def,...(LASTV[kind]||{}),...(cur&&cur.t==='px'?cur.P:{})},old=T.map(o=>o.g.dataset.fx);
+  const fdPad=()=>'<div style="margin-bottom:6px">Drag the corner handles.</div><svg id="fdpad" width="280" height="210" viewBox="0 0 280 210" style="background:var(--field);border:1px solid var(--line);touch-action:none"><rect x="50" y="45" width="180" height="120" fill="none" stroke="var(--mute)" stroke-dasharray="3 3"/><polygon id="fdpoly" fill="rgba(79,128,255,.25)" stroke="#4F80FF"/>'+['tl','tr','bl','br'].map(k=>'<circle data-h="'+k+'" r="6" fill="#fff" stroke="#4F80FF" stroke-width="2" style="cursor:move"/>').join('')+'</svg>'+D.spec.map(f=>'<input type="hidden" data-f="'+f.k+'" min="'+f.min+'" max="'+f.max+'" value="'+def[f.k]+'">').join('');
+  const rows=D.custom==='fd'?fdPad()+'<label class="fxp"><input type="checkbox" id="pxpv" checked> Preview</label>':D.spec.map(f=>f.t==='n'?'<label>'+f.l+'<input type="number" data-f="'+f.k+'" min="'+f.min+'" max="'+f.max+'" step="'+f.step+'" value="'+def[f.k]+'"></label>':f.t==='s'?'<label>'+f.l+'<select data-f="'+f.k+'">'+f.opts.map(op=>'<option value="'+op[0]+'"'+(String(def[f.k])===String(op[0])?' selected':'')+'>'+op[1]+'</option>').join('')+'</select></label>':'<label class="fxp"><input type="checkbox" data-f="'+f.k+'"'+(def[f.k]?' checked':'')+'> '+f.l+'</label>').join('')+'<label class="fxp"><input type="checkbox" id="pxpv" checked> Preview</label>';
   const seed=(cur&&cur.P&&cur.P.seed)||((Math.random()*1e9)|0),read=box=>{const P={seed};D.spec.forEach(f=>{const i=box.querySelector('[data-f="'+f.k+'"]');if(f.t==='n'){let v=parseFloat(i.value);if(isNaN(v))v=def[f.k];P[f.k]=Math.max(f.min,Math.min(f.max,v))}else if(f.t==='s')P[f.k]=(/^-?\d+(\.\d+)?$/.test(i.value)&&f.k!=='vert')?+i.value:i.value;else P[f.k]=i.checked?1:0});return P};
   const back=()=>T.forEach((o,i)=>{if(old[i]===undefined)delete o.g.dataset.fx;else o.g.dataset.fx=old[i];fxUpd(o)});
   const put=P=>T.forEach((o,i)=>{const L=old[i]?JSON.parse(old[i]):[];if(typeof ed==='number'&&L[ed]&&L[ed].t==='px')L[ed]={...L[ed],P};else L.push({t:'px',k:kind,P});o.g.dataset.fx=JSON.stringify(L);fxUpd(o)});
   const prev=box=>{back();if(box.querySelector('#pxpv').checked)put(read(box));draw()};
   const M=dkModal(D.n,rows,[{t:'Cancel',c:1,f:()=>{back();draw()}},{t:'OK',p:1,f:box=>{const P=read(box);back();put(P);LASTV[kind]=P;window.PXLAST={kind,P};commit();draw()}}]);
-  M.box.addEventListener('input',()=>prev(M.box));M.box.addEventListener('change',()=>prev(M.box));prev(M.box);const f0=M.box.querySelector('input,select');if(f0)f0.focus()}
+  M.box.addEventListener('input',()=>prev(M.box));M.box.addEventListener('change',()=>prev(M.box));
+  if(D.custom==='fd'){const pad=M.box.querySelector('#fdpad'),poly=M.box.querySelector('#fdpoly'),X0=50,Y0=45,W=180,H=120,C={tl:[X0,Y0,'tlx','tly'],tr:[X0+W,Y0,'trx','try'],bl:[X0,Y0+H,'blx','bly'],br:[X0+W,Y0+H,'brx','bry']};
+    const val=k=>parseFloat(M.box.querySelector('[data-f="'+k+'"]').value)||0,paint=()=>{const pts=[];['tl','tr','br','bl'].forEach(k=>{const c=C[k],x=c[0]+val(c[2])/100*W,y=c[1]+val(c[3])/100*H;pts.push(x+','+y);const h=pad.querySelector('[data-h="'+k+'"]');h.setAttribute('cx',x);h.setAttribute('cy',y)});poly.setAttribute('points',pts.join(' '))};
+    pad.querySelectorAll('[data-h]').forEach(h=>h.addEventListener('pointerdown',e=>{e.preventDefault();h.setPointerCapture(e.pointerId);const c=C[h.dataset.h],mv=ev=>{const r=pad.getBoundingClientRect(),x=(ev.clientX-r.left)*280/r.width,y=(ev.clientY-r.top)*210/r.height;
+      M.box.querySelector('[data-f="'+c[2]+'"]').value=Math.max(-100,Math.min(100,(x-c[0])/W*100)).toFixed(1);M.box.querySelector('[data-f="'+c[3]+'"]').value=Math.max(-100,Math.min(100,(y-c[1])/H*100)).toFixed(1);paint();M.box.dispatchEvent(new Event('input',{bubbles:true}))};h.onpointermove=mv;h.onpointerup=()=>{h.onpointermove=null}}));paint()}
+  prev(M.box);const f0=M.box.querySelector('input:not([type=hidden]),select');if(f0)f0.focus()}
 window.pxEdit=i=>{const T=targets();const e=T.length&&fxList(T[0])[i];if(e&&e.t==='px')pxDlg(e.k,i)};
-window.pxSyncAll=pxSyncAll;
+window.pxSyncAll=pxSyncAll;window.pxOutlineStroke=()=>{const T=targets();if(!T.length)return false;const ch=T.map(o=>outlineStrokeObj(o)).some(Boolean);if(ch){commit();draw()}return ch};
 window.PX=PX;window.pxDlg=pxDlg;window.pxApply=pxApply;window.PXLAST=null;window.pxPre=(kind,patch)=>{LASTV[kind]={...(LASTV[kind]||{}),...patch};pxDlg(kind)};
 window.pxApplyLast=()=>{if(window.PXLAST)pxApply(window.PXLAST.kind,window.PXLAST.P)};window.pxLastDlg=()=>{if(window.PXLAST)pxDlg(window.PXLAST.kind)};
 window.WSTY=WSTY;
@@ -8113,7 +8150,7 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Group',k:'Ctrl+G',f:groupSel,en:S},{t:'Ungroup',k:'Ctrl+Shift+G',f:ungroupSel,en:hasGrp},
     {t:'Lock',sub:()=>[{t:'Selection',k:'Ctrl+2',f:lockSel,en:S},{t:'Unlock All',k:'Ctrl+Alt+2',f:unlockAll}]},
     {t:'Hide',sub:()=>[{t:'Selection',k:'Ctrl+3',f:hideSel,en:S},{t:'Show All',k:'Ctrl+Alt+3',f:showAll}]},sep,
-    {t:'Path',sub:()=>[{t:'Join',k:'Ctrl+J',f:()=>pjJoin(),en:anySel},{t:'Average…',k:'Ctrl+Alt+J',f:pjAverage,en:anySel},{t:'Remove Anchor Points',f:anRemove,en:()=>dsSel.size>0}]},
+    {t:'Path',sub:()=>[{t:'Join',k:'Ctrl+J',f:()=>pjJoin(),en:anySel},{t:'Average…',k:'Ctrl+Alt+J',f:pjAverage,en:anySel},{t:'Outline Stroke',f:()=>window.pxOutlineStroke(),en:S},{t:'Remove Anchor Points',f:anRemove,en:()=>dsSel.size>0}]},
     {t:'Clipping Mask',sub:()=>[{t:'Make',k:'Ctrl+7',f:clipMake,en:S},{t:'Release',k:'Ctrl+Alt+7',f:clipRelease,en:S}]},
     {t:'Compound Path',sub:()=>[{t:'Make',k:'Ctrl+8',f:makeCompound,en:S},{t:'Release',k:'Ctrl+Alt+8',f:releaseCompound,en:S}]},sep,
     {t:'Expand Appearance',f:()=>window.pxExpand(),en:()=>[...sel].some(o=>o.g.dataset&&o.g.dataset.pxon&&fxList(o).some(e=>e.t==='px'))},{t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
@@ -8134,8 +8171,8 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Apply Last Effect',k:'Ctrl+Shift+E',f:fxApplyLast,en:L},{t:'Last Effect…',k:'Ctrl+Alt+Shift+E',f:fxLastDlg,en:L},sep,
     {t:'Illustrator Effects',hd:1},
     {t:'Convert to Shape',sub:()=>[{t:'Rectangle…',f:LV('conv',{shape:'rect'}),en:S},{t:'Rounded Rectangle…',f:LV('conv',{shape:'rr'}),en:S},{t:'Ellipse…',f:LV('conv',{shape:'ell'}),en:S}]},
-    {t:'Distort & Transform',sub:()=>[{t:'Pucker & Bloat…',f:PD('pb'),en:S},{t:'Roughen…',f:PD('rough'),en:S},{t:'Transform…',f:PD('xf'),en:S},{t:'Tweak…',f:PD('tweak'),en:S},{t:'Twist…',f:PD('twist'),en:S},{t:'Zig Zag…',f:PD('zig'),en:S}]},
-    {t:'Path',sub:()=>[{t:'Offset Path…',f:PD('off'),en:S}]},
+    {t:'Distort & Transform',sub:()=>[{t:'Free Distort…',f:PD('fd'),en:S},{t:'Pucker & Bloat…',f:PD('pb'),en:S},{t:'Roughen…',f:PD('rough'),en:S},{t:'Transform…',f:PD('xf'),en:S},{t:'Tweak…',f:PD('tweak'),en:S},{t:'Twist…',f:PD('twist'),en:S},{t:'Zig Zag…',f:PD('zig'),en:S}]},
+    {t:'Path',sub:()=>[{t:'Offset Path…',f:PD('off'),en:S},{t:'Outline Object',f:PD('outobj'),en:S},{t:'Outline Stroke',f:PD('ostroke'),en:S}]},
     {t:'Stylize',sub:()=>[{t:'Drop Shadow…',f:()=>fxDlg('ds'),en:S},{t:'Feather…',f:()=>fxDlg('fe'),en:S},{t:'Inner Glow…',f:()=>fxDlg('ig'),en:S},{t:'Outer Glow…',f:()=>fxDlg('og'),en:S},{t:'Round Corners…',f:PD('round'),en:S},{t:'Scribble…',f:PD('scrib'),en:S}]},
     {t:'Warp',sub:()=>WSTY.map(w=>({t:w[1]+'…',f:LV('warp',{style:w[0]}),en:S}))},sep,
     {t:'Photoshop Effects',hd:1},

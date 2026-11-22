@@ -167,6 +167,10 @@
 **اتعمل:** Drop Shadow: Mode (16 mode، الافتراضي Multiply) + خيار Shadow = Color أو **Darkness** (لون الـ object ممزوج بأسود بنسبة %). Outer Glow: Mode (الافتراضي Screen). Inner Glow: Mode (الافتراضي Screen) بـ feBlend على الـ object. الظل/التوهج بأي Mode غير Normal بيترسم كـ layer مستقل ورا الشغل بـ `mix-blend-mode` فبيتمازج مع اللي تحته (اتأكدت: أحمر Multiply على أزرق = #330000). Mode=Normal بيفضل جوه فلتر الـ object. بيشتغل مع Undo/Redo وCopy/Paste وGroup/Ungroup وSave/Load وتصدير SVG وحذف التأثير.
 **ملاحظة:** الـ effects القديمة المحفوظة (من غير Mode) بتفضل Normal زي ما كانت.
 
+## 5-ك) build 179 — الناقص في Effect
+**اتعمل:** Effect > Distort & Transform > **Free Distort** (dialog بمقابض الأركان الأربعة تتسحب، live)؛ Effect > Path > **Outline Stroke** (live، من غير dialog) وObject > Path > **Outline Stroke** (بيخبز)؛ Effect > Path > **Outline Object** (يحوّل الـ live shapes لـ paths). Outline Stroke: caps (butt/round/square) وjoins (miter/round/bevel مع miter limit) والـ dashes بتتحترم، النتيجة مظبوطة رقمياً (مساحة = الطول × العرض، + π r² للـ round caps، وزوايا الـ joins).
+**لسه:** Effect > **Pathfinder** (13 تأثير): في Illustrator بتشتغل على groups/layers مش objects منفردة، ومسار حالياً الـ live effects على objects منفردة بس (الـ Pathfinder panel الـ destructive موجود)؛ Rasterize، Crop Marks، SVG Filters، 3D and Materials، Document Raster Effects Settings، Photoshop Effects.
+
 ## 5-ج) تخصيص الواجهة (مقارنة بـ Illustrator)
 **موجود وشغال (اتختبر بماوس حقيقي):** سحب تاب بانل لليسار/اليمين/عايم، دمج بانلز كتابات، إغلاق/فتح من Window، حفظ التخطيط بعد reload، Workspaces (Essentials, Essentials Classic, Typography, Painting) + New Workspace + Reset، Edit Toolbar، Toolbar عمودين/عمود، Tab/Shift+Tab، 4 ثيمات.
 **ناقص:** Keyboard Shortcuts editor (Ctrl+Alt+Shift+K) — تخصيص الاختصارات؛ Workspaces الجاهزة الباقية (3D, Automation, Layout, Motion, Printing, Tracing, Web…)؛ قايمة إظهار/إخفاء عناصر الـ Control bar؛ Control bar overflow menu؛ UI Scale في Preferences؛ تخصيص قوائم السياق/البانل.
