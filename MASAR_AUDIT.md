@@ -237,3 +237,8 @@
 - **Appearance:** بقى يدعم أكتر من Fill/Stroke للأوبجكت الواحد: Add New Stroke / Add New Fill تضيف عنصر فوق المحدد، Duplicate / Delete Selected Item، سحب الصفوف لإعادة الترتيب (حتى بين الـStroke والـFill)، لون ووزن وOpacity لكل عنصر، قايمة اللوحة (Add New Fill/Stroke/Effect، Duplicate Item، Remove Item، Clear Appearance، Reduce to Basic Appearance). مخزّن في `data-aps` ومرسوم كمسارات مصاحبة `data-apx` (بتتحرك وبتتنسخ وبتتحفظ وبتتعمل لها Undo). tests/ap.js (14 فحص).
 - لسه ناقص في Appearance: Gradient/Pattern في العناصر الإضافية، Blend Mode لكل عنصر في الواجهة، Redefine Graphic Style (محتاجة لوحة Graphic Styles)، New Art Has Basic Appearance، ترتيب الـEffects بين العناصر.
 - **UI:** منع تحديد النص العشوائي في كل الواجهة (user-select:none ما عدا حقول الإدخال).
+
+## 5-ص) Build 203 — Layers: البحث بزر فقط
+- اتشال حقل الكتابة؛ بقى في زر بحث (عدسة) في الفوتر: حدد عنصر واضغط عليه ← اللير يتفتح والصف يظهر ويومّض (ظاهر حتى لو جوه جروب/لير مقفول/القايمة طويلة). الزر رمادي لو مفيش تحديد. Filter اتنقل للفوتر.
+- Alt+click على اسم لير يحدد كل شغله؛ Alt+drag للير ينسخه بشغله.
+- tests/layers4.js

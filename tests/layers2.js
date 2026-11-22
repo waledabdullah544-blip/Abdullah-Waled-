@@ -17,5 +17,6 @@ await run('dup',async()=>{const n0=(await H.state()).n;await mnClick('Duplicate'
 await run('tpl',async()=>{await mnClick('Template');await pg.waitForTimeout(150);const l=await L();chk('Template: layer becomes template (locked, dimmed)',l.some(x=>x.tpl),l)});
 await run('sel',async()=>{await pg.evaluate(()=>{sel=new Set();draw()});await pg.locator('#lyl .lyr.L .sq').first().click().catch(()=>{});await pg.waitForTimeout(100);const s=await H.state();console.log('click on layer selection square → sel',s.sel)});
 await run('target',async()=>{await pg.evaluate(()=>{sel=new Set();draw()});await pg.locator('#lyl .lyr.L .tg').first().click();await pg.waitForTimeout(100);const s=await H.state();chk('Click target circle on layer selects all its art',s.sel>=1,s.sel)});
-await run('search',async()=>{await pg.fill('#lySrch','Rect');await pg.waitForTimeout(200);const n=await pg.evaluate(()=>document.querySelectorAll('#lyl .lyr').length);chk('Layers search by name filters rows',n>=1,n);await pg.fill('#lySrch','')});
+// typed search removed on purpose (Illustrator: select an object, click the search button) — see layers4.js
+await run('search-removed',async()=>{return;await pg.fill('#lySrch','Rect');await pg.waitForTimeout(200);const n=await pg.evaluate(()=>document.querySelectorAll('#lyl .lyr').length);chk('Layers search by name filters rows',n>=1,n);await pg.fill('#lySrch','')});
 console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();
