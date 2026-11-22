@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 192</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 194</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -7366,7 +7366,7 @@ function opExpandGradient(o,N){if(isGroup(o)||isText(o))return null;normalizeObj
   else{const cx=p[0],cy=p[1],Rr=Math.hypot(p[2]-p[0],p[3]-p[1])||1,circ=r=>{const a=[];for(let k=0;k<96;k++){const th=k*2*Math.PI/96;a.push([cx+Math.cos(th)*r,cy+Math.sin(th)*r])}return a};
     for(let i=0;i<N;i++){const r0=Rr*i/N,r1=i===N-1?R:Rr*(i+1)/N;let band={rings:[polyRing(circ(r1))],rule:'nonzero'};if(i>0)band=boolOp('diff',band,{rings:[polyRing(circ(r0))],rule:'nonzero'});const F=boolOp('inter',T,band);if(!boolEmpty(F))make(F,gradColorAt(g,(i+.5)/N))}}
   if(!out.length)return null;const at=objs.indexOf(o);objs.splice(at,1,...out);o.g.remove();return out}
-window.OP={resample,fitC:(pts,tol,closed,corners)=>{/* smooth Bezier through a dense polyline; 'corners' = indices that stay sharp */const n=pts.length,T=v=>V2.norm(v),nodes=[];if(n<3)return pts.map(q=>({x:R3(q[0]),y:R3(q[1]),i:null,o:null}));
+window.OP={clone:opClone,resample,fitC:(pts,tol,closed,corners)=>{/* smooth Bezier through a dense polyline; 'corners' = indices that stay sharp */const n=pts.length,T=v=>V2.norm(v),nodes=[];if(n<3)return pts.map(q=>({x:R3(q[0]),y:R3(q[1]),i:null,o:null}));
     const cs=new Set((corners||[]).filter(i=>i>=0&&i<n));if(!closed){cs.add(0);cs.add(n-1)}const sp=[...cs].sort((a,b)=>a-b);let runs=[];
     if(closed){if(!sp.length)runs=[{a:0,b:n>>1,sm:true},{a:n>>1,b:n,sm:true}];else for(let k=0;k<sp.length;k++){const a=sp[k],b=sp[(k+1)%sp.length];runs.push({a,b:b<=a?b+n:b})}}else for(let k=0;k+1<sp.length;k++)runs.push({a:sp[k],b:sp[k+1]});
     const tg=i=>T(V2.sub(pts[(i+1)%n],pts[(i-1+n)%n]));
@@ -9252,6 +9252,51 @@ LQT.forEach((T,i)=>{TL.tools[T.id]={};const b=addTool({id:T.id,name:T.name,key:T
   function restoreLq(D){D.forEach(d=>{d.pe.__sp=d.subs.map(s=>s.orig);writeSP(d.pe);d.o.bb=BBX(d.o);touch(d.o)});draw()}});
 addGroup({id:'wdBtn',lab:'Warp tools',t:['wa','tw','pu','bo','sca','cry','wri']});
 
+
+/* ---------- Shape Builder (Shift+M) ---------- */
+const SBK='masar.sbd.v1',SBD={open:true,pick:'art',fill:true,hc:'#4F80FF'};let SB={...SBD};try{Object.assign(SB,JSON.parse(localStorage.getItem(SBK)||'{}'))}catch(_){}
+const sbSave=()=>{try{localStorage.setItem(SBK,JSON.stringify(SB))}catch(_){}};
+let SBC=null;/* cached faces of the current selection */
+const sbArea=F=>Math.abs(F.rings.reduce((t,r)=>{const P=r.pts;let a=0;for(let k=0;k<P.length;k++){const q=P[(k+1)%P.length];a+=P[k][0]*q[1]-q[0]*P[k][1]}return t+a/2},0));
+const sbEmpty=F=>boolEmpty(F)||sbArea(F)<.05;
+function sbInterior(F){const bx=boolBox(F);for(let g=2;g<=12;g+=2)for(let a=1;a<g;a++)for(let c=1;c<g;c++){const q=[bx[0]+(bx[2]-bx[0])*a/g,bx[1]+(bx[3]-bx[1])*c/g];if(boolIn(q,F))return q}return[(bx[0]+bx[2])/2,(bx[1]+bx[3])/2]}
+const sbSrc=()=>[...sel].filter(o=>pick(o)&&!isGroup(o)&&!isText(o)&&o.g.querySelector('path,rect,ellipse')&&(SB.open||eps(o).every(pe=>getSP(pe).every(sp=>sp.closed))));
+function sbFaces(L){let faces=[];for(const o of L){normalizeObj(o);ensurePath(o);const Fo=boolFlat(o),next=[];if(sbEmpty(Fo))continue;
+    faces.forEach(fc=>{const i=boolOp('inter',fc.F,Fo),d=boolOp('diff',fc.F,Fo);if(!sbEmpty(i))next.push({F:i,src:o});if(!sbEmpty(d))next.push({F:d,src:fc.src})});
+    let rest=Fo;faces.forEach(fc=>{rest=boolOp('diff',rest,fc.F)});if(!sbEmpty(rest))next.push({F:rest,src:o});faces=next}
+  faces=faces.flatMap(fc=>boolSplit(fc.F).map(F=>({F,src:fc.src})));faces.forEach(fc=>{fc.box=boolBox(fc.F);fc.pt=sbInterior(fc.F);fc.d=spD((fc.F.loops||[]).map(N=>({pts:N,closed:true})))});return faces}
+function sbCache(){const L=objs.filter(o=>sbSrc().includes(o)),key=L.map(o=>oid(o)).join()+'|'+hi+'|'+objs.length+'|'+SB.open;if(SBC&&SBC.key===key)return SBC;SBC={key,L,faces:L.length?sbFaces(L):[]};return SBC}
+const sbAt=(p)=>{const C=sbCache();for(let i=C.faces.length-1;i>=0;i--){const f=C.faces[i],b=f.box;if(p.x<b[0]||p.x>b[2]||p.y<b[1]||p.y>b[3])continue;if(boolIn([p.x,p.y],f.F))return f}return null};
+function sbPattern(){const md=document.getElementById('mdefs');if(!md||md.querySelector('#sbdots'))return;const p=el('pattern',{id:'sbdots',width:4,height:4,patternUnits:'userSpaceOnUse'});p.innerHTML='<rect width="4" height="4" fill="rgba(255,255,255,.35)"/><circle cx="1" cy="1" r="1" fill="#555"/><circle cx="3" cy="3" r="1" fill="#555"/>';md.appendChild(p)}
+const sbShow=(faces,del)=>{peng.replaceChildren();if(!faces.length)return;sbPattern();const g=el('g',{'pointer-events':'none'}),s=1/z;faces.forEach(f=>{g.append(el('path',{d:f.d,fill:SB.fill?'url(#sbdots)':'none','fill-rule':'evenodd',stroke:del?'#e8423c':SB.hc,'stroke-width':1.5*s}))});peng.append(g)};
+/* the colour / style the new shape takes */
+function sbStyleSrc(faces){return(faces[0]||{}).src}
+function sbApply(kind,faces){const C=sbCache(),hitS=new Set(faces),U=faces.slice(1).reduce((a,f)=>boolOp('union',a,f.F),faces[0].F),L=C.L,keep=[];let made=null;
+  const flats=new Map(L.map(o=>[o,boolFlat(o)]));
+  if(kind!=='del'){const ref=sbStyleSrc(faces),top=L[L.length-1];made=OP.clone(ref);boolApply(made,U,ref);if(SB.pick==='swatch'){const e=fillables(made)[0];if(e&&DEF.fill){e.setAttribute('fill',DEF.fill);e.removeAttribute('data-grad')}}objs.splice(objs.indexOf(top)+1,0,made)}
+  L.forEach(o=>{const mine=C.faces.filter(f=>!hitS.has(f)&&boolIn(f.pt,flats.get(o)));if(!mine.length){sbDel(o);return}const R=mine.slice(1).reduce((a,f)=>boolOp('union',a,f.F),mine[0].F);if(sbEmpty(R)){sbDel(o);return}boolApply(o,R,o);keep.push(o)});
+  layer.replaceChildren(...objs.map(q=>q.g));sel=new Set(made?[...keep,made]:keep);SBC=null;commit();draw()}
+const sbDel=o=>{o.g.remove();const i=objs.indexOf(o);if(i>=0)objs.splice(i,1);sel.delete(o)};
+let sbMode=null;const sbAlt=e=>{if(tool==='sbd')cv.classList.toggle('tl-sbd-minus',e.altKey)};
+addEventListener('keydown',sbAlt);addEventListener('keyup',sbAlt);
+addTool({id:'sbd',name:'Shape Builder Tool',key:'Shift+M',svg:'<circle cx="9" cy="10" r="5.5"/><circle cx="15" cy="14" r="5.5"/>',after:'ft',hint:'Shape Builder · drag across regions to merge them · click a region to separate it · Alt+click / Alt+drag: delete regions · Shift+drag: marquee',
+  cursor:'<circle cx="8" cy="9" r="5"/><path d="M14 14h6M17 11v6"/>',dbl:()=>sbDialog(),
+  enter:()=>{SBC=null},leave:()=>{SBC=null},
+  card:{d:'Create complex shapes by merging, dividing and erasing simpler shapes',m:['Select the overlapping shapes first, then drag across the regions you want to merge','Click a region: it becomes a separate shape','Alt+click or Alt+drag: delete the regions','Shift+drag: a marquee merges the regions inside it','Double-click icon: Shape Builder Tool Options'],
+    demo:A=>'<g opacity=".9"><circle cx="108" cy="62" r="34" fill="#8E6CEF" fill-opacity=".7"/><circle cx="150" cy="62" r="34" fill="#F6A623" fill-opacity=".7"/></g><g opacity="0">'+A.SHOW(.35,.95)+'<path d="M108 28A34 34 0 1 0 108 96A34 34 0 0 0 150 28Z" fill="url(#sbdots)" stroke="#4F80FF" opacity=".0"/><path d="M80 40A34 34 0 0 0 80 84L150 84A34 34 0 0 0 150 40Z" fill="#555" fill-opacity=".25" stroke="#4F80FF"/></g><g>'+A.MV('228 110;96 62;96 62;150 62;150 62','0;.2;.3;.7;1')+A.CUR('#111')+'</g>'}});
+{let faces0=[],first=null,hit=new Set(),marq=null,alt=false,start=null;
+  const trav=p=>{const f=sbAt(p);if(f&&!hit.has(f)){hit.add(f);sbShow([...hit],alt)}};
+  tlDrag('sbd',{down:(p,e)=>{if(sbSrc().length<1){tb5Msg('Shape Builder: select the shapes first');return false}alt=e.altKey;hit=new Set();start=p;marq=null;if(e.shiftKey){marq={x:p.x,y:p.y};return true}trav(p);return hit.size>0||true},
+    move:(p,e,m)=>{if(marq){const s=1/z;peng.replaceChildren(el('rect',{x:Math.min(marq.x,p.x),y:Math.min(marq.y,p.y),width:Math.abs(p.x-marq.x),height:Math.abs(p.y-marq.y),fill:'rgba(79,128,255,.1)',stroke:SB.hc,'stroke-width':s,'pointer-events':'none'}));return}trav(p)},
+    up:(p,e,m)=>{peng.replaceChildren();let faces=[...hit];
+      if(marq){const x0=Math.min(marq.x,p.x),x1=Math.max(marq.x,p.x),y0=Math.min(marq.y,p.y),y1=Math.max(marq.y,p.y);faces=sbCache().faces.filter(f=>{const b=f.box,cx=(b[0]+b[2])/2,cy=(b[1]+b[3])/2;return cx>=x0&&cx<=x1&&cy>=y0&&cy<=y1});marq=null}
+      if(!faces.length)return;if(alt)sbApply('del',faces);else if(faces.length===1&&!m)sbApply('split',faces);else sbApply('merge',faces)},
+    esc:()=>{peng.replaceChildren();hit=new Set();marq=null}});
+  cv.addEventListener('pointermove',e=>{if(tool!=='sbd'||PDOWN||st)return;const r=cv.getBoundingClientRect();if(e.clientX<r.left||e.clientY<r.top)return;try{const f=sbAt(pt(e));sbShow(f?[f]:[],e.altKey)}catch(_){}})}
+function sbDialog(){const M=dkModal('Shape Builder Tool Options','<label class="fxp"><input type="checkbox" data-k="open"'+(SB.open?' checked':'')+'> Consider Open Filled Paths as Closed</label><label>Pick Color From<select data-k="pick"><option value="art"'+(SB.pick==='art'?' selected':'')+'>Artwork</option><option value="swatch"'+(SB.pick==='swatch'?' selected':'')+'>Color Swatches</option></select></label><b>Appearance</b><label class="fxp"><input type="checkbox" data-k="fill"'+(SB.fill?' checked':'')+'> Fill (halftone preview)</label><label>Highlight Color<input type="color" data-k="hc" value="'+SB.hc+'"></label>',[{t:'Reset',f:()=>{SB={...SBD};sbSave();return true}},{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{box.querySelectorAll('[data-k]').forEach(i=>{SB[i.dataset.k]=i.type==='checkbox'?i.checked:i.value});sbSave();SBC=null}}])}
+{const st=document.createElement('style');const cur=(m)=>'url("data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32"><path d="M2 2L2 17L6 13.4L8.7 19.5L11 18.5L8.4 12.6L13.6 12.6Z" fill="#fff" stroke="#000" stroke-width="1.1" stroke-linejoin="round"/><g fill="none" stroke="#000" stroke-width="2.6" stroke-linecap="round"><circle cx="17" cy="18" r="5"/><path d="M23 23h6'+(m?'':'M26 20v6')+'"/></g><g fill="none" stroke="#fff" stroke-width="1.2" stroke-linecap="round"><circle cx="17" cy="18" r="5"/><path d="M23 23h6'+(m?'':'M26 20v6')+'"/></g></svg>')+'") 2 2,crosshair';st.textContent='#cv.tl-sbd{cursor:'+cur(false)+' !important}#cv.tl-sbd.tl-sbd-minus{cursor:'+cur(true)+' !important}';document.head.appendChild(st)}
+
+addGroup({id:'sbBtn',lab:'Shape Builder tools',t:['sbd']});
 /*TOOLS-END*/
 })();
 </script>
