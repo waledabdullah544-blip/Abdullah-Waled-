@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 167</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 168</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8538,6 +8538,77 @@ addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey
     dd.style.display='block';const r=b.getBoundingClientRect();dd.style.left=Math.max(4,Math.min(r.left,innerWidth-dd.offsetWidth-6))+'px';dd.style.top=(pos==='bottom'?Math.max(4,r.top-dd.offsetHeight-4):r.bottom+4)+'px'};
   addEventListener('pointerdown',e=>{if(!dd.contains(e.target)&&e.target!==b)close()},true);addEventListener('keydown',e=>{if(e.key==='Escape')close()},true);
   window.ctlDock=apply})();
+</script>
+<script>
+/* ===================== Color Picker (Illustrator: double-click the Fill / Stroke box) ===================== */
+(()=>{
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),hx2=v=>Math.round(v).toString(16).padStart(2,'0');
+const rgb2hsb=([r,g,b])=>{r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;if(d){if(mx===r)h=((g-b)/d+6)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60}return[h,mx?d/mx*100:0,mx*100]};
+const hsb2rgb=([h,s,v])=>{h=((h%360)+360)%360;s/=100;v/=100;const c=v*s,x=c*(1-Math.abs((h/60)%2-1)),m=v-c;let r,g,b;
+  if(h<60)[r,g,b]=[c,x,0];else if(h<120)[r,g,b]=[x,c,0];else if(h<180)[r,g,b]=[0,c,x];else if(h<240)[r,g,b]=[0,x,c];else if(h<300)[r,g,b]=[x,0,c];else[r,g,b]=[c,0,x];return[r+m,g+m,b+m].map(q=>Math.round(q*255))};
+const rgb2cmyk=([r,g,b])=>{const k=1-Math.max(r,g,b)/255;if(k>=1)return[0,0,0,100];return[(1-r/255-k)/(1-k),(1-g/255-k)/(1-k),(1-b/255-k)/(1-k),k].map(q=>q*100)};
+const cmyk2rgb=([c,m,y,k])=>[c,m,y].map(q=>Math.round(255*(1-q/100)*(1-k/100)));
+const web=c=>c.map(q=>Math.round(q/51)*51),isWeb=c=>c.every(q=>q%51===0);
+let CP=null;
+window.openColorPicker=function(target){
+  if(CP)return;target=target==='stroke'?'stroke':'fill';FSA=target;try{closeSw()}catch(_){}
+  const st=sel.size?styleOf([...sel][0]):null,cur0=(st?st[target]:DEF[target]);const c0=colRGB(hexOf(cur0&&cur0!=='none'?cur0:'#ffffff'))||[255,255,255];
+  const S={rgb:c0.slice(),h:rgb2hsb(c0)[0],ch:'H',web:false};const orig=c0.slice();
+  const bg=document.createElement('div');bg.className='fxm';
+  bg.innerHTML='<div class="fxb cpb" role="dialog" aria-label="Color Picker"><b>Color Picker</b><div class="fxr cpr"><div class="cpl"><div class="cpt">Select '+(target==='stroke'?'Stroke':'Fill')+' Color:</div><div class="cpm"><div class="cpfw"><canvas id="cpkf" width="256" height="256"></canvas><i id="cpkmk"></i></div><div class="cpsw"><canvas id="cpks" width="20" height="256"></canvas><i id="cpksa"></i></div></div></div>'+
+   '<div class="cpx"><div class="cpv"><div class="cpnw" id="cpknew" title="New"></div><div class="cpcu" id="cpkcur" title="Current"></div></div><button type="button" id="cpkws" class="cpwb" title="Out of Web Color warning: click to correct" style="display:none"></button><button type="button" id="cpksb">Color Swatches</button>'+
+   '<div class="cpg">'+[['H','°'],['S','%'],['B','%']].map(([k,u])=>'<label><input type="radio" name="cpch" value="'+k+'"'+(k==='H'?' checked':'')+'><b>'+k+':</b><input type="number" data-f="'+k+'"><u>'+u+'</u></label>').join('')+
+   [['r','R'],['g','G'],['bl','B']].map(([k,l])=>'<label><input type="radio" name="cpch" value="'+k+'"><b>'+l+':</b><input type="number" data-f="'+k+'"><u></u></label>').join('')+'<label><b class="cph">#</b><input type="text" id="cpkhex" maxlength="6" spellcheck="false"></label>'+
+   [['C'],['M'],['Y'],['K']].map(([k])=>'<label><b class="cpc">'+k+':</b><input type="number" data-f="'+k+'c" min="0" max="100"><u>%</u></label>').join('')+'</div></div></div>'+
+   '<div class="cpsws" id="cpkswp" style="display:none"><input type="search" id="cpkq" placeholder="Search swatches"><div id="cpkgrid" class="cpgrid"></div><button type="button" id="cpkmod">Color Models</button></div>'+
+   '<div class="fxf"><label class="cpow"><input type="checkbox" id="cpkwc"> Only Web Colors</label></div></div>';
+  document.body.appendChild(bg);const box=bg.firstChild,q=s=>box.querySelector(s),F=q('#cpkf'),SL=q('#cpks'),fc=F.getContext('2d'),sc=SL.getContext('2d');
+  const ok=document.createElement('button'),cn=document.createElement('button');ok.type=cn.type='button';ok.textContent='OK';ok.className='pri';cn.textContent='Cancel';q('.fxf').append(cn,ok);
+  /* axes of the field / slider for the chosen radio button (as in Illustrator: H S B R G B) */
+  const MAP={H:{sl:'h',x:'s',y:'v'},S:{sl:'s',x:'h',y:'v'},B:{sl:'v',x:'h',y:'s'},r:{sl:'r',x:'bl',y:'g'},g:{sl:'g',x:'bl',y:'r'},bl:{sl:'bl',x:'r',y:'g'}};
+  const RNG={h:360,s:100,v:100,r:255,g:255,bl:255};
+  const getv=()=>{const[h,s,v]=rgb2hsb(S.rgb),hh=(S.rgb[0]===S.rgb[1]&&S.rgb[1]===S.rgb[2])?S.h:h;return{h:s?h:hh,s,v,r:S.rgb[0],g:S.rgb[1],bl:S.rgb[2]}};
+  const fromv=V=>{if('hsv'.includes(MAP[S.ch].sl)||['h','s','v'].some(k=>k in V&&MAP[S.ch].sl===k)){}return null};
+  const rgbOf=V=>S.ch==='H'||S.ch==='S'||S.ch==='B'?hsb2rgb([V.h,V.s,V.v]):[V.r,V.g,V.bl];
+  const setRGB=(rgb,fromHue)=>{rgb=rgb.map(v=>clamp(Math.round(v),0,255));if(S.web)rgb=web(rgb);const hs=rgb2hsb(rgb);if(hs[1]>0&&hs[2]>0&&!fromHue)S.h=hs[0];S.rgb=rgb;sync()};
+  const hasHSB=()=>['H','S','B'].includes(S.ch);
+  function drawField(){const V=getv(),M=MAP[S.ch],img=fc.createImageData(256,256);const H0=S.h;
+    for(let y=0;y<256;y++)for(let x=0;x<256;x++){const W=Object.assign({},V,{h:S.h});W[M[S.x?'x':'x']]=(x/255)*RNG[M.x];W[M.y]=(1-y/255)*RNG[M.y];const c=rgbOf(W),i=(y*256+x)*4;img.data[i]=c[0];img.data[i+1]=c[1];img.data[i+2]=c[2];img.data[i+3]=255}fc.putImageData(img,0,0)}
+  function drawSlider(){const V=getv(),M=MAP[S.ch],img=sc.createImageData(20,256);for(let y=0;y<256;y++){const W=Object.assign({},V,{h:S.h});W[M.sl]=(1-y/255)*RNG[M.sl];if(S.ch==='H'){W.s=100;W.v=100}/* the hue slider is always the full spectrum */const c=rgbOf(W);for(let x=0;x<20;x++){const i=(y*20+x)*4;img.data[i]=c[0];img.data[i+1]=c[1];img.data[i+2]=c[2];img.data[i+3]=255}}sc.putImageData(img,0,0)}
+  function markers(){const V=getv(),M=MAP[S.ch];q('#cpkmk').style.left=(V[M.x]/RNG[M.x]*256)+'px';q('#cpkmk').style.top=((1-V[M.y]/RNG[M.y])*256)+'px';q('#cpksa').style.top=((1-V[M.sl]/RNG[M.sl])*256)+'px'}
+  function fields(){const V=getv(),cm=rgb2cmyk(S.rgb),set=(k,v)=>{const i=q('[data-f="'+k+'"]');if(i&&document.activeElement!==i)i.value=Math.round(v)};
+    set('H',V.h);set('S',V.s);set('B',V.v);set('r',V.r);set('g',V.g);set('bl',V.bl);['C','M','Y','K'].forEach((k,i)=>set(k+'c',cm[i]));
+    const hx=S.rgb.map(hx2).join('');if(document.activeElement!==q('#cpkhex'))q('#cpkhex').value=hx.toUpperCase();
+    q('#cpknew').style.background='rgb('+S.rgb+')';q('#cpkcur').style.background='rgb('+orig+')';
+    const w=q('#cpkws');w.style.display=!S.web&&!isWeb(S.rgb)?'block':'none';w.style.background='linear-gradient(135deg,#bbb,#fff)';w.dataset.c=web(S.rgb).join(',')}
+  function sync(){drawField();drawSlider();markers();fields()}
+  /* pointer: field and slider */
+  const drag=(el,fn)=>{el.addEventListener('pointerdown',e=>{e.preventDefault();el.setPointerCapture(e.pointerId);const mv=ev=>{const r=el.getBoundingClientRect();fn(clamp((ev.clientX-r.left)/r.width,0,1),clamp((ev.clientY-r.top)/r.height,0,1))};mv(e);el.onpointermove=mv;el.onpointerup=()=>{el.onpointermove=null}})};
+  const compose=(ch,val)=>{const V=getv();V[ch]=val;return V};
+  drag(q('.cpfw'),(fx,fy)=>{const M=MAP[S.ch],V=getv();V.h=S.h;V[M.x]=fx*RNG[M.x];V[M.y]=(1-fy)*RNG[M.y];if(M.x==='h'||M.sl==='h')S.h=V.h;const rgb=rgbOf(V);const hs=rgb2hsb(rgb);setRGB(rgb,true)});
+  drag(q('.cpsw'),(fx,fy)=>{const M=MAP[S.ch],V=getv();V.h=S.h;V[M.sl]=(1-fy)*RNG[M.sl];if(M.sl==='h')S.h=V.h;setRGB(rgbOf(V),true)});
+  box.addEventListener('change',e=>{const t=e.target;if(t.name==='cpch'){S.ch=t.value;sync();return}const f=t.dataset&&t.dataset.f;if(!f)return;const v=parseFloat(t.value);if(!isFinite(v))return;
+    if(['H','S','B'].includes(f)){const V=getv();const k={H:'h',S:'s',B:'v'}[f];V[k]=clamp(v,0,k==='h'?360:100);if(k==='h')S.h=V.h;setRGB(hsb2rgb([V.h,V.s,V.v]),k==='h')}
+    else if(['r','g','bl'].includes(f)){const c=S.rgb.slice();c[{r:0,g:1,bl:2}[f]]=clamp(v,0,255);setRGB(c)}
+    else{const cm=rgb2cmyk(S.rgb);cm['CMYK'.indexOf(f[0])]=clamp(v,0,100);setRGB(cmyk2rgb(cm))}});
+  q('#cpkhex').addEventListener('change',e=>{let v=e.target.value.replace('#','').trim();if(/^[0-9a-f]{3}$/i.test(v))v=v.split('').map(c=>c+c).join('');if(/^[0-9a-f]{6}$/i.test(v))setRGB([0,2,4].map(i=>parseInt(v.substr(i,2),16)));else fields()});
+  q('#cpkwc').addEventListener('change',e=>{S.web=e.target.checked;if(S.web)setRGB(S.rgb);else sync()});
+  q('#cpkws').addEventListener('click',()=>setRGB(q('#cpkws').dataset.c.split(',').map(Number)));
+  /* Color Swatches view (with search) */
+  const swatches=()=>swList().filter(s=>s.h&&s.h!=='none'&&colRGB(hexOf(s.h))).map(s=>({n:s.n,c:s.h}));
+  const grid=()=>{const qq=q('#cpkq').value.trim().toLowerCase(),g=q('#cpkgrid');g.replaceChildren(...swatches().filter(s=>!qq||s.n.toLowerCase().includes(qq)).map(s=>{const b=document.createElement('button');b.type='button';b.className='cpsq';b.title=s.n;b.style.background=s.c;b.onclick=()=>{setRGB(colRGB(hexOf(s.c)));q('#cpkswp').style.display='none';q('.cpr').style.display=''};return b}))};
+  q('#cpksb').onclick=()=>{q('.cpr').style.display='none';q('#cpkswp').style.display='flex';grid();q('#cpkq').focus()};q('#cpkmod').onclick=()=>{q('#cpkswp').style.display='none';q('.cpr').style.display=''};q('#cpkq').oninput=grid;
+  const close=()=>{removeEventListener('keydown',kd,true);bg.remove();CP=null};
+  const done=()=>{const hx='#'+S.rgb.map(hx2).join('');close();applyStyle({[target]:hx},true);window.dispatchEvent(new Event('resize'))};
+  ok.onclick=done;cn.onclick=close;
+  const kd=e=>{if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();close()}else if(e.key==='Enter'&&e.target.tagName!=='BUTTON'){e.preventDefault();e.stopImmediatePropagation();if(e.target.tagName==='INPUT')e.target.blur();done()}else e.stopPropagation()};
+  addEventListener('keydown',kd,true);CP={close};sync();
+};
+const st=document.createElement('style');st.textContent='.cpb{width:auto;max-width:520px}.cpr{display:flex;gap:14px;align-items:flex-start}.cpt{margin-bottom:6px}.cpm{display:flex;gap:10px}.cpfw{position:relative;width:256px;height:256px;cursor:crosshair;touch-action:none}.cpfw canvas{display:block;border:1px solid var(--line)}#cpkmk{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 1px #000;pointer-events:none}.cpsw{position:relative;width:20px;height:256px;cursor:pointer;touch-action:none}.cpsw canvas{display:block;border:1px solid var(--line)}#cpksa{position:absolute;left:-7px;width:34px;height:0;margin-top:0;pointer-events:none;border-top:2px solid #fff;box-shadow:0 0 0 1px #000}.cpx{display:flex;flex-direction:column;gap:8px;min-width:150px}.cpv{width:70px;border:1px solid var(--line)}.cpnw,.cpcu{height:34px}.cpwb{width:20px;height:20px;border:1px solid var(--line);border-radius:2px;cursor:pointer}.cpg{display:flex;flex-direction:column;gap:4px}.cpg label{display:flex;align-items:center;gap:4px}.cpg label b{width:16px}.cpg input[type=number]{width:54px}.cpg input[type=text]{width:70px;text-transform:uppercase}.cpsws{display:flex;flex-direction:column;gap:8px;width:420px}.cpgrid{display:flex;flex-wrap:wrap;gap:2px;max-height:260px;overflow:auto}.cpsq{width:20px;height:20px;border:1px solid var(--line);padding:0;cursor:pointer}.cpow{margin-right:auto}';document.head.appendChild(st);
+const bind=()=>{['fqf','fqs'].forEach(id=>{const b=document.getElementById(id);if(b&&!b.__cp){b.__cp=1;b.addEventListener('dblclick',e=>{e.stopImmediatePropagation();window.openColorPicker(id==='fqs'?'stroke':'fill')},true)}});
+  [['clF','fill'],['clS','stroke']].forEach(([id,t])=>{const b=document.getElementById(id);if(b&&!b.__cp){b.__cp=1;b.addEventListener('dblclick',e=>{e.stopImmediatePropagation();window.openColorPicker(t)},true)}})};
+bind();new MutationObserver(bind).observe(document.body,{childList:true,subtree:true});
+})();
 </script>
 </body>
 </html>
