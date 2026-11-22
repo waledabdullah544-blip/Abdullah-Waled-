@@ -495,11 +495,11 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 162</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 164</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
-const F={x:$('#fx'),y:$('#fy'),w:$('#fw'),h:$('#fh')};
+const F={x:$('#fx'),y:$('#fy'),w:$('#fw'),h:$('#fh')};var REF=[.5,.5];/* reference point shared by the Control bar and the Properties panel (Illustrator: X / Y are the coordinates of the chosen reference point) */
 let z=1,px=0,py=0,objs=[],sel=new Set(),hist=[],hi=0,st=null,tool='v',pen=null,dsSel=new Set();
 var MACP=/Mac|iPhone|iPad/.test(navigator.platform||navigator.userAgent||'');function MW(s){s=String(s==null?'':s);return MACP?s.replace(/\bCtrl\b/g,'Cmd').replace(/\bAlt\b/g,'Option'):s}
 const HINT={fl:'Flare · drag from the center for the flare size · Up/Down ray count · then drag again for the ring direction (Up/Down ring count) · click for options',v:'V Selection · Shift add · Alt+drag copy · outside a corner = rotate · arrow keys move · Ctrl+G group · Ctrl+Shift+G ungroup · Ctrl+C/X/V copy, cut and paste · Ctrl+F/B paste in front/behind · Ctrl+] [ arrange · Ctrl+D repeat last move',m:'M Rectangle · drag to draw · Shift square · Alt from center · V to select',l:'L Ellipse · drag to draw · Shift perfect circle · Alt from center · V to select',p:'P Pen · click for a point · drag for a curve · Alt break handle · Space move the point · click the last point to remove its handle · first point closes · Enter finish · Ctrl+Z remove a point',h:'H Hand · drag to pan the canvas · Space temporary hand · double-click = fit to screen',z:'Z Zoom · click to zoom in · Alt+click or right-click to zoom out · drag right = zoom in, left = zoom out · double-click the icon = 100%',sm:'Smooth · drag over the part of the selected path you want to smooth · each extra pass smooths more and removes more points · double-click for options',pe:'Path Eraser · drag along the part of the selected path you want to erase · the path splits into separate paths',at:'Area Type · click any path (or inside a shape) to type inside it · or drag a box · resizing the box with V or editing its points with A reflows the text · red + with V then click or drag: continues the text in another box · double-click the square under the box: Auto Size · double-click the tool: options',tp:'Type on a Path · click a path then type',vt:'Vertical Type · click and type',vat:'Vertical Area Type · drag a box',vtp:'Vertical Type on a Path · click a path then type',tt:'Shift+T Touch Type · click a character and drag to move it · Alt+drag to rotate',bb:'Shift+B Blob Brush · draws a solid shape in the stroke color (or the fill color if there is no stroke) · merges with solid, stroke-less shapes of the same color · [ and ] size · Shift horizontal or vertical line · double-click for options',br:'B Paintbrush · drag to paint with the brush chosen in the top bar · hold Alt while dragging and release the mouse first to close the path · start from a selected path to continue or edit it · choosing a brush with a path selected applies it · double-click for options',ey:'I Eyedropper · click a shape to copy its appearance to the selection (or to the current color if nothing is selected) · Shift color only · Alt apply the current appearance to the clicked shape',gr:'G Gradient · drag over the selected shape to set the gradient start and end · Shift 45° angle · from the Color panel, Gradient tab',sh:'Shear · drag to slant the shape · Alt copy · double-click the icon = angle and axis dialog',mw:'Y Magic Wand · click to select similar shapes · Shift add · Alt subtract · double-click the icon = settings',ls:'Q Lasso · draw a loop around points to select them · Shift add · Alt subtract · arrow keys and Delete act on the points',gs:'Group Selection · click to select the whole path · Shift add · drag to move',ro:'R Rotate · click to set the pivot · drag to rotate · Shift 45° angle · Alt copy · double-click the icon = angle dialog',sl:'S Scale · click to set the pivot · drag to scale · Shift proportional · Alt copy · double-click = scale dialog',rf:'O Reflect · drag to set the reflection axis · Shift 45° angle · Alt copy · double-click = axis dialog',ft:'E Free Transform · scale handles · drag outside a corner to rotate · drag inside to move',er:'Shift+E Eraser · drag over a shape to erase it · erases only the selection if there is one · [ ] size',sc:'C Scissors · click an anchor point or a path to cut it',kn:'Knife · drag to cut filled shapes · Alt straight cut · Shift+Alt 45° angle · cuts only the selection if there is one',cu:'Shift+~ Curvature · click to add points and the curve forms automatically · Alt or double-click = corner · click the first point to close · Enter finish',pc:'N Pencil · drag to draw freehand · Shift/Alt while drawing = straight line · ending at the start closes the path · start from a selected path to continue or edit it · double-click for options',rr:'Rounded Rectangle · drag to draw · Up/Down corner radius (while drawing or after) · Left sharp · Right fully round · Shift square · Alt from center',po:'Polygon · drag from the center · Up/Down number of sides (while drawing or after) · Shift keeps it pointing up',sr:'Star · drag from the center · Up/Down number of points (while drawing or after) · Ctrl keep the inner radius fixed · Alt straight shoulders',ln:'\\ Line · drag to draw a line · Shift 45° angle · Alt from center · Space move the line · ~ multiple lines · click to enter exact length and angle',ap:'+ Add Anchor Point · click the path to add an anchor point',dp:'- Delete Anchor Point · click a point to delete it',cp:'Shift+C Anchor Point · click a smooth point to make it a corner · drag to create handles',t:'T Type · click for point type or drag for a text box (filled with selected placeholder text) · on an open path it types on the path · Shift+click new text · click inside text to place the cursor · Esc finish · Ctrl temporary selection',a:'A Direct Selection · click a point or handle · drag to move · Shift add · Alt+click = whole path · Alt on a handle breaks it · corner circles round the corners · Delete removes the point'};
@@ -605,7 +605,7 @@ function info(L){
     const setv=(id,v)=>{if(document.activeElement!==$(id))$(id).value=v};
     if(kind==='rr')setv('#shr',P.r);else{setv('#shn',P.n);if(kind==='sr')setv('#shk',Math.round((P.k==null?.5:P.k)*100))}}
   const on=L.length>0,u=on?uni(L):{x:'',y:'',w:'',h:''};
-  for(const k in F){F[k].disabled=!on;if(document.activeElement!==F[k])F[k].value=on?(+u[k]).toFixed(2):''}
+  for(const k in F){F[k].disabled=!on;if(document.activeElement!==F[k])F[k].value=on?(+(k==='x'?u.x+REF[0]*u.w:k==='y'?u.y+REF[1]*u.h:u[k])).toFixed(2):''}
 }
 function view(){world.setAttribute('transform',`translate(${px} ${py}) scale(${z})`);zm.textContent=Math.round(z*100)+'%';$('#tab').textContent='Untitled-1 @ '+Math.round(z*100)+'% '+(cv.classList.contains('outlv')?'(RGB/Outline)':'(RGB/Preview)');draw();penDraw();cuDraw();placeEditor();if(typeof tbView==='function')tbView()}
 function fit(){const r=cv.getBoundingClientRect();z=Math.max(.03125,Math.min((r.width-60)/800,(r.height-60)/600));px=(r.width-800*z)/2;py=(r.height-600*z)/2;view()}
@@ -4817,8 +4817,8 @@ function setBox(){
   const L=[...sel];if(!L.length)return;const u=uni(L);
   const nx=parseFloat(F.x.value),ny=parseFloat(F.y.value),nw=parseFloat(F.w.value),nh=parseFloat(F.h.value);
   if([nx,ny,nw,nh].some(isNaN)||nw<.1||nh<.1){draw();return}
-  const kx=u.w?nw/u.w:1,ky=u.h?nh/u.h:1;
-  L.forEach(o=>{const r=wbox(o);setW(o,nx+(r.x-u.x)*kx,ny+(r.y-u.y)*ky,r.w*kx,r.h*ky)});commit();draw();
+  const kx=u.w?nw/u.w:1,ky=u.h?nh/u.h:1,ox=nx-REF[0]*nw,oy=ny-REF[1]*nh;/* X / Y are the reference point's coordinates: the top-left follows from it */
+  L.forEach(o=>{const r=wbox(o);setW(o,ox+(r.x-u.x)*kx,oy+(r.y-u.y)*ky,r.w*kx,r.h*ky)});commit();draw();
 }
 for(const k in F)F[k].addEventListener('change',setBox);
 
@@ -7863,7 +7863,7 @@ P.innerHTML='<div id="prNone"><div class="pt" style="margin-top:0">Document</div
  '<div class="pt">Align</div><div class="pr alg" id="pral"></div>'+
  '<div class="pt">Quick Actions</div><div class="prq"><button type="button" class="pb" id="qG">Group</button><button type="button" class="pb" id="qU">Ungroup</button><button type="button" class="pb" id="qA">Align</button><button type="button" class="pb" id="qO">Offset Path</button><button type="button" class="pb" id="qM">Make Clipping Mask</button><button type="button" class="pb" id="qR">Release Clipping Mask</button><button type="button" class="pb" id="qF">Bring to Front</button><button type="button" class="pb" id="qB">Send to Back</button></div></div>';
 const $p=s=>P.querySelector(s),vis=(id,on)=>{$p(id).style.display=on?'':'none'};
-let LINK=false,REF=[.5,.5];
+let LINK=false;
 const T=()=>[...sel].filter(o=>o.g.isConnected);
 const setv=(id,v)=>{const e=$p(id);if(document.activeElement!==e)e.value=v};
 function prPieSync(L){const w=$p('#prPie'),o=L.length===1?L[0]:null,Q=o?ellP(o):null;w.style.display=Q?'block':'none';if(!Q)return;const sd=((Q.s%360)+360)%360,ed=((Q.e%360)+360)%360;setv('#prps',+sd.toFixed(2));setv('#prpe',+(pieFull(Q)?sd:ed).toFixed(2))}
@@ -7882,7 +7882,7 @@ const ord=['l','hc','r','t','vc','b'];$p('#pral').innerHTML=ord.map(k=>'<button 
 function box(chg){const L=T();if(!L.length)return;const u=uni(L);let x=parseFloat($p('#prx').value),y=parseFloat($p('#pry').value),w=parseFloat($p('#prw').value),h=parseFloat($p('#prh').value);
   if(chg==='x'||chg==='y'){w=u.w;h=u.h}
   else if(LINK&&u.w&&u.h){if(chg==='w')h=w*u.h/u.w;else if(chg==='h')w=h*u.w/u.h}
-  F.x.value=x-REF[0]*w;F.y.value=y-REF[1]*h;F.w.value=w;F.h.value=h;setBox();refresh()}
+  F.x.value=x;F.y.value=y;F.w.value=w;F.h.value=h;setBox();refresh()}
 ['x','y','w','h'].forEach(k=>$p('#pr'+k).addEventListener('change',()=>box(k)));
 $p('#prLk').addEventListener('click',()=>{LINK=!LINK;$p('#prLk').classList.toggle('on',LINK)});
 $p('#prr').addEventListener('change',()=>{const L=T();if(!L.length)return;const nv=parseFloat($p('#prr').value);if(isNaN(nv))return;const cur=-rotOf(L[0])*180/Math.PI,d=(nv-cur)*Math.PI/180;if(Math.abs(d)<1e-9)return;
@@ -7904,7 +7904,7 @@ P.addEventListener('click',e=>{const b=e.target.closest('button'),r=e.target.clo
 P.addEventListener('change',e=>{const id=e.target.id;if(id!=='prps'&&id!=='prpe')return;const L=T(),o=L.length===1?L[0]:null;if(!o||!ellP(o))return;
   let s=parseFloat($p('#prps').value),en=parseFloat($p('#prpe').value);if(!isFinite(s)||!isFinite(en))return;s=((s%360)+360)%360;en=((en%360)+360)%360;
   pieToPath(o);const Q=ellP(o);if(!Q)return;const e2=Math.abs(en-s)<1e-9?s+360:s+((en-s+360)%360);setShape(o,{s:r3(s),e:r3(e2)});touch(o);commit();draw();refresh()});
-function setRef(rx,ry){REF=[rx,ry];$p('#prRef').querySelectorAll('.prd').forEach(b=>b.classList.toggle('on',+b.dataset.rx===rx&&+b.dataset.ry===ry));refresh()}
+function setRef(rx,ry){REF=[rx,ry];$p('#prRef').querySelectorAll('.prd').forEach(b=>b.classList.toggle('on',+b.dataset.rx===rx&&+b.dataset.ry===ry));refresh();try{info([...sel])}catch(_){}}
 $p('#prRef').addEventListener('click',e=>{const b=e.target.closest('.prd');if(b)setRef(+b.dataset.rx,+b.dataset.ry)});
 function flipSel(ax){const L=T();if(!L.length)return;const u=uni(L),cx=u.x+REF[0]*u.w,cy=u.y+REF[1]*u.h;xfSel(ax==='h'?[-1,0,0,1,2*cx,0]:[1,0,0,-1,0,2*cy],false);refresh()}
 $p('#prFlH').addEventListener('click',()=>flipSel('h'));$p('#prFlV').addEventListener('click',()=>flipSel('v'));
@@ -7964,8 +7964,13 @@ window.wsApply=name=>{const j=WSP[name]||wsCustom()[name];if(!j)return false;DK.
 window.wsCurrent=()=>WSCUR;
 window.wsNew=()=>{dkModal('New Workspace','<label>Name:<input type="text" id="wsn" value="My Workspace"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{const n=box.querySelector('#wsn').value.trim();if(!n||WSP[n])return false;
   const x=wsCustom();x[n]=JSON.parse(JSON.stringify(DK.serialize()));try{localStorage.setItem('masar-wsx',JSON.stringify(x));localStorage.setItem('masar-ws',n)}catch(_){}WSCUR=n}}])};
+window.wsManage=()=>{const draw=()=>{const cu=Object.keys(wsCustom());return cu.length?cu.map(n=>'<label class="wsm"><input type="radio" name="wsr" value="'+n.replace(/"/g,'&quot;')+'"> '+n.replace(/</g,'&lt;')+'</label>').join(''):'<span style="color:var(--mute)">No custom workspaces. Arrange the panels and choose Window > Workspace > New Workspace.</span>'};
+  const m=dkModal('Manage Workspaces','<div id="wsml" style="min-width:260px;max-height:220px;overflow:auto">'+draw()+'</div><label>Name:<input type="text" id="wsmn"></label>',[
+    {t:'Rename',f:box=>{const r=box.querySelector('input[name=wsr]:checked'),nn=box.querySelector('#wsmn').value.trim();if(!r||!nn||WSP[nn]||wsCustom()[nn])return false;const x=wsCustom();x[nn]=x[r.value];delete x[r.value];try{localStorage.setItem('masar-wsx',JSON.stringify(x));if(WSCUR===r.value){WSCUR=nn;localStorage.setItem('masar-ws',nn)}}catch(_){}box.querySelector('#wsml').innerHTML=draw();box.querySelector('#wsmn').value='';return false}},
+    {t:'Delete',f:box=>{const r=box.querySelector('input[name=wsr]:checked');if(!r)return false;const x=wsCustom();delete x[r.value];try{localStorage.setItem('masar-wsx',JSON.stringify(x))}catch(_){}if(WSCUR===r.value)wsApply('Essentials');box.querySelector('#wsml').innerHTML=draw();return false}},
+    {t:'Done',c:1,p:1}])};
 window.wsMenu=()=>{const cu=Object.keys(wsCustom()),it=Object.keys(WSP).concat(cu).map(n=>({t:n,c:()=>WSCUR===n,f:()=>wsApply(n)}));
-  return[...it,{sep:1},{t:'New Workspace…',f:wsNew},{t:'Reset '+WSCUR,f:wsReset}]};
+  return[...it,{sep:1},{t:'New Workspace…',f:wsNew},{t:'Manage Workspaces…',f:wsManage},{t:'Reset '+WSCUR,f:wsReset}]};
 /* ---- desktop shell: shortcuts the browser would swallow are real handlers (Cmd on Mac = Ctrl); quit goes to the shell through a hook ---- */
 window.MasarHost=window.MasarHost||{};
 function hostQuit(){try{dispatchEvent(new CustomEvent('masar-quit'))}catch(_){}
@@ -8200,7 +8205,8 @@ nav .fsb button:hover{background:var(--hov2)}
 .fxf button:hover{background:var(--hov2)}
 .fxf button.pri{background:#1473E6;border-color:#1473E6;color:#fff}.fxf button.pri:hover{background:#0D66D0;border-color:#0D66D0}.fxf button.pri:active{background:#095ABA;border-color:#095ABA}
 /* status bar */
-footer{height:24px;background:var(--panel);border-top:1px solid var(--sep);gap:12px;color:var(--mute2)}
+footer{height:24px;background:var(--panel);border-top:1px solid var(--sep);gap:12px;color:var(--mute2);order:100}
+body.ctl-bottom header{order:90;border-bottom:0;border-top:1px solid var(--line)}
 footer .zb{background:none;border:0;color:var(--mute2);width:20px}footer .zb:hover:not(:disabled){background:var(--hov2);color:var(--onink)}footer .zb:disabled{opacity:.35}
 #zm{min-width:44px;text-align:center;background:var(--field);border:1px solid var(--bdr);border-radius:2px;padding:1px 6px;color:var(--ink)}
 #abn{display:inline-flex;align-items:center;gap:2px}#abi{min-width:30px;text-align:center;background:var(--field);border:1px solid var(--bdr);border-radius:2px;padding:1px 6px;color:var(--ink)}
@@ -8509,5 +8515,20 @@ addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey
 })();
 </script>
 
+<script>
+/* Control panel menu (Illustrator: panel menu at the end of the Control panel, with Dock to Top / Dock to Bottom) */
+(()=>{const h=document.querySelector('header');if(!h||document.getElementById('ctlmenu'))return;
+  const b=document.createElement('button');b.id='ctlmenu';b.type='button';b.title='Control panel menu';b.setAttribute('aria-label','Control panel menu');b.textContent='\u2261';
+  b.style.cssText='margin-left:auto;position:sticky;right:0;flex:none;width:24px;height:24px;border:0;border-radius:3px;background:var(--panel);color:var(--ink);font-size:16px;line-height:1;cursor:pointer';h.appendChild(b);
+  let pos='top';try{pos=localStorage.getItem('masar-ctl')==='bottom'?'bottom':'top'}catch(_){}
+  const apply=p=>{pos=p;document.body.classList.toggle('ctl-bottom',p==='bottom');try{localStorage.setItem('masar-ctl',p)}catch(_){}dispatchEvent(new Event('resize'))};apply(pos);
+  const dd=document.createElement('div');dd.className='mdd';dd.setAttribute('role','menu');document.body.appendChild(dd);
+  const close=()=>{dd.style.display='none'};
+  b.onclick=e=>{e.stopPropagation();if(dd.style.display==='block'){close();return}
+    dd.innerHTML='';[['Dock to Top','top'],['Dock to Bottom','bottom']].forEach(([t,k])=>{const x=document.createElement('button');x.type='button';x.innerHTML='<i>'+(pos===k?'\u2713':'')+'</i><em>'+t+'</em>';x.onclick=()=>{close();apply(k)};dd.appendChild(x)});
+    dd.style.display='block';const r=b.getBoundingClientRect();dd.style.left=Math.max(4,Math.min(r.left,innerWidth-dd.offsetWidth-6))+'px';dd.style.top=(pos==='bottom'?Math.max(4,r.top-dd.offsetHeight-4):r.bottom+4)+'px'};
+  addEventListener('pointerdown',e=>{if(!dd.contains(e.target)&&e.target!==b)close()},true);addEventListener('keydown',e=>{if(e.key==='Escape')close()},true);
+  window.ctlDock=apply})();
+</script>
 </body>
 </html>

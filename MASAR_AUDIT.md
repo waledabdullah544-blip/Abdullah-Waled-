@@ -114,14 +114,20 @@
 
 **اتختبر ونجح (بدون أخطاء):** Rectangle/Ellipse (Shift, Alt, Shift+Alt, dialog), Polygon/Star/Line, Selection (move, Shift, Alt copy, handles, marquee, Shift+click), Group/Ungroup/Delete/Undo/Redo, Pen (closing, curve drag, Shift, undo), Direct Selection (anchor drag + undo), Rotate (origin + angle + Alt copy), Reflect, Scale, Shear, Pencil, Zoom (click / Alt+click), Hand, Space+drag, Ctrl+0, Type (click + type + Esc), Gradient (drag → white→black gradient), Eyedropper, Scissors, Magic Wand, Lasso.
 
-**أخطاء اتصلّحت:** polygon 5→6 أضلاع، Shift+حروف أدوات، الكيبورد العربي، Alt+حرف، F10، `=`/`_`، **الـ tooltips مش بتظهر لأدوات flyout الأشكال (RoundedRect/Polygon/Star/Flare) وأدوات Type (Area/Path/Vertical/Touch Type)** — اتربطت.
+**اتصلّح في build 163/164:** X/Y في الـ Control bar بقت مطابقة للـ Properties وبنقطة المرجع (Reference Point)؛ Control panel menu (≡) فيه Dock to Top / Dock to Bottom ويتحفظ؛ Window > Workspace > Manage Workspaces (Rename / Delete).
+
+**أخطاء اتصلّحت (قبلها):** polygon 5→6 أضلاع، Shift+حروف أدوات، الكيبورد العربي، Alt+حرف، F10، `=`/`_`، **الـ tooltips مش بتظهر لأدوات flyout الأشكال (RoundedRect/Polygon/Star/Flare) وأدوات Type (Area/Path/Vertical/Touch Type)** — اتربطت.
 
 **أخطاء لسه موجودة:**
 1. **Control bar X/Y ≠ Properties X/Y**: الـ control bar بيعرض الركن العلوي الأيسر (75.03) والـ Properties بيعرض المركز (155.57) لنفس الشكل. في Illustrator الاتنين بيستخدموا نقطة المرجع (Reference Point) نفسها (الافتراضي: المركز).
-2. **أرقام 1–0 ما بتغيّرش الـ opacity** (Illustrator: 1=10% … 0=100%).
-3. الـ control bar بيتقص من اليمين على عرض 1500px (Opacity مقطوعة) — Illustrator بيعمل overflow menu.
+2. ~~أرقام 1–0 للـ opacity~~ — **مش ميزة Illustrator** (دي Photoshop)؛ Adobe بتوثّق أسهم ↑↓ في خانة الـ Opacity (1%، و10% مع Shift) — لسه ما اتختبرش في مسار.
+3. الـ control bar بيعمل scroll أفقي على العروض الصغيرة؛ Illustrator بيحط الزايد في قايمة overflow.
 
 **لسه ما اتختبرش:** Blob Brush, Paintbrush+Brushes, Curvature, Add/Delete Anchor/Anchor Point, Shaper, Smooth/Path Eraser/Join, Knife, Eraser, Free Transform, Arc/Spiral/Grids, Flare, Touch Type/Area Type, Align, Pathfinder, Layers (drag/search), Appearance, Swatches/Color, Stroke options, Transparency, Smart Guides، Isolation Mode، Clipping Mask، Effects.
+
+## 5-ج) تخصيص الواجهة (مقارنة بـ Illustrator)
+**موجود وشغال (اتختبر بماوس حقيقي):** سحب تاب بانل لليسار/اليمين/عايم، دمج بانلز كتابات، إغلاق/فتح من Window، حفظ التخطيط بعد reload، Workspaces (Essentials, Essentials Classic, Typography, Painting) + New Workspace + Reset، Edit Toolbar، Toolbar عمودين/عمود، Tab/Shift+Tab، 4 ثيمات.
+**ناقص:** Keyboard Shortcuts editor (Ctrl+Alt+Shift+K) — تخصيص الاختصارات؛ Workspaces الجاهزة الباقية (3D, Automation, Layout, Motion, Printing, Tracing, Web…)؛ قايمة إظهار/إخفاء عناصر الـ Control bar؛ Control bar overflow menu؛ UI Scale في Preferences؛ تخصيص قوائم السياق/البانل.
 
 ## 6) خطة التنفيذ المقترحة (بالترتيب)
 
