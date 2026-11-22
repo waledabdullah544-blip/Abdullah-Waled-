@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 198</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 199</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -4580,7 +4580,7 @@ cv.addEventListener('pointerdown',e=>{
   if(GEN.includes(tool)){sel=new Set();draw();st={p,moved:false,mode:'gen',t:tool,opt:{...GOPT[tool]},cur:p};return}
   if(tool==='fl'){flareDown(p);return}
   if(tool==='br'){const cand=BRO.edit?pcCands():[],q=sgStart(p,e);sel=new Set();draw();st={p:q,moved:false,mode:'brush',pts:[[q.x,q.y]],cand,pr:[e.pressure!=null?e.pressure:.5]};return}
-  if(tool==='sm'||tool==='pe'){if(!sel.size)$('#hint').textContent=(tool==='sm'?'Smooth':'Path Eraser')+' works only on the selected path, like Illustrator: select the path with V first, then drag over it';st={p,moved:false,mode:'pathedit',kind:tool,pts:[[p.x,p.y]]};return}
+  if(tool==='sm'||tool==='pe'){if(!sel.size)$('#hint').textContent=(tool==='sm'?'Smooth':'Path Eraser')+' works only on the selected path: select the path with V first, then drag over it';st={p,moved:false,mode:'pathedit',kind:tool,pts:[[p.x,p.y]]};return}
   if(tool==='jn'){st={p,moved:false,mode:'join',pts:[[p.x,p.y]]};return}
   if(tool==='shp'){sel=new Set();draw();st={p,moved:false,mode:'shaper',pts:[[p.x,p.y]]};return}
   if(tool==='ey'){eyeClick(e);st=null;return}
@@ -8281,13 +8281,13 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Reselect',k:'Ctrl+6',f:()=>window.selReselect()},{t:'Inverse',f:selInverse},{t:'Next Object Above',k:'Ctrl+Alt+]',f:()=>selNext(1),en:S},{t:'Next Object Below',k:'Ctrl+Alt+[',f:()=>selNext(-1),en:S},sep,{t:'Same',sub:()=>window.selSameItems(),en:S},{t:'Object',sub:()=>window.selObjectItems()},sep,{t:'Save Selection…',f:()=>window.selSave(),en:S},{t:'Edit Selection…',f:()=>window.selEdit(),en:()=>window.selHasSaved()},...(window.selSavedItems?(window.selSavedItems().length?[sep,...window.selSavedItems()]:[]):[])]],
    ['Effect',()=>{const LV=(k,p)=>()=>pxPre(k,p),PD=k=>()=>pxDlg(k),L=()=>S()&&(!!FXLAST||!!window.PXLAST);return[
     {t:'Apply Last Effect',k:'Ctrl+Shift+E',f:fxApplyLast,en:L},{t:'Last Effect…',k:'Ctrl+Alt+Shift+E',f:fxLastDlg,en:L},sep,
-    {t:'Illustrator Effects',hd:1},
+    {t:'Masar Effects',hd:1},
     {t:'Convert to Shape',sub:()=>[{t:'Rectangle…',f:LV('conv',{shape:'rect'}),en:S},{t:'Rounded Rectangle…',f:LV('conv',{shape:'rr'}),en:S},{t:'Ellipse…',f:LV('conv',{shape:'ell'}),en:S}]},
     {t:'Distort & Transform',sub:()=>[{t:'Free Distort…',f:PD('fd'),en:S},{t:'Pucker & Bloat…',f:PD('pb'),en:S},{t:'Roughen…',f:PD('rough'),en:S},{t:'Transform…',f:PD('xf'),en:S},{t:'Tweak…',f:PD('tweak'),en:S},{t:'Twist…',f:PD('twist'),en:S},{t:'Zig Zag…',f:PD('zig'),en:S}]},
     {t:'Path',sub:()=>[{t:'Offset Path…',f:PD('off'),en:S},{t:'Outline Object',f:PD('outobj'),en:S},{t:'Outline Stroke',f:PD('ostroke'),en:S}]},
     {t:'Stylize',sub:()=>[{t:'Drop Shadow…',f:()=>fxDlg('ds'),en:S},{t:'Feather…',f:()=>fxDlg('fe'),en:S},{t:'Inner Glow…',f:()=>fxDlg('ig'),en:S},{t:'Outer Glow…',f:()=>fxDlg('og'),en:S},{t:'Round Corners…',f:PD('round'),en:S},{t:'Scribble…',f:PD('scrib'),en:S}]},
     {t:'Warp',sub:()=>WSTY.map(w=>({t:w[1]+'…',f:LV('warp',{style:w[0]}),en:S}))},sep,
-    {t:'Photoshop Effects',hd:1},
+    {t:'Raster Effects',hd:1},
     {t:'Blur',sub:()=>[{t:'Gaussian Blur…',f:()=>fxDlg('gb'),en:S}]}]}],
    ['View',()=>[
     {t:()=>cv.classList.contains('outlv')?'Preview':'Outline',k:'Ctrl+Y',f:()=>{cv.classList.toggle('outlv');view()}},{t:'Pixel Preview',k:'Ctrl+Alt+Y',c:()=>window.viewState('px'),f:()=>window.viewToggle('px')},sep,
