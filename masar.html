@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 185</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 188</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -1080,7 +1080,7 @@ ted.addEventListener('keydown',e=>{const E=ted_s;if(!E||E.kind==='path'||e.ctrlK
 /* The edit session survives the control bar, the panels, the colour boxes and the window losing focus (Alt-Tab, devtools, a file dialog); it ends with Esc, a click on the canvas or another tool */
 const TYUI='header,nav,#fsbar,#fontbar,#swp,#chp,#pap,#tbpanel,#dlg,.dkg,.dkd,.fxm';
 ted.addEventListener('blur',e=>{const E=ted_s;if(!E)return;E.selSv=[ted.selectionStart,ted.selectionEnd,ted.selectionDirection];const rt=e.relatedTarget;
-  if(rt&&rt.closest&&rt.closest('#chp,#pap,#tbpanel,.dkg'))return;
+  if(rt&&rt.closest&&rt.closest('#chp,#pap,#tbpanel,.dkg,#frp'))return;/* the Find and Replace panel keeps the text session (and its selection) */
   /* a window blur leaves document.activeElement on the text (and hasFocus() false); a click elsewhere in the page moves it first */
   if(document.activeElement===ted||(!document.hasFocus()&&!rt)){E.winBlur=1;return}
   if(rt&&rt.closest&&rt.closest(TYUI))return;
@@ -8222,7 +8222,7 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Undo',k:'Ctrl+Z',f:K('z',{c:1,code:'KeyZ'}),en:()=>hi>0||!!pen||!!curv},{t:'Redo',k:'Ctrl+Shift+Z',f:K('z',{c:1,s:1,code:'KeyZ'}),en:()=>hi<hist.length-1||!!(pen&&pen.redo&&pen.redo.length)},sep,
     {t:'Cut',k:'Ctrl+X',f:()=>{if(copySel()){delSel();commit();draw()}},en:S},{t:'Copy',k:'Ctrl+C',f:copySel,en:S},{t:'Paste',k:'Ctrl+V',f:()=>pasteClip('center'),en:()=>!!CLIP},
     {t:'Paste in Front',k:'Ctrl+F',f:()=>pasteClip('front'),en:()=>!!CLIP},{t:'Paste in Back',k:'Ctrl+B',f:()=>pasteClip('back'),en:()=>!!CLIP},{t:'Paste in Place',k:'Ctrl+Shift+V',f:()=>pasteClip('inplace'),en:()=>!!CLIP},sep,
-    {t:'Clear',k:'Delete',f:K('Delete',{code:'Delete'}),en:S},sep,
+    {t:'Clear',k:'Delete',f:K('Delete',{code:'Delete'}),en:S},sep,{t:'Find and Replace…',f:()=>window.findOpen()},{t:'Find Next',f:()=>window.findNext()},sep,
     {t:'Keyboard Shortcuts…',k:'Ctrl+Alt+Shift+K',f:()=>window.openKeyboardShortcuts()},sep,
     {t:'Preferences',sub:()=>[{t:'General…',k:'Ctrl+K',f:()=>window.prefOpen('gen')},{t:'User Interface…',f:()=>window.prefOpen('ui')}]}]],
    ['Object',()=>[
@@ -8247,7 +8247,7 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Upload Font…',f:()=>$('#fup').click()},...($('#fsys')&&$('#fsys').style.display!=='none'?[{t:'Installed Fonts…',f:()=>$('#fsys').click()}]:[])]],
    ['Select',()=>[
     {t:'All',k:'Ctrl+A',f:()=>{sel=new Set(objs.filter(pick));draw()}},{t:'All on Active Artboard',k:'Ctrl+Alt+A',f:()=>{sel=new Set(objs.filter(pick));draw()}},{t:'Deselect',k:'Ctrl+Shift+A',f:()=>{sel=new Set();dsSel=new Set();draw()},en:anySel},sep,
-    {t:'Inverse',f:selInverse},{t:'Next Object Above',k:'Ctrl+Alt+]',f:()=>selNext(1),en:S},{t:'Next Object Below',k:'Ctrl+Alt+[',f:()=>selNext(-1),en:S}]],
+    {t:'Reselect',k:'Ctrl+6',f:()=>window.selReselect()},{t:'Inverse',f:selInverse},{t:'Next Object Above',k:'Ctrl+Alt+]',f:()=>selNext(1),en:S},{t:'Next Object Below',k:'Ctrl+Alt+[',f:()=>selNext(-1),en:S},sep,{t:'Same',sub:()=>window.selSameItems(),en:S},{t:'Object',sub:()=>window.selObjectItems()},sep,{t:'Save Selection…',f:()=>window.selSave(),en:S},{t:'Edit Selection…',f:()=>window.selEdit(),en:()=>window.selHasSaved()},...(window.selSavedItems?(window.selSavedItems().length?[sep,...window.selSavedItems()]:[]):[])]],
    ['Effect',()=>{const LV=(k,p)=>()=>pxPre(k,p),PD=k=>()=>pxDlg(k),L=()=>S()&&(!!FXLAST||!!window.PXLAST);return[
     {t:'Apply Last Effect',k:'Ctrl+Shift+E',f:fxApplyLast,en:L},{t:'Last Effect…',k:'Ctrl+Alt+Shift+E',f:fxLastDlg,en:L},sep,
     {t:'Illustrator Effects',hd:1},
@@ -8259,13 +8259,14 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Photoshop Effects',hd:1},
     {t:'Blur',sub:()=>[{t:'Gaussian Blur…',f:()=>fxDlg('gb'),en:S}]}]}],
    ['View',()=>[
-    {t:()=>cv.classList.contains('outlv')?'Preview':'Outline',k:'Ctrl+Y',f:()=>{cv.classList.toggle('outlv');view()}},sep,
+    {t:()=>cv.classList.contains('outlv')?'Preview':'Outline',k:'Ctrl+Y',f:()=>{cv.classList.toggle('outlv');view()}},{t:'Pixel Preview',k:'Ctrl+Alt+Y',c:()=>window.viewState('px'),f:()=>window.viewToggle('px')},sep,
     {t:'Zoom In',k:'Ctrl++',f:()=>{const r=cv.getBoundingClientRect();zoomAt(1.25,r.width/2,r.height/2)}},{t:'Zoom Out',k:'Ctrl+-',f:()=>{const r=cv.getBoundingClientRect();zoomAt(.8,r.width/2,r.height/2)}},
     {t:'Fit Artboard in Window',k:'Ctrl+0',f:fit},{t:'Fit All in Window',k:'Ctrl+Alt+0',f:fitAll},{t:'Actual Size',k:'Ctrl+1',f:zoom100},sep,
+    {t:()=>window.viewState('he')?'Show Edges':'Hide Edges',k:'Ctrl+H',f:()=>window.viewToggle('he')},{t:()=>window.viewState('ab')?'Hide Artboards':'Show Artboards',k:'Ctrl+Shift+H',f:()=>window.viewToggle('ab')},{t:()=>window.viewState('bb')?'Show Bounding Box':'Hide Bounding Box',k:'Ctrl+Shift+B',f:()=>window.viewToggle('bb')},{t:()=>window.viewState('tg')?'Hide Transparency Grid':'Show Transparency Grid',k:'Ctrl+Shift+D',f:()=>window.viewToggle('tg')},sep,
     {t:'Rulers',sub:()=>[{t:'Show Rulers',k:'Ctrl+R',c:()=>RLON,f:rlToggle},sep,...Object.keys(RLUN).map(u=>({t:RLUN[u].n,c:()=>RLU===u,f:()=>rlUnits(u)}))]},
     {t:'Guides',sub:()=>[{t:'Show Guides',k:'Ctrl+;',c:()=>GDVIS,f:gdToggleVis},{t:'Lock Guides',k:'Ctrl+Alt+;',c:()=>GDLOCK,f:gdToggleLock},{t:'Make Guides',k:'Ctrl+5',f:gdMake,en:S},{t:'Release Guides',k:'Ctrl+Alt+5',f:gdRelease,en:()=>GD.some(g=>GDSEL.has(g.id)&&g.t==='p'&&g.src)},{t:'Clear Guides',f:gdClear,en:()=>GD.length>0}]},
     {t:'Smart Guides',k:'Ctrl+U',c:()=>SGON,f:sgToggle},
-    {t:'Show Grid',k:'Ctrl+"',c:()=>GRIDG.getAttribute('display')!=='none',f:gridToggle},{t:'Snap to Grid',k:'Ctrl+Shift+"',c:()=>SNAPG,f:()=>{SNAPG=!SNAPG}},{t:'Snap to Point',k:'Ctrl+Alt+"',c:()=>SNAPP,f:snapToggle}]],
+    {t:'Show Grid',k:'Ctrl+"',c:()=>GRIDG.getAttribute('display')!=='none',f:gridToggle},{t:'Snap to Grid',k:'Ctrl+Shift+"',c:()=>SNAPG,f:()=>{SNAPG=!SNAPG}},{t:'Snap to Point',k:'Ctrl+Alt+"',c:()=>SNAPP,f:snapToggle},{t:'Snap to Pixel',c:()=>window.viewState('spx'),f:()=>window.viewToggle('spx')},sep,{t:'New View…',f:()=>window.viewNew()},{t:'Edit Views…',f:()=>window.viewEdit()},...(window.viewSavedItems&&window.viewSavedItems().length?[sep,...window.viewSavedItems()]:[])]],
    ['Window',()=>{const PN=(t,id,k)=>({t,k,c:()=>DK.isOpen(id),f:()=>DK.toggle(id)});return[
     {t:'Workspace',sub:()=>wsMenu()},sep,
     {t:'Control',c:()=>!document.body.classList.contains('hide-ctrl'),f:()=>document.body.classList.toggle('hide-ctrl')},{t:'Tools',c:()=>!document.body.classList.contains('hide-tools'),f:()=>document.body.classList.toggle('hide-tools')},sep,
@@ -8986,6 +8987,129 @@ window.pathReverse=()=>each(o=>OP.reverse(o),'Reverse Path Direction');window.pa
 window.pathDivideBelow=()=>{const L=selected();if(L.length!==1){msg('Divide Objects Below: select one closed path');return}const R=OP.divideBelow(L[0]);if(R){sel=new Set(R);commit();draw()}else msg('Divide Objects Below: nothing below the selected closed path')};
 window.createTrimMarks=()=>{const L=selected(),b=L.length?uni(L):{x:0,y:0,w:800,h:600},o=OP.trimMarks(b);sel=new Set([o]);commit();draw()};
 addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||(typeof ted_s!=='undefined'&&ted_s))return;if((e.ctrlKey||e.metaKey)&&e.altKey&&e.shiftKey&&e.code==='KeyD'){e.preventDefault();e.stopImmediatePropagation();window.openTransformEach()}},true);
+})();
+</script>
+<script>
+/* ===================== Select (Reselect, Same, Object, Save / Edit Selection), Edit (Find and Replace), View (Hide Edges, Hide Bounding Box, Transparency Grid, Pixel Preview, Snap to Pixel, Hide Artboards, New / Edit Views) ===================== */
+(()=>{
+const msg=t=>{try{tb5Msg(t)}catch(_){}};
+const vis=()=>objs.filter(o=>pick(o));
+/* ---- Reselect (Ctrl+6): the selection that was just cleared ---- */
+let CUR=[],LASTSEL=[];
+const _dr=draw;draw=function(){const r=_dr.apply(this,arguments);try{const now=[...sel];if(now.length)CUR=now;else if(CUR.length){LASTSEL=CUR;CUR=[]}viewFx()}catch(_){}return r};
+window.selReselect=()=>{const L=LASTSEL.filter(o=>objs.includes(o)&&pick(o));if(!L.length){msg('Reselect: no previous selection');return}sel=new Set(L);dsSel=new Set();draw()};
+/* ---- Select > Same ---- */
+const el0=o=>fillables(o)[0],hx=c=>{c=(c||'').trim();return c&&c!=='none'?hexOf(c):'none'};
+const KEYS={
+  fill:o=>{const e=el0(o);if(!e)return'';const g=e.getAttribute('data-grad');return g?'g'+g:hx(e.getAttribute('fill'))},
+  stroke:o=>{const e=el0(o);if(!e)return'';const g=e.getAttribute('data-grads');return g?'g'+g:hx(e.getAttribute('stroke'))},
+  sw:o=>{const e=el0(o);if(!e)return 0;const s=e.getAttribute('stroke');return!s||s==='none'?0:+(parseFloat(e.getAttribute('stroke-width')||1)).toFixed(3)},
+  op:o=>{const S=styleOf(o);return S?S.op:100},
+  blend:o=>{const e=el0(o);return e&&e.style&&e.style.mixBlendMode?e.style.mixBlendMode:'normal'},
+  fx:o=>o.g.dataset.fx||'',
+  story:o=>{const t=o.g.querySelector('text[data-th]');return t?t.getAttribute('data-th'):null}};
+const SAME={app:['Appearance',['fill','stroke','sw','op','blend','fx']],attr:['Appearance Attribute',['op','blend','fx']],blend:['Blending Mode',['blend']],fs:['Fill & Stroke',['fill','stroke','sw']],fill:['Fill Color',['fill']],op:['Opacity',['op']],stroke:['Stroke Color',['stroke']],sw:['Stroke Weight',['sw']],link:['Link Block Series',['story']]};
+window.selSame=k=>{const cur=[...sel].filter(pick);if(!cur.length)return;const ks=SAME[k][1],sig=o=>JSON.stringify(ks.map(f=>KEYS[f](o)));
+  if(k==='link'){const st=new Set(cur.map(o=>KEYS.story(o)).filter(Boolean));if(!st.size){msg('Select a text object that is part of a story first');return}sel=new Set(vis().filter(o=>st.has(KEYS.story(o))));dsSel=new Set();draw();return}
+  const S=new Set(cur.map(sig));sel=new Set(vis().filter(o=>S.has(sig(o))));dsSel=new Set();draw()};
+window.selSameItems=()=>Object.keys(SAME).filter(k=>k!=='link').map(k=>({t:SAME[k][0],f:()=>window.selSame(k),en:()=>sel.size>0})).concat([{t:SAME.link[0],f:()=>window.selSame('link'),en:()=>[...sel].some(o=>KEYS.story(o))}]);
+/* ---- Select > Object ---- */
+const only=L=>{sel=new Set(L.filter(pick));dsSel=new Set();draw()};
+window.selObject=k=>{
+  if(k==='layer'){const ly=new Set([...sel].map(o=>o.ly));only(objs.filter(o=>ly.has(o.ly)));return}
+  if(k==='brush')return only(objs.filter(o=>o.g.querySelector('[data-bc]')));
+  if(k==='clip')return only(objs.filter(o=>o.g.querySelector(':scope > g[data-clipmask]')));
+  if(k==='stray')return only(OP.cleanFind({stray:true}).stray);
+  if(k==='text')return only(objs.filter(isText));
+  if(k==='handles'){const A=[];[...sel].forEach(o=>dsAnchors(o).forEach(a=>{if(a.q.i||a.q.o)A.push(a.key)}));dsSel=new Set(A);draw()}};
+window.selObjectItems=()=>[{t:'All on Same Layer',f:()=>window.selObject('layer'),en:()=>sel.size>0},{t:'Direction Handles',f:()=>window.selObject('handles'),en:()=>sel.size>0},{t:'Brush Strokes',f:()=>window.selObject('brush')},{t:'Clipping Masks',f:()=>window.selObject('clip')},{t:'Stray Points',f:()=>window.selObject('stray')},{t:'Text Objects',f:()=>window.selObject('text')}];
+/* ---- Save Selection / Edit Selection: the names live in the objects (data-ss), so they are part of undo, copy and the saved file ---- */
+const ssOf=o=>{try{return JSON.parse(o.g.dataset.ss||'[]')}catch(_){return[]}};
+const ssSet=(o,L)=>{if(L.length)o.g.dataset.ss=JSON.stringify(L);else delete o.g.dataset.ss};
+const ssNames=()=>[...new Set(objs.flatMap(ssOf))];
+const modal=(title,body,btns)=>dkModal(title,body,btns);
+window.selSave=()=>{const cur=[...sel].filter(pick);if(!cur.length)return;const M=modal('Save Selection','<label>Name: <input type="text" id="ssn" style="min-width:200px"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{const n=box.querySelector('#ssn').value.trim();if(!n)return false;
+  objs.forEach(o=>{const L=ssOf(o).filter(x=>x!==n);if(cur.includes(o))L.push(n);ssSet(o,L)});commit();msg('Selection "'+n+'" saved')}}]);M.box.querySelector('#ssn').focus()};
+window.selLoad=n=>{only(objs.filter(o=>ssOf(o).includes(n)))};
+window.selEdit=()=>{const names=ssNames();if(!names.length){msg('No saved selections');return}
+  const M=modal('Edit Selection','<div id="sel_l" style="min-width:240px;max-height:200px;overflow:auto">'+names.map(n=>'<label style="display:block"><input type="radio" name="ssr" value="'+n.replace(/"/g,'&quot;')+'"> '+n.replace(/</g,'&lt;')+'</label>').join('')+'</div><label>Name: <input type="text" id="ssn"></label>',[
+    {t:'Rename',f:box=>{const r=box.querySelector('input[name=ssr]:checked'),nn=box.querySelector('#ssn').value.trim();if(!r||!nn)return false;objs.forEach(o=>{ssSet(o,ssOf(o).map(x=>x===r.value?nn:x))});commit();return false}},
+    {t:'Delete',f:box=>{const r=box.querySelector('input[name=ssr]:checked');if(!r)return false;objs.forEach(o=>ssSet(o,ssOf(o).filter(x=>x!==r.value)));commit();const lab=r.closest('label');lab.remove();return false}},
+    {t:'Done',c:1,p:1}])};
+window.selSavedItems=()=>{const n=ssNames();return n.map(x=>({t:x,f:()=>window.selLoad(x)}))};
+window.selHasSaved=()=>ssNames().length>0;
+addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||(typeof ted_s!=='undefined'&&ted_s)||document.querySelector('.fxm'))return;
+  if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey&&e.code==='Digit6'){e.preventDefault();e.stopImmediatePropagation();window.selReselect()}},true);
+/* ---- View toggles ---- */
+const V={he:false,bb:false,tg:false,px:false,spx:false,ab:true};
+const AB=()=>document.querySelector('#world > rect');
+function viewFx(){const sg=document.getElementById('selg');if(sg){const direct=typeof DSM==='function'&&DSM(tool);[...sg.children].forEach(c=>{let hide=false;if(V.he){hide=direct||c.tagName==='path'}if(V.bb&&!direct&&c.tagName!=='path')hide=true;c.style.display=hide?'none':''})}}
+const tgPat=()=>{const md=document.getElementById('mdefs');if(!md||md.querySelector('#tgrid'))return;const p=el('pattern',{id:'tgrid',width:16,height:16,patternUnits:'userSpaceOnUse'});p.innerHTML='<rect width="16" height="16" fill="#fff"/><rect width="8" height="8" fill="#ccc"/><rect x="8" y="8" width="8" height="8" fill="#ccc"/>';md.appendChild(p)};
+const applyView=()=>{const a=AB();if(a){if(V.tg)tgPat();else{const o=document.querySelector('#mdefs #tgrid');if(o)o.remove()}a.setAttribute('fill',V.tg?'url(#tgrid)':'#fff');a.setAttribute('stroke',V.ab?'#000':'none')}const L=document.getElementById('layer');if(L)L.setAttribute('shape-rendering',V.px?'crispEdges':'auto');
+  let g=document.getElementById('pxg');if(V.px&&z>=6){if(!g){g=el('g',{id:'pxg','pointer-events':'none'});const md=document.getElementById('mdefs');const p=el('pattern',{id:'pxgp',width:1,height:1,patternUnits:'userSpaceOnUse'});p.innerHTML='<path d="M1 0V1H0" fill="none" stroke="#9aa0b4" stroke-width="1" vector-effect="non-scaling-stroke" opacity=".6"/>';md.appendChild(p);g.appendChild(el('rect',{x:-4000,y:-4000,width:9000,height:9000,fill:'url(#pxgp)'}));L.after(g)}g.style.display=''}else if(g){g.remove();const pp=document.querySelector('#mdefs #pxgp');if(pp)pp.remove()}viewFx()};
+const _vw=view;view=function(){_vw();try{applyView()}catch(_){}};
+const tog=(k,msgOn,msgOff)=>{V[k]=!V[k];applyView();msg(V[k]?msgOn:msgOff)};
+window.viewToggle=k=>{if(k==='he')tog('he','Edges hidden','Edges shown');else if(k==='bb')tog('bb','Bounding box hidden','Bounding box shown');else if(k==='tg')tog('tg','Transparency grid shown','Transparency grid hidden');else if(k==='px')tog('px','Pixel Preview on','Pixel Preview off');else if(k==='ab')tog('ab','Artboards shown','Artboards hidden');else if(k==='spx'){V.spx=!V.spx;msg(V.spx?'Snap to Pixel on':'Snap to Pixel off')}};
+window.viewState=k=>V[k];
+const _pt=pt;pt=function(e){const p=_pt(e);if(V.spx&&PDOWN&&(SG.includes(tool)||['ln','p','cu','ar','spi','rgr','pgr','kn','sc','gr','pc','er','bb'].includes(tool))){p.x=Math.round(p.x);p.y=Math.round(p.y)}return p};
+addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||(typeof ted_s!=='undefined'&&ted_s)||document.querySelector('.fxm'))return;const c=e.ctrlKey||e.metaKey;if(!c)return;
+  let h=true;if(e.code==='KeyH'&&!e.shiftKey&&!e.altKey)window.viewToggle('he');else if(e.code==='KeyB'&&e.shiftKey&&!e.altKey)window.viewToggle('bb');else if(e.code==='KeyD'&&e.shiftKey&&!e.altKey)window.viewToggle('tg');else if(e.code==='KeyY'&&e.altKey&&!e.shiftKey)window.viewToggle('px');else if(e.code==='KeyH'&&e.shiftKey&&!e.altKey)window.viewToggle('ab');else h=false;
+  if(h){e.preventDefault();e.stopImmediatePropagation()}},true);
+/* ---- New View / Edit Views ---- */
+const VK='masar.views.v1',views=()=>{try{return JSON.parse(localStorage.getItem(VK)||'[]')||[]}catch(_){return[]}},saveViews=a=>{try{localStorage.setItem(VK,JSON.stringify(a))}catch(_){}};
+window.viewNew=()=>{const M=modal('New View','<label>Name: <input type="text" id="vwn" value="View '+(views().length+1)+'" style="min-width:200px"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{const n=box.querySelector('#vwn').value.trim();if(!n)return false;const a=views().filter(v=>v.n!==n);a.push({n,px,py,z});saveViews(a);msg('View "'+n+'" saved')}}]);const i=M.box.querySelector('#vwn');i.focus();i.select()};
+window.viewGo=n=>{const v=views().find(x=>x.n===n);if(!v)return;px=v.px;py=v.py;z=v.z;view()};
+window.viewEdit=()=>{const a=views();if(!a.length){msg('No saved views');return}
+  modal('Edit Views','<div style="min-width:240px;max-height:200px;overflow:auto">'+a.map(v=>'<label style="display:block"><input type="radio" name="vwr" value="'+v.n.replace(/"/g,'&quot;')+'"> '+v.n.replace(/</g,'&lt;')+'</label>').join('')+'</div><label>Name: <input type="text" id="vwn"></label>',[
+    {t:'Rename',f:box=>{const r=box.querySelector('input[name=vwr]:checked'),nn=box.querySelector('#vwn').value.trim();if(!r||!nn)return false;saveViews(views().map(v=>v.n===r.value?{...v,n:nn}:v));r.value=nn;r.parentElement.lastChild.textContent=' '+nn;return false}},
+    {t:'Delete',f:box=>{const r=box.querySelector('input[name=vwr]:checked');if(!r)return false;saveViews(views().filter(v=>v.n!==r.value));r.closest('label').remove();return false}},{t:'Done',c:1,p:1}])};
+window.viewSavedItems=()=>views().map(v=>({t:v.n,f:()=>window.viewGo(v.n)}));
+applyView();
+})();
+</script>
+<script>
+/* ===================== Edit > Find and Replace / Find Next (text objects) ===================== */
+(()=>{
+const D={q:'',r:'',cs:false,ww:false,back:false,hid:false,lock:false};
+let panel=null;
+const esc=t=>t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const RX=g=>new RegExp(D.ww?'\\b'+esc(D.q)+'\\b':esc(D.q),(g?'g':'')+(D.cs?'':'i'));
+const rawOf=o=>{if(typeof ted_s!=='undefined'&&ted_s&&ted_s.o===o)return ted.value.replace(/\r/g,'');const t=o.g.querySelector('text');return t?(t.getAttribute('data-raw')||''):''};
+const pool=()=>objs.filter(o=>isText(o)&&(D.hid||o.g.style.display!=='none')&&(D.lock||(!o.g.dataset.lock&&!o.ll)));
+const status=t=>{const s=panel&&panel.querySelector('#frs');if(s)s.textContent=t;else{try{tb5Msg(t)}catch(_){}}};
+function select(o,s,e){if(ted_s&&ted_s.o!==o)finishText();if(!ted_s||ted_s.o!==o){beginText(o,null,{});ted_s.selR=[s,e]}ted.setSelectionRange(s,e);try{tedCaret()}catch(_){}sel=new Set([o]);if(typeof draw==='function')draw()}
+function find(){if(!D.q){status('Type the text to find');return false}let L=pool();if(!L.length){status('No text objects to search');return false}if(D.back)L=L.slice().reverse();
+  let i0=0,p0=D.back?Infinity:0;const ed=typeof ted_s!=='undefined'&&ted_s&&ted_s.o&&L.indexOf(ted_s.o)>=0?ted_s.o:null;
+  if(ed){i0=L.indexOf(ed);p0=D.back?Math.min(ted.selectionStart,ted.selectionEnd):Math.max(ted.selectionStart,ted.selectionEnd)}
+  else{const s=[...sel].find(o=>L.includes(o));if(s)i0=L.indexOf(s)}
+  const re=RX(true);
+  for(let k=0;k<=L.length;k++){const o=L[(i0+k)%L.length],raw=rawOf(o),first=k===0,wrap=k===L.length;let hit=null;re.lastIndex=0;
+    if(!D.back){const from=first?p0:0;re.lastIndex=from;const m=re.exec(raw);if(m&&(!wrap||m.index<p0||p0===0||true))hit=m}
+    else{let m,last=null;while((m=re.exec(raw))){if(m[0].length===0){re.lastIndex++;continue}if(first&&m.index+m[0].length>p0)break;if(wrap&&m.index+m[0].length<=p0&&p0!==Infinity)break;last=m}hit=last}
+    if(hit){select(o,hit.index,hit.index+hit[0].length);status('Found');return true}}
+  status('No match found');return false}
+function replace(){if(!(typeof ted_s!=='undefined'&&ted_s)||ted.selectionStart===ted.selectionEnd)return false;const a=ted.selectionStart,b=ted.selectionEnd,t=ted.value.slice(a,b),m=RX(false).exec(t);if(!m||m[0].length!==t.length)return false;
+  ted.setRangeText(D.r,a,b,'end');ted.dispatchEvent(new Event('input',{bubbles:true}));status('Replaced');return true}
+function replaceAll(){if(!D.q){status('Type the text to find');return}if(typeof ted_s!=='undefined'&&ted_s)finishText();let n=0;const re=RX(true),h0=hi;
+  pool().forEach(o=>{const raw=rawOf(o);let c=0;const nv=raw.replace(re,()=>{c++;return D.r});if(c){beginText(o,null,{});ted.value=nv;ted.dispatchEvent(new Event('input',{bubbles:true}));finishText();n+=c}});
+  if(hi>h0+1){hist.splice(h0+1,hi-h0-1);hi=h0+1}/* Replace All is one undo step */
+  if(n){draw()}status(n?n+' replaced':'No match found')}
+window.findOpen=()=>{if(panel){panel.querySelector('#frf').focus();return}
+  panel=document.createElement('div');panel.id='frp';panel.setAttribute('role','dialog');panel.setAttribute('aria-label','Find and Replace');
+  panel.innerHTML='<div class="frt"><b>Find and Replace</b></div><label>Find:<input id="frf" type="text" spellcheck="false"></label><label>Replace With:<input id="frr" type="text" spellcheck="false"></label>'+
+   '<div class="fro"><label><input type="checkbox" data-o="cs"> Match Case</label><label><input type="checkbox" data-o="ww"> Find Whole Word</label><label><input type="checkbox" data-o="back"> Search Backwards</label><label><input type="checkbox" data-o="hid"> Check Hidden Layers</label><label><input type="checkbox" data-o="lock"> Check Locked Layers</label></div>'+
+   '<div class="frb"><button type="button" data-a="find">Find</button><button type="button" data-a="rep">Replace</button><button type="button" data-a="repfind">Replace &amp; Find</button><button type="button" data-a="all">Replace All</button><button type="button" data-a="done">Done</button></div><div id="frs" class="frs"></div>';
+  document.body.appendChild(panel);const q=s=>panel.querySelector(s);q('#frf').value=D.q;q('#frr').value=D.r;panel.querySelectorAll('[data-o]').forEach(c=>{c.checked=!!D[c.dataset.o]});
+  const sync=()=>{D.q=q('#frf').value;D.r=q('#frr').value;panel.querySelectorAll('[data-o]').forEach(c=>{D[c.dataset.o]=c.checked})};
+  panel.addEventListener('input',sync);panel.addEventListener('change',sync);
+  panel.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;sync();const a=b.dataset.a;if(a==='find')find();else if(a==='rep')replace();else if(a==='repfind'){replace();find()}else if(a==='all')replaceAll();else if(a==='done')window.findClose()});
+  panel.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT'&&e.target.type==='text'){e.preventDefault();e.stopPropagation();sync();find()}else if(e.key==='Escape'){e.preventDefault();e.stopPropagation();window.findClose()}else e.stopPropagation()});
+  const t=q('.frt');let dr=null;t.addEventListener('pointerdown',e=>{const r=panel.getBoundingClientRect();dr={x:e.clientX-r.left,y:e.clientY-r.top};t.setPointerCapture(e.pointerId)});t.addEventListener('pointermove',e=>{if(!dr)return;panel.style.left=(e.clientX-dr.x)+'px';panel.style.top=(e.clientY-dr.y)+'px';panel.style.right='auto'});t.addEventListener('pointerup',()=>{dr=null});
+  q('#frf').focus();q('#frf').select()};
+window.findClose=()=>{if(panel){panel.remove();panel=null}};
+window.findNext=()=>{if(!D.q){window.findOpen();return}find()};
+window.findHasQuery=()=>!!D.q;
+const st=document.createElement('style');st.textContent='#frp{position:fixed;top:96px;right:320px;z-index:9200;width:300px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:4px;box-shadow:0 8px 28px rgba(0,0,0,.5);padding:0 12px 12px;font:12px "Segoe UI",Cairo,Tahoma,sans-serif;direction:ltr}#frp .frt{margin:0 -12px 8px;padding:8px 12px;border-bottom:1px solid var(--line);cursor:move}#frp label{display:flex;align-items:center;gap:8px;margin:4px 0}#frp label>input[type=text]{flex:1;margin-left:auto;width:170px}#frp .fro{margin:6px 0}#frp .fro label{margin:2px 0}#frp .frb{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}#frp .frb button{height:24px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:transparent;color:var(--ink);cursor:pointer}#frp .frb button:hover{background:var(--hov)}#frp .frs{margin-top:8px;color:var(--mute);min-height:16px}';document.head.appendChild(st);
 })();
 </script>
 </body>
