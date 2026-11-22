@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 160</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 161</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -4834,8 +4834,8 @@ addEventListener('keydown',e=>{
   else if(!c&&!e.shiftKey&&k==='s')setTool('sl');
   else if(!c&&!e.shiftKey&&k==='o')setTool('rf');
   else if(!c&&!e.shiftKey&&k==='e')setTool('ft');
-  else if(!c&&(k==='+'||k==='='))setTool('ap');
-  else if(!c&&(k==='-'||k==='_'))setTool('dp');
+  else if(!c&&k==='+')setTool('ap');/* Illustrator: + (Shift+= / numpad +) is Add Anchor Point; a plain = key is not a tool key */
+  else if(!c&&k==='-')setTool('dp');
   else if(!c&&e.shiftKey&&k==='c')setTool('cp');
   else if(!c&&!e.shiftKey&&k==='v')setTool('v');
   else if(!c&&k==='enter'&&['v','a','gs','ls'].includes(tool)){if(sel.size)openMoveDlg()}

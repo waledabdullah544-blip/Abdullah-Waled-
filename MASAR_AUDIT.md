@@ -100,8 +100,11 @@
 10. **ملف fileSave:** اسم الملف ثابت `masar-artwork.masar`؛ تصدير SVG/PNG بمقاس ثابت (800×600 / 1600×1200) بدل مقاس الـ artboard المختار
 11. **Document:** مفيش New Document dialog ولا Home Screen؛ File>New بيمسح من غير ما يسأل عن الحفظ؛ Preferences > General فاضية
 
+### كروت الشرح (tooltip) الناقصة للأدوات الموجودة
+الأدوات دي ليها `title` بسيط بس، مفيش كارت شرح زي Illustrator (الاسم + الاختصار + الوصف + تلميحات الماوس): Eraser, Rotate, Reflect, Scale, Shear, Free Transform, Gradient, Eyedropper, Hand, Zoom, Scissors, Knife, Touch Type وباقي أدوات Type الفرعية.
+
 ### اختلافات اختصارات لسه موجودة
-- `=` من غير Shift بيشغّل Add Anchor (في Illustrator مفيهوش)
+- ~~`=` من غير Shift بيشغّل Add Anchor~~ — اتصلّح في build 161
 - أرقام 1–0 لتغيير الـ opacity مش موجودة
 - كل اختصارات القسمين 2 و3 و4 فوق (Ctrl+H, Ctrl+6, Ctrl+P, F5, Ctrl+F9, Ctrl+F8, Shift+F8…) مش شغالة
 
