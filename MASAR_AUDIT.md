@@ -248,3 +248,6 @@
 - **Collect for Export**: زر في الفوتر + Object › Collect for Export (As Single Asset / As Multiple Assets) + لوحة جديدة **Asset Export** (Window): قايمة الأصول بمصغّرات، إعادة تسمية بدبل-كليك، Scale (0.5x–4x) وFormat (PNG/JPEG/WebP/SVG) لكل أصل، Export All / Export…، Remove. التصدير حقيقي (يرسم SVG على canvas ← ملف، اسمه `name@2x.jpg`). الحالة محفوظة في الأوبجكت (`data-ax`) فتعدّي على Undo/Copy/الملف.
 - **Locate Layer** لما Show Layers Only شغال (الزر بيتغير اسمه ويومّض صف الـLayer).
 - ملحوظة: لوحة Asset Export فيها تبويب Assets فقط (تبويب Artboards بيستنى الـmulti-Artboard). tests/layers5.js (12 فحص).
+
+## 5-ر) Build 205 — اختصارات القفل
+- Ctrl+2 (Lock Selection) و Alt+Ctrl+2 (Unlock All) و Ctrl+3 / Alt+Ctrl+3 بقوا يشتغلوا حتى لو الفوكس في خانة أرقام/لوحة (كانوا بيتجاهلوا لو الفوكس في input). لو اللير متحدد في لوحة Layers ومفيش أوبجكت متحدد: Ctrl+2 يقفل اللير؛ Alt+Ctrl+2 يفك قفل الأوبجكتات واللايرز. tests/lk.js

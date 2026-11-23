@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 204</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 205</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -3175,8 +3175,8 @@ addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='
   if(h){e.preventDefault();e.stopImmediatePropagation()}},true);
 /* ---------- Lock / Hide (Object menu) ---------- */
 (()=>{const t=document.createElement('style');t.textContent='#layer > g[data-lock],#layer > g[data-iso]{pointer-events:none}#isob{position:fixed;display:none;align-items:center;gap:8px;height:24px;padding:0 10px;background:#d6d6d6;color:#1e1e1e;font:12px/24px Inter,Arial,sans-serif;z-index:5;border-bottom:1px solid #b9b9b9;cursor:default}#isob button{border:0;background:none;font:14px Inter,Arial;cursor:pointer;padding:0 4px}';document.head.appendChild(t)})();
-function lockSel(){const L=[...sel];if(!L.length)return;L.forEach(o=>o.g.dataset.lock='1');sel=new Set();dsSel=new Set();commit();draw()}
-function unlockAll(){const L=objs.filter(o=>o.g.dataset.lock);if(!L.length)return;L.forEach(o=>delete o.g.dataset.lock);sel=new Set(L.filter(pick));commit();draw()}
+function lockSel(){const L=[...sel];if(!L.length){if(window.lyLockLayers&&window.lyLockLayers())return;return}L.forEach(o=>o.g.dataset.lock='1');sel=new Set();dsSel=new Set();commit();draw()}
+function unlockAll(){const lk=window.lyUnlockLayers?window.lyUnlockLayers():false;const L=objs.filter(o=>o.g.dataset.lock);if(!L.length){if(lk){commit();draw()}return}L.forEach(o=>delete o.g.dataset.lock);sel=new Set(L.filter(pick));commit();draw()}
 function hideSel(){const L=[...sel];if(!L.length)return;L.forEach(o=>o.g.style.display='none');sel=new Set();dsSel=new Set();commit();draw()}
 function showAll(){const L=objs.filter(o=>o.g.style.display==='none');if(!L.length)return;L.forEach(o=>{o.g.style.display=''});sel=new Set(L.filter(pick));commit();draw()}
 /* ---------- Isolation Mode: double-click a group to edit inside it, everything else is dimmed and locked ---------- */
@@ -3201,9 +3201,10 @@ function isoExit(){if(!ISO)return;if(ted_s)finishText();const out=ISO.out,inside
 const ISOH=[];
 function isoSync(){const r=ISOH.find(x=>hi>=x.a&&hi<=x.b);if(r){if(ISO&&ISO.out===r.out)return;if(ISO)isoClear();ISO={out:r.out,h0:r.a-1,fromH:1,clip:r.clip};r.out.forEach(o=>{o.g.dataset.iso='1';o.g.style.opacity='.35'});isoBar(true)}else if(ISO&&(hi<=ISO.h0||ISO.fromH))isoClear()}
 addEventListener('resize',()=>{if(ISO)isoBar(true)});
-addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||ted_s)return;
-  if((e.ctrlKey||e.metaKey)&&e.code==='Digit2'){e.preventDefault();e.stopImmediatePropagation();e.altKey?unlockAll():lockSel();return}
-  if((e.ctrlKey||e.metaKey)&&e.code==='Digit3'){e.preventDefault();e.stopImmediatePropagation();e.altKey?showAll():hideSel();return}
+addEventListener('keydown',e=>{const tg=e.target.tagName;if(ted_s||tg==='TEXTAREA')return;/* Ctrl+2 / Ctrl+3 never type a character: they work from number fields and panels too */
+  if((e.ctrlKey||e.metaKey)&&e.code==='Digit2'){e.preventDefault();e.stopImmediatePropagation();if(tg==='INPUT'||tg==='SELECT')e.target.blur();e.altKey?unlockAll():lockSel();return}
+  if((e.ctrlKey||e.metaKey)&&e.code==='Digit3'){e.preventDefault();e.stopImmediatePropagation();if(tg==='INPUT'||tg==='SELECT')e.target.blur();e.altKey?showAll():hideSel();return}
+  if(tg==='INPUT'||tg==='SELECT')return;
   if(e.key==='Escape'&&ISO&&!st&&!TLOAD&&!pen&&!curv&&$('#dlg').style.display==='none'){e.preventDefault();e.stopImmediatePropagation();isoExit()}},true);
 cv.addEventListener('dblclick',e=>{if(tool!=='v')return;const u=document.elementFromPoint(e.clientX,e.clientY),g=u&&u.closest&&u.closest('#layer > g'),o=g&&g.__o;
   if(o&&isGroup(o)&&pick(o)){isoEnter(o);return}if(!o&&ISO)isoExit()});
@@ -7684,6 +7685,8 @@ function openMenu(){mnClose();const it=lyMenuList();it.forEach(x=>{if(!x){MN.app
   const r=P.querySelector('#lyMenu').getBoundingClientRect();MN.style.display='block';const w=MN.offsetWidth,h=MN.offsetHeight;MN.style.left=Math.max(4,Math.min(innerWidth-w-4,r.right-w))+'px';MN.style.top=Math.max(4,Math.min(innerHeight-h-4,r.top-h-2))+'px'}
 document.addEventListener('pointerdown',e=>{if(MN.style.display!=='none'&&!MN.contains(e.target)&&!e.target.closest('#lyMenu'))mnClose()},true);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&MN.style.display!=='none'){e.preventDefault();e.stopImmediatePropagation();mnClose()}},true);
+window.lyLockLayers=()=>{const ids=LYSEL.size?[...LYSEL]:(LYK==='L'&&LYCUR!=null?[LAYACT]:[]);if(!ids.length)return false;ids.forEach(i=>{const l=lyBy(i);if(l)l.lock=true});lyApply();sel=new Set([...sel].filter(pick));commitAll();return true};
+window.lyUnlockLayers=()=>{let n=false;LAYERS.forEach(q=>{if(q.lock||q.tpl){q.lock=false;q.tpl=false;n=true}});if(n)lyApply();return n};
 window.lyMenuAct={dup:dupLayer,collect:collectNew,merge:mergeSel,flatten:flattenArt,clipToggle:lyClipToggle,locate,reverse:reverseOrder};
 P.addEventListener('click',e=>{if(lySup){lySup=false;return}const b=e.target.closest('button'),row=e.target.closest('.lyr');
   if(b&&b.id){const f={lyNew:()=>{if(e.altKey)lyOptions(0,true,false);else newLayer(false)},lySub:()=>{if(e.altKey)lyOptions(0,true,true);else newLayer(true)},lyDel:()=>{if(sel.size){delSel();commitAll()}else delLayer(LAYACT)},

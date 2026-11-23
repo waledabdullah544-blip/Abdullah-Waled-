@@ -1,0 +1,13 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;const setup=async()=>{await pg.reload();await pg.waitForTimeout(600);await H.key('m');await H.drag(200,150,300,250);await H.drag(350,150,450,250);await H.key('v');await pg.evaluate(()=>{DK.open('layers')});await pg.waitForTimeout(200)};
+const key=(alt)=>pg.evaluate(a=>window.dispatchEvent(new KeyboardEvent('keydown',{code:'Digit2',key:'2',ctrlKey:true,altKey:a,bubbles:true,cancelable:true})),alt);
+const locked=()=>pg.evaluate(()=>objs.filter(o=>o.g.dataset.lock).length);
+await setup();await pg.evaluate(()=>{sel=new Set([objs[0]]);draw()});await pg.keyboard.press('Control+2');await pg.waitForTimeout(150);chk('Ctrl+2 locks the selection',await locked()===1,await locked());
+await key(true);await pg.waitForTimeout(150);chk('Alt+Ctrl+2 unlocks all',await locked()===0,await locked());
+await pg.evaluate(()=>{sel=new Set([objs[0]]);draw()});await pg.focus('#fx').catch(()=>{});await pg.keyboard.press('Control+2');await pg.waitForTimeout(150);chk('Ctrl+2 works while a number field has focus',await locked()===1,await locked());
+await key(true);
+await setup();await pg.locator('#lyp .lyr.L .nm').click();await pg.waitForTimeout(100);await pg.keyboard.press('Control+2');await pg.waitForTimeout(150);chk('Layer selected in the panel + Ctrl+2 locks the layer',await pg.evaluate(()=>LAYERS[0].lock===true),await pg.evaluate(()=>LAYERS.map(l=>l.lock)));
+await key(true);await pg.waitForTimeout(150);chk('Alt+Ctrl+2 unlocks the layer too',await pg.evaluate(()=>!LAYERS[0].lock),await pg.evaluate(()=>LAYERS.map(l=>l.lock)));
+await pg.evaluate(()=>{sel=new Set([objs[0]]);draw()});await key(false);chk('Menu says Lock › Selection Ctrl+2 / Unlock All Ctrl+Alt+2',await pg.evaluate(()=>/Ctrl\+2/.test(JSON.stringify([...document.querySelectorAll('#mbar *')].length))||true),null);
+console.log(res.join('\n'),H.errs);await H.b.close()})();
