@@ -283,3 +283,17 @@
 - **السبب:** سحب مقابض الـbounding box كان بيكبّر الأوبجكت بـtransform (الـstroke بيتكبّر معاه بصريًا)، وعند الإفلات الشكل بيتخبّز في الـpath لكن الـstroke-width بيرجع للقيمة الأصلية → الرسمة تتحوّل لسمك زايد (blob) وقت الإفلات.
 - **الإصلاح:** إعداد **Scale Strokes & Effects** (Edit › Preferences › General + خانة في Properties › Transform + بيحدد الافتراضي في ديالوج Scale). ON (الافتراضي): الـstroke وأحجام الـeffects (Shadow/Glow/Blur) بتتكبّر مع الرسمة. OFF: الـstroke يفضل بنفس السمك أثناء السحب وبعد الإفلات (بدون قفزة). شغّال في: مقابض الـSelection، حقول W/H، Free Transform، Scale/Rotate drag، Transform Each/Again. tests/ss.js
 - اختصارات القفل: Numpad2 كمان، وعناصر Lock Selection / Unlock All في قايمة Layers.
+
+## 5-د) فحص الواجهة (build 211) — أخطاء + الناقص (للإصلاح)
+**أخطاء مؤكدة:**
+1. عمود الـDock لما تفتح لوحات كتير بيطلع بره الشاشة (مفيش scroll ولا تقليص) — ظاهر في 1280×720 وحتى 1500×900.
+2. Control bar بيتقطع على اليمين (1567px > 1500) بدل ما يعمل overflow menu.
+3. سطر الحالة (footer) نصه بيتقص بدون "…" و 1819px جواه.
+4. Window menu فيها "Swatches" مرتين.
+5. ثيم Medium Dark: نص صف Layers المحدد تباينه 3.8:1 (أقل من 4.5) بعد تحويل الأزرق لرمادي.
+6. مفيش Context menu (right-click) على الكانفس ولا على لوحة Layers.
+7. قوايم اللوحات (≡) لـAlign/Pathfinder/Transparency/Info/Character/Paragraph/Tabs/Properties/Asset Export فاضية (Close بس).
+8. مفيش تنقل بالكيبورد في القوايم (Alt+حرف، أسهم).
+9. Control bar بدون تحديد: "No Selection X Y W H" بس — ناقص Document Setup / Preferences / Style.
+10. File › New بيصفّر المستند بدون ديالوج (Width/Height/Units/Color Mode/Artboards).
+**نتايج سليمة:** 225 أمر قايمة اتجرّبوا بدون خطأ JS؛ تباين النصوص سليم في 3 ثيمات؛ الـtooltips والـcards لكل الأدوات الـ58 موجودة.
