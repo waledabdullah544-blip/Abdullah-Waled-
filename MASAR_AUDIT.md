@@ -335,3 +335,10 @@
 10. Adjustment Layers تأثر على كل اللي تحتها + Clipping.
 11. Layer Styles فوتوشوب (Bevel & Emboss, Gradient/Pattern Overlay, Satin) كـ Appearance effects.
 12. Export: JPG quality / WebP / AVIF + Save for Web بمعاينة الحجم.
+**إضافات من البحث (Adobe Community / 99designs / CreativePro / Creative Bloq):**
+13. Mockups حقيقية: تحطيط التصميم على صورة منتج (Smart Object) + Perspective + Displacement Map + ظلال/إضاءة بالـBlend Modes — أكتر سبب بيتقال إن المصمم يروح لفوتوشوب (Illustrator Mockup مش بيقبل صور raster).
+14. Grain / Noise texture overlay (طبقة رمادي 50% Overlay + Add Noise، أو Grain adjustment) لإضافة ملمس للفيكتور.
+15. ظلال وإضاءة وEmboss واقعية على الصور (Shadows / Lighting / Bevel).
+16. رسم رقمي بفرش بتحاكي الألوان المائية/الفحم مع حساسية ضغط القلم (Pressure).
+17. Eraser غير مدمّر (بيعمل Layer Mask أوتوماتيك بدل ما يمسح البكسل).
+18. Pattern Stamp لعمل textures.
