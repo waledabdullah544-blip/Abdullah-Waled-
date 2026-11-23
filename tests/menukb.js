@@ -1,0 +1,25 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;const R=H.R;pg.setDefaultTimeout(4000);
+const setup=async()=>{await pg.reload();await pg.waitForTimeout(600);await H.key('m');await H.drag(200,150,300,250);await H.drag(350,150,450,250);await H.key('v');await pg.evaluate(()=>{sel=new Set([objs[0]]);draw()})};
+const openMenu=()=>pg.evaluate(()=>[...document.querySelectorAll('.mdd')].filter(m=>m.style.display==='block').map(m=>m.className+':'+(m.querySelector('.mi button em')||{}).textContent));
+const focused=()=>pg.evaluate(()=>{const f=document.activeElement;return f&&f.closest('.mdd')?(f.querySelector('em')||{}).textContent:null});
+await setup();
+await pg.keyboard.press('Alt+f');await pg.waitForTimeout(200);chk('Alt+F opens File and focuses its first item',(await focused())==='New…',await focused());
+await pg.keyboard.press('ArrowDown');await pg.keyboard.press('ArrowDown');await pg.waitForTimeout(100);chk('ArrowDown ×2 → Place… (skipping separators correctly)',(await focused())==='Place…',await focused());
+await pg.keyboard.press('ArrowUp');await pg.waitForTimeout(80);chk('ArrowUp goes back',(await focused())==='Open…',await focused());
+await pg.keyboard.press('ArrowRight');await pg.waitForTimeout(150);chk('ArrowRight moves to the Edit menu',(await focused())==='Undo',await focused());
+await pg.keyboard.press('ArrowLeft');await pg.waitForTimeout(150);chk('ArrowLeft goes back to File',(await focused())==='New…',await focused());
+await pg.keyboard.press('Escape');await pg.waitForTimeout(150);chk('Esc closes the menu',(await openMenu()).length===0,await openMenu());
+await pg.keyboard.press('Alt+o');await pg.waitForTimeout(200);chk('Alt+O opens Object',(await focused())==='Transform',await focused());
+await pg.keyboard.press('Enter');await pg.waitForTimeout(150);chk('Enter on a submenu item opens the submenu and focuses its first item',(await focused())==='Transform Again'||(await focused())==='Move…',await focused());
+await pg.keyboard.press('ArrowLeft');await pg.waitForTimeout(100);chk('ArrowLeft closes the submenu',(await focused())==='Transform',await focused());
+await pg.keyboard.press('ArrowDown');await pg.keyboard.press('ArrowDown');await pg.waitForTimeout(100);const f=await focused();await pg.keyboard.press('Enter');await pg.waitForTimeout(250);chk('Enter runs the item ('+f+') and closes the menu',(await openMenu()).length===0&&f==='Group'&&await pg.evaluate(()=>objs.length)===2,[f,await openMenu()]);
+// context menus
+await pg.mouse.click(R.x+250,R.y+200,{button:'right'});await pg.waitForTimeout(250);const ctx=await pg.evaluate(()=>{const c=document.querySelector('.cxm');return c&&c.style.display==='block'?c.innerText.replace(/\s+/g,' ').slice(0,200):''});chk('Right-click on artwork opens the object context menu',/Group/.test(ctx)&&/Transform/.test(ctx)&&/Arrange/.test(ctx),ctx);
+await pg.keyboard.press('ArrowDown');await pg.waitForTimeout(80);chk('The context menu is keyboard-driven too',!!(await focused()),await focused());await pg.keyboard.press('Escape');await pg.waitForTimeout(120);chk('Esc closes the context menu',await pg.evaluate(()=>document.querySelector('.cxm').style.display!=='block'),null);
+await pg.evaluate(()=>{sel=new Set();draw()});await pg.mouse.click(R.x+700,R.y+500,{button:'right'});await pg.waitForTimeout(250);const c2=await pg.evaluate(()=>{const c=document.querySelector('.cxm');return c&&c.style.display==='block'?c.innerText.replace(/\s+/g,' ').slice(0,200):''});chk('Right-click on the empty canvas opens the canvas menu',/Paste/.test(c2)&&/Select/.test(c2)||/All/.test(c2),c2);
+await pg.click('.cxm button:has-text("All")').catch(()=>{});await pg.waitForTimeout(200);chk('Its commands work (Select All selects both)',await pg.evaluate(()=>sel.size)===2,await pg.evaluate(()=>sel.size));
+await pg.evaluate(()=>{sel=new Set()});await pg.mouse.click(R.x+380,R.y+200,{button:'right'});await pg.waitForTimeout(200);chk('Right-click on an unselected object selects it first',await pg.evaluate(()=>sel.size)===1,await pg.evaluate(()=>sel.size));
+await pg.mouse.click(R.x+900,R.y+700);await pg.waitForTimeout(150);chk('Clicking elsewhere closes it',await pg.evaluate(()=>document.querySelector('.cxm').style.display!=='block'),null);
+console.log(res.join('\n'),H.errs);await H.b.close()})();

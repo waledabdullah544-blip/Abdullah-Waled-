@@ -297,3 +297,15 @@
 9. Control bar بدون تحديد: "No Selection X Y W H" بس — ناقص Document Setup / Preferences / Style.
 10. File › New بيصفّر المستند بدون ديالوج (Width/Height/Units/Color Mode/Artboards).
 **نتايج سليمة:** 225 أمر قايمة اتجرّبوا بدون خطأ JS؛ تباين النصوص سليم في 3 ثيمات؛ الـtooltips والـcards لكل الأدوات الـ58 موجودة.
+
+## 5-ذ) Builds 212–216 — إصلاحات فحص الواجهة
+- (1) **كان إنذار كاذب:** عمود الـDock بيسكرول فعلًا (overflow-y:auto، العجلة شغالة) — اتأكد بالماوس.
+- (2) Control bar: لو ضاق، الكنترولز الزيادة بتنتقل (حيّة) لقايمة **»** بدل ما تتقص (tests/ovt.js).
+- (3) سطر الحالة: نص الـhint بقى بـ"…" + tooltip. (4) Window: Swatches مرة واحدة. (5) Medium Dark: تباين صف Layers اتظبط.
+- (6) **Context menus (كليك يمين):** على الأوبجكت (Undo/Group/Compound/Clipping/Blend/Transform/Arrange/Select/Lock/Hide/Cut/Copy/Paste…)، على الكانفس الفاضي (Paste/Select/View)، وعلى صفوف Layers (قايمة اللوحة).
+- (8) **القوايم بالكيبورد:** Alt+F/E/O/T/S/C/V/W/H، أسهم ↑↓←→، Home/End، Enter، Esc (القوايم الفرعية كمان) — tests/menukb.js.
+- (7) **قوايم اللوحات (≡):** Align (Show/Hide Options + Use Preview Bounds بيشتغل فعلًا)، Info/Transparency/Character/Paragraph/Properties (Show/Hide Options)، Pathfinder (Repeat + Ctrl+4)، Asset Export (Export All/Selected، Collect) — tests/pm.js.
+- (9) Control bar بدون تحديد: Document Setup + Preferences.
+- (10) **File › New…** (Name/Preset/Units/Width/Height/Orientation/Color Mode)، **Document Setup…** (Ctrl+Alt+P)، **Place…** (Ctrl+Shift+P: صور مضمّنة PNG/JPG/GIF/WebP أو SVG)، **Document Color Mode** (RGB/CMYK)، **Print…** (Ctrl+P). حجم الـArtboard بقى متغيّر (ABW/ABH) ومتحفوظ في الملف ومستخدم في التصدير/الـFit/Align/Smart Guides. tests/doc.js
+- إصلاح: دالة `add` الخاصة بالسواتشات كانت بتغطي `add` العامة جوه سكريبت الأدوات (اتغيرت لـswAdd).
+- المتبقي من القايمة: multi-Artboard، لوحات/أدوات ناقصة، Open Recent/Revert، أوامر Type/Effect/View الناقصة.
