@@ -317,3 +317,21 @@
 - **لوحة Navigator**: معاينة كل الـartboards والشغل، مستطيل العرض الأحمر، سحب/كليك للتنقل، زووم (− slider + و%).
 - شريط الحالة: ◀ ▶ + "n / N" + قايمة الأسماء. Object › Artboards، Select › All on Active Artboard، File › Export All Artboards (SVG/PNG ملف لكل واحد)، New Document بعدد Artboards + Spacing. Align to Artboard / Smart Guides / Rulers / Fit / Place بتشتغل على الـartboard النشط (أو كلهم).
 - إصلاح خطير: دوال block داخل سكريبت الأدوات (`apply`, `dupSel`, `delSel`, `render`…) كانت بتغطي دوال عامة — بلوك Swatches بقى IIFE. tests/ma.js (35 فحص).
+
+## 6) خطة أدوات فوتوشوب (تتعمل بعد ما نخلص أدوات مسار كلها)
+الهدف: الحاجات اللي بتخلي مصمم يسيب إليستريتور ويفتح فوتوشوب — تشتغل على الصور الـPlaced جوه مسار (raster) وتفضل non-destructive قد ما نقدر.
+**أولوية 1 (الأكثر طلبًا):**
+1. Remove Background (إزالة الخلفية) + Select Subject تقريبي + Magic Wand / Color Range على الصورة.
+2. Adjustments على الصور (non-destructive): Brightness/Contrast, Levels, Curves, Hue/Saturation, Exposure, Vibrance, Color Balance, Black & White, Invert, Threshold, Posterize, Gradient Map, Photo Filter.
+3. Crop Image (قص الصورة نفسها مش clipping بس) + Image Size / Resample.
+4. Layer Mask على الصور: رسم ماسك بفرشاة ناعمة (أبيض/أسود) + Feather.
+**أولوية 2:**
+5. Retouch: Spot Healing Brush, Clone Stamp, Patch، Content-Aware Fill (تقريبي).
+6. فرش raster: Brush / Eraser بحواف ناعمة، Opacity/Flow، Dodge / Burn / Sponge، Blur / Sharpen / Smudge.
+7. Filters: Unsharp Mask / Sharpen، Motion Blur، Radial Blur، Add Noise / Reduce Noise، High Pass.
+8. تحديدات بكسل: Marquee / Lasso / Quick Selection + Select and Mask (Feather, Smooth, Expand/Contract).
+**أولوية 3:**
+9. Perspective Warp / Puppet Warp / Liquify على الصور (Mockups).
+10. Adjustment Layers تأثر على كل اللي تحتها + Clipping.
+11. Layer Styles فوتوشوب (Bevel & Emboss, Gradient/Pattern Overlay, Satin) كـ Appearance effects.
+12. Export: JPG quality / WebP / AVIF + Save for Web بمعاينة الحجم.
