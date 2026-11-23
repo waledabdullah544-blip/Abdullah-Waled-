@@ -263,3 +263,8 @@
 ## 5-ث) Build 208 — صفر أزرق في الواجهة
 - اتفحصت بسكان بكسلات (Python/PIL) في ~35 حالة: قوايم، لوحات، حوارات، أدوات، تلميحات الأدوات، مقابض Width، تحديد النص… النتيجة صفر بكسل أزرق (غير طيف الـHue في Color Picker وسواتشات الألوان).
 - اتحول لرمادي: تحديد الأوبجكت/المقابض على الكانفس وكل overlays الأدوات، لون اللير الافتراضي (Light Gray #8C8C8C؛ الألوان الزرقاء بقت آخر قايمة ألوان اللير فمش بتتوزع تلقائي)، لوجو Masar (التايل كان كحلي)، الـfavicon، رسومات كروت الشرح.
+
+## 5-ج) Build 209 — فحص Color
+**لوحة Color (tests/colprobe.js، 25 فحص):** اتصلح: hex مختصر (f80 → ff8800، ab → ababab، f → ffffff)، Shift+drag لسلايدر = باقي السلايدرز تتحرك بنفس النسبة، Shift+Arrow = ±10 في الخانات، خانة hex فاضية لما الألوان مختلفة (Mixed)، **Out of Gamut Warning** (مثلث أصفر في RGB/HSB/Web — بيتقرّب لأقرب لون قابل للطباعة بنموذج SWOP تقريبي). Color Picker سليم (cpick/col1-6).
+**لوحات عايمة:** اللوحات اللي بتتفتح (Color / Stroke / Align / Swatches…) كانت بتتراكم فوق بعض عايمة؛ دلوقتي أول فتح بيدوكها في العمود اليمين (place() default = R).
+**Swatches (لسه ناقص — ما اتعملش):** Swatch Options (دبل-كليك)، New Swatch dialog، Global/Spot swatches، New Color Group، Swatch Libraries، List view/Sort/Select All Unused/Add Used Colors، سحب لإعادة الترتيب، قايمة اللوحة، Duplicate/Merge.

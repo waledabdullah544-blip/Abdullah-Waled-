@@ -1,0 +1,18 @@
+const {open}=require('./lib');
+(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
+const pg=H.pg;pg.setDefaultTimeout(4000);const run=async(n,f)=>{try{await f()}catch(e){chk(n+' (threw)',false,String(e).slice(0,200))}};
+const setup=async()=>{await pg.reload();await pg.waitForTimeout(600);await H.key('m');await H.drag(200,150,300,250);await H.key('v');await pg.evaluate(()=>{sel=new Set([objs[0]]);draw();openSw('fill',document.getElementById('fqf'),'sw')});await pg.waitForTimeout(250)};
+const fill=()=>pg.evaluate(()=>objs[0].g.querySelector('rect,path').getAttribute('fill'));
+const dlg=()=>pg.evaluate(()=>{const d=document.querySelector('.fxb, #dlg');return d&&d.offsetParent!==null?d.innerText.replace(/\s+/g,' '):''});
+await run('click',async()=>{await setup();await pg.click('#swgrid .sc[title="CMYK Red"]');await pg.waitForTimeout(150);chk('Click a swatch sets the fill',/^#(ed|ee|ff|e)/i.test(await fill())||await fill()!=='#ffffff',await fill())});
+await run('dblclick options',async()=>{await setup();await pg.dblclick('#swgrid .sc[title="CMYK Red"]');await pg.waitForTimeout(250);const t=await dlg();chk('Double-click a swatch opens Swatch Options (Name / Color Type / Global / Color Mode)',/Swatch Options/.test(t)&&/Global/.test(t),t.slice(0,80));await pg.keyboard.press('Escape')});
+await run('new',async()=>{await setup();const n0=await pg.locator('#swgrid .sc').count();await pg.evaluate(()=>{objs[0].g.querySelector('rect,path').setAttribute('fill','#123456');draw();renderSw&&renderSw()});await pg.click('#swp [data-act="new"], #swp [title*="New Swatch"]');await pg.waitForTimeout(250);const t=await dlg();chk('New Swatch asks for Name/Colour Type (Illustrator dialog)',/New Swatch|Swatch Name/.test(t),t.slice(0,80));await pg.keyboard.press('Escape')});
+await run('del',async()=>{await setup();chk('Delete Swatch button exists',await pg.locator('#swp [data-act="del"]').count()===1,null)});
+await run('group',async()=>{await setup();chk('New Color Group button',await pg.locator('#swp [title*="Color Group"]').count()>=1,null)});
+await run('libraries',async()=>{await setup();chk('Swatch Libraries menu button',await pg.locator('#swp [title*="Librar"]').count()>=1,null)});
+await run('list view',async()=>{await setup();chk('Thumbnail / List view switch',await pg.locator('#swp [title*="List"], #swp [title*="View"]').count()>=1,await pg.evaluate(()=>[...document.querySelectorAll('#swp button')].filter(b=>!b.dataset.h).map(b=>b.title||b.textContent).join('|')))});
+await run('drag reorder',async()=>{await setup();chk('Custom swatches can be reordered by dragging',false,'not implemented')});
+await run('global',async()=>{await setup();chk('Global swatch: editing the swatch updates all objects',false,'not implemented')});
+await run('stroke alt',async()=>{await setup();await pg.evaluate(()=>{FSA='stroke'});await pg.click('#swgrid .sc[title="CMYK Red"]');await pg.waitForTimeout(150);chk('With Stroke active a swatch sets the stroke',await pg.evaluate(()=>objs[0].g.querySelector('rect,path').getAttribute('stroke'))!=='#000000',null)});
+await run('gradient swatch',async()=>{await setup();chk('Gradients can be saved as swatches',await pg.evaluate(()=>/Gradient/.test(document.getElementById('swp').innerText)),null)});
+console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();
