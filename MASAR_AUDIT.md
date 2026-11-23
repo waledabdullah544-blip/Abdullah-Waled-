@@ -309,3 +309,11 @@
 - (10) **File › New…** (Name/Preset/Units/Width/Height/Orientation/Color Mode)، **Document Setup…** (Ctrl+Alt+P)، **Place…** (Ctrl+Shift+P: صور مضمّنة PNG/JPG/GIF/WebP أو SVG)، **Document Color Mode** (RGB/CMYK)، **Print…** (Ctrl+P). حجم الـArtboard بقى متغيّر (ABW/ABH) ومتحفوظ في الملف ومستخدم في التصدير/الـFit/Align/Smart Guides. tests/doc.js
 - إصلاح: دالة `add` الخاصة بالسواتشات كانت بتغطي `add` العامة جوه سكريبت الأدوات (اتغيرت لـswAdd).
 - المتبقي من القايمة: multi-Artboard، لوحات/أدوات ناقصة، Open Recent/Revert، أوامر Type/Effect/View الناقصة.
+
+## 5-ض) Builds 217–219 — Multi-Artboard
+- نموذج بيانات: `ARTS` (id/اسم/x/y/w/h) + الـArtboard النشط (ABX/ABY/ABW/ABH) — في الـUndo/Redo وفي الملف (.masar) وفي التصدير.
+- **Artboard Tool (Shift+O)**: سحب = Artboard جديد (Shift مربع، Alt من المركز)؛ كليك = تنشيط؛ سحب جواه = نقل مع الـartwork (زر Move artwork في الـControl bar)؛ Alt+drag = نسخة بالـartwork؛ مقابض تغيير حجم (Shift/Alt)؛ Delete؛ أسهم؛ Enter/Esc للخروج؛ دبل-كليك = Artboard Options (Name/Preset/W/H/Orientation/X/Y)؛ Control bar كامل (Preset, Name, X, Y, W, H, تبديل الاتجاه, New, Delete, Options).
+- **لوحة Artboards**: قايمة مرقمة، كليك = تنشيط + Fit، دبل-كليك = إعادة تسمية، سحب لإعادة الترتيب، تحديد متعدد، New/Delete، قايمة (Duplicate, Delete, Artboard Options, Rearrange All…, Fit to Artwork Bounds, Fit to Selected Art, Convert to Artboards, Export All…).
+- **لوحة Navigator**: معاينة كل الـartboards والشغل، مستطيل العرض الأحمر، سحب/كليك للتنقل، زووم (− slider + و%).
+- شريط الحالة: ◀ ▶ + "n / N" + قايمة الأسماء. Object › Artboards، Select › All on Active Artboard، File › Export All Artboards (SVG/PNG ملف لكل واحد)، New Document بعدد Artboards + Spacing. Align to Artboard / Smart Guides / Rulers / Fit / Place بتشتغل على الـartboard النشط (أو كلهم).
+- إصلاح خطير: دوال block داخل سكريبت الأدوات (`apply`, `dupSel`, `delSel`, `render`…) كانت بتغطي دوال عامة — بلوك Swatches بقى IIFE. tests/ma.js (35 فحص).
