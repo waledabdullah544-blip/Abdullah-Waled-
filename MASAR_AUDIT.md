@@ -268,3 +268,13 @@
 **لوحة Color (tests/colprobe.js، 25 فحص):** اتصلح: hex مختصر (f80 → ff8800، ab → ababab، f → ffffff)، Shift+drag لسلايدر = باقي السلايدرز تتحرك بنفس النسبة، Shift+Arrow = ±10 في الخانات، خانة hex فاضية لما الألوان مختلفة (Mixed)، **Out of Gamut Warning** (مثلث أصفر في RGB/HSB/Web — بيتقرّب لأقرب لون قابل للطباعة بنموذج SWOP تقريبي). Color Picker سليم (cpick/col1-6).
 **لوحات عايمة:** اللوحات اللي بتتفتح (Color / Stroke / Align / Swatches…) كانت بتتراكم فوق بعض عايمة؛ دلوقتي أول فتح بيدوكها في العمود اليمين (place() default = R).
 **Swatches (لسه ناقص — ما اتعملش):** Swatch Options (دبل-كليك)، New Swatch dialog، Global/Spot swatches، New Color Group، Swatch Libraries، List view/Sort/Select All Unused/Add Used Colors، سحب لإعادة الترتيب، قايمة اللوحة، Duplicate/Merge.
+
+## 5-ح) Build 210 — لوحة Swatches كاملة (Window › Swatches)
+- لوحة حقيقية متدوكة: عرض Thumbnail (صغير/وسط/كبير) وList (صغير/كبير)، Show Swatch Kinds (All/Color/Color Groups)، حقل Find، قايمة اللوحة، سحب لإعادة الترتيب أو للنقل جوه مجموعة، تحديد متعدد (Shift/Ctrl).
+- **Swatch Options** (دبل-كليك): Name، Color Type (Process/Spot)، Global، Color Mode (Grayscale/RGB/HSB/CMYK/Web)، Hex، Preview حي. **New Swatch** بنفس الديالوج.
+- **Global/Spot swatches**: بيتربطوا بالأوبجكتات (data-swf/data-sws) فتعديل السواتش يعيد تلوينها؛ تغيير اللون يدوي بيفك الربط. مؤشر مثلث أبيض في الركن.
+- **New Color Group** (من سواتشات محددة أو من ألوان Selected Artwork)، تغيير اسم المجموعة بدبل-كليك.
+- Duplicate / Merge (بيحوّل الاستخدامات) / Delete (بتأكيد) / Select All Unused / Add Used Colors / Sort by Name / Sort by Kind.
+- **Swatch Libraries**: Pastel, Earthtones, Neon, Grayscale, Skintones, Vintage, Metals — كليك يطبّق ويضيف للـSwatches.
+- Alt+click يطبّق على الخاصية التانية. الـpop-up بتاع Fill/Stroke بيستخدم نفس القايمة، والحفظ في localStorage.
+- لسه ناقص: Gradient/Pattern swatches، حفظ/فتح مكتبة ملف (ASE)، سحب سواتش على أوبجكت في الكانفس. tests/sw.js (29 فحص).

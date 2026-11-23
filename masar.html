@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 209</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 210</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -2037,8 +2037,8 @@ function applyStyle(P,done){
   L.forEach(o=>{
     if((P.stroke!==undefined&&P.stroke!=='none')||(P.sw!==undefined&&P.sw>0))normalizeObj(o);
     fillables(o).forEach(e=>{
-      if(P.fill!==undefined){e.setAttribute('fill',P.fill);e.removeAttribute('data-grad')}
-      if(P.stroke!==undefined){e.setAttribute('stroke',P.stroke);e.removeAttribute('data-grads');
+      if(P.fill!==undefined){e.setAttribute('fill',P.fill);e.removeAttribute('data-grad');if(P.swg)e.setAttribute('data-swf',P.swg);else e.removeAttribute('data-swf')}
+      if(P.stroke!==undefined){e.setAttribute('stroke',P.stroke);e.removeAttribute('data-grads');if(P.swg)e.setAttribute('data-sws',P.swg);else e.removeAttribute('data-sws');
         if(P.stroke!=='none'){const w=e.getAttribute('stroke-width');if(!w||w==='0')e.setAttribute('stroke-width',DEF.sw||1);e.setAttribute('stroke-linejoin','round')}}
       if(P.sw!==undefined){e.removeAttribute('vector-effect');e.setAttribute('stroke-width',P.sw);if(P.sw>0&&(e.getAttribute('stroke')||'none')==='none')e.setAttribute('stroke',DEF.stroke!=='none'?DEF.stroke:'#000000')}
       if(P.op!==undefined)e.setAttribute('opacity',P.op/100)})});
@@ -2086,12 +2086,12 @@ const toHex=a=>'#'+a.map(x=>Math.max(0,Math.min(255,x)).toString(16).padStart(2,
 function targetColor(){const o=sel.size?styleOf([...sel][0]):null,v=o?o[FSA]:DEF[FSA];return v||'none'}
 const SWI=d=>'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';
 const SWBAR='<div class="swbar"><button type="button" data-act="kind" title="Show Swatch Kinds Menu" aria-label="Show Swatch Kinds Menu">'+SWI('<rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><path d="M10 11.5l2 2 2-2"/>')+'</button><button type="button" data-act="pick" title="Custom color…" aria-label="Custom color">'+SWI('<circle cx="8" cy="8" r="5.5"/><path d="M8 2.5v11M2.5 8h11"/>')+'</button><span class="sp"></span><button type="button" data-act="new" title="New Swatch" aria-label="New Swatch">'+SWI('<path d="M3 2h7l3 3v9H3z"/><path d="M10 2v3h3M8 8v4M6 10h4"/>')+'</button><button type="button" data-act="del" title="Delete Swatch" aria-label="Delete Swatch">'+SWI('<path d="M3 4.5h10M6 4.5V3h4v1.5M4.5 4.5l.7 9h5.6l.7-9"/>')+'</button></div>';
-function swList(){const C=CUS.map(h=>({n:h,h}));return SWK==='custom'?C:SWK==='color'?SWS.filter(s=>s.h!=='none').concat(C):SWS.concat(C)}
+function swList(){if(window.SWAPI)return SWAPI.popList(SWK);const C=CUS.map(h=>({n:h,h}));return SWK==='custom'?C:SWK==='color'?SWS.filter(s=>s.h!=='none').concat(C):SWS.concat(C)}
 function renderSw(){
   const cur=targetColor(),curH=cur==='none'?'none':hexOf(cur);let rgb=null;
   const tabs='<div class="swh"><button data-tab="co" class="'+(swTab==='co'?'on':'')+'">Color</button><button data-tab="sw" class="'+(swTab==='sw'?'on':'')+'">Swatches</button><button data-tab="gd" class="'+(swTab==='gd'?'on':'')+'">Gradient</button><i class="gp" title="Drag to move"></i><b>'+(FSA==='fill'?'Fill':'Stroke')+'</b><button data-act="close" title="Close" aria-label="Close">×</button></div>';
   let body;
-  if(swTab==='sw')body='<div id="swgrid">'+swList().map(s=>'<button class="sc'+(s.h===curH?' cur':'')+(s.h==='none'?' none':'')+'" data-h="'+s.h+'" title="'+s.n+'"'+(s.h==='none'?'':' style="background:'+s.h+'"')+'></button>').join('')+'</div>';
+  if(swTab==='sw')body='<div id="swgrid">'+swList().map(s=>'<button class="sc'+(s.h===curH?' cur':'')+(s.h==='none'?' none':'')+'" data-h="'+s.h+'"'+(s.id?' data-sid="'+s.id+'"':'')+' title="'+s.n+'"'+(s.h==='none'?'':' style="background:'+s.h+'"')+'></button>').join('')+'</div>';
   else if(swTab==='gd')body=gradBody();
   else{rgb=colRGB(curH==='none'?'#000000':curH);const q=rgb2hsv(rgb);cpk={h:q[1]&&q[2]?q[0]:cpk.h,s:q[1],v:q[2]};
     body='<div id="cpsb"><i id="cpt"></i></div><div id="cph"><i id="cpht"></i></div><div class="cpr"><span id="cpprev"></span><label class="sl3">#<input id="swhex" type="text" maxlength="6"></label></div><div class="cpr3">'+['R','G','B'].map((c,i)=>'<label class="sl3">'+c+'<input type="number" min="0" max="255" data-ch="'+i+'"></label>').join('')+'</div>'}
@@ -2116,7 +2116,8 @@ const closeSw=()=>{swp.style.display='none'};
 swp.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
   if(b.dataset.act==='close'){closeSw();return}
   if(b.dataset.tab){swTab=b.dataset.tab;renderSw();return}
-  if(b.dataset.h!==undefined){applyStyle({[FSA]:b.dataset.h},true);renderSw();return}
+  if(b.dataset.h!==undefined){if(b.dataset.sid&&window.SWAPI)SWAPI.apply(b.dataset.sid,e.altKey);else applyStyle({[FSA]:b.dataset.h},true);renderSw();return}
+  if(b.dataset.act==='new'&&window.SWAPI){SWAPI.newFromColor();return}
   if(b.dataset.act==='new'){const c=targetColor();if(c!=='none'){const h=hexOf(c);if(!CUS.includes(h)&&!SWS.some(s=>s.h===h)){CUS.push(h);saveCus()}}renderSw()}
   if(b.dataset.act==='pick'){swTab='co';renderSw()}});
 swp.addEventListener('pointerdown',e=>{const t=e.target.closest('#cpsb,#cph');if(!t)return;cpDrag=t.id==='cpsb'?'sb':'h';swp.setPointerCapture(e.pointerId);cpMove(e)});
@@ -7916,10 +7917,10 @@ const setMode=k=>{const s=$c('#clm');s.value=k;s.dispatchEvent(new Event('change
 const clMenu=()=>{const col=!CL.none&&targetColor()!=='none';return[['gray','Grayscale'],['rgb','RGB'],['hsb','HSB'],['cmyk','CMYK'],['web','Web Safe RGB']].map(([k,n])=>({t:n,c:CL.mode===k,f:()=>setMode(k)})).concat([{sep:1},
   {t:'Invert',en:col,f:()=>{apply(CL.rgb.map(v=>255-v),true);refresh()}},
   {t:'Complement',en:col,f:()=>{const mx=Math.max(...CL.rgb),mn=Math.min(...CL.rgb);apply(CL.rgb.map(v=>mx+mn-v),true);refresh()}},{sep:1},
-  {t:'Create New Swatch...',en:col,f:()=>{const c=targetColor();if(c!=='none'){const h=hexOf(c);if(!CUS.includes(h)&&!SWS.some(s=>s.h===h)){CUS.push(h);saveCus()}}if(typeof renderSw==='function')renderSw()}},{sep:1},
+  {t:'Create New Swatch...',en:col,f:()=>{if(window.SWAPI){SWAPI.newFromColor();return}const c=targetColor();if(c!=='none'){const h=hexOf(c);if(!CUS.includes(h)&&!SWS.some(s=>s.h===h)){CUS.push(h);saveCus()}}if(typeof renderSw==='function')renderSw()}},{sep:1},
   {t:CL.opts?'Hide Options':'Show Options',f:()=>{CL.opts=!CL.opts;P.classList.toggle('clho',!CL.opts);try{localStorage.setItem('masar-colopts',CL.opts?'1':'0')}catch(e){}}}])};
 DK.reg('color','Color','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17" stroke-width="1.2"/></svg>',P,{dw:260,menu:clMenu,open:()=>{P.style.display='block';refresh()},close:()=>{P.style.display='none'},refresh});
-window.clRefresh=refresh;window.clState=CL;
+window.clRefresh=refresh;window.clState=CL;window.CLK={vals,toRgb,MODES};
 })();
 
 /* ---------------------------------------------------------------- Stroke (Ctrl+F10) ---------------------------------------------------------------- */
@@ -8786,6 +8787,7 @@ const _dr13=draw;draw=function(){const r=_dr13.apply(this,arguments);try{if(laye
 /* ======================= Swatches: kinds menu + delete ======================= */
 swp.addEventListener('click',e=>{const b=e.target.closest('button[data-act]');if(!b)return;
   if(b.dataset.act==='kind'){const r=b.getBoundingClientRect();window.pmPopup([{t:'Show All Swatches',c:SWK==='all',f:()=>{SWK='all';renderSw()}},{t:'Show Color Swatches',c:SWK==='color',f:()=>{SWK='color';renderSw()}},{t:'Show Custom Swatches',c:SWK==='custom',f:()=>{SWK='custom';renderSw()}}],r.left,r.top-4+0)}
+  else if(b.dataset.act==='del'&&window.SWAPI){SWAPI.delCurrent()}
   else if(b.dataset.act==='del'){const c=targetColor();if(c==='none'){tb5Msg('Select a custom swatch to delete it');return}const h=hexOf(c),i=CUS.indexOf(h);if(i<0){tb5Msg('Only custom swatches can be deleted');return}CUS.splice(i,1);saveCus();renderSw()}});
 
 /* ======================= Status bar: zoom field with presets (3.13 - 6400%) ======================= */
@@ -9741,6 +9743,109 @@ addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!e.altKey||e.code!=='
       el.querySelector('#axs').innerHTML=S.length?'<b>Export Settings</b><label>Scale<select data-axs="s">'+AXS.map(v=>'<option value="'+v+'"'+(a.s===v?' selected':'')+'>'+v+'x</option>').join('')+'</select></label><label>Format<select data-axs="f">'+AXF.map(f=>'<option value="'+f[0]+'"'+(a.f===f[0]?' selected':'')+'>'+f[1]+'</option>').join('')+'</select></label>':'';
       el.querySelector('[data-ax="exp"]').disabled=!S.length;el.querySelector('[data-ax="rm"]').disabled=!S.length;el.querySelector('[data-ax="all"]').disabled=!L.length}});
   {const st=document.createElement('style');st.textContent='#assetexportP .axw{padding:6px;font:12px "Segoe UI",Cairo,sans-serif}#assetexportP .axl{border:1px solid var(--line);background:var(--field);min-height:120px;max-height:260px;overflow:auto}#assetexportP .axr{display:flex;align-items:center;gap:8px;padding:4px 6px;border-bottom:1px solid var(--line);cursor:default}#assetexportP .axr.on{background:var(--on)}#assetexportP .axt{width:44px;height:36px;flex:none;border:1px solid var(--line);background:repeating-conic-gradient(#ccc 0 25%,#fff 0 50%) 0 0/8px 8px;display:block;overflow:hidden}#assetexportP .axt svg{width:100%;height:100%;display:block}#assetexportP .axn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#assetexportP small{color:var(--mute)}#assetexportP .axe{color:var(--mute);margin:10px 8px}#assetexportP .axs{display:grid;gap:6px;margin:8px 0}#assetexportP .axs label{display:flex;justify-content:space-between;align-items:center}#assetexportP .axf{display:flex;gap:6px;align-items:center}#assetexportP .axf .pri{margin-left:auto}';document.head.appendChild(st)}
+}
+
+/* ---------- Swatches panel (Window > Swatches) ----------
+   One swatch list for the panel and for the Fill / Stroke pop-up. A global (or spot) swatch is linked to the objects painted with it
+   (data-swf / data-sws on the element), so editing the swatch repaints them. Colour groups are folders of consecutive swatches. */
+{const SK='masar.sw2.v1',VK='masar.sw2.view';
+  let SW=[],SG=[],UID=0,VIEW={v:'s',k:'all',find:false};try{Object.assign(VIEW,JSON.parse(localStorage.getItem(VK)||'{}'))}catch(_){}
+  const SSEL=new Set();let ANCH=null;
+  const hx=c=>c==='none'?'none':hexOf(c);
+  const nid=()=>'sw'+(++UID);
+  const rgbName=h=>{const r=colRGB(h);return 'R='+r[0]+' G='+r[1]+' B='+r[2]};
+  (function init(){let d=null;try{d=JSON.parse(localStorage.getItem(SK)||'null')}catch(_){}
+    if(d&&Array.isArray(d.sw)&&d.sw.length){SW=d.sw;SG=d.sg||[];UID=d.uid||SW.length}
+    else{SW=SWS.map((s,i)=>({id:nid(),n:s.n,h:s.h,t:'process',d:1,k:s.h==='none'?'none':i===1?'reg':'color'}));(CUS||[]).forEach(h=>SW.push({id:nid(),n:rgbName(h),h,t:'process'}));SG=[]}
+    if(!SW.some(x=>x.k==='none'))SW.unshift({id:nid(),n:'None',h:'none',t:'process',d:1,k:'none'})})();
+  const save=()=>{try{localStorage.setItem(SK,JSON.stringify({sw:SW,sg:SG,uid:UID}));localStorage.setItem(VK,JSON.stringify(VIEW))}catch(_){}};
+  const byId=id=>SW.find(x=>x.id===id),grpOf=id=>SG.find(g=>g.id===id);
+  const isGlobal=s=>s.t==='spot'||!!s.gl;
+  const locked=s=>s.k==='none'||s.k==='reg';
+  /* links */
+  function relink(s){if(!s||!isGlobal(s))return;layer.querySelectorAll('[data-swf="'+s.id+'"]').forEach(e=>{e.setAttribute('fill',s.h)});layer.querySelectorAll('[data-sws="'+s.id+'"]').forEach(e=>{e.setAttribute('stroke',s.h)})}
+  function apply(id,alt){const s=byId(id);if(!s)return;const k=alt?(FSA==='fill'?'stroke':'fill'):FSA,keep=FSA;FSA=k;applyStyle({[k]:s.h,swg:isGlobal(s)&&s.h!=='none'?s.id:undefined},true);FSA=keep;try{fsRefresh()}catch(_){}panelRefresh()}
+  /* colours used by the artwork */
+  function usedColors(){const U=new Set(),L=new Set();objs.forEach(o=>fillables(o).forEach(e=>{[['fill','data-swf'],['stroke','data-sws']].forEach(([a,l])=>{const v=e.getAttribute(a);if(v&&v!=='none'&&!/^url/.test(v))U.add(hx(v));const q=e.getAttribute(l);if(q)L.add(q)})}));return{U,L}}
+  /* dialog */
+  function dialog(s,startHex,onOk){const isNew=!s,cur=s||{n:'',h:startHex||'#000000',t:'process'},M=window.CLK.MODES;let mode='rgb';
+    const rgb0=cur.h==='none'?[0,0,0]:colRGB(cur.h);let rgb=rgb0.slice();const ro=s&&locked(s);
+    const dlg=dkModal(isNew?'New Swatch':'Swatch Options','<label>Swatch Name<input type="text" data-k="n" value="'+esc(cur.n||rgbName(cur.h))+'" style="min-width:190px"'+(ro?' disabled':'')+'></label><label>Color Type<select data-k="t"'+(ro?' disabled':'')+'><option value="process">Process Color</option><option value="spot">Spot Color</option></select></label><label class="fxp"><input type="checkbox" data-k="gl"'+(ro?' disabled':'')+'> Global</label><label>Color Mode<select data-k="m"><option value="gray">Grayscale</option><option value="rgb" selected>RGB</option><option value="hsb">HSB</option><option value="cmyk">CMYK</option><option value="web">Web Safe RGB</option></select></label><div id="swdf"></div><label>#<input type="text" data-k="hex" maxlength="6" style="width:80px"'+(ro?' disabled':'')+'></label><span id="swdp" style="display:block;height:22px;border:1px solid var(--line);margin:4px 0"></span><label class="fxp"><input type="checkbox" id="fxpv" checked> Preview</label>',
+      [{t:'Cancel',c:1,f:()=>{if(s){Object.assign(s,orig);relink(s);draw()}}},{t:'OK',p:1,f:b=>{const v=read();if(!v.n)return false;if(s){Object.assign(s,v);relink(s);save();commit();draw();panelRefresh()}else{onOk(v)}}}]);
+    const orig=s?{...s}:null,I=k=>dlg.box.querySelector('[data-k="'+k+'"]');I('t').value=cur.t==='spot'?'spot':'process';I('gl').checked=isGlobal(cur);if(cur.t==='spot'){I('gl').checked=true;I('gl').disabled=true}
+    const read=()=>({n:I('n').value.trim(),t:I('t').value,gl:I('t').value==='spot'?true:I('gl').checked,h:cur.h==='none'?'none':'#'+rgb.map(x=>Math.max(0,Math.min(255,Math.round(x))).toString(16).padStart(2,'0')).join('')});
+    const fields=()=>{const m=I('m').value,v=window.CLK.vals(rgb,m),Mm=M[m];dlg.box.querySelector('#swdf').innerHTML=Mm.map((q,i)=>'<label>'+q[0]+'<input type="number" data-i="'+i+'" min="'+q[1]+'" max="'+q[2]+'" value="'+v[i]+'" style="width:70px"></label>').join('');I('hex').value=read().h.slice(1);dlg.box.querySelector('#swdp').style.background=read().h};
+    const live=()=>{const v=read();if(s&&dlg.box.querySelector('#fxpv').checked){const keep={...s};Object.assign(s,v);relink(s);draw();Object.assign(s,keep,v)}};
+    fields();
+    dlg.box.addEventListener('change',e=>{const t=e.target;if(t.dataset.k==='m'){fields();return}if(t.dataset.k==='t'){I('gl').disabled=t.value==='spot';if(t.value==='spot')I('gl').checked=true}
+      if(t.dataset.k==='hex'){const v=t.value.replace(/[^0-9a-f]/gi,'');if(v.length===6){rgb=colRGB('#'+v);fields();live()}}});
+    dlg.box.addEventListener('input',e=>{const t=e.target;if(t.dataset.i!==undefined){const m=I('m').value,Mm=M[m],vv=[...dlg.box.querySelectorAll('#swdf input')].map((n,i)=>Math.max(Mm[i][1],Math.min(Mm[i][2],parseFloat(n.value)||0)));rgb=window.CLK.toRgb(vv,m);I('hex').value=read().h.slice(1);dlg.box.querySelector('#swdp').style.background=read().h;live()}});
+    const f0=I('n');f0.focus();f0.select()}
+  function add(v,at){const s={id:nid(),n:v.n||rgbName(v.h),h:v.h,t:v.t||'process',gl:v.gl||undefined};if(at!=null)SW.splice(at,0,s);else SW.push(s);save();panelRefresh();return s}
+  function newFromColor(){let c=targetColor();c=c==='none'?'#000000':hexOf(c);dialog(null,c,v=>{const s=add(v);SSEL.clear();SSEL.add(s.id);panelRefresh()})}
+  function delSel(ids){const L=SW.filter(s=>ids.has(s.id)&&!locked(s));if(!L.length)return;
+    dkModal('Delete Swatch','Delete the selected swatch'+(L.length>1?'es':'')+'? Artwork keeps its colour.',[{t:'No',c:1},{t:'Yes',p:1,f:()=>{L.forEach(s=>{SW.splice(SW.indexOf(s),1);layer.querySelectorAll('[data-swf="'+s.id+'"]').forEach(e=>e.removeAttribute('data-swf'));layer.querySelectorAll('[data-sws="'+s.id+'"]').forEach(e=>e.removeAttribute('data-sws'))});SG=SG.filter(g=>SW.some(s=>s.g===g.id));SSEL.clear();save();commit();panelRefresh();if(typeof renderSw==='function')renderSw()}}])}
+  function delCurrent(){const c=targetColor();if(c==='none'){tb5Msg('Select a swatch to delete it');return}const h=hexOf(c),s=SW.find(x=>x.h===h&&!locked(x)&&!x.d);if(!s){tb5Msg('Only custom swatches can be deleted');return}delSel(new Set([s.id]))}
+  function dupSel(){const L=SW.filter(s=>SSEL.has(s.id)&&!locked(s));if(!L.length)return;SSEL.clear();L.forEach(s=>{const i=SW.indexOf(s),n=add({n:s.n+' copy',h:s.h,t:s.t,gl:s.gl},i+1);n.g=s.g;SSEL.add(n.id)});save();panelRefresh()}
+  function mergeSel(){const L=SW.filter(s=>SSEL.has(s.id)&&!locked(s));if(L.length<2){tb5Msg('Merge Swatches: select two or more swatches');return}const keep=L[0];
+    L.slice(1).forEach(s=>{layer.querySelectorAll('[data-swf="'+s.id+'"]').forEach(e=>{if(isGlobal(keep))e.setAttribute('data-swf',keep.id);else e.removeAttribute('data-swf');e.setAttribute('fill',keep.h)});layer.querySelectorAll('[data-sws="'+s.id+'"]').forEach(e=>{if(isGlobal(keep))e.setAttribute('data-sws',keep.id);else e.removeAttribute('data-sws');e.setAttribute('stroke',keep.h)});SW.splice(SW.indexOf(s),1)});SSEL.clear();SSEL.add(keep.id);save();commit();draw();panelRefresh()}
+  function selUnused(){const{U,L}=usedColors();SSEL.clear();SW.forEach(s=>{if(locked(s))return;if(isGlobal(s)?!L.has(s.id)&&!U.has(s.h):!U.has(s.h))SSEL.add(s.id)});panelRefresh()}
+  function addUsed(){const{U}=usedColors();let n=0;U.forEach(h=>{if(!SW.some(s=>s.h===h)){add({n:rgbName(h),h});n++}});tb5Msg(n?'Added '+n+' swatch'+(n>1?'es':''):'All used colours are already swatches')}
+  function sortBy(k){const none=SW.filter(s=>locked(s)),rest=SW.filter(s=>!locked(s)),units=[],seen=new Set();rest.forEach(s=>{if(s.g){if(seen.has(s.g))return;seen.add(s.g);units.push({n:(grpOf(s.g)||{n:''}).n,m:rest.filter(x=>x.g===s.g)})}else units.push({n:s.n,m:[s],t:s.t==='spot'?2:isGlobal(s)?1:0,h:s.h})});
+    const rank=u=>u.t==null?9:u.t;units.sort((a,b)=>k==='kind'?rank(a)-rank(b)||a.n.localeCompare(b.n,undefined,{numeric:true}):a.n.localeCompare(b.n,undefined,{numeric:true}));SW=none.concat(units.flatMap(u=>u.m));save();panelRefresh()}
+  function newGroup(){const sels=SW.filter(s=>SSEL.has(s.id)&&!locked(s)),art=[...sel].length>0;
+    const dlg=dkModal('New Color Group','<label>Name<input type="text" data-k="n" value="Color Group '+(SG.length+1)+'" style="min-width:190px"></label>'+(art?'<label class="fxp"><input type="checkbox" data-k="art"'+(sels.length?'':' checked')+'> Selected Artwork (use its colours)</label>':''),[{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{const n=b.querySelector('[data-k="n"]').value.trim();if(!n)return false;const g={id:'g'+(++UID),n};SG.push(g);let M=[];
+        if(art&&b.querySelector('[data-k="art"]').checked){const cols=new Set();[...sel].forEach(o=>fillables(o).forEach(e=>['fill','stroke'].forEach(a=>{const v=e.getAttribute(a);if(v&&v!=='none'&&!/^url/.test(v))cols.add(hx(v))})));cols.forEach(h=>{const ex=SW.find(s=>s.h===h&&!locked(s));if(ex)M.push(ex);else{M.push(add({n:rgbName(h),h}))}})}else M=sels;
+        if(!M.length){SG.pop();tb5Msg('New Color Group: select swatches (or artwork) first');return}
+        M.forEach(s=>{SW.splice(SW.indexOf(s),1)});const at=Math.min(SW.length,Math.max(...[0,...M.map(()=>0)]));M.forEach(s=>{s.g=g.id});SW.push(...M);save();panelRefresh()}}]);dlg.box.querySelector('input').select()}
+  const LIBS={'Pastel':['#FFD1DC','#FFE4B5','#FFFACD','#C1E1C1','#B5EAD7','#C7CEEA','#E2CFEA','#F8C8DC','#FFDAC1','#E0BBE4'],'Earthtones':['#5C4033','#7B5B3A','#A0785A','#C19A6B','#8A7F54','#6B705C','#A5A58D','#CB997E','#B7B7A4','#3F3A2E'],'Neon':['#FF0090','#FF5F1F','#FFFF33','#39FF14','#00FFD5','#00B7FF','#8A2BE2','#FF073A','#CCFF00','#FF6EC7'],'Grayscale':['#000000','#1A1A1A','#333333','#4D4D4D','#666666','#808080','#999999','#B3B3B3','#CCCCCC','#E6E6E6','#FFFFFF'],'Skintones':['#FFE0BD','#F1C27D','#E0AC69','#C68642','#8D5524','#6B3E26','#4A2C17','#FFCBA4'],'Vintage':['#E4D8B4','#D7B377','#C9724D','#9E3B33','#5F4B66','#3D5A6C','#6F8F72','#B5A28C'],'Metals':['#D4AF37','#C0C0C0','#B87333','#8C7853','#A9A9A9','#E5E4E2','#B08D57','#7F7F7F']};
+  let LIBEL=null;function openLib(name,anchor){if(LIBEL)LIBEL.remove();const d=document.createElement('div');LIBEL=d;d.id='swlib';d.innerHTML='<div class="swlh"><b>'+name+'</b><button type="button" data-x="1" aria-label="Close">×</button></div><div class="swlg">'+LIBS[name].map(h=>'<button type="button" class="sc" data-h="'+h+'" title="'+h+'" style="background:'+h+'"></button>').join('')+'</div><div class="swlf">Click: apply &amp; add to Swatches</div>';
+    document.body.appendChild(d);const r=anchor.getBoundingClientRect();d.style.left=Math.max(4,Math.min(innerWidth-d.offsetWidth-4,r.left-40))+'px';d.style.top=Math.max(4,r.top-d.offsetHeight-6)+'px';
+    d.addEventListener('click',e=>{if(e.target.closest('[data-x]')){d.remove();LIBEL=null;return}const b=e.target.closest('.sc');if(!b)return;let s=SW.find(x=>x.h.toLowerCase()===b.dataset.h.toLowerCase());if(!s)s=add({n:name+' '+b.dataset.h,h:b.dataset.h.toLowerCase()});apply(s.id,e.altKey)})}
+  /* the panel */
+  let EL=null;const sz=()=>({s:16,m:24,l:34,ls:16,ll:26})[VIEW.v]||16;
+  const corner=s=>isGlobal(s)?'<i class="swgl'+(s.t==='spot'?' sp':'')+'"></i>':'';
+  let RSIG='';function render(){if(!EL)return;const L=EL.querySelector('#swxl'),list=VIEW.v==='ls'||VIEW.v==='ll',q=((EL.querySelector('#swxq')||{}).value||'').trim().toLowerCase(),c=hexOf(targetColor()==='none'?'#000':targetColor()),curNone=targetColor()==='none',shown=[];let lastG=null;
+    SW.forEach(s=>{if(VIEW.k==='groups'&&!s.g)return;if(VIEW.k==='color'&&locked(s))return;if(q&&s.n.toLowerCase().indexOf(q)<0)return;shown.push(s)});
+    const sg=JSON.stringify([shown.map(s=>[s.id,s.h,s.n,s.t,s.gl,s.g]),SG,VIEW.v,VIEW.k,VIEW.find,q]);
+    if(sg===RSIG&&L.firstChild){L.querySelectorAll('[data-id]').forEach(x=>{const id=x.dataset.id,s=byId(id);x.classList.toggle('sel',SSEL.has(id));x.classList.toggle('cur',!!s&&(curNone?s.h==='none':s.h===c))});const one0=SW.filter(s=>SSEL.has(s.id));EL.querySelector('[data-b="del"]').disabled=!one0.some(s=>!locked(s));EL.querySelector('[data-b="opt"]').disabled=one0.length!==1;return}RSIG=sg;
+    let h='';shown.forEach(s=>{if(s.g&&s.g!==lastG){const g=grpOf(s.g);h+=list?'<div class="swr swf" data-g="'+s.g+'"><i class="swfi"></i><span>'+esc(g.n)+'</span></div>':'<span class="swfo" data-g="'+s.g+'" title="'+esc(g.n)+'"><svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M1 2h4l1 1.5h5V10H1z"/></svg></span>'}lastG=s.g||null;
+      const on=SSEL.has(s.id),cur=curNone?s.h==='none':s.h===c;
+      if(list)h+='<div class="swr'+(on?' sel':'')+(cur?' cur':'')+'" data-id="'+s.id+'" style="height:'+(sz()+4)+'px"><span class="sc'+(s.h==='none'?' none':'')+'" style="width:'+sz()+'px;height:'+sz()+'px;'+(s.h==='none'?'':'background:'+s.h)+'">'+corner(s)+(s.k==='reg'?'<b class="swreg">+</b>':'')+'</span><span class="swn">'+esc(s.n)+'</span></div>';
+      else h+='<button type="button" class="sc'+(s.h==='none'?' none':'')+(on?' sel':'')+(cur?' cur':'')+'" data-id="'+s.id+'" title="'+esc(s.n)+(isGlobal(s)?' (global)':'')+'" style="width:'+sz()+'px;height:'+sz()+'px;'+(s.h==='none'?'':'background:'+s.h)+'">'+corner(s)+(s.k==='reg'?'<b class="swreg">+</b>':'')+'</button>'});
+    L.className='swxl'+(list?' list':'');L.innerHTML=h||'<p class="swem">No swatches</p>';
+    EL.querySelector('#swxfw').style.display=VIEW.find?'':'none';
+    const one=SW.filter(s=>SSEL.has(s.id));EL.querySelector('[data-b="del"]').disabled=!one.some(s=>!locked(s));EL.querySelector('[data-b="opt"]').disabled=one.length!==1}
+  function panelRefresh(){try{render()}catch(_){}try{if(typeof renderSw==='function'&&swp.style.display!=='none')renderSw()}catch(_){}}
+  const menu=()=>{const one=SW.filter(s=>SSEL.has(s.id)),nl=one.filter(s=>!locked(s));return[{t:'New Swatch…',f:()=>newFromColor()},{t:'New Color Group…',f:newGroup},{sep:1},{t:'Duplicate Swatch',f:dupSel,en:nl.length>0},{t:'Merge Swatches',f:mergeSel,en:nl.length>1},{t:'Delete Swatch',f:()=>delSel(SSEL),en:nl.length>0},{sep:1},{t:'Select All Unused',f:selUnused},{t:'Add Used Colors',f:addUsed},{sep:1},{t:'Sort by Name',f:()=>sortBy('name')},{t:'Sort by Kind',f:()=>sortBy('kind')},{t:VIEW.find?'Hide Find Field':'Show Find Field',f:()=>{VIEW.find=!VIEW.find;save();render()}},{sep:1},{t:'Small Thumbnail View',c:VIEW.v==='s',f:()=>view('s')},{t:'Medium Thumbnail View',c:VIEW.v==='m',f:()=>view('m')},{t:'Large Thumbnail View',c:VIEW.v==='l',f:()=>view('l')},{t:'Small List View',c:VIEW.v==='ls',f:()=>view('ls')},{t:'Large List View',c:VIEW.v==='ll',f:()=>view('ll')},{sep:1},{t:'Swatch Options…',f:()=>optSel(),en:one.length===1},{t:'Open Swatch Library',sub:1,f:()=>libMenu(EL.querySelector('[data-b="lib"]'))}]};
+  const view=v=>{VIEW.v=v;save();render()};
+  const optSel=()=>{const s=SW.find(x=>SSEL.has(x.id));if(s)dialog(s)};
+  const libMenu=a=>{const r=a.getBoundingClientRect();window.pmPopup(Object.keys(LIBS).map(n=>({t:n,f:()=>openLib(n,a)})),r.left,r.top-Object.keys(LIBS).length*24-8)};
+  const kindMenu=a=>{const r=a.getBoundingClientRect(),K=(k,t)=>({t,c:VIEW.k===k,f:()=>{VIEW.k=k;save();render()}});window.pmPopup([K('all','Show All Swatches'),K('color','Show Color Swatches'),K('groups','Show Color Groups')],r.left,r.top-100)};
+  const P=regPanel({id:'swatches',title:'Swatches',key:'',icon:'<rect x="4" y="4" width="7" height="7"/><rect x="13" y="4" width="7" height="7"/><rect x="4" y="13" width="7" height="7"/><rect x="13" y="13" width="7" height="7"/>',dw:260,
+    build:el=>{EL=el;const I=d=>'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">'+d+'</svg>';
+      el.innerHTML='<div class="swx"><div id="swxfw" style="display:none"><input id="swxq" type="text" placeholder="Find" aria-label="Find swatches"></div><div class="swxl" id="swxl"></div><div class="swxb"><button type="button" class="lyi" data-b="lib" title="Swatch Libraries Menu">'+I('<path d="M3 2.5h8a2 2 0 0 1 2 2V13.5H5a2 2 0 0 1-2-2z"/><path d="M5 11.5h8"/>')+'</button><button type="button" class="lyi" data-b="kind" title="Show Swatch Kinds Menu">'+I('<rect x="2" y="2" width="5" height="5"/><rect x="9" y="2" width="5" height="5"/><rect x="2" y="9" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/>')+'</button><span class="sp"></span><button type="button" class="lyi" data-b="opt" title="Swatch Options">'+I('<circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M12.6 3.4l-1.4 1.4M4.8 11.2l-1.4 1.4"/>')+'</button><button type="button" class="lyi" data-b="grp" title="New Color Group">'+I('<path d="M1.5 4h4.5l1.2 1.5H14V12.5H1.5z"/><path d="M8 7.5v3.5M6.2 9.2h3.6"/>')+'</button><button type="button" class="lyi" data-b="new" title="New Swatch">'+I('<path d="M3 2h6l3 3v9H3z"/><path d="M9 2v3h3"/><path d="M6 10.5h4M8 8.5v4"/>')+'</button><button type="button" class="lyi" data-b="del" title="Delete Swatch">'+I('<path d="M3 4.5h10M6 4.5V3h4v1.5M4.5 4.5l.7 9h5.6l.7-9"/>')+'</button></div></div>';
+      el.querySelector('#swxq').addEventListener('input',render);
+      el.addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(b){const k=b.dataset.b;if(k==='lib')libMenu(b);else if(k==='kind')kindMenu(b);else if(k==='opt')optSel();else if(k==='grp')newGroup();else if(k==='new')newFromColor();else if(k==='del')delSel(SSEL);return}
+        const it=e.target.closest('[data-id]');if(!it)return;const id=it.dataset.id,list=[...el.querySelectorAll('#swxl [data-id]')].map(x=>x.dataset.id);
+        if(e.shiftKey&&ANCH&&list.includes(ANCH)){const a=list.indexOf(ANCH),c=list.indexOf(id);SSEL.clear();list.slice(Math.min(a,c),Math.max(a,c)+1).forEach(x=>SSEL.add(x))}
+        else if(e.ctrlKey||e.metaKey){if(SSEL.has(id))SSEL.delete(id);else SSEL.add(id);ANCH=id}
+        else{SSEL.clear();SSEL.add(id);ANCH=id;apply(id,e.altKey)}render()});
+      el.addEventListener('dblclick',e=>{const f=e.target.closest('[data-g]');if(f){const g=grpOf(f.dataset.g);if(g){const M=dkModal('Color Group Options','<label>Name<input type="text" data-k="n" value="'+esc(g.n)+'" style="min-width:190px"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{const v=b.querySelector('[data-k="n"]').value.trim();if(!v)return false;g.n=v;save();render()}}]);M.box.querySelector('input').select()}return}
+        const it=e.target.closest('[data-id]');if(!it)return;const s=byId(it.dataset.id);if(s&&s.k!=='none')dialog(s)});
+      /* drag to reorder (drop before the swatch under the pointer; onto a folder = into that group) */
+      let dr=null;el.addEventListener('pointerdown',e=>{if(e.button!==0)return;const it=e.target.closest('#swxl [data-id]');if(!it||e.shiftKey||e.ctrlKey||e.metaKey||e.altKey)return;dr={id:it.dataset.id,x:e.clientX,y:e.clientY,on:false}});
+      document.addEventListener('pointermove',e=>{if(!dr)return;if(!dr.on){if(Math.hypot(e.clientX-dr.x,e.clientY-dr.y)<6)return;dr.on=true}const t=document.elementFromPoint(e.clientX,e.clientY),r=t&&t.closest&&t.closest('#swxl [data-id],#swxl [data-g]');el.querySelectorAll('.swdrop').forEach(x=>x.classList.remove('swdrop'));dr.t=r||null;if(r)r.classList.add('swdrop')});
+      document.addEventListener('pointerup',()=>{const d=dr;dr=null;el.querySelectorAll('.swdrop').forEach(x=>x.classList.remove('swdrop'));if(!d||!d.on||!d.t)return;const s=byId(d.id);if(!s||locked(s))return;
+        if(d.t.dataset.g){s.g=d.t.dataset.g;SW.splice(SW.indexOf(s),1);const last=SW.map((x,i)=>x.g===s.g?i:-1).filter(i=>i>=0).pop();SW.splice((last==null?SW.length-1:last)+1,0,s)}
+        else{const t=byId(d.t.dataset.id);if(!t||t===s)return;SW.splice(SW.indexOf(s),1);const i=SW.indexOf(t);s.g=t.g;SW.splice(i,0,s)}
+        SG=SG.filter(g=>SW.some(x=>x.g===g.id));save();render()},true)},
+    refresh:el=>{render()}});
+  DK.P.swatches.menu=menu;
+  {const st=document.createElement('style');st.textContent='#swatchesP .swx{padding:6px;font:12px "Segoe UI",Cairo,sans-serif}#swatchesP .swxl{display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;border:1px solid var(--line);background:var(--field);min-height:120px;max-height:320px;overflow:auto;padding:4px}#swatchesP .swxl.list{display:block;padding:0}#swatchesP .sc{position:relative;display:inline-block;border:1px solid #1f1f1f;padding:0;cursor:pointer;box-sizing:border-box}#swatchesP .sc.none{background:linear-gradient(135deg,#fff 46%,#e03131 46%,#e03131 54%,#fff 54%)}#swatchesP .sc.sel{outline:2px solid #fff;outline-offset:0;z-index:1}#swatchesP .sc.cur{box-shadow:0 0 0 1px var(--brand)}#swatchesP .swgl{position:absolute;right:0;bottom:0;width:0;height:0;border-left:7px solid transparent;border-bottom:7px solid #fff}#swatchesP .swgl.sp::after{content:"";position:absolute;right:1px;bottom:-6px;width:2px;height:2px;background:#000;border-radius:50%}#swatchesP .swreg{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:11px;mix-blend-mode:difference}#swatchesP .swfo{display:inline-grid;place-items:center;width:14px;height:16px;color:var(--mute)}#swatchesP .swr{display:flex;align-items:center;gap:6px;padding:0 6px;cursor:default;border-bottom:1px solid var(--line)}#swatchesP .swr.sel{background:var(--sel)}#swatchesP .swr.cur .sc{box-shadow:0 0 0 1px var(--brand)}#swatchesP .swr.swf{color:var(--mute);height:20px}#swatchesP .swfi{width:12px;height:9px;background:currentColor;border-radius:1px}#swatchesP .swdrop{outline:2px solid var(--brand);outline-offset:-2px}#swatchesP .swxb{display:flex;align-items:center;gap:2px;margin-top:6px}#swatchesP .swxb .sp{flex:1}#swatchesP #swxq{width:100%;box-sizing:border-box;margin-bottom:6px;background:var(--field);color:var(--ink);border:1px solid var(--line);height:24px;padding:0 6px}#swatchesP .swem{color:var(--mute);margin:8px}#swlib{position:fixed;z-index:9200;width:210px;background:var(--panel);border:1px solid var(--line);border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.45);font:12px "Segoe UI",Cairo,sans-serif;color:var(--ink)}#swlib .swlh{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid var(--line)}#swlib .swlh button{border:0;background:none;color:var(--ink);font-size:16px;cursor:pointer}#swlib .swlg{display:flex;flex-wrap:wrap;gap:3px;padding:8px}#swlib .sc{width:22px;height:22px;border:1px solid #1f1f1f;padding:0;cursor:pointer}#swlib .swlf{padding:4px 8px 8px;color:var(--mute);font-size:11px}';document.head.appendChild(st)}
+  window.SWAPI={popList:kind=>SW.filter(s=>kind==='custom'?!s.d:kind==='color'?s.h!=='none':true).map(s=>({id:s.id,n:s.n,h:s.h})),apply,newFromColor,delCurrent,render:panelRefresh,all:()=>SW.slice()};
+  /* keep the panel in step with the artwork's colour */
+  {const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(EL&&EL.style.display!=='none')render()}catch(_){}return r}}
 }
 
 /*TOOLS-END*/
