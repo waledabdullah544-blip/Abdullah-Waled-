@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 205</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 206</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -9273,7 +9273,7 @@ function tlDrag(id,H){let on=false,moved=false,p0=null;
 window.PANELX=window.PANELX||[];
 function regPanel(P){const el=document.createElement('div');el.id=P.id+'P';el.className='dkpn';el.style.display='none';document.body.appendChild(el);let built=false;
   const refresh=()=>{if(el.style.display==='none')return;if(!built){built=true;P.build(el)}if(P.refresh)P.refresh(el)};
-  DK.reg(P.id,P.title,'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+P.icon+'</svg>',el,{dw:P.dw||280,open:()=>{el.style.display='block';refresh()},close:()=>{el.style.display='none'},refresh});
+  DK.reg(P.id,P.title,'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">'+P.icon+'</svg>',el,{dw:P.dw||280,home:P.home||{m:'R'},open:()=>{el.style.display='block';refresh()},close:()=>{el.style.display='none'},refresh});
   window.PANELX.push({id:P.id,title:P.title,key:P.key});if(P.key&&P.keyCode){addEventListener('keydown',e=>{if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT'||e.target.tagName==='TEXTAREA')return;if(P.keyCode(e)){e.preventDefault();e.stopImmediatePropagation();DK.toggle(P.id)}},true)}
   const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{refresh()}catch(_){}return r};return{el,refresh}}
 window.TLAPI={addTool,addGroup,tlDrag,regPanel,icon};
