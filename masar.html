@@ -379,7 +379,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 #app .apl{min-height:120px;border:1px solid var(--line);background:var(--field);overflow:auto;max-height:240px}
 #app .apr{display:flex;align-items:center;gap:6px;height:28px;padding:0 6px;border-bottom:1px solid var(--line);cursor:default;user-select:none}#app .apr:hover{background:var(--hov)}#app .apr.on{background:var(--on)}
 #app .apr .apey{width:18px;height:18px;padding:0;border:0;background:none;color:var(--ink);display:grid;place-items:center;flex:none}#app .apr .apey:not(.on){opacity:.35}
-#app .apr input.apw,#app .apr input.apo{width:46px;height:20px;box-sizing:border-box;margin-left:4px;padding:0 3px;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:2px;font:inherit;font-size:11px}#app .apr input.apo{width:42px}#app.apdrag .apr{cursor:grabbing}#app .apr.dropa{box-shadow:inset 0 2px 0 var(--brand)}#app .apr.dropb{box-shadow:inset 0 -2px 0 var(--brand)}#app .apr .apn{min-width:48px;text-decoration:underline dotted;text-underline-offset:3px}#app .apr .apv{margin-left:auto;color:var(--mute);white-space:nowrap}
+#prp .prss{display:flex;align-items:center;gap:6px;margin:8px 0 2px;color:var(--ink2);font-size:11px}#app .apr input.apw,#app .apr input.apo{width:46px;height:20px;box-sizing:border-box;margin-left:4px;padding:0 3px;background:var(--field);color:var(--ink);border:1px solid var(--line);border-radius:2px;font:inherit;font-size:11px}#app .apr input.apo{width:42px}#app.apdrag .apr{cursor:grabbing}#app .apr.dropa{box-shadow:inset 0 2px 0 var(--brand)}#app .apr.dropb{box-shadow:inset 0 -2px 0 var(--brand)}#app .apr .apn{min-width:48px;text-decoration:underline dotted;text-underline-offset:3px}#app .apr .apv{margin-left:auto;color:var(--mute);white-space:nowrap}
 #app .apr .apc{width:20px;height:18px;border:1px solid var(--line);border-radius:2px;padding:0;flex:none}#app .apr .apc.none{background:linear-gradient(to top right,transparent 46%,#e03131 47%,#e03131 53%,transparent 54%),#fff}
 #app .apr.fx{padding-left:30px}#app .apr .fxi{font-style:italic;font-weight:600;color:var(--mute);margin-left:auto}
 #app .apf{display:flex;align-items:center;gap:2px;margin-top:6px}#app .apf .sp{flex:1}#app .apf button{width:26px;height:26px;padding:0;display:grid;place-items:center;border:1px solid transparent;border-radius:3px;background:none;color:var(--ink);cursor:pointer}#app .apf button:hover:not(:disabled){background:var(--hov)}#app .apf button:disabled{opacity:.35}
@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 210</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 211</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -1799,7 +1799,14 @@ function relive(L,F){const T=mulAff(F,L.X||[1,0,0,1,0,0]),a=T[0],b=T[1],c=T[2],d
   else X=[Math.cos(th),Math.sin(th),-Math.sin(th),Math.cos(th),T[4],T[5]].map(v=>Math.round(v*1e9)/1e9);
   const pe=L.pe;pe.setAttribute('data-shape',k);pe.setAttribute('data-p',JSON.stringify(P));if(X)pe.setAttribute('data-xf',JSON.stringify(X));else pe.removeAttribute('data-xf');
   pe.setAttribute('d',liveD(k,P,X));pe.__sp=undefined;return true}
-function bakeAffine(ob,A){
+/* Scale Strokes & Effects (Preferences, Properties panel, Scale dialog). A live scale on the object (o.m, used while a handle is dragged) is baked into the geometry here;
+   the stroke then scales with it (option on) or keeps its weight (option off) - the stroke-width written during the drag (data-sw0 holds the real one) is put right first. */
+const ssOnG=()=>!(window.MGEN&&window.MGEN.ss===false);
+const ssK=A=>Math.sqrt(Math.abs(A[0]*A[3]-A[1]*A[2]));
+function ssComp(o){if(ssOnG())return;const k=Math.sqrt(Math.abs(o.m.sx*o.m.sy))||1;fillables(o).forEach(e=>{const c=e.getAttribute('stroke');if(!c||c==='none')return;if(!e.hasAttribute('data-sw0'))e.setAttribute('data-sw0',e.getAttribute('stroke-width')||'1');const w=parseFloat(e.getAttribute('data-sw0'))||0;e.setAttribute('stroke-width',+(w/k).toFixed(3))})}
+function ssPre(ob){fillables(ob).forEach(e=>{if(e.hasAttribute('data-sw0')){e.setAttribute('stroke-width',e.getAttribute('data-sw0'));e.removeAttribute('data-sw0')}});
+  const M=ob.m,k=Math.sqrt(Math.abs(M.sx*M.sy));if(ssOnG()&&isFinite(k)&&k>0&&Math.abs(k-1)>1e-9&&typeof scStrokes==='function')scStrokes([ob],k,true)}
+function bakeAffine(ob,A){ssPre(ob);
   const M=ob.m,F=mulAff(A,[M.sx,0,0,M.sy,M.tx,M.ty]);if(ob.g.dataset.gen)delete ob.g.dataset.gen;const LV=prepLive(ob,F);if(LV==='done'){const e0=ob.g.firstElementChild,t0=q=>[r3(F[0]*q[0]+F[2]*q[1]+F[4]),r3(F[1]*q[0]+F[3]*q[1]+F[5])];
     ['data-grad','data-grads'].forEach(key=>{const g=gradOf(e0,key);if(g&&g.p){const a=t0([g.p[0],g.p[1]]),b=t0([g.p[2],g.p[3]]);g.p=[a[0],a[1],b[0],b[1]];e0.setAttribute(key,JSON.stringify(g))}});
     ob.m={sx:1,sy:1,tx:0,ty:0};ob.bb=BBX(ob);apply(ob);return}ensurePath(ob);
@@ -1846,7 +1853,7 @@ function xfMove(e,p){
   if(st.copy===undefined){st.copy=st.ftsk?false:!!e.altKey;if(st.copy){const C=dupSel();sel=new Set(C);st.snap=xfSnap(C)}}
   if(st.ftsk)st.org=e.altKey?st.orgC:st.org0;
   xfRestore(st.snap);const A=xfMatrix(st.kind,st.org,[st.p.x,st.p.y],[p.x,p.y],e);
-  st.snap.forEach(a=>bakeAffine(a.o,A));st.lastA=A;
+  st.snap.forEach(a=>bakeAffine(a.o,A));if(ssOnG())scStrokes(st.snap.map(a=>a.o),ssK(A));st.lastA=A;
   if(Math.abs(A[0]*A[0]+A[1]*A[1]-1)<1e-6&&Math.abs(A[2]+A[1])<1e-6&&Math.abs(A[3]-A[0])<1e-6){if(!st.r0){st.r0=st.snap.map(a=>rotOf(a.o));const L0=st.snap.map(a=>a.o),eq=L0.every(o=>Math.abs(rotOf(o)-st.r0[0])<1e-3),sr=selRotFor(L0);st.base=sr!=null?sr:eq?st.r0[0]:0}const ang=Math.atan2(A[1],A[0]);st.live=true;SELROT={objs:st.snap.map(a=>a.o),a:st.base+ang};
     st.snap.forEach((a,i)=>{let r=st.r0[i]+ang;r=Math.atan2(Math.sin(r),Math.cos(r));if(Math.abs(r)<1e-4)delete a.o.g.dataset.rot;else a.o.g.dataset.rot=r.toFixed(6)})}
   draw()}
@@ -1905,7 +1912,7 @@ function ftdMove(e,p){
     let kx=Math.abs(hx-ax)<1e-6?1:(q[0]-ax)/(hx-ax),ky=Math.abs(hy-ay)<1e-6?1:(q[1]-ay)/(hy-ay);
     if(e.shiftKey){const m=Math.max(Math.abs(kx),Math.abs(ky));kx=Math.sign(kx||1)*m;ky=Math.sign(ky||1)*m}
     if(Math.abs(kx)<.01)kx=kx<0?-.01:.01;if(Math.abs(ky)<.01)ky=ky<0?-.01:.01;
-    const A=mulAff(rotAff(B.a,0,0),mulAff(sclAff(kx,ky,ax,ay),rotAff(-B.a,0,0)));st.snap.forEach(a=>bakeAffine(a.o,A));st.lastA=A;draw();return}
+    const A=mulAff(rotAff(B.a,0,0),mulAff(sclAff(kx,ky,ax,ay),rotAff(-B.a,0,0)));st.snap.forEach(a=>bakeAffine(a.o,A));if(ssOnG())scStrokes(st.snap.map(a=>a.o),ssK(A));st.lastA=A;draw();return}
   const dx=p.x-st.p.x,dy=p.y-st.p.y,Q=Q0.map(q=>q.slice()),persp=!!(e.altKey&&e.shiftKey);
   if(persp){/* Perspective: the dragged corner and its neighbour on the same edge move in opposite directions along the edge */
     const l=B.toL([dx,dy]);let d,nb;if(Math.abs(l[0])>=Math.abs(l[1])){d=B.toW(l[0],0);nb=ci^1}else{d=B.toW(0,l[1]);nb=3-ci}
@@ -1928,6 +1935,7 @@ function openDlg(kind){
     ro:'<label>Angle: '+num('d1','0')+'°</label>',
     sl:'<div class="mvg xg"><label><input type="radio" name="sm" value="u"'+(mv('sm','u')==='u'?' checked':'')+'> Uniform</label><label style="margin-inline-start:18px">Scale: '+num('d1','100')+'%</label><label><input type="radio" name="sm" value="n"'+(mv('sm','u')==='n'?' checked':'')+'> Non-Uniform</label><label style="margin-inline-start:18px">Horizontal: '+num('d4','100')+'%</label><label style="margin-inline-start:18px">Vertical: '+num('d2','100')+'%</label></div>',
     rf:'<div class="mvg xg"><span class="mvh">Axis</span>'+radio('h','Horizontal')+radio('v','Vertical')+radio('a','Angle: ',num('d1','0')+'°')+'</div>'}[kind];
+  if(kind==='sl')XSS=ssOnG();
   const opts='<div class="mvg xg"><span class="mvh">Options</span>'+(kind==='sl'?'<label><input id="xss" type="checkbox"'+(XSS?' checked':'')+'> Scale Strokes &amp; Effects</label>':'')+'<label><input id="xob" type="checkbox"'+(XOBJ?' checked':'')+'> Transform Objects</label><label><input id="xpt" type="checkbox"'+(XPAT?' checked':'')+'> Transform Patterns</label></div>';
   d.innerHTML='<b>'+({ro:'Rotate',sl:'Scale',rf:'Reflect',sh:'Shear'}[kind])+'</b>'+f+opts+'<label><input id="xpv" type="checkbox"'+(XPREV?' checked':'')+'> Preview</label><span class="dr"><button id="dc" type="button">Copy</button><button id="dx" type="button">Cancel</button><button id="dok" type="button">OK</button></span>';
   d.style.display='flex';if(dlgPos){d.style.transform='none';d.style.left=dlgPos.x+'px';d.style.top=dlgPos.y+'px'}
@@ -3115,7 +3123,7 @@ function arrange(k){const L=objs.filter(o=>sel.has(o));if(!L.length)return;
   else if(k==='bwd'){for(let i=1;i<objs.length;i++)if(sel.has(objs[i])&&!sel.has(objs[i-1]))[objs[i],objs[i-1]]=[objs[i-1],objs[i]]}
   layer.replaceChildren(...objs.map(o=>o.g));commit();draw()}
 let LASTXF=null;
-function scStrokes(L,k){if(!isFinite(k)||k<=0||Math.abs(k-1)<1e-9)return;L.forEach(o=>{fillables(o).forEach(e=>{const c=e.getAttribute('stroke');if(!c||c==='none')return;const w=parseFloat(e.getAttribute('stroke-width'));if(w>0)e.setAttribute('stroke-width',r3(w*k));const da=e.getAttribute('stroke-dasharray');if(da&&da!=='none')e.setAttribute('stroke-dasharray',da.split(/[ ,]+/).filter(Boolean).map(v=>r3(parseFloat(v)*k)).join(' '))});if(typeof touch==='function')touch(o)})}
+function scStrokes(L,k,nt){if(!isFinite(k)||k<=0||Math.abs(k-1)<1e-9)return;L.forEach(o=>{try{const FL=typeof fxList==='function'?fxList(o):[];if(FL.length){FL.forEach(x=>{if(x&&x.t!=='px')['dx','dy','b','r'].forEach(q=>{if(typeof x[q]==='number')x[q]=+(x[q]*k).toFixed(2)});});o.g.dataset.fx=JSON.stringify(FL);if(typeof fxUpd==='function')fxUpd(o)}}catch(_){}fillables(o).forEach(e=>{const c=e.getAttribute('stroke');if(!c||c==='none')return;const w=parseFloat(e.getAttribute('stroke-width'));if(w>0)e.setAttribute('stroke-width',r3(w*k));const da=e.getAttribute('stroke-dasharray');if(da&&da!=='none')e.setAttribute('stroke-dasharray',da.split(/[ ,]+/).filter(Boolean).map(v=>r3(parseFloat(v)*k)).join(' '))});if(!nt&&typeof touch==='function')touch(o)})}
 /* last transform of any kind, as a linear part about a fixed point (absolute, or relative to the selection box) or an absolute matrix */
 function xfRec(A,org,copy,ss){if(!A)return;LASTXF={L:[A[0],A[1],A[2],A[3]],abs:org&&org.abs?[org.abs[0],org.abs[1]]:null,rel:org&&org.rel?org.rel:null,A:org&&org.A?A.slice():null,copy:!!copy,ss:!!ss}}
 function xfAgainMat(X){if(X.A)return X.A;const u=uni([...sel]),O=X.abs||[u.x+u.w*X.rel[0],u.y+u.h*X.rel[1]],[a,b,c,d]=X.L;return[a,b,c,d,O[0]-(a*O[0]+c*O[1]),O[1]-(b*O[0]+d*O[1])]}
@@ -3176,6 +3184,7 @@ addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='
   if(h){e.preventDefault();e.stopImmediatePropagation()}},true);
 /* ---------- Lock / Hide (Object menu) ---------- */
 (()=>{const t=document.createElement('style');t.textContent='#layer > g[data-lock],#layer > g[data-iso]{pointer-events:none}#isob{position:fixed;display:none;align-items:center;gap:8px;height:24px;padding:0 10px;background:#d6d6d6;color:#1e1e1e;font:12px/24px Inter,Arial,sans-serif;z-index:5;border-bottom:1px solid #b9b9b9;cursor:default}#isob button{border:0;background:none;font:14px Inter,Arial;cursor:pointer;padding:0 4px}';document.head.appendChild(t)})();
+window.lockSelNow=()=>lockSel();window.unlockAllNow=()=>unlockAll();
 function lockSel(){const L=[...sel];if(!L.length){if(window.lyLockLayers&&window.lyLockLayers())return;return}L.forEach(o=>o.g.dataset.lock='1');sel=new Set();dsSel=new Set();commit();draw()}
 function unlockAll(){const lk=window.lyUnlockLayers?window.lyUnlockLayers():false;const L=objs.filter(o=>o.g.dataset.lock);if(!L.length){if(lk){commit();draw()}return}L.forEach(o=>delete o.g.dataset.lock);sel=new Set(L.filter(pick));commit();draw()}
 function hideSel(){const L=[...sel];if(!L.length)return;L.forEach(o=>o.g.style.display='none');sel=new Set();dsSel=new Set();commit();draw()}
@@ -3203,7 +3212,7 @@ const ISOH=[];
 function isoSync(){const r=ISOH.find(x=>hi>=x.a&&hi<=x.b);if(r){if(ISO&&ISO.out===r.out)return;if(ISO)isoClear();ISO={out:r.out,h0:r.a-1,fromH:1,clip:r.clip};r.out.forEach(o=>{o.g.dataset.iso='1';o.g.style.opacity='.35'});isoBar(true)}else if(ISO&&(hi<=ISO.h0||ISO.fromH))isoClear()}
 addEventListener('resize',()=>{if(ISO)isoBar(true)});
 addEventListener('keydown',e=>{const tg=e.target.tagName;if(ted_s||tg==='TEXTAREA')return;/* Ctrl+2 / Ctrl+3 never type a character: they work from number fields and panels too */
-  if((e.ctrlKey||e.metaKey)&&e.code==='Digit2'){e.preventDefault();e.stopImmediatePropagation();if(tg==='INPUT'||tg==='SELECT')e.target.blur();e.altKey?unlockAll():lockSel();return}
+  if((e.ctrlKey||e.metaKey)&&(e.code==='Digit2'||e.code==='Numpad2')){e.preventDefault();e.stopImmediatePropagation();if(tg==='INPUT'||tg==='SELECT')e.target.blur();e.altKey?unlockAll():lockSel();return}
   if((e.ctrlKey||e.metaKey)&&e.code==='Digit3'){e.preventDefault();e.stopImmediatePropagation();if(tg==='INPUT'||tg==='SELECT')e.target.blur();e.altKey?showAll():hideSel();return}
   if(tg==='INPUT'||tg==='SELECT')return;
   if(e.key==='Escape'&&ISO&&!st&&!TLOAD&&!pen&&!curv&&$('#dlg').style.display==='none'){e.preventDefault();e.stopImmediatePropagation();isoExit()}},true);
@@ -4562,7 +4571,7 @@ function rscaleMove(e,p){
   if(e.shiftKey){if(fx===.5)kx=ky;else if(fy===.5)ky=kx;else{const m=Math.max(Math.abs(kx),Math.abs(ky));kx=Math.sign(kx||1)*m;ky=Math.sign(ky||1)*m}}
   if(Math.abs(kx)<.01)kx=kx<0?-.01:.01;if(Math.abs(ky)<.01)ky=ky<0?-.01:.01;
   const A=mulAff(rotAff(B.a,0,0),mulAff(sclAff(kx,ky,ax,ay),rotAff(-B.a,0,0)));
-  xfRestore(st.snap);st.o.forEach(o=>bakeAffine(o,A));st.lastA=A;draw()}
+  xfRestore(st.snap);st.o.forEach(o=>bakeAffine(o,A));if(ssOnG())scStrokes(st.o,ssK(A));st.lastA=A;draw()}
 
 cv.addEventListener('pointerdown',e=>{
   if(e.button!==0||pinch)return;cv.setPointerCapture(e.pointerId);
@@ -4720,7 +4729,7 @@ cv.addEventListener('pointermove',e=>{
     let kx=fx===.5||Math.abs(hx-ax)<1e-6?1:(p.x-ax)/(hx-ax),ky=fy===.5||Math.abs(hy-ay)<1e-6?1:(p.y-ay)/(hy-ay);
     if(e.shiftKey){if(fx===.5)kx=ky;else if(fy===.5)ky=kx;else{const m=Math.max(Math.abs(kx),Math.abs(ky));kx=Math.sign(kx||1)*m;ky=Math.sign(ky||1)*m}}
     if(Math.abs(kx)<.01)kx=kx<0?-.01:.01;if(Math.abs(ky)<.01)ky=ky<0?-.01:.01;
-    st.k={kx,ky,rx:al?.5:1-fx,ry:al?.5:1-fy};st.orig.forEach(a=>setW(a.o,ax+(a.x-ax)*kx,ay+(a.y-ay)*ky,a.w*kx,a.h*ky));st.orig.forEach(a=>areaLive(a.o));draw();
+    st.k={kx,ky,rx:al?.5:1-fx,ry:al?.5:1-fy};st.orig.forEach(a=>{setW(a.o,ax+(a.x-ax)*kx,ay+(a.y-ay)*ky,a.w*kx,a.h*ky);ssComp(a.o)});st.orig.forEach(a=>areaLive(a.o));draw();
   }else if(st.mode==='marq'){
     const x=Math.min(p.x,st.p.x),y=Math.min(p.y,st.p.y),w=Math.abs(dx),h=Math.abs(dy);
     mq.setAttribute('display','');mq.setAttribute('x',x);mq.setAttribute('y',y);mq.setAttribute('width',w);mq.setAttribute('height',h);mq.setAttribute('stroke-width',1/z);
@@ -4829,7 +4838,7 @@ function setBox(){
   const nx=parseFloat(F.x.value),ny=parseFloat(F.y.value),nw=parseFloat(F.w.value),nh=parseFloat(F.h.value);
   if([nx,ny,nw,nh].some(isNaN)||nw<.1||nh<.1){draw();return}
   const kx=u.w?nw/u.w:1,ky=u.h?nh/u.h:1,ox=nx-REF[0]*nw,oy=ny-REF[1]*nh;/* X / Y are the reference point's coordinates: the top-left follows from it */
-  L.forEach(o=>{const r=wbox(o);setW(o,ox+(r.x-u.x)*kx,oy+(r.y-u.y)*ky,r.w*kx,r.h*ky)});commit();draw();
+  L.forEach(o=>{const r=wbox(o);setW(o,ox+(r.x-u.x)*kx,oy+(r.y-u.y)*ky,r.w*kx,r.h*ky);ssComp(o)});commit();draw();
 }
 for(const k in F)F[k].addEventListener('change',setBox);
 
@@ -7676,6 +7685,7 @@ function lyMenuList(){const l=lyBy(LAYACT)||LAYERS[0],cg=[...sel].some(o=>clipMG
    [LAYERS.some(q=>q.vis)?'Hide All Layers':'Show All Layers',()=>{const h=LAYERS.some(q=>q.vis);LAYERS.forEach(q=>q.vis=!h);lyApply();sel=new Set([...sel].filter(pick));commitAll()},true],
    [LAYERS.every(q=>q.prv===false)?'Preview All Layers':'Outline All Layers',()=>{const h=LAYERS.every(q=>q.prv===false);LAYERS.forEach(q=>q.prv=h?true:false);lyApply();commitAll()},true],
    [LAYERS.filter(q=>!lyTargetLayers().includes(q)).every(q=>q.prv===false)&&LAYERS.length>1?'Preview Others':'Outline Others',()=>{const T=lyTargetLayers(),oth=LAYERS.filter(q=>!T.includes(q)),h=oth.every(q=>q.prv===false);oth.forEach(q=>q.prv=h?true:false);lyApply();commitAll()},LAYERS.length>1],
+   ['Lock Selection (Ctrl+2)',()=>{if(window.lockSelNow)window.lockSelNow()},S||LYSEL.size>0],['Unlock All (Ctrl+Alt+2)',()=>{if(window.unlockAllNow)window.unlockAllNow()},true],0,
    [LAYERS.every(q=>q.lock)?'Unlock All Layers':'Lock All Layers',()=>{const h=LAYERS.every(q=>q.lock);LAYERS.forEach(q=>q.lock=!h);lyApply();sel=new Set([...sel].filter(pick));commitAll()},true],
    [LAYERS.filter(q=>!lyTargetLayers().includes(q)).every(q=>!q.vis)&&LAYERS.length>1?'Show Others':'Hide Others',()=>{const T=lyTargetLayers(),oth=LAYERS.filter(q=>!T.includes(q)),h=oth.every(q=>!q.vis);oth.forEach(q=>q.vis=h);lyApply();sel=new Set([...sel].filter(pick));commitAll()},LAYERS.length>1],
    [LAYERS.filter(q=>!lyTargetLayers().includes(q)).every(q=>q.lock)&&LAYERS.length>1?'Unlock Others':'Lock Others',()=>{const T=lyTargetLayers(),oth=LAYERS.filter(q=>!T.includes(q)),h=oth.every(q=>q.lock);oth.forEach(q=>{q.lock=!h;if(h)q.tpl=false});lyApply();sel=new Set([...sel].filter(pick));commitAll()},LAYERS.length>1],0,
@@ -8130,6 +8140,7 @@ P.innerHTML='<div id="prNone"><div class="pt" style="margin-top:0">Document</div
  '<button type="button" class="pb" id="prLk" title="Constrain Width and Height Proportions">'+CHAIN+'</button>'+
  '<label class="prf" style="grid-area:r" title="Rotate"><b>'+ROTI+'</b>'+unitIn('prr','&deg;','1')+'</label><label class="prf" style="grid-area:s" title="Shear"><b>'+SHI+'</b>'+unitIn('prsh','&deg;','1')+'</label>'+
  '<button type="button" class="pb" id="prFlH" title="Flip Horizontal">'+FLH+'</button><button type="button" class="pb" id="prFlV" title="Flip Vertical">'+FLV+'</button></div>'+
+ '<label class="prss" title="Strokes and live effects are scaled with the artwork (Preferences › General)"><input id="prss" type="checkbox"> Scale Strokes &amp; Effects</label>'+
  '<div class="pt">Appearance</div>'+
  '<div class="pap"><i class="pai" id="prFi"></i><span class="pal">Fill</span><button type="button" class="pb prchip" id="prF" title="Fill"></button></div>'+
  '<div class="pap"><i class="pai" id="prSi"></i><span class="pal">Stroke</span><button type="button" class="pb prchip" id="prS" title="Stroke"></button>'+unitIn('prsw','px','0.5','0')+'</div>'+
@@ -8144,7 +8155,7 @@ let LINK=false;
 const T=()=>[...sel].filter(o=>o.g.isConnected);
 const setv=(id,v)=>{const e=$p(id);if(document.activeElement!==e)e.value=v};
 function prPieSync(L){const w=$p('#prPie'),o=L.length===1?L[0]:null,Q=o?ellP(o):null;w.style.display=Q?'block':'none';if(!Q)return;const sd=((Q.s%360)+360)%360,ed=((Q.e%360)+360)%360;setv('#prps',+sd.toFixed(2));setv('#prpe',+(pieFull(Q)?sd:ed).toFixed(2))}
-function refresh(){if(P.style.display==='none')return;const L=T();vis('#prNone',!L.length);vis('#prSel',!!L.length);
+function refresh(){if(P.style.display==='none')return;const L=T();vis('#prNone',!L.length);{const q=$p('#prss');if(q)q.checked=!(window.MGEN&&window.MGEN.ss===false)}vis('#prSel',!!L.length);
   if(!L.length){const gr=GRIDG.getAttribute('display')!=='none';[['pdR',RLON],['pdG',gr],['pdSG',SNAPG],['pdSP',SNAPP],['pdSm',SGON],['pdGV',GDVIS],['pdGL',GDLOCK]].forEach(([i,v])=>$p('#'+i).classList.toggle('on',!!v));return}
   $p('#prType').textContent=$('#ctl').textContent;prPieSync(L);const u=uni(L);setv('#prx',+(u.x+REF[0]*u.w).toFixed(2));setv('#pry',+(u.y+REF[1]*u.h).toFixed(2));setv('#prw',+(+u.w).toFixed(2));setv('#prh',+(+u.h).toFixed(2));
   setv('#prr',(Math.round(-rotOf(L[0])*180/Math.PI*100)/100)||0);
@@ -8165,6 +8176,7 @@ function box(chg){const L=T();if(!L.length)return;const u=uni(L);let x=parseFloa
   F.x.value=x;F.y.value=y;F.w.value=w;F.h.value=h;setBox();refresh()}
 ['x','y','w','h'].forEach(k=>$p('#pr'+k).addEventListener('change',()=>box(k)));
 $p('#prLk').addEventListener('click',()=>{LINK=!LINK;$p('#prLk').classList.toggle('on',LINK)});
+$p('#prss').addEventListener('change',()=>{const g={...(window.MGEN||{}),ss:$p('#prss').checked};if(window.gsaveGen)window.gsaveGen(g);else window.MGEN=g});
 $p('#prr').addEventListener('change',()=>{const L=T();if(!L.length)return;const nv=parseFloat($p('#prr').value);if(isNaN(nv))return;const cur=-rotOf(L[0])*180/Math.PI,d=(nv-cur)*Math.PI/180;if(Math.abs(d)<1e-9)return;
   const u=uni(L);xfSel(rotAff(-d,u.x+REF[0]*u.w,u.y+REF[1]*u.h),false);refresh()});
 $p('#prwp').addEventListener('change',()=>{const v=$p('#prwp').value;if(v==='__c')return;const sp=document.getElementById('stPf');if(!sp)return;sp.value=v;sp.dispatchEvent(new Event('change',{bubbles:true}));refresh()});
@@ -8826,9 +8838,9 @@ const get=()=>{let p=null;try{p=JSON.parse(localStorage.getItem(KEY)||'null')}ca
 const apply=p=>{R.setAttribute('data-theme',p.b);if(p.c==='white')R.setAttribute('data-canvas','white');else R.removeAttribute('data-canvas');try{window.view&&window.view()}catch(_){}};
 const save=p=>{try{localStorage.setItem(KEY,JSON.stringify(p))}catch(_){}};
 window.uiPrefs={get,apply,save};
-const GK='masar.gen.v1',GD={kbi:1,tips:true};
-const gload=()=>{let p=null;try{p=JSON.parse(localStorage.getItem(GK)||'null')}catch(_){}const k=p&&+p.kbi>0?+p.kbi:1;return{kbi:k,tips:!(p&&p.tips===false)}};
-window.MGEN=gload();const gsave=g=>{window.MGEN=g;try{localStorage.setItem(GK,JSON.stringify(g))}catch(_){}};
+const GK='masar.gen.v1',GD={kbi:1,tips:true,ss:true};
+const gload=()=>{let p=null;try{p=JSON.parse(localStorage.getItem(GK)||'null')}catch(_){}const k=p&&+p.kbi>0?+p.kbi:1;return{kbi:k,tips:!(p&&p.tips===false),ss:!(p&&p.ss===false)}};
+window.MGEN=gload();const gsave=g=>{window.MGEN=g;try{localStorage.setItem(GK,JSON.stringify(g))}catch(_){}};window.gsaveGen=gsave;
 apply(get());
 const st=document.createElement('style');st.textContent=`
 #prefd{position:fixed;inset:0;z-index:9300;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center}
@@ -8863,10 +8875,11 @@ window.prefOpen=(page)=>{if(open)return;open=true;if(window.mbClose)try{window.m
       rr.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{cur.b=b.dataset.b;apply(cur);draw()});
       rr.querySelectorAll('input[name=pcv]').forEach(i=>i.onchange=()=>{cur.c=i.value;apply(cur)})}
     else{rr.innerHTML='<h4>General</h4><label class="rd" style="gap:8px"><span style="width:150px">Keyboard Increment:</span><input id="pgkb" type="number" min="0.001" step="0.1" style="width:70px" value="'+(gcur.kbi)+'"> px</label><p style="margin:2px 0 10px;color:var(--mute)">Arrow keys move by this distance; Shift+arrow moves 10 times as far.</p><label class="rd"><input id="pgtip" type="checkbox"'+(gcur.tips?' checked':'')+'> Show Tool Tips</label><p style="margin:12px 0;color:var(--mute)">Interface appearance is under User Interface. Preferences are stored in this browser.</p><button type="button" class="rst" id="prst">Reset Preferences</button>';
+      rr.insertAdjacentHTML('beforeend','<label class="rd" style="margin-top:8px"><input id="pgss" type="checkbox"'+(gcur.ss!==false?' checked':'')+'> Scale Strokes &amp; Effects</label><p style="margin:2px 0 8px;color:var(--mute)">When you scale artwork its stroke weights and live effects are scaled with it.</p>');rr.querySelector('#pgss').onchange=e=>{gcur.ss=e.target.checked};
       rr.querySelector('#pgkb').oninput=e=>{const v=parseFloat(e.target.value);if(v>0)gcur.kbi=v};rr.querySelector('#pgtip').onchange=e=>{gcur.tips=e.target.checked};
       rr.querySelector('#prst').onclick=()=>{cur={b:'dark',c:'match'};gcur={...GD};apply(cur);pg='ui';draw()}}};
   const close=()=>{open=false;bg.remove();removeEventListener('keydown',kd,true)};
-  const cancel=()=>{apply(init);close()},ok=()=>{save(cur);gsave({kbi:gcur.kbi>0?gcur.kbi:1,tips:gcur.tips!==false});apply(cur);close()};
+  const cancel=()=>{apply(init);close()},ok=()=>{save(cur);gsave({kbi:gcur.kbi>0?gcur.kbi:1,tips:gcur.tips!==false,ss:gcur.ss!==false});apply(cur);close()};
   const kd=e=>{if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();cancel()}else if(e.key==='Enter'&&!(e.target&&e.target.tagName==='BUTTON'&&e.target.dataset.b)){e.preventDefault();e.stopImmediatePropagation();ok()}};
   bg.querySelectorAll('.pl button').forEach(b=>b.onclick=()=>{pg=b.dataset.p;draw()});
   bg.querySelector('#pcn').onclick=cancel;bg.querySelector('#pok').onclick=ok;

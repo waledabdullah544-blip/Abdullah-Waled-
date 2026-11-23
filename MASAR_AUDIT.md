@@ -278,3 +278,8 @@
 - **Swatch Libraries**: Pastel, Earthtones, Neon, Grayscale, Skintones, Vintage, Metals — كليك يطبّق ويضيف للـSwatches.
 - Alt+click يطبّق على الخاصية التانية. الـpop-up بتاع Fill/Stroke بيستخدم نفس القايمة، والحفظ في localStorage.
 - لسه ناقص: Gradient/Pattern swatches، حفظ/فتح مكتبة ملف (ASE)، سحب سواتش على أوبجكت في الكانفس. tests/sw.js (29 فحص).
+
+## 5-خ) Build 211 — السكيل بيبوّظ الرسمة
+- **السبب:** سحب مقابض الـbounding box كان بيكبّر الأوبجكت بـtransform (الـstroke بيتكبّر معاه بصريًا)، وعند الإفلات الشكل بيتخبّز في الـpath لكن الـstroke-width بيرجع للقيمة الأصلية → الرسمة تتحوّل لسمك زايد (blob) وقت الإفلات.
+- **الإصلاح:** إعداد **Scale Strokes & Effects** (Edit › Preferences › General + خانة في Properties › Transform + بيحدد الافتراضي في ديالوج Scale). ON (الافتراضي): الـstroke وأحجام الـeffects (Shadow/Glow/Blur) بتتكبّر مع الرسمة. OFF: الـstroke يفضل بنفس السمك أثناء السحب وبعد الإفلات (بدون قفزة). شغّال في: مقابض الـSelection، حقول W/H، Free Transform، Scale/Rotate drag، Transform Each/Again. tests/ss.js
+- اختصارات القفل: Numpad2 كمان، وعناصر Lock Selection / Unlock All في قايمة Layers.
