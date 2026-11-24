@@ -368,3 +368,9 @@
 - `display:none` used during editing is never left in history snapshots (tested). Save/Load keeps base mask + dc.
 - Tests: rb4.js (real mouse strokes, undo/redo, sliders, Enter), rb5.js (before/after fringe crop).
 - Limit: colour-fringe estimation is a simplified foreground estimate, not Photoshop's exact algorithm.
+
+## 5-ؿ build 224 — Remove Background, phase 4 (mask → vector, Auto Die-Cut)
+- Mask to Path…: marching squares (sub-pixel interpolation, saddle handling) → loops → Douglas-Peucker simplify → Catmull-Rom cubic Beziers with sharp-corner detection; compound path (evenodd) with holes; sliders Threshold / Smoothness / Simplify / Ignore specks; live preview object; option to also make a real clipping mask from a COPY of the original image (uses the existing Clipping Mask command, one Undo step).
+- Auto Die-Cut Outline…: exact Euclidean distance transform → offset field → contour (round, sub-pixel), optional hole filling (single outer cut line), white sticker fill, magenta cut-line stroke, created BELOW the image; offset adjustable live.
+- Access: context bar (Mask to Path / Die-Cut) and Object menu. Results are normal paths, editable with Pen / Direct Selection and Offset Path.
+- Tests: rb6.js (bbox, holes, undo/redo, clip option, cancel), perf: 1400² mask traced in ~0.2 s, die-cut in ~0.45 s.

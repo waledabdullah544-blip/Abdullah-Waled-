@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 223</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 224</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8357,7 +8357,7 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Clipping Mask',sub:()=>[{t:'Make',k:'Ctrl+7',f:clipMake,en:S},{t:'Release',k:'Ctrl+Alt+7',f:clipRelease,en:S}]},
     {t:'Compound Path',sub:()=>[{t:'Make',k:'Ctrl+8',f:makeCompound,en:S},{t:'Release',k:'Ctrl+Alt+8',f:releaseCompound,en:S}]},
     {t:'Artboards',sub:()=>[{t:'Convert to Artboards',f:()=>window.abConvert(),en:S},{t:'Rearrange All Artboards…',f:()=>window.abRearrange()},sep,{t:'Fit to Artwork Bounds',f:()=>window.abFitTo(window.abBounds(objs)),en:()=>objs.length>0},{t:'Fit to Selected Art',f:()=>window.abFitTo(window.abBounds([...sel])),en:S}]},
-    {t:'Remove Background…',f:()=>window.rbOpen(),en:S},{t:'Collect for Export',sub:()=>[{t:'As Single Asset',f:()=>window.axCollect(true),en:S},{t:'As Multiple Assets',f:()=>window.axCollect(false),en:S}]},
+    {t:'Remove Background…',f:()=>window.rbOpen(),en:S},{t:'Mask to Path…',f:()=>window.rbToPath(),en:()=>sel.size===1&&window.RBMASK&&RBMASK.masked([...sel][0])},{t:'Die-Cut Outline…',f:()=>window.rbDieCut(),en:()=>sel.size===1&&window.RBMASK&&RBMASK.masked([...sel][0])},{t:'Collect for Export',sub:()=>[{t:'As Single Asset',f:()=>window.axCollect(true),en:S},{t:'As Multiple Assets',f:()=>window.axCollect(false),en:S}]},
     {t:'Blend',sub:()=>{const B=()=>[...sel].some(o=>window.bnHas&&bnHas(o.g));return[{t:'Make',k:'Ctrl+Alt+B',f:()=>window.blendMake(),en:()=>sel.size>1},{t:'Release',k:'Ctrl+Alt+Shift+B',f:()=>window.blendRelease(),en:B},sep,{t:'Blend Options…',f:()=>window.blendOptions(),en:()=>true},{t:'Expand',f:()=>window.blendExpand(),en:B},sep,{t:'Replace Spine',f:()=>window.blendReplaceSpine(),en:()=>sel.size===2&&B()},{t:'Reverse Spine',f:()=>window.blendReverseSpine(),en:B},{t:'Reverse Front to Back',f:()=>window.blendReverseFB(),en:B}]}},sep,
     {t:'Expand…',f:()=>window.openExpand(),en:S},{t:'Expand Appearance',f:()=>window.pxExpand(),en:()=>[...sel].some(o=>o.g.dataset&&o.g.dataset.pxon&&fxList(o).some(e=>e.t==='px'))},{t:'Make Pixel Perfect',f:()=>window.pathPixel(),en:S},{t:'Create Trim Marks',f:()=>window.createTrimMarks()},sep,{t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
    ['Type',()=>[
@@ -10195,7 +10195,7 @@ function rbApplyMatte(o,im,url){const A=a=>im.getAttribute(a);
 const mdlKey=()=>{try{const v=localStorage.getItem('masar.rbmodel');if(MODELS.some(m=>m.id===v))return v}catch(_){}return'fast'};
 /* ---- contextual action bar (shown when exactly one image is selected) ---- */
 const BAR=document.createElement('div');BAR.id='rbctx';BAR.style.display='none';document.body.appendChild(BAR);
-BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbed" title="Edit the mask: brush, edge, colour fringe">Edit Mask</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i>';
+BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbed" title="Edit the mask: brush, edge, colour fringe">Edit Mask</button><button type="button" class="rbpt" title="Trace the mask into an editable vector path (Pen / Direct Selection)">Mask to Path</button><button type="button" class="rbdc" title="Create a cut line (offset outline) around the subject for stickers and print">Die-Cut</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i>';
 {const st=document.createElement('style');st.textContent='#rbctx{position:fixed;z-index:40;display:flex;align-items:center;gap:6px;padding:4px 6px;background:var(--panel,#2b2b2b);border:1px solid var(--line,#444);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.4);font:12px "Segoe UI",Cairo,sans-serif;color:var(--fg,#ddd);white-space:nowrap}#rbctx button{font:inherit;padding:3px 10px;border-radius:4px;border:1px solid var(--line,#555);background:var(--field,#3a3a3a);color:inherit;cursor:pointer}#rbctx button:hover:not(:disabled){background:var(--hover,#4a4a4a)}#rbctx button:active:not(:disabled){background:var(--press,#555)}#rbctx button:disabled{opacity:.5;cursor:default}#rbctx select{font:inherit;max-width:230px;background:var(--field,#3a3a3a);color:inherit;border:1px solid var(--line,#555);border-radius:4px;padding:2px}#rbctx .rbst{opacity:.85;max-width:260px;overflow:hidden;text-overflow:ellipsis}#rbctx .rbpg{display:none;width:60px;height:4px;background:var(--line,#555);border-radius:2px;overflow:hidden}#rbctx .rbpg b{display:block;height:100%;width:0;background:#9a9a9a}#rbov{position:fixed;z-index:39;pointer-events:none;display:none;border:1px dashed #aaa;background:rgba(0,0,0,.18);color:#fff;font:12px "Segoe UI",Cairo,sans-serif;align-items:center;justify-content:center;text-shadow:0 1px 3px #000}';document.head.appendChild(st)}
 const OV=document.createElement('div');OV.id='rbov';document.body.appendChild(OV);
 const $b=s=>BAR.querySelector(s);let JOB=null;
@@ -10203,7 +10203,7 @@ $b('.rbmd').value=mdlKey();$b('.rbmd').addEventListener('change',()=>{try{localS
 function rbPos(){const L=[...sel],o=L.length===1?L[0]:null,mk=!!o&&!!window.RBMASK&&RBMASK.masked(o),show=!!o&&objs.includes(o)&&(!!rbTarget(o)||mk||(JOB&&JOB.o===o));
   if(!show||typeof ted_s!=='undefined'&&ted_s){BAR.style.display='none';OV.style.display='none';return}
   const r=cv.getBoundingClientRect(),b=wbox(o),x0=r.left+b.x*z+px,y0=r.top+b.y*z+py,w=b.w*z,h=b.h*z;
-  BAR.style.display='flex';{const P=mk&&RBMASK.parts(o.g),off=P&&P.mk.getAttribute('data-rbon')==='0';$b('.rbgo').style.display=mk?'none':'';$b('.rbmd').style.display=mk?'none':'';$b('.rbtg').style.display=mk?'':'none';$b('.rbrm').style.display=mk?'':'none';$b('.rbed').style.display=mk?'':'none';if(window.rbEditing&&window.rbEditing())BAR.style.display='none';$b('.rbtg').textContent=off?'Mask: Off':'Mask: On'}const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
+  BAR.style.display='flex';{const P=mk&&RBMASK.parts(o.g),off=P&&P.mk.getAttribute('data-rbon')==='0';$b('.rbgo').style.display=mk?'none':'';$b('.rbmd').style.display=mk?'none':'';$b('.rbtg').style.display=mk?'':'none';$b('.rbrm').style.display=mk?'':'none';$b('.rbed').style.display=mk?'':'none';$b('.rbpt').style.display=mk?'':'none';$b('.rbdc').style.display=mk?'':'none';if(window.rbEditing&&window.rbEditing())BAR.style.display='none';$b('.rbtg').textContent=off?'Mask: Off':'Mask: On'}const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
   BAR.style.left=Math.max(r.left+4,Math.min(r.right-bw-4,x))+'px';BAR.style.top=y+'px';
   if(JOB&&JOB.o===o){OV.style.display='flex';OV.style.left=x0+'px';OV.style.top=y0+'px';OV.style.width=w+'px';OV.style.height=h+'px'}else OV.style.display='none'}
 function rbUi(t,f){$b('.rbst').textContent=t||'';const p=$b('.rbpg');if(f==null){p.style.display='none'}else{p.style.display='block';p.firstChild.style.width=(f*100).toFixed(0)+'%'}OV.textContent=t||''}
@@ -10220,7 +10220,7 @@ async function rbStart(){if(RB.busy)return;const L=[...sel];if(L.length!==1||!rb
     JOB=null;await RBMASK.make(o,im,c);if(!o.nm)o.nm='Background removed';commit();draw();say('Background removed: non-destructive mask, the original image is untouched. Undo with Ctrl+Z.')}
   catch(e){say('Remove Background: '+(e.message||e));try{aiAlert(String(e.message||e))}catch(_){}}
   finally{RB.busy=false;JOB=null;$b('.rbgo').disabled=false;$b('.rbmd').disabled=false;rbUi('',null);rbPos()}}
-$b('.rbgo').addEventListener('click',rbStart);$b('.rbed').addEventListener('click',()=>{const o=[...sel][0];if(o&&window.rbEditStart)window.rbEditStart(o)});
+$b('.rbgo').addEventListener('click',rbStart);$b('.rbpt').addEventListener('click',()=>window.rbToPath());$b('.rbdc').addEventListener('click',()=>window.rbDieCut());$b('.rbed').addEventListener('click',()=>{const o=[...sel][0];if(o&&window.rbEditStart)window.rbEditStart(o)});
 $b('.rbtg').addEventListener('click',()=>{const o=[...sel][0];if(o)RBMASK.toggle(o)});$b('.rbrm').addEventListener('click',()=>{const o=[...sel][0];if(o&&RBMASK.remove(o))say('Mask removed: original image restored.')});window.rbBar=()=>{try{rbPos()}catch(_){}};
 window.rbOpen=rbStart;window.rbRun=rbRun;window.rbTarget=rbTarget;window.RBAI=RB;
 })();
@@ -10385,6 +10385,85 @@ addEventListener('keydown',e=>{if(!S)return;if(e.code==='Space'){SPACE=true;CAP.
   else if(e.key==='['||e.key===']'){e.preventDefault();e.stopImmediatePropagation();const s=q('size');s.value=Math.max(2,Math.min(400,+s.value*(e.key==='['?.85:1.18)));ED.querySelector('[data-o="size"]').textContent=Math.round(s.value)}},true);
 addEventListener('keyup',e=>{if(e.code==='Space'){SPACE=false;CAP.style.pointerEvents='auto'}},true);
 window.rbEditStart=start;window.rbEditEnd=end;window.rbEditing=()=>!!S;window.RBEDIT={get S(){return S},refineAt,vals};
+})();
+
+
+/* ======================= Mask to vector path + Auto Die-Cut (build 224, phase 4) ======================= */
+(()=>{
+const R=window.RBMASK;
+/* marching squares with sub-pixel interpolation. F(x,y) = field value (x in [-1,w], y in [-1,h] are outside = lo). Returns closed loops of [x,y] grid points. */
+function trace(F,w,h,thr,lo){const V=(x,y)=>x<0||y<0||x>=w||y>=h?lo:F[y*w+x],pts=new Map(),adj=new Map(),W2=w+2;
+  const idH=(x,y)=>((y+1)*W2+(x+1))*2,idV=(x,y)=>((y+1)*W2+(x+1))*2+1;
+  const ptH=(x,y,a,b)=>{const id=idH(x,y);if(!pts.has(id)){const t=b===a?.5:(thr-a)/(b-a);pts.set(id,[x+t,y])}return id};
+  const ptV=(x,y,a,b)=>{const id=idV(x,y);if(!pts.has(id)){const t=b===a?.5:(thr-a)/(b-a);pts.set(id,[x,y+t])}return id};
+  const link=(a,b)=>{(adj.get(a)||adj.set(a,[]).get(a)).push(b);(adj.get(b)||adj.set(b,[]).get(b)).push(a)};
+  for(let y=-1;y<h;y++)for(let x=-1;x<w;x++){const tl=V(x,y),tr=V(x+1,y),br=V(x+1,y+1),bl=V(x,y+1),c=(tl>=thr?8:0)|(tr>=thr?4:0)|(br>=thr?2:0)|(bl>=thr?1:0);if(c===0||c===15)continue;
+    const T=()=>ptH(x,y,tl,tr),B=()=>ptH(x,y+1,bl,br),L=()=>ptV(x,y,tl,bl),Rr=()=>ptV(x+1,y,tr,br),hi=(tl+tr+br+bl)/4>=thr;
+    switch(c){case 1:link(L(),B());break;case 2:link(B(),Rr());break;case 3:link(L(),Rr());break;case 4:link(T(),Rr());break;
+      case 5:if(hi){link(T(),L());link(B(),Rr())}else{link(T(),Rr());link(L(),B())}break;case 6:link(T(),B());break;case 7:link(T(),L());break;case 8:link(T(),L());break;case 9:link(T(),B());break;
+      case 10:if(hi){link(T(),Rr());link(L(),B())}else{link(T(),L());link(B(),Rr())}break;case 11:link(T(),Rr());break;case 12:link(L(),Rr());break;case 13:link(B(),Rr());break;case 14:link(L(),B());break}}
+  const seen=new Set(),loops=[];
+  for(const[s]of adj){if(seen.has(s))continue;const L=[];let cur=s,prev=-1,guard=0;
+    while(!seen.has(cur)&&guard++<5e6){seen.add(cur);L.push(pts.get(cur));const n=adj.get(cur),nx=n[0]!==prev&&!seen.has(n[0])?n[0]:(n[1]!==undefined&&!seen.has(n[1])?n[1]:-1);if(nx<0)break;prev=cur;cur=nx}
+    if(L.length>=3)loops.push(L)}
+  return loops}
+const area=L=>{let a=0;for(let i=0,n=L.length;i<n;i++){const p=L[i],q=L[(i+1)%n];a+=p[0]*q[1]-q[0]*p[1]}return a/2};
+/* Douglas-Peucker on a closed loop */
+function simplify(L,tol){const n=L.length;if(n<8||tol<=0)return L;let far=0,dm=-1;for(let i=1;i<n;i++){const d=(L[i][0]-L[0][0])**2+(L[i][1]-L[0][1])**2;if(d>dm){dm=d;far=i}}
+  const keep=new Uint8Array(n);keep[0]=1;keep[far]=1;const st=[[0,far],[far,n]];const P=i=>L[i%n],t2=tol*tol;
+  while(st.length){const[a,b]=st.pop();if(b-a<2)continue;const A=P(a),B=P(b),dx=B[0]-A[0],dy=B[1]-A[1],ll=dx*dx+dy*dy;let mx=-1,mi=-1;
+    for(let i=a+1;i<b;i++){const p=P(i);let d;if(ll===0)d=(p[0]-A[0])**2+(p[1]-A[1])**2;else{const c=((p[0]-A[0])*dy-(p[1]-A[1])*dx);d=c*c/ll}if(d>mx){mx=d;mi=i}}
+    if(mx>t2){keep[mi%n]=1;st.push([a,mi],[mi,b])}}
+  const o=[];for(let i=0;i<n;i++)if(keep[i])o.push(L[i]);return o.length>=3?o:L}
+/* closed loop -> smooth cubic Bezier path (Catmull-Rom), sharp corners kept */
+function toPath(L,sx,sy,ox,oy,smooth){const n=L.length,f=v=>(Math.round(v*100)/100),X=p=>f(ox+(p[0]+.5)*sx),Y=p=>f(oy+(p[1]+.5)*sy);
+  if(n<3)return'';let d='M'+X(L[0])+' '+Y(L[0]);const k=smooth/6,tg=[];
+  for(let i=0;i<n;i++){const p=L[(i+n-1)%n],c=L[i],q=L[(i+1)%n],a1=Math.atan2(c[1]-p[1],c[0]-p[0]),a2=Math.atan2(q[1]-c[1],q[0]-c[0]);let da=Math.abs(a2-a1);if(da>Math.PI)da=2*Math.PI-da;tg.push(da>1.05||smooth===0?[0,0]:[(q[0]-p[0])*k,(q[1]-p[1])*k])}
+  for(let i=0;i<n;i++){const c=L[i],q=L[(i+1)%n],t0=tg[i],t1=tg[(i+1)%n];
+    if(!t0[0]&&!t0[1]&&!t1[0]&&!t1[1])d+='L'+X(q)+' '+Y(q);else d+='C'+f(ox+(c[0]+.5+t0[0])*sx)+' '+f(oy+(c[1]+.5+t0[1])*sy)+' '+f(ox+(q[0]+.5-t1[0])*sx)+' '+f(oy+(q[1]+.5-t1[1])*sy)+' '+X(q)+' '+Y(q)}
+  return d+'Z'}
+/* squared Euclidean distance transform (Felzenszwalb): input g = 0 on sources, INF elsewhere */
+function edt(g,w,h){const INF=1e20,N=Math.max(w,h),f=new Float64Array(N),d=new Float64Array(N),v=new Int32Array(N),z=new Float64Array(N+1);
+  const pass=(n,get,set)=>{for(let i=0;i<n;i++)f[i]=get(i);let k=0;v[0]=0;z[0]=-INF;z[1]=INF;for(let q=1;q<n;q++){let s;for(;;){const p=v[k];s=((f[q]+q*q)-(f[p]+p*p))/(2*q-2*p);if(s<=z[k]&&k>0)k--;else break}k++;v[k]=q;z[k]=s;z[k+1]=INF}k=0;for(let q=0;q<n;q++){while(z[k+1]<q)k++;const p=v[k];d[q]=(q-p)*(q-p)+f[p];set(q,d[q])}};
+  for(let x=0;x<w;x++)pass(h,y=>g[y*w+x],(y,val)=>{g[y*w+x]=val});for(let y=0;y<h;y++)pass(w,x=>g[y*w+x],(x,val)=>{g[y*w+x]=val});return g}
+/* alpha of the current mask at working resolution */
+async function alphaOf(o,maxSide){const P=R.parts(o.g);if(!P)return null;const m=await R.maskImg(P.mk.getAttribute('data-rbm')),k=Math.min(1,maxSide/Math.max(m.naturalWidth,m.naturalHeight)),w=Math.max(2,Math.round(m.naturalWidth*k)),h=Math.max(2,Math.round(m.naturalHeight*k)),c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d',{willReadFrequently:true});x.imageSmoothingQuality='high';x.drawImage(m,0,0,w,h);
+  const d=x.getImageData(0,0,w,h).data,a=new Float32Array(w*h);for(let i=0;i<a.length;i++)a[i]=(d[i*4]*.2126+d[i*4+1]*.7152+d[i*4+2]*.0722)*d[i*4+3]/65025;
+  return{a,w,h,gx:+P.out.getAttribute('x'),gy:+P.out.getAttribute('y'),gw:+P.out.getAttribute('width'),gh:+P.out.getAttribute('height')}}
+const specks=(loops,w,h,pct)=>{const min=w*h*pct/100;return loops.filter(L=>Math.abs(area(L))>=min)};
+function pathFromAlpha(A,o){/* o: {thr,tol,smooth,speck} */return specks(trace(A.a,A.w,A.h,o.thr/100,0),A.w,A.h,o.speck).map(L=>toPath(simplify(L,o.tol),A.gw/A.w,A.gh/A.h,A.gx,A.gy,o.smooth/100*1.0)).filter(Boolean).join(' ')}
+function dieFromAlpha(A,o){const w0=A.w,h0=A.h,d=Math.max(0,o.off)/A.gw*w0,p=Math.ceil(d)+3,w=w0+2*p,h=h0+2*p,INF=1e20,g=new Float64Array(w*h).fill(INF);
+  const fg=new Uint8Array(w*h);for(let y=0;y<h0;y++)for(let x=0;x<w0;x++)if(A.a[y*w0+x]>=o.thr/100)fg[(y+p)*w+x+p]=1;
+  if(o.holes){/* fill holes: background not connected to the border becomes foreground */const out=new Uint8Array(w*h),st=[];for(let x=0;x<w;x++){st.push(x,(h-1)*w+x)}for(let y=0;y<h;y++){st.push(y*w,y*w+w-1)}
+    while(st.length){const i=st.pop();if(out[i]||fg[i])continue;out[i]=1;const x=i%w,y=(i-x)/w;if(x>0)st.push(i-1);if(x<w-1)st.push(i+1);if(y>0)st.push(i-w);if(y<h-1)st.push(i+w)}
+    for(let i=0;i<w*h;i++)if(!out[i])fg[i]=1}
+  for(let i=0;i<w*h;i++)if(fg[i])g[i]=0;edt(g,w,h);const F=new Float32Array(w*h);for(let i=0;i<w*h;i++)F[i]=d-Math.sqrt(g[i]);
+  const loops=specks(trace(F,w,h,0,-1e3),w,h,.02);return loops.map(L=>toPath(simplify(L,o.tol),A.gw/A.w0,A.gh/A.h0,A.gx-p*A.gw/A.w,A.gy-p*A.gh/A.h,o.smooth/100)).filter(Boolean).join(' ')}
+/* ---- add an object to the document ---- */
+function addPath(src,d,attrs,nm,below){const n=add('<path d="'+d+'" '+attrs+'/>');const t=src.g.getAttribute('transform');if(t)n.g.setAttribute('transform',t);n.m=Object.assign({},src.m);n.ly=src.ly;n.nm=nm;try{n.bb=n.g.getBBox()}catch(_){}
+  if(below){objs.pop();objs.splice(Math.max(0,objs.indexOf(src)),0,n);layer.replaceChildren(...objs.map(q=>q.g))}return n}
+const sl=(k,nm,mn,mx,v,st)=>'<label>'+nm+'<span><input type="range" data-k="'+k+'" min="'+mn+'" max="'+mx+'" step="'+(st||1)+'" value="'+v+'" style="width:130px"> <b data-o="'+k+'">'+v+'</b></span></label>';
+let BUSY=false;
+async function dialog(kind){const L=[...sel],o=L.length===1?L[0]:null;if(!o||!R.masked(o)){try{aiAlert('Select one image that has a mask (use Remove Background first).')}catch(_){}return}if(BUSY)return;BUSY=true;
+  let A;try{A=await alphaOf(o,kind==='die'?900:1400)}catch(e){BUSY=false;try{aiAlert(String(e.message||e))}catch(_){}return}
+  A.w0=A.w;A.h0=A.h;let PV=null,tmr=0;const die=kind==='die',im=R.parts(o.g).sr;
+  const body=die?sl('off','Offset (px)',0,200,16)+sl('smooth','Smoothness',0,100,100)+sl('tol','Simplify',0,30,6,1)+'<label class="fxp"><input type="checkbox" data-k="holes" checked> Fill holes (one outer cut line)</label><label class="fxp"><input type="checkbox" data-k="fill" checked> White sticker border (fill)</label><label class="fxp"><input type="checkbox" id="fxpv" checked> Preview</label>'
+    :sl('thr','Threshold %',5,95,50)+sl('smooth','Smoothness',0,100,60)+sl('tol','Simplify',0,30,6,1)+sl('speck','Ignore specks %',0,2,.05,.01)+'<label class="fxp"><input type="checkbox" data-k="clip"> Also make a clipping mask from a copy of the original image</label><label class="fxp"><input type="checkbox" id="fxpv" checked> Preview</label>';
+  const M=dkModal(die?'Auto Die-Cut Outline':'Mask to Vector Path',body,[{t:'Cancel',c:1,f:()=>{clean()}},{t:'OK',p:1,f:b=>{const v=rd(b);if(!PV||!objs.includes(PV))build(v);if(!PV)return false;fin(v);return true}}]);
+  const bx=M.box,Q=k=>bx.querySelector('[data-k="'+k+'"]');
+  const rd=()=>({thr:+(Q('thr')||{value:50}).value,smooth:+Q('smooth').value,tol:(+Q('tol').value)/10,speck:+(Q('speck')||{value:0}).value,off:+(Q('off')||{value:0}).value,holes:!!(Q('holes')&&Q('holes').checked),fill:!!(Q('fill')&&Q('fill').checked),clip:!!(Q('clip')&&Q('clip').checked)});
+  function clean(){if(PV){const i=objs.indexOf(PV);if(i>=0)objs.splice(i,1);PV.g.remove();PV=null;sel=new Set([o]);draw()}BUSY=false}
+  function build(v){const d=die?dieFromAlpha(A,v):pathFromAlpha(A,v);if(!d){if(PV){const i=objs.indexOf(PV);if(i>=0)objs.splice(i,1);PV.g.remove();PV=null}return}
+    if(PV&&objs.includes(PV)){PV.g.querySelector('path').setAttribute('d',d);PV.g.querySelector('path').setAttribute('fill',die&&v.fill?'#ffffff':'none');try{PV.bb=PV.g.getBBox()}catch(_){}}
+    else PV=addPath(o,d,die?'fill="'+(v.fill?'#ffffff':'none')+'" fill-rule="evenodd" stroke="#ff00ff" stroke-width="1"':'fill="none" fill-rule="evenodd" stroke="#000000" stroke-width="1"',die?'Die-cut line':'Mask path',die);
+    sel=new Set([PV]);dsSel=new Set();draw()}
+  function fin(v){const p=PV;PV=null;BUSY=false;if(!die&&v.clip){const n=add(im.outerHTML.replace(/ data-rb[a-z]*="[^"]*"/g,'').replace(/ data-placed="[^"]*"/,''));const t=o.g.getAttribute('transform');if(t)n.g.setAttribute('transform',t);n.m=Object.assign({},o.m);n.ly=o.ly;n.nm='Image (clipped)';objs.pop();objs.splice(objs.indexOf(p),0,n);layer.replaceChildren(...objs.map(q=>q.g));sel=new Set([n,p]);dsSel=new Set();clipMake()}
+    else{sel=new Set([p]);commit()}draw();if(typeof tb5Msg==='function')tb5Msg((die?'Die-cut line':'Vector path')+' created: editable with the Pen / Direct Selection tools')}
+  const go=()=>{clearTimeout(tmr);tmr=setTimeout(()=>{if(bx.isConnected&&(bx.querySelector('#fxpv')||{checked:true}).checked)build(rd())},120)};
+  bx.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.k;if(!k)return;const out=bx.querySelector('[data-o="'+k+'"]');if(out)out.textContent=e.target.value;go()});bx.addEventListener('change',go);
+  const pv=bx.querySelector('#fxpv');if(pv)pv.addEventListener('change',()=>{if(!pv.checked){if(PV){const i=objs.indexOf(PV);if(i>=0)objs.splice(i,1);PV.g.remove();PV=null;sel=new Set([o]);draw()}}else go()});
+  go()}
+window.rbToPath=()=>dialog('path');window.rbDieCut=()=>dialog('die');window.RBVEC={trace,simplify,toPath,edt,alphaOf,pathFromAlpha,dieFromAlpha};
 })();
 
 /*TOOLS-END*/
