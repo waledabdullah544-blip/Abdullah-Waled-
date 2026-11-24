@@ -342,3 +342,9 @@
 16. رسم رقمي بفرش بتحاكي الألوان المائية/الفحم مع حساسية ضغط القلم (Pressure).
 17. Eraser غير مدمّر (بيعمل Layer Mask أوتوماتيك بدل ما يمسح البكسل).
 18. Pattern Stamp لعمل textures.
+
+## 5-غ build 220 — AI Remove Background (RMBG 1.4, in-browser)
+- Object › Remove Background… (also in the object context menu). Runs ONNX Runtime Web (WebGPU, WASM fallback) from jsDelivr; model downloaded once from Hugging Face (Fast 44 MB / Quality 176 MB) and cached (Cache API), or a local .onnx file (RMBG / BiRefNet style).
+- Dialog: live preview (Result / Matte / Overlay) + Smooth edge, Shift edge, Edge contrast, Feather. Apply makes a NON-destructive Opacity Mask (original pixels kept, single Undo step). Opacity-mask maker now accepts `<image>` as the mask.
+- Verified headless (CPU/WASM, ~13 s on 933×1405): giraffe test photo cut cleanly; undo restores. Test: tests/rb.js (needs local copies of ort + model, see script).
+- Not yet: brush to paint/erase the mask, colour decontamination, SAM click-select, LaMa fill.
