@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 221</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 222</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -6913,13 +6913,13 @@ addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='
 function fileDownload(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
 function fileNew(){if(ISO)isoExit();if(!objs.length)return;objs.slice().forEach(o=>o.g.remove());objs=[];sel=new Set();dsSel=new Set();commit();draw();tb5Msg('New document');if(window.dkSaved)dkSaved()}
 function fileSave(){if(ISO)isoExit();
-  const D={masar:1,build:140,ab:[ABW,ABH],arts:ARTS.map(a=>({...a})),abi:ABI,objs:objs.map(o=>{const a={};for(const t of o.g.attributes){if(t.name==='transform')continue;a[t.name]=t.value}return{a,h:o.g.innerHTML,m:{...o.m},ly:o.ly,nm:o.nm,lh:o.lh}}),gd:typeof gdSer==='function'?gdSer():'',lys:typeof lyJSON==='function'?lyJSON():''};
+  const D={masar:1,build:140,ab:[ABW,ABH],arts:ARTS.map(a=>({...a})),abi:ABI,objs:objs.map(o=>{const a={};for(const t of o.g.attributes){if(t.name==='transform')continue;a[t.name]=t.value}return{a,h:(window.rbPack?window.rbPack(o):o.g.innerHTML),m:{...o.m},ly:o.ly,nm:o.nm,lh:o.lh}}),gd:typeof gdSer==='function'?gdSer():'',lys:typeof lyJSON==='function'?lyJSON():''};
   fileDownload(new Blob([JSON.stringify(D)],{type:'application/json'}),'masar-artwork.masar');if(window.dkSaved)dkSaved();tb5Msg('Saved masar-artwork.masar')}
 function fileLoadMasar(D){if(ISO)isoExit();if(Array.isArray(D.arts)&&D.arts.length){ARTS=D.arts.map(a=>({...a}));ABN=Math.max(...ARTS.map(a=>+a.id||0),ARTS.length);ABI=Math.min(Math.max(+D.abi||0,0),ARTS.length-1);abSync();abRender();fit()}else if(D.ab&&D.ab.length===2){ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:+D.ab[0]||800,h:+D.ab[1]||600}];ABI=0;ABN=1;abSync();abRender();fit()}else if(ABW!==800||ABH!==600||ARTS.length!==1){ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:800,h:600}];ABI=0;ABN=1;abSync();abRender();fit()}objs.slice().forEach(o=>o.g.remove());objs=[];sel=new Set();dsSel=new Set();if(D.lys&&window.lyLoad)lyLoad(D.lys);else if(window.lyReset)lyReset();
   D.objs.forEach(r=>{const g=el('g',{});for(const k in r.a)g.setAttribute(k,r.a[k]);g.innerHTML=r.h;layer.appendChild(g);const o={g,bb:null,m:{sx:1,sy:1,tx:0,ty:0,...r.m},ly:r.ly,nm:r.nm,lh:r.lh};g.__o=o;o.bb=BBX(o);apply(o);objs.push(o)});
-  if(typeof gdRestore==='function'&&D.gd)gdRestore(D.gd);commit();draw();if(window.dkSaved)dkSaved()}
+  if(window.rbUnpack)window.rbUnpack();if(typeof gdRestore==='function'&&D.gd)gdRestore(D.gd);commit();draw();if(window.dkSaved)dkSaved()}
 function fileSVGString(ai){if(ISO)isoExit();const AA=ARTS[ai==null?ABI:ai]||ARTS[ABI];const XS=new XMLSerializer(),md=document.getElementById('mdefs'),defs=md?[...md.childNodes].map(n=>XS.serializeToString(n)).join(''):'';
-  const body=objs.filter(o=>o.g.style.display!=='none'&&!o.nop).map(o=>{const c=o.g.cloneNode(true);c.removeAttribute('data-iso');{const w=c.querySelector(':scope > g[data-pxo]');if(w){[...c.children].forEach(k=>{if(k!==w)k.remove()});while(w.firstChild)c.insertBefore(w.firstChild,w);w.remove();c.removeAttribute('data-pxon')}}c.querySelectorAll('[data-hf]').forEach(e=>e.setAttribute('fill','none'));c.querySelectorAll('[data-hs]').forEach(e=>e.setAttribute('stroke','none'));['data-lytpl','data-lyol','data-lydim'].forEach(a=>c.removeAttribute(a));return XS.serializeToString(c)}).join('\n');
+  const body=objs.filter(o=>o.g.style.display!=='none'&&!o.nop).map(o=>{const c=o.g.cloneNode(true);c.removeAttribute('data-iso');{const w=c.querySelector(':scope > g[data-pxo]');if(w){[...c.children].forEach(k=>{if(k!==w)k.remove()});while(w.firstChild)c.insertBefore(w.firstChild,w);w.remove();c.removeAttribute('data-pxon')}}c.querySelectorAll('[data-hf]').forEach(e=>e.setAttribute('fill','none'));c.querySelectorAll('[data-hs]').forEach(e=>e.setAttribute('stroke','none'));['data-lytpl','data-lyol','data-lydim'].forEach(a=>c.removeAttribute(a));if(window.rbExportFix)window.rbExportFix(c);return XS.serializeToString(c)}).join('\n');
   return'<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="'+AA.w+'" height="'+AA.h+'" viewBox="'+AA.x+' '+AA.y+' '+AA.w+' '+AA.h+'"><defs>'+defs+'</defs>\n'+body+'\n</svg>'}
 function fileExportSVG(){fileDownload(new Blob([fileSVGString()],{type:'image/svg+xml'}),'masar-artwork.svg');tb5Msg('Exported masar-artwork.svg')}
 function fileExportPNG(){const s=fileSVGString(),img=new Image(),u=URL.createObjectURL(new Blob([s],{type:'image/svg+xml'}));
@@ -7583,7 +7583,7 @@ function memRows(el0,oidv,pth,dep,out){memKids(el0).forEach((m,i)=>{const p=pth?
   out.push('<div class="lyr C'+(LYCUR===key?' sel':'')+(nest?' gp':'')+'" data-ty="'+(m.hasAttribute('data-clipmask')?'clip':nest?'group':'path')+'" data-k="C" data-id="'+oidv+'" data-p="'+p+'"><button type="button" class="ic ey'+(hid?'':' on')+'" title="Toggle Visibility">'+(hid?'':EYE)+'</button><button type="button" class="ic lk" disabled style="visibility:hidden"></button><i class="lcb" style="background:'+lyColOf(oidv)+'"></i><i style="width:'+(dep*12)+'px;flex:none"></i><button type="button" class="ic ar" style="visibility:'+(nest?'visible':'hidden')+'">'+(open?'▾':'▸')+'</button><i class="th">'+thumbM(m)+'</i><span class="nm" title="Double-click to rename">'+hl(memName(m))+'</span><button type="button" class="tg" title="Target (enters Isolation Mode and selects it)"></button><i class="sq" style="background:transparent"></i></div>');
   if(nest&&open)memRows(m,oidv,p,dep+1,out)})}
 function objRow(o,dep,out){const hid=o.g.style.display==='none'&&!o.lh,lk=!!o.g.dataset.lock,s=sel.has(o),l=lyBy(o.ly),cg=!!o.g.querySelector(':scope > g[data-clipmask]'),grp=!!o.g.querySelector(':scope > g[data-mem]'),open=LYGX.has(''+oid(o))||!!SQ();
-  out.push('<div class="lyr O'+(s?' sel':'')+(cg?' clipg':'')+(grp?' gp':'')+'" data-ty="'+(isText(o)?'text':grp?'group':cg?'clip':'path')+'" data-k="O" data-id="'+oid(o)+'"><button type="button" class="ic ey'+(o.g.style.display==='none'?'':' on')+'" title="Toggle Visibility">'+(o.g.style.display==='none'?'':EYE)+'</button><button type="button" class="ic lk'+(lk?' on':'')+'" title="Toggle Lock">'+(lk?LOCK:'')+'</button><i class="lcb" style="background:'+l.color+'"></i><i style="width:'+(dep*12)+'px;flex:none"></i><button type="button" class="ic ar" style="visibility:'+(grp?'visible':'hidden')+'">'+(open?'▾':'▸')+'</button><i class="th">'+thumbO(o)+'</i><span class="nm" title="Double-click to rename">'+hl(lyName(o))+'</span><button type="button" class="tg'+(s?' on':'')+'" title="Target / Select"></button><i class="sq" style="background:'+(s?l.color:'transparent')+'"></i></div>');
+  out.push('<div class="lyr O'+(s?' sel':'')+(cg?' clipg':'')+(grp?' gp':'')+'" data-ty="'+(isText(o)?'text':grp?'group':cg?'clip':'path')+'" data-k="O" data-id="'+oid(o)+'"><button type="button" class="ic ey'+(o.g.style.display==='none'?'':' on')+'" title="Toggle Visibility">'+(o.g.style.display==='none'?'':EYE)+'</button><button type="button" class="ic lk'+(lk?' on':'')+'" title="Toggle Lock">'+(lk?LOCK:'')+'</button><i class="lcb" style="background:'+l.color+'"></i><i style="width:'+(dep*12)+'px;flex:none"></i><button type="button" class="ic ar" style="visibility:'+(grp?'visible':'hidden')+'">'+(open?'▾':'▸')+'</button><i class="th">'+thumbO(o)+'</i>'+(window.rbThumb?window.rbThumb(o):'')+'<span class="nm" title="Double-click to rename">'+hl(lyName(o))+'</span><button type="button" class="tg'+(s?' on':'')+'" title="Target / Select"></button><i class="sq" style="background:'+(s?l.color:'transparent')+'"></i></div>');
   if(grp&&open)memRows(o.g,oid(o),'',dep+1,out)}
 function layRow(l,dep,os,has){const open=!LYCL.has(l.id),sa=os.length&&os.every(o=>sel.has(o)),sn=os.some(o=>sel.has(o)),ms=LYSEL.has(l.id);
   const cg=os.some(o=>o.g.querySelector(':scope > g[data-clipmask]'));
@@ -10195,15 +10195,15 @@ function rbApplyMatte(o,im,url){const A=a=>im.getAttribute(a);
 const mdlKey=()=>{try{const v=localStorage.getItem('masar.rbmodel');if(MODELS.some(m=>m.id===v))return v}catch(_){}return'fast'};
 /* ---- contextual action bar (shown when exactly one image is selected) ---- */
 const BAR=document.createElement('div');BAR.id='rbctx';BAR.style.display='none';document.body.appendChild(BAR);
-BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><span class="rbst"></span><i class="rbpg"><b></b></i>';
+BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i>';
 {const st=document.createElement('style');st.textContent='#rbctx{position:fixed;z-index:40;display:flex;align-items:center;gap:6px;padding:4px 6px;background:var(--panel,#2b2b2b);border:1px solid var(--line,#444);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.4);font:12px "Segoe UI",Cairo,sans-serif;color:var(--fg,#ddd);white-space:nowrap}#rbctx button{font:inherit;padding:3px 10px;border-radius:4px;border:1px solid var(--line,#555);background:var(--field,#3a3a3a);color:inherit;cursor:pointer}#rbctx button:hover:not(:disabled){background:var(--hover,#4a4a4a)}#rbctx button:active:not(:disabled){background:var(--press,#555)}#rbctx button:disabled{opacity:.5;cursor:default}#rbctx select{font:inherit;max-width:230px;background:var(--field,#3a3a3a);color:inherit;border:1px solid var(--line,#555);border-radius:4px;padding:2px}#rbctx .rbst{opacity:.85;max-width:260px;overflow:hidden;text-overflow:ellipsis}#rbctx .rbpg{display:none;width:60px;height:4px;background:var(--line,#555);border-radius:2px;overflow:hidden}#rbctx .rbpg b{display:block;height:100%;width:0;background:#9a9a9a}#rbov{position:fixed;z-index:39;pointer-events:none;display:none;border:1px dashed #aaa;background:rgba(0,0,0,.18);color:#fff;font:12px "Segoe UI",Cairo,sans-serif;align-items:center;justify-content:center;text-shadow:0 1px 3px #000}';document.head.appendChild(st)}
 const OV=document.createElement('div');OV.id='rbov';document.body.appendChild(OV);
 const $b=s=>BAR.querySelector(s);let JOB=null;
 $b('.rbmd').value=mdlKey();$b('.rbmd').addEventListener('change',()=>{try{localStorage.setItem('masar.rbmodel',$b('.rbmd').value)}catch(_){}});
-function rbPos(){const L=[...sel],o=L.length===1?L[0]:null,show=!!o&&objs.includes(o)&&(!!rbTarget(o)||(JOB&&JOB.o===o));
+function rbPos(){const L=[...sel],o=L.length===1?L[0]:null,mk=!!o&&!!window.RBMASK&&RBMASK.masked(o),show=!!o&&objs.includes(o)&&(!!rbTarget(o)||mk||(JOB&&JOB.o===o));
   if(!show||typeof ted_s!=='undefined'&&ted_s){BAR.style.display='none';OV.style.display='none';return}
   const r=cv.getBoundingClientRect(),b=wbox(o),x0=r.left+b.x*z+px,y0=r.top+b.y*z+py,w=b.w*z,h=b.h*z;
-  BAR.style.display='flex';const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
+  BAR.style.display='flex';{const P=mk&&RBMASK.parts(o.g),off=P&&P.mk.getAttribute('data-rbon')==='0';$b('.rbgo').style.display=mk?'none':'';$b('.rbmd').style.display=mk?'none':'';$b('.rbtg').style.display=mk?'':'none';$b('.rbrm').style.display=mk?'':'none';$b('.rbtg').textContent=off?'Mask: Off':'Mask: On'}const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
   BAR.style.left=Math.max(r.left+4,Math.min(r.right-bw-4,x))+'px';BAR.style.top=y+'px';
   if(JOB&&JOB.o===o){OV.style.display='flex';OV.style.left=x0+'px';OV.style.top=y0+'px';OV.style.width=w+'px';OV.style.height=h+'px'}else OV.style.display='none'}
 function rbUi(t,f){$b('.rbst').textContent=t||'';const p=$b('.rbpg');if(f==null){p.style.display='none'}else{p.style.display='block';p.firstChild.style.width=(f*100).toFixed(0)+'%'}OV.textContent=t||''}
@@ -10217,11 +10217,72 @@ async function rbStart(){if(RB.busy)return;const L=[...sel];if(L.length!==1||!rb
     rbUi('Building mask…',null);const k=Math.min(1,4096/Math.max(img.naturalWidth,img.naturalHeight)),W=Math.max(1,Math.round(img.naturalWidth*k)),H=Math.max(1,Math.round(img.naturalHeight*k));
     const sm=document.createElement('canvas');sm.width=r.w;sm.height=r.h;const sx=sm.getContext('2d'),id=sx.createImageData(r.w,r.h);for(let i=0;i<r.w*r.h;i++){const v=r.data[i];id.data[i*4]=id.data[i*4+1]=id.data[i*4+2]=v;id.data[i*4+3]=255}sx.putImageData(id,0,0);
     const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(sm,0,0,W,H);
-    JOB=null;if(rbApplyMatte(o,im,c.toDataURL('image/png'))){draw();say('Background removed (non-destructive opacity mask). Undo with Ctrl+Z.')}else say('Remove Background failed')}
+    JOB=null;await RBMASK.make(o,im,c);if(!o.nm)o.nm='Background removed';commit();draw();say('Background removed: non-destructive mask, the original image is untouched. Undo with Ctrl+Z.')}
   catch(e){say('Remove Background: '+(e.message||e));try{aiAlert(String(e.message||e))}catch(_){}}
   finally{RB.busy=false;JOB=null;$b('.rbgo').disabled=false;$b('.rbmd').disabled=false;rbUi('',null);rbPos()}}
 $b('.rbgo').addEventListener('click',rbStart);
+$b('.rbtg').addEventListener('click',()=>{const o=[...sel][0];if(o)RBMASK.toggle(o)});$b('.rbrm').addEventListener('click',()=>{const o=[...sel][0];if(o&&RBMASK.remove(o))say('Mask removed: original image restored.')});window.rbBar=()=>{try{rbPos()}catch(_){}};
 window.rbOpen=rbStart;window.rbRun=rbRun;window.rbTarget=rbTarget;window.RBAI=RB;
+})();
+
+
+/* ======================= Non-destructive raster mask (build 222, phase 2) =======================
+   An image with a mask is an ordinary object <g> holding: the visible result <image data-rbo> (a cancellable Blob object URL, never a huge Base64),
+   and a hidden <g data-rbh> with the untouched ORIGINAL image + a reference to the mask (the mask itself lives in a version store, edits create new
+   versions, so Undo / Redo just switch versions). The result is composited at full source resolution on a background canvas (rbSync). */
+(()=>{
+const NSV='http://www.w3.org/2000/svg';
+const MSK=new Map(),SRCI=new Map(),URLS=new Map(),PEND=new Set(),DEC=new Map();let N=0,EDIT=null;
+const loadImg=u=>new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('image decode failed'));i.src=u});
+const parts=g=>{const h=g.querySelector(':scope > g[data-rbh]');if(!h)return null;const out=g.querySelector(':scope > image[data-rbo]'),sr=h.querySelector(':scope > image[data-rbsrc]'),mk=h.querySelector(':scope > image[data-rbmask]');return out&&sr&&mk?{h,out,sr,mk}:null};
+const masked=o=>!!(o&&o.g&&parts(o.g));
+const hrefOf=e=>e.getAttribute('href')||e.getAttributeNS('http://www.w3.org/1999/xlink','href')||'';
+async function srcImg(sr){let id=sr.getAttribute('data-rbsid');if(id&&SRCI.has(id))return SRCI.get(id);const i=await loadImg(hrefOf(sr));if(!id){id='s'+(++N);sr.setAttribute('data-rbsid',id)}SRCI.set(id,i);return i}
+async function maskImg(id){if(DEC.has(id))return DEC.get(id);const m=MSK.get(id);if(!m)throw new Error('mask missing');const i=await loadImg(m.url);DEC.set(id,i);if(DEC.size>6)DEC.delete(DEC.keys().next().value);return i}
+function thumbOf(c){const t=document.createElement('canvas'),k=Math.min(1,64/Math.max(c.width,c.height));t.width=Math.max(1,Math.round(c.width*k));t.height=Math.max(1,Math.round(c.height*k));const x=t.getContext('2d');x.imageSmoothingQuality='high';x.drawImage(c,0,0,t.width,t.height);return t.toDataURL('image/png')}
+/* register a mask (canvas or dataURL) as a new version */
+function newMask(src){let url,th;if(typeof src==='string'){url=src;th=null}else{url=src.toDataURL('image/png');th=thumbOf(src)}const id='m'+(++N)+'_'+Math.random().toString(36).slice(2,6);MSK.set(id,{url,th});return id}
+async function thumbFor(id){const m=MSK.get(id);if(!m||m.th)return m&&m.th;try{const i=await maskImg(id);const c=document.createElement('canvas');c.width=i.naturalWidth;c.height=i.naturalHeight;c.getContext('2d').drawImage(i,0,0);m.th=thumbOf(c)}catch(_){}return m.th}
+async function render(P){const[s,m]=await Promise.all([srcImg(P.sr),maskImg(P.mk.getAttribute('data-rbm'))]);
+  const k=Math.min(1,8192/Math.max(s.naturalWidth,s.naturalHeight)),W=Math.max(1,Math.round(s.naturalWidth*k)),H=Math.max(1,Math.round(s.naturalHeight*k)),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
+  x.drawImage(s,0,0,W,H);x.globalCompositeOperation='destination-in';
+  /* the mask is luminance: convert to alpha on a scratch canvas */
+  const t=document.createElement('canvas');t.width=W;t.height=H;const tx=t.getContext('2d',{willReadFrequently:true});tx.imageSmoothingQuality='high';tx.drawImage(m,0,0,W,H);const d=tx.getImageData(0,0,W,H),a=d.data;
+  for(let i=0;i<a.length;i+=4){a[i+3]=(a[i]*.2126+a[i+1]*.7152+a[i+2]*.0722)*a[i+3]/255;a[i]=a[i+1]=a[i+2]=0}tx.putImageData(d,0,0);x.drawImage(t,0,0);
+  const b=await new Promise(r=>c.toBlob(r,'image/png'));return URL.createObjectURL(b)}
+function evict(){if(URLS.size<=40)return;const used=new Set([...layer.querySelectorAll('image[data-rbo]')].map(i=>i.getAttribute('href')));for(const[k,u]of URLS){if(URLS.size<=40)break;if(!used.has(u)){URL.revokeObjectURL(u);URLS.delete(k)}}}
+function sync(){if(!layer.querySelector('g[data-rbh]'))return;
+  layer.querySelectorAll(':scope > g').forEach(g=>{const P=parts(g);if(!P)return;const on=P.mk.getAttribute('data-rbon')!=='0',mid=P.mk.getAttribute('data-rbm'),sid=P.sr.getAttribute('data-rbsid')||'',key=on?mid+'|'+sid:'off';
+    if(!on){if(P.out.getAttribute('href')!==hrefOf(P.sr))P.out.setAttribute('href',hrefOf(P.sr));return}
+    const u=URLS.get(key);if(u){if(P.out.getAttribute('href')!==u)P.out.setAttribute('href',u);return}
+    if(PEND.has(key))return;PEND.add(key);render(P).then(url=>{URLS.set(key,url);PEND.delete(key);evict();sync();try{window.lyDirty&&window.lyDirty()}catch(_){}}).catch(e=>{PEND.delete(key);try{document.getElementById('hint').textContent='Mask render failed: '+e.message}catch(_){}})})}
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{sync()}catch(_){}return r}}
+/* turn a plain image object into a masked one (maskCanvas: grey, white = keep) */
+async function make(o,im,maskCanvas){const s=await loadImg(hrefOf(im)),sid='s'+(++N);SRCI.set(sid,s);const mid=newMask(maskCanvas);
+  const a=n=>im.getAttribute(n),pos=' x="'+a('x')+'" y="'+a('y')+'" width="'+a('width')+'" height="'+a('height')+'" preserveAspectRatio="none"';
+  const src=im.cloneNode(true);src.setAttribute('data-rbsrc','1');src.setAttribute('data-rbsid',sid);
+  o.g.innerHTML='<image data-rbo="1"'+pos+'/><g data-rbh="1" style="display:none"></g>';
+  const h=o.g.querySelector('g[data-rbh]');h.appendChild(src);const mk=document.createElementNS(NSV,'image');mk.setAttribute('data-rbmask','1');mk.setAttribute('data-rbm',mid);mk.setAttribute('data-rbon','1');['x','y','width','height'].forEach(n=>mk.setAttribute(n,a(n)));h.appendChild(mk);
+  const P=parts(o.g),url=await render(P);URLS.set(mid+'|'+sid,url);P.out.setAttribute('href',url);try{o.bb=o.g.getBBox()}catch(_){}return mid}
+function toggle(o){const P=o&&parts(o.g);if(!P)return false;P.mk.setAttribute('data-rbon',P.mk.getAttribute('data-rbon')==='0'?'1':'0');commit();draw();return true}
+function remove(o){const P=o&&parts(o.g);if(!P)return false;const s=P.sr.cloneNode(true);['data-rbsrc','data-rbsid'].forEach(n=>s.removeAttribute(n));o.g.innerHTML='';o.g.appendChild(s);try{o.bb=o.g.getBBox()}catch(_){}if(EDIT)EDIT=null;commit();draw();return true}
+/* file / export support */
+function pack(o){const P=parts(o.g);if(!P)return o.g.innerHTML;const c=o.g.cloneNode(true),Q=parts(c);Q.out.removeAttribute('href');Q.mk.setAttribute('data-rbmd',(MSK.get(P.mk.getAttribute('data-rbm'))||{}).url||'');Q.mk.removeAttribute('data-rbm');Q.sr.removeAttribute('data-rbsid');return c.innerHTML}
+function unpack(){layer.querySelectorAll(':scope > g').forEach(g=>{const P=parts(g);if(!P)return;const d=P.mk.getAttribute('data-rbmd');if(d){const id=newMask(d);P.mk.setAttribute('data-rbm',id);P.mk.removeAttribute('data-rbmd')}if(!P.out.getAttribute('href'))P.out.setAttribute('href',hrefOf(P.sr))});sync()}
+function exportFix(c){const P=parts(c);if(!P)return;const mid=P.mk.getAttribute('data-rbm'),m=MSK.get(mid);if(!m||P.mk.getAttribute('data-rbon')==='0'){P.out.setAttribute('href',hrefOf(P.sr));P.h.remove();return}
+  const mid2='rbm'+(++N),mk=document.createElementNS(NSV,'mask');mk.setAttribute('id',mid2);mk.setAttribute('maskUnits','userSpaceOnUse');['x','y','width','height'].forEach(n=>mk.setAttribute(n,P.sr.getAttribute(n)));mk.setAttribute('style','mask-type:luminance');
+  const im=document.createElementNS(NSV,'image');['x','y','width','height'].forEach(n=>im.setAttribute(n,P.sr.getAttribute(n)));im.setAttribute('preserveAspectRatio','none');im.setAttribute('href',m.url);mk.appendChild(im);
+  const s=P.sr.cloneNode(true);['data-rbsrc','data-rbsid'].forEach(n=>s.removeAttribute(n));s.setAttribute('mask','url(#'+mid2+')');P.out.remove();P.h.remove();c.appendChild(mk);c.appendChild(s)}
+/* layers panel: mask thumbnail beside the layer thumbnail */
+function thumb(o){const P=parts(o.g);if(!P)return'';const id=P.mk.getAttribute('data-rbm'),m=MSK.get(id),off=P.mk.getAttribute('data-rbon')==='0';if(m&&!m.th)thumbFor(id).then(()=>{try{window.lyDirty&&window.lyDirty()}catch(_){}});
+  return'<i class="th rbmk'+(EDIT===id?' on':'')+(off?' off':'')+'" data-rbt="1" title="Layer Mask: click to select it · Shift+click: disable / enable"><img alt="" src="'+((m&&m.th)||'data:image/gif;base64,R0lGODlhAQABAAAAACw=')+'"></i>'}
+{const st=document.createElement('style');st.textContent='#lyp .lyr .th.rbmk{background:#000;margin-left:3px;position:relative}#lyp .lyr .th.rbmk img{display:block;width:100%;height:100%;object-fit:contain}#lyp .lyr .th.rbmk.on{outline:2px solid #bbb;outline-offset:-1px}#lyp .lyr .th.rbmk.off::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent 46%,#e04 47%,#e04 53%,transparent 54%)}#lyp .lyr .th.rbmk.off img{opacity:.35}';document.head.appendChild(st)}
+const lp=document.getElementById('lyp');
+if(lp)lp.addEventListener('click',e=>{const t=e.target.closest('[data-rbt]');if(!t)return;e.stopPropagation();e.preventDefault();const row=t.closest('.lyr'),o=objs.find(q=>oid(q)===+row.dataset.id);if(!o)return;
+  if(e.shiftKey){sel=new Set([o]);dsSel=new Set();toggle(o);return}
+  sel=new Set([o]);dsSel=new Set();const P=parts(o.g);EDIT=P?P.mk.getAttribute('data-rbm'):null;draw();window.rbBar&&window.rbBar()},true);
+window.RBMASK={make,toggle,remove,masked,parts,sync,pack,unpack,exportFix,thumb,newMask,MSK,URLS,get edit(){return EDIT},set edit(v){EDIT=v},hrefOf,maskImg,srcImg};
+window.rbThumb=thumb;window.rbPack=pack;window.rbUnpack=unpack;window.rbExportFix=exportFix;
 })();
 
 /*TOOLS-END*/

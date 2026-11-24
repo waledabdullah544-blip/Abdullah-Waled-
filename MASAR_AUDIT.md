@@ -354,3 +354,10 @@
 - Contextual bar above a selected image (Remove Background + model select), dashed busy overlay on the layer, Object menu entry kept. Interim apply = existing opacity mask (phase 2 replaces it with the dedicated mask model).
 - Verified headless: Fast mode on portrait + animals (good on portraits; poor on animals as expected). Studio: could NOT be verified here (WASM fails, sandbox WebGPU is a software adapter with 8-buffer limits) -> needs testing on a real GPU. Studio on a non-WebGPU browser shows a clear error.
 - tests/rb.js uses a local HTTPS mirror of huggingface.co (see /tmp/mdl/srv.js idea) because Playwright cannot stream 200 MB bodies.
+
+## 5-ؼ build 222 — Remove Background, phase 2 (non-destructive raster mask)
+- New object structure: visible result `<image data-rbo>` (Blob object URL, revoked on eviction, never big Base64) + hidden `<g data-rbh>` holding the untouched ORIGINAL image and a reference to the mask. Masks live in a version store (edits = new versions → Undo/Redo switch versions); result composited at full source resolution (cap 8192) by `RBMASK.sync()`.
+- Save/Load .masar: mask embedded (`data-rbmd`) and re-registered on load. SVG export: standard `<mask>` + original image (opens as an opacity mask elsewhere).
+- Layers panel: mask thumbnail beside the layer thumbnail; click selects the mask target, Shift+click disables / enables (red slash). Context bar: Mask On/Off, Remove Mask (restores original).
+- Tests: rb2.js (pixels, undo/redo, export, roundtrip, remove), rb3.js (scale, paste, rectangle tool, panel thumbs).
+- Next: phase 3 (mask brush, edge feather/shift, guided filter, colour decontamination), then SAM-click and mask→vector path / die-cut.
