@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 222</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 223</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10195,7 +10195,7 @@ function rbApplyMatte(o,im,url){const A=a=>im.getAttribute(a);
 const mdlKey=()=>{try{const v=localStorage.getItem('masar.rbmodel');if(MODELS.some(m=>m.id===v))return v}catch(_){}return'fast'};
 /* ---- contextual action bar (shown when exactly one image is selected) ---- */
 const BAR=document.createElement('div');BAR.id='rbctx';BAR.style.display='none';document.body.appendChild(BAR);
-BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i>';
+BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbed" title="Edit the mask: brush, edge, colour fringe">Edit Mask</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i>';
 {const st=document.createElement('style');st.textContent='#rbctx{position:fixed;z-index:40;display:flex;align-items:center;gap:6px;padding:4px 6px;background:var(--panel,#2b2b2b);border:1px solid var(--line,#444);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.4);font:12px "Segoe UI",Cairo,sans-serif;color:var(--fg,#ddd);white-space:nowrap}#rbctx button{font:inherit;padding:3px 10px;border-radius:4px;border:1px solid var(--line,#555);background:var(--field,#3a3a3a);color:inherit;cursor:pointer}#rbctx button:hover:not(:disabled){background:var(--hover,#4a4a4a)}#rbctx button:active:not(:disabled){background:var(--press,#555)}#rbctx button:disabled{opacity:.5;cursor:default}#rbctx select{font:inherit;max-width:230px;background:var(--field,#3a3a3a);color:inherit;border:1px solid var(--line,#555);border-radius:4px;padding:2px}#rbctx .rbst{opacity:.85;max-width:260px;overflow:hidden;text-overflow:ellipsis}#rbctx .rbpg{display:none;width:60px;height:4px;background:var(--line,#555);border-radius:2px;overflow:hidden}#rbctx .rbpg b{display:block;height:100%;width:0;background:#9a9a9a}#rbov{position:fixed;z-index:39;pointer-events:none;display:none;border:1px dashed #aaa;background:rgba(0,0,0,.18);color:#fff;font:12px "Segoe UI",Cairo,sans-serif;align-items:center;justify-content:center;text-shadow:0 1px 3px #000}';document.head.appendChild(st)}
 const OV=document.createElement('div');OV.id='rbov';document.body.appendChild(OV);
 const $b=s=>BAR.querySelector(s);let JOB=null;
@@ -10203,7 +10203,7 @@ $b('.rbmd').value=mdlKey();$b('.rbmd').addEventListener('change',()=>{try{localS
 function rbPos(){const L=[...sel],o=L.length===1?L[0]:null,mk=!!o&&!!window.RBMASK&&RBMASK.masked(o),show=!!o&&objs.includes(o)&&(!!rbTarget(o)||mk||(JOB&&JOB.o===o));
   if(!show||typeof ted_s!=='undefined'&&ted_s){BAR.style.display='none';OV.style.display='none';return}
   const r=cv.getBoundingClientRect(),b=wbox(o),x0=r.left+b.x*z+px,y0=r.top+b.y*z+py,w=b.w*z,h=b.h*z;
-  BAR.style.display='flex';{const P=mk&&RBMASK.parts(o.g),off=P&&P.mk.getAttribute('data-rbon')==='0';$b('.rbgo').style.display=mk?'none':'';$b('.rbmd').style.display=mk?'none':'';$b('.rbtg').style.display=mk?'':'none';$b('.rbrm').style.display=mk?'':'none';$b('.rbtg').textContent=off?'Mask: Off':'Mask: On'}const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
+  BAR.style.display='flex';{const P=mk&&RBMASK.parts(o.g),off=P&&P.mk.getAttribute('data-rbon')==='0';$b('.rbgo').style.display=mk?'none':'';$b('.rbmd').style.display=mk?'none':'';$b('.rbtg').style.display=mk?'':'none';$b('.rbrm').style.display=mk?'':'none';$b('.rbed').style.display=mk?'':'none';if(window.rbEditing&&window.rbEditing())BAR.style.display='none';$b('.rbtg').textContent=off?'Mask: Off':'Mask: On'}const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
   BAR.style.left=Math.max(r.left+4,Math.min(r.right-bw-4,x))+'px';BAR.style.top=y+'px';
   if(JOB&&JOB.o===o){OV.style.display='flex';OV.style.left=x0+'px';OV.style.top=y0+'px';OV.style.width=w+'px';OV.style.height=h+'px'}else OV.style.display='none'}
 function rbUi(t,f){$b('.rbst').textContent=t||'';const p=$b('.rbpg');if(f==null){p.style.display='none'}else{p.style.display='block';p.firstChild.style.width=(f*100).toFixed(0)+'%'}OV.textContent=t||''}
@@ -10220,7 +10220,7 @@ async function rbStart(){if(RB.busy)return;const L=[...sel];if(L.length!==1||!rb
     JOB=null;await RBMASK.make(o,im,c);if(!o.nm)o.nm='Background removed';commit();draw();say('Background removed: non-destructive mask, the original image is untouched. Undo with Ctrl+Z.')}
   catch(e){say('Remove Background: '+(e.message||e));try{aiAlert(String(e.message||e))}catch(_){}}
   finally{RB.busy=false;JOB=null;$b('.rbgo').disabled=false;$b('.rbmd').disabled=false;rbUi('',null);rbPos()}}
-$b('.rbgo').addEventListener('click',rbStart);
+$b('.rbgo').addEventListener('click',rbStart);$b('.rbed').addEventListener('click',()=>{const o=[...sel][0];if(o&&window.rbEditStart)window.rbEditStart(o)});
 $b('.rbtg').addEventListener('click',()=>{const o=[...sel][0];if(o)RBMASK.toggle(o)});$b('.rbrm').addEventListener('click',()=>{const o=[...sel][0];if(o&&RBMASK.remove(o))say('Mask removed: original image restored.')});window.rbBar=()=>{try{rbPos()}catch(_){}};
 window.rbOpen=rbStart;window.rbRun=rbRun;window.rbTarget=rbTarget;window.RBAI=RB;
 })();
@@ -10243,16 +10243,37 @@ function thumbOf(c){const t=document.createElement('canvas'),k=Math.min(1,64/Mat
 /* register a mask (canvas or dataURL) as a new version */
 function newMask(src){let url,th;if(typeof src==='string'){url=src;th=null}else{url=src.toDataURL('image/png');th=thumbOf(src)}const id='m'+(++N)+'_'+Math.random().toString(36).slice(2,6);MSK.set(id,{url,th});return id}
 async function thumbFor(id){const m=MSK.get(id);if(!m||m.th)return m&&m.th;try{const i=await maskImg(id);const c=document.createElement('canvas');c.width=i.naturalWidth;c.height=i.naturalHeight;c.getContext('2d').drawImage(i,0,0);m.th=thumbOf(c)}catch(_){}return m.th}
-async function render(P){const[s,m]=await Promise.all([srcImg(P.sr),maskImg(P.mk.getAttribute('data-rbm'))]);
-  const k=Math.min(1,8192/Math.max(s.naturalWidth,s.naturalHeight)),W=Math.max(1,Math.round(s.naturalWidth*k)),H=Math.max(1,Math.round(s.naturalHeight*k)),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');
-  x.drawImage(s,0,0,W,H);x.globalCompositeOperation='destination-in';
-  /* the mask is luminance: convert to alpha on a scratch canvas */
-  const t=document.createElement('canvas');t.width=W;t.height=H;const tx=t.getContext('2d',{willReadFrequently:true});tx.imageSmoothingQuality='high';tx.drawImage(m,0,0,W,H);const d=tx.getImageData(0,0,W,H),a=d.data;
-  for(let i=0;i<a.length;i+=4){a[i+3]=(a[i]*.2126+a[i+1]*.7152+a[i+2]*.0722)*a[i+3]/255;a[i]=a[i+1]=a[i+2]=0}tx.putImageData(d,0,0);x.drawImage(t,0,0);
-  const b=await new Promise(r=>c.toBlob(r,'image/png'));return URL.createObjectURL(b)}
+/* ---- pixel utilities (box blur, guided filter) ---- */
+function boxH(s,d,w,h,r){const n=2*r+1;for(let y=0;y<h;y++){const o=y*w;let a=0;for(let x=-r;x<=r;x++)a+=s[o+Math.min(w-1,Math.max(0,x))];for(let x=0;x<w;x++){d[o+x]=a/n;a+=s[o+Math.min(w-1,x+r+1)]-s[o+Math.max(0,x-r)]}}}
+function boxV(s,d,w,h,r){const n=2*r+1;for(let x=0;x<w;x++){let a=0;for(let y=-r;y<=r;y++)a+=s[Math.min(h-1,Math.max(0,y))*w+x];for(let y=0;y<h;y++){d[y*w+x]=a/n;a+=s[Math.min(h-1,y+r+1)*w+x]-s[Math.max(0,y-r)*w+x]}}}
+function box(s,w,h,r,t){r=Math.max(0,Math.round(r));const d=new Float32Array(w*h);if(r<1){d.set(s);return d}const q=t||new Float32Array(w*h);boxH(s,q,w,h,r);boxV(q,d,w,h,r);return d}
+function blurF(s,w,h,r){if(r<.5)return Float32Array.from(s);const q=new Float32Array(w*h);let a=box(s,w,h,Math.max(1,r*.58),q);a=box(a,w,h,Math.max(1,r*.58),q);return box(a,w,h,Math.max(1,r*.58),q)}
+/* guided filter (He et al.): edge-aware smoothing of the matte p, steered by the image luminance I */
+function guided(I,p,w,h,r,eps){const N=w*h,q=new Float32Array(N),mI=box(I,w,h,r,q),mp=box(p,w,h,r,q),II=new Float32Array(N),Ip=new Float32Array(N);for(let i=0;i<N;i++){II[i]=I[i]*I[i];Ip[i]=I[i]*p[i]}
+  const cII=box(II,w,h,r,q),cIp=box(Ip,w,h,r,q),a=II,b=Ip;for(let i=0;i<N;i++){const v=cII[i]-mI[i]*mI[i],c=cIp[i]-mI[i]*mp[i],aa=c/(v+eps);a[i]=aa;b[i]=mp[i]-aa*mI[i]}
+  const ma=box(a,w,h,r,q),mb=box(b,w,h,r,q);for(let i=0;i<N;i++){const v=ma[i]*I[i]+mb[i];q[i]=v<0?0:v>1?1:v}return q}
+/* matte refinement used by the edit panel: P = {detail, shift, feather}. alpha/guide are Float32 0..1 at w x h */
+function refine(al,gd,w,h,P){let a=al;const k=Math.max(w,h)/1024;
+  if(P.detail>0)a=guided(gd,a,w,h,Math.max(1,Math.round(P.detail*.6*k)),1e-3+(1-P.detail/40)*2e-3);
+  if(P.shift!==0){const s=P.shift/50,B=blurF(a,w,h,Math.max(1.5,Math.abs(s)*10*k)),c=.5-.42*s,hw=.38,lo=c-hw,hi=c+hw,sc=1/(hi-lo),o=new Float32Array(w*h);for(let i=0;i<o.length;i++){let v=(B[i]-lo)*sc;o[i]=v<0?0:v>1?1:v}a=o}
+  if(P.feather>0)a=blurF(a,w,h,P.feather*k);return a}
+/* colour decontamination: estimate clean foreground colour from the solid interior and push it into the semi-transparent edge pixels */
+function decontam(rgba,al,w,h,amt){const N=w*h,cr=new Float32Array(N),cg=new Float32Array(N),cb=new Float32Array(N),cw=new Float32Array(N);
+  for(let i=0;i<N;i++){const t=(al[i]-.88)/.12,c=t<=0?0:t>=1?1:t;cw[i]=c;cr[i]=rgba[i*4]*c;cg[i]=rgba[i*4+1]*c;cb[i]=rgba[i*4+2]*c}
+  const r=Math.max(4,Math.round(Math.max(w,h)*.012)),q=new Float32Array(N),R=box(cr,w,h,r,q),G=box(cg,w,h,r,q),Bb=box(cb,w,h,r,q),Wt=box(cw,w,h,r,q),R2=box(R,w,h,r,q),G2=box(G,w,h,r,q),B2=box(Bb,w,h,r,q),W2=box(Wt,w,h,r,q);
+  for(let i=0;i<N;i++){const a=al[i];if(a>=.995||W2[i]<.0005)continue;const k=Math.min(1,amt*Math.pow(1-a,.35)*1.25),f=1/W2[i];rgba[i*4]+=(R2[i]*f-rgba[i*4])*k;rgba[i*4+1]+=(G2[i]*f-rgba[i*4+1])*k;rgba[i*4+2]+=(B2[i]*f-rgba[i*4+2])*k}}
+async function render(P){const dc=(+P.mk.getAttribute('data-rbdc')||0)/100;const[s,m]=await Promise.all([srcImg(P.sr),maskImg(P.mk.getAttribute('data-rbm'))]);
+  const cap=dc>0?4096:8192,k=Math.min(1,cap/Math.max(s.naturalWidth,s.naturalHeight)),W=Math.max(1,Math.round(s.naturalWidth*k)),H=Math.max(1,Math.round(s.naturalHeight*k)),c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d',{willReadFrequently:true});
+  x.drawImage(s,0,0,W,H);const sd=x.getImageData(0,0,W,H),px=sd.data;
+  const t=document.createElement('canvas');t.width=W;t.height=H;const tx=t.getContext('2d',{willReadFrequently:true});tx.imageSmoothingQuality='high';tx.drawImage(m,0,0,W,H);const a=tx.getImageData(0,0,W,H).data,N=W*H,al=new Float32Array(N);
+  /* the mask is luminance x alpha */
+  for(let i=0;i<N;i++)al[i]=(a[i*4]*.2126+a[i*4+1]*.7152+a[i*4+2]*.0722)*a[i*4+3]/65025;
+  if(dc>0)decontam(px,al,W,H,dc);
+  for(let i=0;i<N;i++)px[i*4+3]=Math.round(px[i*4+3]*al[i]);
+  x.putImageData(sd,0,0);const b=await new Promise(r=>c.toBlob(r,'image/png'));return URL.createObjectURL(b)}
 function evict(){if(URLS.size<=40)return;const used=new Set([...layer.querySelectorAll('image[data-rbo]')].map(i=>i.getAttribute('href')));for(const[k,u]of URLS){if(URLS.size<=40)break;if(!used.has(u)){URL.revokeObjectURL(u);URLS.delete(k)}}}
 function sync(){if(!layer.querySelector('g[data-rbh]'))return;
-  layer.querySelectorAll(':scope > g').forEach(g=>{const P=parts(g);if(!P)return;const on=P.mk.getAttribute('data-rbon')!=='0',mid=P.mk.getAttribute('data-rbm'),sid=P.sr.getAttribute('data-rbsid')||'',key=on?mid+'|'+sid:'off';
+  layer.querySelectorAll(':scope > g').forEach(g=>{const P=parts(g);if(!P)return;const on=P.mk.getAttribute('data-rbon')!=='0',mid=P.mk.getAttribute('data-rbm'),sid=P.sr.getAttribute('data-rbsid')||'',key=on?mid+'|'+sid+'|'+(P.mk.getAttribute('data-rbdc')||'0'):'off';
     if(!on){if(P.out.getAttribute('href')!==hrefOf(P.sr))P.out.setAttribute('href',hrefOf(P.sr));return}
     const u=URLS.get(key);if(u){if(P.out.getAttribute('href')!==u)P.out.setAttribute('href',u);return}
     if(PEND.has(key))return;PEND.add(key);render(P).then(url=>{URLS.set(key,url);PEND.delete(key);evict();sync();try{window.lyDirty&&window.lyDirty()}catch(_){}}).catch(e=>{PEND.delete(key);try{document.getElementById('hint').textContent='Mask render failed: '+e.message}catch(_){}})})}
@@ -10263,12 +10284,12 @@ async function make(o,im,maskCanvas){const s=await loadImg(hrefOf(im)),sid='s'+(
   const src=im.cloneNode(true);src.setAttribute('data-rbsrc','1');src.setAttribute('data-rbsid',sid);
   o.g.innerHTML='<image data-rbo="1"'+pos+'/><g data-rbh="1" style="display:none"></g>';
   const h=o.g.querySelector('g[data-rbh]');h.appendChild(src);const mk=document.createElementNS(NSV,'image');mk.setAttribute('data-rbmask','1');mk.setAttribute('data-rbm',mid);mk.setAttribute('data-rbon','1');['x','y','width','height'].forEach(n=>mk.setAttribute(n,a(n)));h.appendChild(mk);
-  const P=parts(o.g),url=await render(P);URLS.set(mid+'|'+sid,url);P.out.setAttribute('href',url);try{o.bb=o.g.getBBox()}catch(_){}return mid}
+  const P=parts(o.g),url=await render(P);URLS.set(mid+'|'+sid+'|0',url);P.mk.setAttribute('data-rbbase',mid);P.out.setAttribute('href',url);try{o.bb=o.g.getBBox()}catch(_){}return mid}
 function toggle(o){const P=o&&parts(o.g);if(!P)return false;P.mk.setAttribute('data-rbon',P.mk.getAttribute('data-rbon')==='0'?'1':'0');commit();draw();return true}
 function remove(o){const P=o&&parts(o.g);if(!P)return false;const s=P.sr.cloneNode(true);['data-rbsrc','data-rbsid'].forEach(n=>s.removeAttribute(n));o.g.innerHTML='';o.g.appendChild(s);try{o.bb=o.g.getBBox()}catch(_){}if(EDIT)EDIT=null;commit();draw();return true}
 /* file / export support */
-function pack(o){const P=parts(o.g);if(!P)return o.g.innerHTML;const c=o.g.cloneNode(true),Q=parts(c);Q.out.removeAttribute('href');Q.mk.setAttribute('data-rbmd',(MSK.get(P.mk.getAttribute('data-rbm'))||{}).url||'');Q.mk.removeAttribute('data-rbm');Q.sr.removeAttribute('data-rbsid');return c.innerHTML}
-function unpack(){layer.querySelectorAll(':scope > g').forEach(g=>{const P=parts(g);if(!P)return;const d=P.mk.getAttribute('data-rbmd');if(d){const id=newMask(d);P.mk.setAttribute('data-rbm',id);P.mk.removeAttribute('data-rbmd')}if(!P.out.getAttribute('href'))P.out.setAttribute('href',hrefOf(P.sr))});sync()}
+function pack(o){const P=parts(o.g);if(!P)return o.g.innerHTML;const c=o.g.cloneNode(true),Q=parts(c);Q.out.removeAttribute('href');Q.mk.setAttribute('data-rbmd',(MSK.get(P.mk.getAttribute('data-rbm'))||{}).url||'');{const bi=P.mk.getAttribute('data-rbbase');Q.mk.removeAttribute('data-rbbase');if(bi&&bi!==P.mk.getAttribute('data-rbm')&&MSK.get(bi))Q.mk.setAttribute('data-rbbd',MSK.get(bi).url)}Q.mk.removeAttribute('data-rbm');Q.sr.removeAttribute('data-rbsid');return c.innerHTML}
+function unpack(){layer.querySelectorAll(':scope > g').forEach(g=>{const P=parts(g);if(!P)return;const d=P.mk.getAttribute('data-rbmd');if(d){const id=newMask(d);P.mk.setAttribute('data-rbm',id);P.mk.setAttribute('data-rbbase',id);P.mk.removeAttribute('data-rbmd');const bd=P.mk.getAttribute('data-rbbd');if(bd){P.mk.setAttribute('data-rbbase',newMask(bd));P.mk.removeAttribute('data-rbbd')}}if(!P.out.getAttribute('href'))P.out.setAttribute('href',hrefOf(P.sr))});sync()}
 function exportFix(c){const P=parts(c);if(!P)return;const mid=P.mk.getAttribute('data-rbm'),m=MSK.get(mid);if(!m||P.mk.getAttribute('data-rbon')==='0'){P.out.setAttribute('href',hrefOf(P.sr));P.h.remove();return}
   const mid2='rbm'+(++N),mk=document.createElementNS(NSV,'mask');mk.setAttribute('id',mid2);mk.setAttribute('maskUnits','userSpaceOnUse');['x','y','width','height'].forEach(n=>mk.setAttribute(n,P.sr.getAttribute(n)));mk.setAttribute('style','mask-type:luminance');
   const im=document.createElementNS(NSV,'image');['x','y','width','height'].forEach(n=>im.setAttribute(n,P.sr.getAttribute(n)));im.setAttribute('preserveAspectRatio','none');im.setAttribute('href',m.url);mk.appendChild(im);
@@ -10280,9 +10301,90 @@ function thumb(o){const P=parts(o.g);if(!P)return'';const id=P.mk.getAttribute('
 const lp=document.getElementById('lyp');
 if(lp)lp.addEventListener('click',e=>{const t=e.target.closest('[data-rbt]');if(!t)return;e.stopPropagation();e.preventDefault();const row=t.closest('.lyr'),o=objs.find(q=>oid(q)===+row.dataset.id);if(!o)return;
   if(e.shiftKey){sel=new Set([o]);dsSel=new Set();toggle(o);return}
-  sel=new Set([o]);dsSel=new Set();const P=parts(o.g);EDIT=P?P.mk.getAttribute('data-rbm'):null;draw();window.rbBar&&window.rbBar()},true);
-window.RBMASK={make,toggle,remove,masked,parts,sync,pack,unpack,exportFix,thumb,newMask,MSK,URLS,get edit(){return EDIT},set edit(v){EDIT=v},hrefOf,maskImg,srcImg};
+  sel=new Set([o]);dsSel=new Set();const P=parts(o.g);EDIT=P?P.mk.getAttribute('data-rbm'):null;draw();window.rbBar&&window.rbBar();if(window.rbEditStart)window.rbEditStart(o)},true);
+window.RBMASK={U:{box,blurF,guided,refine,decontam},make,toggle,remove,masked,parts,sync,pack,unpack,exportFix,thumb,newMask,MSK,URLS,get edit(){return EDIT},set edit(v){EDIT=v},hrefOf,maskImg,srcImg};
 window.rbThumb=thumb;window.rbPack=pack;window.rbUnpack=unpack;window.rbExportFix=exportFix;
+})();
+
+
+/* ======================= Mask editing (build 223, phase 3): brush, edge controls, decontamination ======================= */
+(()=>{
+const R=window.RBMASK,U=R.U;let S=null,RAF=0,SPACE=false;
+const mk=(t,id,css)=>{const e=document.createElement(t);e.id=id;e.style.cssText=css;document.body.appendChild(e);return e};
+const CAP=mk('div','rbcap','position:fixed;z-index:38;display:none;cursor:none;touch-action:none');
+const OVC=mk('canvas','rbovc','position:fixed;left:0;top:0;z-index:37;display:none;pointer-events:none;transform-origin:0 0');
+const CUR=mk('div','rbcur','position:fixed;z-index:39;display:none;pointer-events:none;border:1px solid #fff;box-shadow:0 0 0 1px #000;border-radius:50%;transform:translate(-50%,-50%)');
+const ED=mk('div','rbed','position:fixed;z-index:41;display:none;width:236px;padding:8px 10px;background:var(--panel,#2b2b2b);border:1px solid var(--line,#444);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.4);font:12px "Segoe UI",Cairo,sans-serif;color:var(--fg,#ddd)');
+{const st=document.createElement('style');st.textContent='#rbed b{display:block;margin:6px 0 2px;font-weight:600}#rbed .r{display:grid;grid-template-columns:78px 1fr 30px;gap:6px;align-items:center;margin:2px 0}#rbed input[type=range]{width:100%}#rbed .bt{display:flex;gap:6px;margin-top:6px}#rbed button{flex:1;font:inherit;padding:4px 6px;border-radius:4px;border:1px solid var(--line,#555);background:var(--field,#3a3a3a);color:inherit;cursor:pointer}#rbed button:hover{background:var(--hover,#4a4a4a)}#rbed button.on,#rbed button:active{background:var(--press,#5a5a5a)}#rbed .nt{opacity:.7;font-size:11px;margin-top:4px}';document.head.appendChild(st)}
+const sl=(k,n,mn,mx,v)=>'<div class="r"><span>'+n+'</span><input type="range" data-k="'+k+'" min="'+mn+'" max="'+mx+'" value="'+v+'"><span data-o="'+k+'">'+v+'</span></div>';
+ED.innerHTML='<b>Mask Brush</b><div class="bt"><button type="button" data-m="hide" class="on" title="Paint black: hide (X swaps)">Hide</button><button type="button" data-m="show" title="Paint white: reveal (X swaps)">Reveal</button></div>'+sl('size','Size',2,400,60)+sl('hard','Hardness',0,100,60)+sl('op','Opacity',1,100,100)+
+ '<b>Edge</b>'+sl('shift','Shift edge',-50,50,0)+sl('feather','Feather',0,30,0)+sl('detail','Detail (follow image)',0,40,0)+sl('dc','Remove colour fringe',0,100,0)+
+ '<div class="bt"><button type="button" data-a="reset" title="Back to the original AI mask">Reset</button><button type="button" data-a="done" title="Finish (Enter)">Done</button></div><div class="nt">[ ] size · X swap · Space pan · Esc/Enter done</div>';
+const q=k=>ED.querySelector('[data-k="'+k+'"]');
+const parts=()=>S&&S.o&&objs.includes(S.o)?R.parts(S.o.g):null;
+function cv2(w,h){const c=document.createElement('canvas');c.width=w;c.height=h;return c}
+const lum=(d,n)=>{const a=new Float32Array(n);for(let i=0;i<n;i++)a[i]=(d[i*4]*.2126+d[i*4+1]*.7152+d[i*4+2]*.0722)/255;return a};
+/* --- load / save the working mask (alpha representation: white + alpha) --- */
+async function loadWork(){const P=parts();if(!P)return false;const id=P.mk.getAttribute('data-rbm'),mi=await R.maskImg(id);if(!S)return false;
+  const k=Math.min(1,2048/Math.max(mi.naturalWidth,mi.naturalHeight)),w=Math.max(1,Math.round(mi.naturalWidth*k)),h=Math.max(1,Math.round(mi.naturalHeight*k)),t=cv2(w,h),x=t.getContext('2d',{willReadFrequently:true});x.drawImage(mi,0,0,w,h);const d=x.getImageData(0,0,w,h),a=d.data;
+  for(let i=0;i<a.length;i+=4){const v=(a[i]*.2126+a[i+1]*.7152+a[i+2]*.0722)*a[i+3]/255;a[i]=a[i+1]=a[i+2]=255;a[i+3]=v}x.putImageData(d,0,0);
+  S.M=t;S.mw=w;S.mh=h;S.M0=cv2(w,h);S.M0.getContext('2d').drawImage(t,0,0);S.id=id;S.P0=null;
+  /* guide (image luminance) at working resolution */
+  const g=cv2(w,h),gx=g.getContext('2d',{willReadFrequently:true});gx.drawImage(S.src,0,0,w,h);S.guide=lum(gx.getImageData(0,0,w,h).data,w*h);return true}
+function geom(){const P=parts();if(!P)return null;const o=P.out,x=+o.getAttribute('x'),y=+o.getAttribute('y'),w=+o.getAttribute('width'),h=+o.getAttribute('height'),m=o.getScreenCTM();return m?{x,y,w,h,m}:null}
+function place(){const G=geom();if(!G||!S)return;const r=cv.getBoundingClientRect();CAP.style.left=r.left+'px';CAP.style.top=r.top+'px';CAP.style.width=r.width+'px';CAP.style.height=r.height+'px';
+  const m=G.m;OVC.style.transform='matrix('+m.a+','+m.b+','+m.c+','+m.d+','+m.e+','+m.f+') translate('+G.x+'px,'+G.y+'px) scale('+(G.w/OVC.width)+','+(G.h/OVC.height)+')';
+  const rr=ED.getBoundingClientRect();ED.style.left=Math.max(4,r.right-250)+'px';ED.style.top=(r.top+8)+'px'}
+function paint(){RAF=0;if(!S||!S.sc)return;const x=OVC.getContext('2d');x.globalCompositeOperation='source-over';x.clearRect(0,0,OVC.width,OVC.height);x.drawImage(S.sc,0,0);x.globalCompositeOperation='destination-in';x.drawImage(S.prev||S.M,0,0,OVC.width,OVC.height)}
+const redraw=()=>{if(!RAF)RAF=requestAnimationFrame(paint)};
+/* --- brush --- */
+function pos(e){const G=geom();if(!G)return null;const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(G.m.inverse());return{mx:(p.x-G.x)/G.w*S.mw,my:(p.y-G.y)/G.h*S.mh,G}}
+function radiusMask(){const G=geom();return Math.max(.5,(+q('size').value/2)/G.w*S.mw)}
+function stamp(mx,my){const x=S.M.getContext('2d'),r=radiusMask(),hd=+q('hard').value/100,op=+q('op').value/100,hide=S.mode==='hide';x.globalCompositeOperation=hide?'destination-out':'source-over';
+  const g=x.createRadialGradient(mx,my,Math.max(0,r*hd*.98),mx,my,r);g.addColorStop(0,'rgba(255,255,255,'+op+')');g.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=g;x.beginPath();x.arc(mx,my,r,0,6.2832);x.fill()}
+function stroke(a,b){const r=radiusMask(),step=Math.max(1,r*.22),dx=b.mx-a.mx,dy=b.my-a.my,n=Math.max(1,Math.ceil(Math.hypot(dx,dy)/step));for(let i=1;i<=n;i++)stamp(a.mx+dx*i/n,a.my+dy*i/n)}
+CAP.addEventListener('pointerdown',e=>{if(!S||e.button!==0||SPACE)return;e.preventDefault();CAP.setPointerCapture(e.pointerId);const p=pos(e);if(!p)return;S.prev=null;S.down=p;S.last=p;if(S.P0===null||S.P0)syncSliders(true);stamp(p.mx,p.my);redraw()});
+CAP.addEventListener('pointermove',e=>{if(!S)return;moveCur(e);if(!S.down)return;const p=pos(e);if(!p)return;stroke(S.last,p);S.last=p;redraw()});
+const up=e=>{if(!S||!S.down)return;S.down=null;S.M0.getContext('2d').clearRect(0,0,S.mw,S.mh);S.M0.getContext('2d').drawImage(S.M,0,0);setVals0();commitMask('Mask brush')};
+CAP.addEventListener('pointerup',up);CAP.addEventListener('pointercancel',up);
+CAP.addEventListener('pointerleave',()=>{CUR.style.display='none'});
+CAP.addEventListener('pointerenter',e=>{if(S)moveCur(e)});
+CAP.addEventListener('wheel',e=>{e.preventDefault();const c=document.getElementById('cv');c.dispatchEvent(new WheelEvent('wheel',e))},{passive:false});
+function moveCur(e){const G=geom();if(!G||SPACE){CUR.style.display='none';return}const d=Math.max(4,+q('size').value*Math.hypot(G.m.a,G.m.b));CUR.style.display='block';CUR.style.width=d+'px';CUR.style.height=d+'px';CUR.style.left=e.clientX+'px';CUR.style.top=e.clientY+'px'}
+/* --- edge controls: live preview at <=1024 px while dragging, full working res on release --- */
+const vals=()=>({shift:+q('shift').value,feather:+q('feather').value,detail:+q('detail').value});
+function setVals0(){['shift','feather','detail'].forEach(k=>{q(k).value=0;ED.querySelector('[data-o="'+k+'"]').textContent=0});S.P0=vals()}
+function syncSliders(){/* a brush stroke happens on top of the refined mask: that becomes the new base */}
+function refineAt(maxSide){const k=Math.min(1,maxSide/Math.max(S.mw,S.mh)),w=Math.max(1,Math.round(S.mw*k)),h=Math.max(1,Math.round(S.mh*k)),b=cv2(w,h),bx=b.getContext('2d',{willReadFrequently:true});bx.drawImage(S.M0,0,0,w,h);
+  const d=bx.getImageData(0,0,w,h),n=w*h,al=new Float32Array(n);for(let i=0;i<n;i++)al[i]=d.data[i*4+3]/255;
+  let gd=S.guide;if(k<1){const g=cv2(w,h),gx=g.getContext('2d',{willReadFrequently:true});gx.drawImage(S.src,0,0,w,h);gd=lum(gx.getImageData(0,0,w,h).data,n)}
+  const o=U.refine(al,gd,w,h,vals());for(let i=0;i<n;i++){d.data[i*4]=d.data[i*4+1]=d.data[i*4+2]=255;d.data[i*4+3]=Math.round(o[i]*255)}bx.putImageData(d,0,0);return b}
+function edgeLive(){const v=vals();if(!v.shift&&!v.feather&&!v.detail){S.prev=null;redraw();return}S.prev=refineAt(768);redraw()}
+function edgeApply(){const v=vals();if(!v.shift&&!v.feather&&!v.detail){S.prev=null;redraw();return}const b=refineAt(2048);S.M.getContext('2d').clearRect(0,0,S.mw,S.mh);S.M.getContext('2d').drawImage(b,0,0,S.mw,S.mh);S.prev=null;redraw()}
+/* --- commit a new mask version (Undo / Redo = switch versions) --- */
+function commitMask(label){const P=parts();if(!P)return;const c=cv2(S.mw,S.mh),x=c.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,S.mw,S.mh);x.drawImage(S.M,0,0);
+  const id=R.newMask(c);P.mk.setAttribute('data-rbm',id);P.mk.setAttribute('data-rbdc',q('dc').value);P.out.style.display='';S.id=id;commit();draw();P.out.style.display='none';
+  if(typeof tb5Msg==='function')tb5Msg(label+' applied (Undo = Ctrl+Z)')}
+ED.addEventListener('input',e=>{const k=e.target.dataset.k;if(!k)return;ED.querySelector('[data-o="'+k+'"]').textContent=e.target.value;if(k==='shift'||k==='feather'||k==='detail')edgeLive()});
+ED.addEventListener('change',e=>{const k=e.target.dataset.k;if(!S||!k)return;if(k==='dc'){commitMask('Colour fringe removal');return}if(k==='shift'||k==='feather'||k==='detail'){edgeApply();S.M0.getContext('2d').clearRect(0,0,S.mw,S.mh);S.M0.getContext('2d').drawImage(S.M,0,0);commitMask('Edge refinement');setVals0()}});
+ED.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.m){S.mode=b.dataset.m;ED.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('on',x===b))}
+  else if(b.dataset.a==='done')end();else if(b.dataset.a==='reset'){const P=parts();if(!P)return;const base=P.mk.getAttribute('data-rbbase');if(base&&R.MSK.get(base)){P.mk.setAttribute('data-rbm',base);P.mk.setAttribute('data-rbdc','0');q('dc').value=0;ED.querySelector('[data-o="dc"]').textContent=0;P.out.style.display='';commit();draw();P.out.style.display='none';loadWork().then(()=>{setVals0();redraw()})}}});
+/* --- session --- */
+async function start(o){if(S)end();const P=R.parts(o.g);if(!P)return;const src=await R.srcImg(P.sr);
+  S={o,src,mode:'hide',down:null};ED.style.display='block';q('dc').value=P.mk.getAttribute('data-rbdc')||0;ED.querySelector('[data-o="dc"]').textContent=q('dc').value;
+  if(!(await loadWork()))return end();
+  const k=Math.min(1,1536/Math.max(src.naturalWidth,src.naturalHeight));OVC.width=Math.max(8,Math.round(src.naturalWidth*k));OVC.height=Math.max(8,Math.round(src.naturalHeight*k));S.sc=cv2(OVC.width,OVC.height);S.sc.getContext('2d').drawImage(src,0,0,OVC.width,OVC.height);
+  setVals0();R.edit=S.id;P.out.style.display='none';CAP.style.display='block';OVC.style.display='block';place();redraw();window.rbBar&&window.rbBar();if(typeof tb5Msg==='function')tb5Msg('Mask edit: paint black to hide, white to reveal · Enter or Done to finish')}
+function end(){if(!S)return;const P=parts();if(P)P.out.style.display='';S=null;R.edit=null;CAP.style.display='none';OVC.style.display='none';CUR.style.display='none';ED.style.display='none';try{draw()}catch(_){}window.rbBar&&window.rbBar()}
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(S){const P=parts();if(!P){end()}else{const id=P.mk.getAttribute('data-rbm');if(id!==S.id){S.id=id;P.out.style.display='none';q('dc').value=P.mk.getAttribute('data-rbdc')||0;ED.querySelector('[data-o="dc"]').textContent=q('dc').value;loadWork().then(()=>{if(S){setVals0();redraw()}})}else P.out.style.display='none';place()}}}catch(_){}return r}}
+addEventListener('resize',()=>{if(S)place()});
+addEventListener('keydown',e=>{if(!S)return;if(e.code==='Space'){SPACE=true;CAP.style.pointerEvents='none';CUR.style.display='none';return}
+  if(e.target.tagName==='INPUT'&&e.target.type!=='range')return;
+  if(e.key==='Escape'||e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();end()}
+  else if(e.key==='x'||e.key==='X'){e.preventDefault();e.stopImmediatePropagation();S.mode=S.mode==='hide'?'show':'hide';ED.querySelectorAll('[data-m]').forEach(x=>x.classList.toggle('on',x.dataset.m===S.mode))}
+  else if(e.key==='['||e.key===']'){e.preventDefault();e.stopImmediatePropagation();const s=q('size');s.value=Math.max(2,Math.min(400,+s.value*(e.key==='['?.85:1.18)));ED.querySelector('[data-o="size"]').textContent=Math.round(s.value)}},true);
+addEventListener('keyup',e=>{if(e.code==='Space'){SPACE=false;CAP.style.pointerEvents='auto'}},true);
+window.rbEditStart=start;window.rbEditEnd=end;window.rbEditing=()=>!!S;window.RBEDIT={get S(){return S},refineAt,vals};
 })();
 
 /*TOOLS-END*/

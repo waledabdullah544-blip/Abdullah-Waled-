@@ -361,3 +361,10 @@
 - Layers panel: mask thumbnail beside the layer thumbnail; click selects the mask target, Shift+click disables / enables (red slash). Context bar: Mask On/Off, Remove Mask (restores original).
 - Tests: rb2.js (pixels, undo/redo, export, roundtrip, remove), rb3.js (scale, paste, rectangle tool, panel thumbs).
 - Next: phase 3 (mask brush, edge feather/shift, guided filter, colour decontamination), then SAM-click and mask→vector path / die-cut.
+
+## 5-ػ build 223 — Remove Background, phase 3 (mask brush + edge controls)
+- Edit Mask (context bar button or click the mask thumbnail in Layers): Mask Brush on a 60 fps overlay canvas that follows the image's exact SVG transform (zoom/pan/rotate), Hide/Reveal (X swaps), Size/Hardness/Opacity, `[` `]` resize, Space = pan, wheel = zoom, Enter/Esc = done. Each stroke / refinement = one new mask version = one Undo step (Undo/Redo inside the session reloads the working mask).
+- Edge controls: Shift edge, Feather, Detail (guided filter steered by the image, snaps the matte to real edges/hair) with live preview at ≤768 px and full 2048 px working resolution on release; Remove colour fringe (foreground colour estimation) stored per mask (`data-rbdc`), applied at render time at ≤4096 px. Reset = back to the original AI mask.
+- `display:none` used during editing is never left in history snapshots (tested). Save/Load keeps base mask + dc.
+- Tests: rb4.js (real mouse strokes, undo/redo, sliders, Enter), rb5.js (before/after fringe crop).
+- Limit: colour-fringe estimation is a simplified foreground estimate, not Photoshop's exact algorithm.
