@@ -1,5 +1,5 @@
 const {chromium}=require('playwright');
-exports.open=async()=>{const b=await chromium.launch(),pg=await b.newPage({viewport:{width:1500,height:900}});const errs=[];
+exports.open=async(o)=>{const b=await chromium.launch(o&&o.launch),pg=await b.newPage(Object.assign({viewport:{width:1500,height:900}},o&&o.page));const errs=[];
 pg.on('pageerror',e=>errs.push(String(e)));
 await pg.goto('file://'+require('path').resolve(__dirname,'../masar.html'));await pg.waitForTimeout(700);
 const r=await pg.evaluate(()=>{const c=document.getElementById('cv').getBoundingClientRect();return{x:c.left,y:c.top,w:c.width,h:c.height}});

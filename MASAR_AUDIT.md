@@ -348,3 +348,9 @@
 - Dialog: live preview (Result / Matte / Overlay) + Smooth edge, Shift edge, Edge contrast, Feather. Apply makes a NON-destructive Opacity Mask (original pixels kept, single Undo step). Opacity-mask maker now accepts `<image>` as the mask.
 - Verified headless (CPU/WASM, ~13 s on 933×1405): giraffe test photo cut cleanly; undo restores. Test: tests/rb.js (needs local copies of ort + model, see script).
 - Not yet: brush to paint/erase the mask, colour decontamination, SAM click-select, LaMa fill.
+
+## 5-ػ build 221 — Remove Background, phase 1 (AI service, commercial-safe)
+- RMBG-1.4 removed (non-commercial licence). Models: Fast = Xenova/modnet (Apache-2.0, portraits), Studio = onnx-community/BiRefNet_lite-ONNX (MIT). transformers.js 3.7.6 runs inside a Blob Web Worker; nothing loads at start-up; lazy download with progress; browser cache; WebGPU -> WASM fallback; input capped at 1024 px, matte scaled to the original (cap 4096).
+- Contextual bar above a selected image (Remove Background + model select), dashed busy overlay on the layer, Object menu entry kept. Interim apply = existing opacity mask (phase 2 replaces it with the dedicated mask model).
+- Verified headless: Fast mode on portrait + animals (good on portraits; poor on animals as expected). Studio: could NOT be verified here (WASM fails, sandbox WebGPU is a software adapter with 8-buffer limits) -> needs testing on a real GPU. Studio on a non-WebGPU browser shows a clear error.
+- tests/rb.js uses a local HTTPS mirror of huggingface.co (see /tmp/mdl/srv.js idea) because Playwright cannot stream 200 MB bodies.

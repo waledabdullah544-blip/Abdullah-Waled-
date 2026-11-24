@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 220</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:pointer">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 221</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10147,92 +10147,81 @@ addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!e.altKey||e.code!=='
 }
 
 
-/* ======================= AI: Remove Background (build 220) =======================
-   In-browser neural matting (ONNX Runtime Web: WebGPU, falls back to WASM). Nothing is uploaded: the model is downloaded once
-   (or loaded from a local .onnx file) and cached in the browser. The result is NOT destructive: the placed image gets an
-   Opacity Mask (the matte), so Undo / Release Opacity Mask / editing the mask keep working and the original pixels are kept. */
+/* ======================= AI: Remove Background (build 221, phase 1: AI service) =======================
+   Runs 100% on the user's computer inside a dedicated Web Worker (transformers.js): the canvas, zoom, pan and the vector tools stay smooth.
+   Commercial-safe models only: Fast = Xenova/modnet (Apache-2.0, portraits), Studio = onnx-community/BiRefNet_lite-ONNX (MIT).
+   Nothing is loaded at start-up: the engine and the chosen model download on the first click, with progress, and are cached by the browser. */
 (()=>{
-const ORTU='https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/',HF='https://huggingface.co/briaai/RMBG-1.4/resolve/main/onnx/';
-const MODELS=[{id:'fast',n:'Fast · RMBG 1.4 quantized (44 MB)',u:HF+'model_quantized.onnx',mb:44,fam:'rmbg'},
-  {id:'hq',n:'Quality · RMBG 1.4 full precision (176 MB)',u:HF+'model.onnx',mb:176,fam:'rmbg'},
-  {id:'file',n:'Custom .onnx file…',fam:'rmbg'}];
-const SESS={},FILEBUF={};let RBBUSY=false;
-const cvs=(w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;return c};
-const say=t=>{try{document.getElementById('hint').textContent=t}catch(_){}};
-async function rbOrt(){if(window.ort&&ort.InferenceSession)return ort;
-  await new Promise((ok,no)=>{const s=document.createElement('script');s.src=ORTU+'ort.webgpu.min.js';s.onload=ok;s.onerror=()=>no(new Error('The inference engine could not be loaded. Internet is needed the first time.'));document.head.appendChild(s)});
-  ort.env.wasm.wasmPaths=ORTU;ort.env.wasm.numThreads=self.crossOriginIsolated?Math.min(4,navigator.hardwareConcurrency||2):1;return ort}
-async function rbBuf(M,prog){if(M.id==='file'){if(!FILEBUF.b)throw new Error('Choose a .onnx model file first.');return FILEBUF.b}
-  let cache=null;try{cache=await caches.open('masar-models');const hit=await cache.match(M.u);if(hit){prog('Loading cached model…',1);return await hit.arrayBuffer()}}catch(_){cache=null}
-  const r=await fetch(M.u);if(!r.ok)throw new Error('Model download failed (HTTP '+r.status+').');const tot=+r.headers.get('content-length')||M.mb*1048576,rd=r.body.getReader(),parts=[];let got=0;
-  for(;;){const{done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;prog('Downloading model… '+(got/1048576).toFixed(0)+' / '+(tot/1048576).toFixed(0)+' MB',Math.min(1,got/tot))}
-  const u8=new Uint8Array(got);let o=0;parts.forEach(p=>{u8.set(p,o);o+=p.length});
-  try{if(cache)await cache.put(M.u,new Response(u8.buffer.slice(0),{headers:{'content-type':'application/octet-stream'}}))}catch(_){}
-  return u8.buffer}
-async function rbSession(M,prog,wasm){const k=M.id+(M.id==='file'?FILEBUF.n:'');if(SESS[k]&&(!wasm||SESS[k].ep==='wasm'))return SESS[k];
-  const O=await rbOrt();prog('Loading inference engine…',0);const b=await rbBuf(M,prog);prog('Preparing model…',1);
-  let s=null,ep='wasm';if(!wasm&&navigator.gpu){try{s=await O.InferenceSession.create(b,{executionProviders:['webgpu'],graphOptimizationLevel:'all'});ep='webgpu'}catch(_){s=null}}
-  if(!s){s=await O.InferenceSession.create(b,{executionProviders:['wasm'],graphOptimizationLevel:'all'});ep='wasm'}
-  return SESS[k]={s,ep,fam:M.fam}}
-const FAM={rmbg:{m:[.5,.5,.5],s:[1,1,1],sig:false},bir:{m:[.485,.456,.406],s:[.229,.224,.225],sig:true}};
-async function rbInfer(img,M,prog){const S=1024,N=S*S,c=cvs(S,S),x=c.getContext('2d',{willReadFrequently:true});x.fillStyle='#fff';x.fillRect(0,0,S,S);x.drawImage(img,0,0,S,S);
-  const d=x.getImageData(0,0,S,S).data,fm=FAM[M.fam]||FAM.rmbg,f=new Float32Array(3*N);
-  for(let i=0;i<N;i++){f[i]=(d[i*4]/255-fm.m[0])/fm.s[0];f[N+i]=(d[i*4+1]/255-fm.m[1])/fm.s[1];f[2*N+i]=(d[i*4+2]/255-fm.m[2])/fm.s[2]}
-  const run=async ses=>{const O=window.ort,r=await ses.s.run({[ses.s.inputNames[0]]:new O.Tensor('float32',f,[1,3,S,S])});return r[ses.s.outputNames[0]]};
-  let ses=await rbSession(M,prog),out;prog('Detecting subject… ('+ses.ep+')',1);
-  try{out=await run(ses)}catch(e){if(ses.ep==='webgpu'){prog('GPU failed, retrying on CPU…',1);ses=await rbSession(M,prog,true);out=await run(ses)}else throw e}
-  const raw=Float32Array.from(out.data);if(raw.length!==N)throw new Error('Unexpected model output size ('+raw.length+'). Use an RMBG / BiRefNet style model with a 1024 × 1024 input.');
-  if(fm.sig)for(let i=0;i<N;i++)raw[i]=1/(1+Math.exp(-raw[i]));
-  let mn=1e9,mx=-1e9;for(let i=0;i<N;i++){const v=raw[i];if(v<mn)mn=v;if(v>mx)mx=v}const dn=(mx-mn)||1;for(let i=0;i<N;i++)raw[i]=(raw[i]-mn)/dn;
-  return raw}
-/* matte refinement: scale -> smooth -> shift/contrast (levels) -> feather. Radii are defined on a 1024 px scale */
-function rbMatte(raw,W,H,P){const S=1024,b=cvs(S,S),bx=b.getContext('2d'),id=bx.createImageData(S,S);
-  for(let i=0;i<S*S;i++){const v=Math.max(0,Math.min(255,Math.round(raw[i]*255)));id.data[i*4]=id.data[i*4+1]=id.data[i*4+2]=v;id.data[i*4+3]=255}bx.putImageData(id,0,0);
-  const k=Math.max(W,H)/S,c=cvs(W,H),x=c.getContext('2d',{willReadFrequently:true});x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';
-  if(P.smooth>0)x.filter='blur('+(P.smooth*k).toFixed(2)+'px)';x.drawImage(b,0,0,W,H);x.filter='none';
-  const thr=.5-P.shift/200,hw=Math.max(.0005,(1-P.hard/100)*.5),lo=thr-hw,hi=thr+hw;
-  if(P.smooth>0||P.shift!==0||P.hard>0){const d=x.getImageData(0,0,W,H),a=d.data,sc=1/(hi-lo);for(let i=0;i<a.length;i+=4){let v=(a[i]/255-lo)*sc;v=v<0?0:v>1?1:v;v=Math.round(v*255);a[i]=a[i+1]=a[i+2]=v}x.putImageData(d,0,0)}
-  if(P.feather>0){const c2=cvs(W,H),x2=c2.getContext('2d');x2.fillStyle='#000';x2.fillRect(0,0,W,H);x2.filter='blur('+(P.feather*k).toFixed(2)+'px)';x2.drawImage(c,0,0);return c2}
-  return c}
+const TFU='https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6/dist/';
+const MODELS=[{id:'fast',n:'Fast · Portrait (MODNet, 7–25 MB)'},{id:'studio',n:'Studio Quality · Hair & detail (BiRefNet lite, 110–215 MB)'}];
+function W(){
+  let TF=null;const C={},SPEC={fast:{id:'Xenova/modnet',dt:d=>d==='webgpu'?'fp32':'q8',sig:false},studio:{id:'onnx-community/BiRefNet_lite-ONNX',dt:(d,h)=>d==='webgpu'&&h?'fp16':'fp32',sig:true}};
+  async function tf(){if(!TF){TF=await import(TFU+'transformers.min.js');TF.env.allowLocalModels=false;TF.env.backends.onnx.wasm.wasmPaths=TFU;TF.env.backends.onnx.wasm.numThreads=1}return TF}
+  async function get(k,id){if(C[k])return C[k];const T=await tf(),S=SPEC[k];let dev='wasm',f16=false;
+    if(self.navigator&&navigator.gpu){try{const ad=await navigator.gpu.requestAdapter();if(ad){dev='webgpu';f16=ad.features.has('shader-f16')}}catch(_){}}
+    const pc=p=>{if(p&&(p.status==='progress'||p.status==='initiate'||p.status==='done'))postMessage({t:'prog',id,f:p.file||p.name||'',l:p.loaded||0,s:p.total||0,st:p.status})};
+    let model=null,dt=S.dt(dev,f16);
+    try{model=await T.AutoModel.from_pretrained(S.id,{device:dev,dtype:dt,progress_callback:pc})}catch(e){if(dev==='webgpu'){dev='wasm';dt=S.dt('wasm',false);model=await T.AutoModel.from_pretrained(S.id,{device:dev,dtype:dt,progress_callback:pc})}else throw e}
+    const proc=await T.AutoProcessor.from_pretrained(S.id,{progress_callback:pc});return C[k]={model,proc,dev,dt,sig:S.sig}}
+  onmessage=async e=>{const m=e.data;try{if(m.cmd!=='run')return;const T=await tf(),M=await get(m.model,m.id);postMessage({t:'dev',id:m.id,dev:M.dev,dt:M.dt});
+      const img=await T.RawImage.fromBlob(m.blob),nm=(M.model.sessions&&M.model.sessions.model&&M.model.sessions.model.inputNames||['input'])[0];
+      /* Studio model: full 1024 on GPU; the CPU (WASM) fallback has a 4 GB memory ceiling, so it works at a smaller side and retries smaller if memory runs out */
+      const sizes=m.model==='studio'?(M.dev==='webgpu'?[1024,512]:[512,384]):[0];let res=null,lastErr=null;
+      for(const sz of sizes){try{if(sz)M.proc.size={width:sz,height:sz};const{pixel_values}=await M.proc(img);res=await M.model({[nm]:pixel_values});break}catch(er){lastErr=er}}
+      if(!res)throw new Error(/^\d+$/.test(String(lastErr&&lastErr.message||lastErr))?'Studio Quality could not run here (it needs WebGPU: use a recent Chrome/Edge on a computer with a graphics card, or choose the Fast model).':lastErr);let out=res[Object.keys(res)[0]];if(out.type!=='float32')out=out.to('float32');
+      const dm=out.dims,H=dm[dm.length-2],Wd=dm[dm.length-1],src=out.data,N=H*Wd,off=src.length-N,u=new Uint8Array(N);
+      for(let i=0;i<N;i++){let v=src[off+i];if(M.sig)v=1/(1+Math.exp(-v));u[i]=v<=0?0:v>=1?255:Math.round(v*255)}
+      postMessage({t:'res',id:m.id,w:Wd,h:H,data:u},[u.buffer])}catch(err){postMessage({t:'err',id:m.id,msg:String(err&&err.message||err)})}}
+}
+const RB={w:null,jobs:new Map(),n:0,busy:false};
+function rbWorker(){if(RB.w)return RB.w;const url=URL.createObjectURL(new Blob(['const TFU='+JSON.stringify(TFU)+';('+W.toString()+')()'],{type:'text/javascript'}));
+  const w=new Worker(url);w.onmessage=e=>{const m=e.data,j=RB.jobs.get(m.id);if(!j)return;
+    if(m.t==='prog'){j.files[m.f]=j.files[m.f]||{l:0,s:0};if(m.s)j.files[m.f].s=m.s;j.files[m.f].l=m.l;let L=0,S=0;for(const k in j.files){L+=j.files[k].l;S+=j.files[k].s}j.cb&&j.cb({phase:'download',f:S?Math.min(1,L/S):0,mb:L/1048576,tot:S/1048576})}
+    else if(m.t==='dev'){j.dev=m.dev+' · '+m.dt;j.cb&&j.cb({phase:'infer',dev:j.dev})}
+    else if(m.t==='res'){RB.jobs.delete(m.id);j.ok({w:m.w,h:m.h,data:m.data,dev:j.dev})}
+    else if(m.t==='err'){RB.jobs.delete(m.id);j.no(new Error(m.msg))}};
+  w.onerror=e=>{const msg='The AI worker failed: '+(e.message||'unknown error');RB.jobs.forEach(j=>j.no(new Error(msg)));RB.jobs.clear();RB.w=null};return RB.w=w}
+/* image -> max 1024 px blob (the model never sees more) -> worker -> small 8-bit matte */
+async function rbRun(img,model,cb){const S=1024,k=Math.min(1,S/Math.max(img.naturalWidth,img.naturalHeight)),w=Math.max(1,Math.round(img.naturalWidth*k)),h=Math.max(1,Math.round(img.naturalHeight*k)),c=document.createElement('canvas');c.width=w;c.height=h;
+  const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+  const wk=rbWorker(),id=++RB.n;return new Promise((ok,no)=>{RB.jobs.set(id,{ok,no,cb,files:{}});cb&&cb({phase:'start'});wk.postMessage({cmd:'run',id,model,blob})})}
 const IMGLOAD=u=>new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('The image could not be read.'));i.src=u});
+const say=t=>{try{document.getElementById('hint').textContent=t}catch(_){}};
 const rbTarget=o=>{if(!o||!o.g)return null;if(o.g.querySelector('[data-opmask]'))return null;const im=o.g.querySelectorAll('image');if(im.length!==1)return null;if(o.g.querySelector('path,rect,ellipse,circle,polygon,polyline,line,text'))return null;return im[0]};
 function rbApplyMatte(o,im,url){const A=a=>im.getAttribute(a);
   const n=add('<image href="'+url+'" x="'+A('x')+'" y="'+A('y')+'" width="'+A('width')+'" height="'+A('height')+'" preserveAspectRatio="none"/>');
   const t=o.g.getAttribute('transform');if(t)n.g.setAttribute('transform',t);n.m=Object.assign({},o.m);try{n.bb=n.g.getBBox()}catch(_){}
-  sel=new Set([o,n]);dsSel=new Set();const ok=opmMake();if(ok){const g=[...sel][0];if(g){g.nm='Background removed'}}return ok}
-function rbOpen(){if(RBBUSY)return;const L=[...sel];if(L.length!==1||!rbTarget(L[0])){say('Remove Background: select ONE placed image (an image that already has an opacity mask: Release Opacity Mask first)');try{aiAlert('Select one placed image (not a group, and without an opacity mask), then choose Object › Remove Background.')}catch(_){}return}
-  const o=L[0],im=rbTarget(o);let RAW=null,SRC=null,closed=false;
-  const css=document.getElementById('rbcss')||(()=>{const s=document.createElement('style');s.id='rbcss';s.textContent='#rbpv{display:block;max-width:100%;border:1px solid var(--line);background:repeating-conic-gradient(#8a8a8a 0 25%,#b4b4b4 0 50%) 0 0/16px 16px}.rbs{display:grid;grid-template-columns:110px 1fr 38px;gap:6px;align-items:center;margin:2px 0}.rbs input{width:100%}#rbst{min-height:16px;margin:4px 0;opacity:.85}#rbbar{height:4px;background:var(--line);margin:2px 0}#rbbar i{display:block;height:100%;width:0;background:var(--acc,#888)}';document.head.appendChild(s);return s})();
-  const sl=(k,n,mn,mx,v)=>'<div class="rbs"><span>'+n+'</span><input type="range" data-k="'+k+'" min="'+mn+'" max="'+mx+'" step="1" value="'+v+'"><span data-o="'+k+'">'+v+'</span></div>';
-  const body='<label>Model<select data-k="mdl">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select></label>'+
-   '<label data-r="file" style="display:none">Model file<span><button type="button" class="pb" data-k="pick">Choose .onnx…</button> <select data-k="fam"><option value="rmbg">RMBG style</option><option value="bir">BiRefNet style</option></select></span></label>'+
-   '<div id="rbbar"><i></i></div><div id="rbst">Press Remove to detect the subject. Everything runs on this computer.</div>'+
-   '<canvas id="rbpv" width="10" height="10"></canvas>'+
-   '<label data-r="ref" style="display:none">View<select data-k="view"><option value="res">Result</option><option value="mat">Matte</option><option value="ovl">Overlay</option></select></label>'+
-   '<div data-r="ref" style="display:none">'+sl('smooth','Smooth edge',0,20,0)+sl('shift','Shift edge',-50,50,0)+sl('hard','Edge contrast',0,100,0)+sl('feather','Feather',0,40,0)+'</div>';
-  const M=dkModal('Remove Background',body,[{t:'Cancel',c:1,f:()=>{closed=true}},{t:'Remove',p:1,f:box=>{if(!RAW){run(box);return false}closed=true;
-      (async()=>{try{say('Building mask…');const P=getP(box),w=Math.min(4096,SRC.naturalWidth||SRC.width),k=Math.min(1,4096/Math.max(SRC.naturalWidth,SRC.naturalHeight)),W=Math.max(1,Math.round(SRC.naturalWidth*k)),H=Math.max(1,Math.round(SRC.naturalHeight*k)),c=rbMatte(RAW,W,H,P);
-        if(rbApplyMatte(o,im,c.toDataURL('image/png'))){draw();say('Background removed (non-destructive opacity mask). Undo with Ctrl+Z.')}else say('Remove Background failed')}catch(e){try{aiAlert(String(e.message||e))}catch(_){}}})();return true}}]);
-  const box=M.box,Q=k=>box.querySelector('[data-k="'+k+'"]'),pv=box.querySelector('#rbpv'),st=box.querySelector('#rbst'),bar=box.querySelector('#rbbar i');
-  const mdl=()=>MODELS.find(m=>m.id===Q('mdl').value),getP=()=>({smooth:+Q('smooth').value,shift:+Q('shift').value,hard:+Q('hard').value,feather:+Q('feather').value});
-  const prog=(t,f)=>{st.textContent=t;bar.style.width=(f*100).toFixed(0)+'%'};
-  const fin=box.querySelector('[data-k="Remove"]');
-  Q('mdl').addEventListener('change',()=>{box.querySelectorAll('[data-r="file"]').forEach(e=>e.style.display=Q('mdl').value==='file'?'':'none')});
-  Q('pick').onclick=()=>{const f=document.createElement('input');f.type='file';f.accept='.onnx';f.onchange=async()=>{const q=f.files[0];if(!q)return;FILEBUF.b=await q.arrayBuffer();FILEBUF.n=q.name+q.size;Q('pick').textContent=q.name;prog('Model file ready.',0)};f.click()};
-  const rdraw=()=>{if(!RAW||closed)return;const W=pv.width,H=pv.height,x=pv.getContext('2d',{willReadFrequently:true}),m=rbMatte(RAW,W,H,getP()),v=Q('view').value;
-    if(v==='mat'){x.clearRect(0,0,W,H);x.drawImage(m,0,0);return}
-    const t=cvs(W,H),tx=t.getContext('2d',{willReadFrequently:true});tx.drawImage(SRC,0,0,W,H);const d=tx.getImageData(0,0,W,H),a=m.getContext('2d').getImageData(0,0,W,H).data;
-    if(v==='ovl'){for(let i=0;i<d.data.length;i+=4){const q=(255-a[i])/255*.6;d.data[i]=d.data[i]*(1-q)+255*q;d.data[i+1]=d.data[i+1]*(1-q);d.data[i+2]=d.data[i+2]*(1-q)}}
-    else for(let i=0;i<d.data.length;i+=4)d.data[i+3]=Math.round(d.data[i+3]*a[i]/255);
-    x.clearRect(0,0,W,H);x.putImageData(d,0,0)};
-  box.querySelectorAll('input[type=range]').forEach(r=>r.addEventListener('input',()=>{box.querySelector('[data-o="'+r.dataset.k+'"]').textContent=r.value;rdraw()}));
-  Q('view').addEventListener('change',rdraw);
-  (async()=>{try{SRC=await IMGLOAD(im.getAttribute('href')||im.getAttributeNS('http://www.w3.org/1999/xlink','href'));const k=Math.min(1,520/SRC.naturalWidth,360/SRC.naturalHeight);pv.width=Math.max(8,Math.round(SRC.naturalWidth*k));pv.height=Math.max(8,Math.round(SRC.naturalHeight*k));pv.getContext('2d').drawImage(SRC,0,0,pv.width,pv.height)}catch(e){prog(String(e.message||e),0)}})();
-  async function run(box){if(RBBUSY||!SRC)return;RBBUSY=true;fin.disabled=true;try{const Mo=Object.assign({},mdl());Mo.fam=Mo.id==='file'?Q('fam').value:Mo.fam;
-      RAW=await rbInfer(SRC,Mo,prog);if(closed)return;prog('Done. Fine-tune the edge, then press Apply.',1);fin.textContent='Apply';box.querySelectorAll('[data-r="ref"]').forEach(e=>e.style.display='');rdraw()}
-    catch(e){RAW=null;prog('Error: '+String(e.message||e),0)}finally{RBBUSY=false;fin.disabled=false}}
-  window.__rb={get raw(){return RAW},P:getP,redraw:rdraw}}
-window.rbOpen=rbOpen;window.rbInfer=rbInfer;window.rbMatte=rbMatte;window.rbTarget=rbTarget;
+  sel=new Set([o,n]);dsSel=new Set();const ok=opmMake();if(ok){const g=[...sel][0];if(g)g.nm='Background removed'}return ok}
+const mdlKey=()=>{try{const v=localStorage.getItem('masar.rbmodel');if(MODELS.some(m=>m.id===v))return v}catch(_){}return'fast'};
+/* ---- contextual action bar (shown when exactly one image is selected) ---- */
+const BAR=document.createElement('div');BAR.id='rbctx';BAR.style.display='none';document.body.appendChild(BAR);
+BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><span class="rbst"></span><i class="rbpg"><b></b></i>';
+{const st=document.createElement('style');st.textContent='#rbctx{position:fixed;z-index:40;display:flex;align-items:center;gap:6px;padding:4px 6px;background:var(--panel,#2b2b2b);border:1px solid var(--line,#444);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.4);font:12px "Segoe UI",Cairo,sans-serif;color:var(--fg,#ddd);white-space:nowrap}#rbctx button{font:inherit;padding:3px 10px;border-radius:4px;border:1px solid var(--line,#555);background:var(--field,#3a3a3a);color:inherit;cursor:pointer}#rbctx button:hover:not(:disabled){background:var(--hover,#4a4a4a)}#rbctx button:active:not(:disabled){background:var(--press,#555)}#rbctx button:disabled{opacity:.5;cursor:default}#rbctx select{font:inherit;max-width:230px;background:var(--field,#3a3a3a);color:inherit;border:1px solid var(--line,#555);border-radius:4px;padding:2px}#rbctx .rbst{opacity:.85;max-width:260px;overflow:hidden;text-overflow:ellipsis}#rbctx .rbpg{display:none;width:60px;height:4px;background:var(--line,#555);border-radius:2px;overflow:hidden}#rbctx .rbpg b{display:block;height:100%;width:0;background:#9a9a9a}#rbov{position:fixed;z-index:39;pointer-events:none;display:none;border:1px dashed #aaa;background:rgba(0,0,0,.18);color:#fff;font:12px "Segoe UI",Cairo,sans-serif;align-items:center;justify-content:center;text-shadow:0 1px 3px #000}';document.head.appendChild(st)}
+const OV=document.createElement('div');OV.id='rbov';document.body.appendChild(OV);
+const $b=s=>BAR.querySelector(s);let JOB=null;
+$b('.rbmd').value=mdlKey();$b('.rbmd').addEventListener('change',()=>{try{localStorage.setItem('masar.rbmodel',$b('.rbmd').value)}catch(_){}});
+function rbPos(){const L=[...sel],o=L.length===1?L[0]:null,show=!!o&&objs.includes(o)&&(!!rbTarget(o)||(JOB&&JOB.o===o));
+  if(!show||typeof ted_s!=='undefined'&&ted_s){BAR.style.display='none';OV.style.display='none';return}
+  const r=cv.getBoundingClientRect(),b=wbox(o),x0=r.left+b.x*z+px,y0=r.top+b.y*z+py,w=b.w*z,h=b.h*z;
+  BAR.style.display='flex';const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
+  BAR.style.left=Math.max(r.left+4,Math.min(r.right-bw-4,x))+'px';BAR.style.top=y+'px';
+  if(JOB&&JOB.o===o){OV.style.display='flex';OV.style.left=x0+'px';OV.style.top=y0+'px';OV.style.width=w+'px';OV.style.height=h+'px'}else OV.style.display='none'}
+function rbUi(t,f){$b('.rbst').textContent=t||'';const p=$b('.rbpg');if(f==null){p.style.display='none'}else{p.style.display='block';p.firstChild.style.width=(f*100).toFixed(0)+'%'}OV.textContent=t||''}
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{rbPos()}catch(_){}return r}}
+addEventListener('resize',()=>{try{rbPos()}catch(_){}});
+async function rbStart(){if(RB.busy)return;const L=[...sel];if(L.length!==1||!rbTarget(L[0])){say('Remove Background: select ONE placed image (one that already has an opacity mask needs Release Opacity Mask first)');try{aiAlert('Select one placed image (not a group, and without an opacity mask), then run Remove Background.')}catch(_){}return}
+  const o=L[0],im=rbTarget(o),model=$b('.rbmd').value;RB.busy=true;JOB={o};$b('.rbgo').disabled=true;$b('.rbmd').disabled=true;rbUi('Starting AI…',0);rbPos();
+  try{const img=await IMGLOAD(im.getAttribute('href')||im.getAttributeNS('http://www.w3.org/1999/xlink','href'));
+    const r=await rbRun(img,model,p=>{if(p.phase==='download')rbUi('Downloading model '+p.mb.toFixed(0)+(p.tot?' / '+p.tot.toFixed(0):'')+' MB (first time only)',p.f);else if(p.phase==='infer')rbUi('Detecting subject… ('+p.dev+')',null);else rbUi('Preparing AI engine…',null)});
+    if(!objs.includes(o))throw new Error('The image was deleted while the AI was working.');
+    rbUi('Building mask…',null);const k=Math.min(1,4096/Math.max(img.naturalWidth,img.naturalHeight)),W=Math.max(1,Math.round(img.naturalWidth*k)),H=Math.max(1,Math.round(img.naturalHeight*k));
+    const sm=document.createElement('canvas');sm.width=r.w;sm.height=r.h;const sx=sm.getContext('2d'),id=sx.createImageData(r.w,r.h);for(let i=0;i<r.w*r.h;i++){const v=r.data[i];id.data[i*4]=id.data[i*4+1]=id.data[i*4+2]=v;id.data[i*4+3]=255}sx.putImageData(id,0,0);
+    const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(sm,0,0,W,H);
+    JOB=null;if(rbApplyMatte(o,im,c.toDataURL('image/png'))){draw();say('Background removed (non-destructive opacity mask). Undo with Ctrl+Z.')}else say('Remove Background failed')}
+  catch(e){say('Remove Background: '+(e.message||e));try{aiAlert(String(e.message||e))}catch(_){}}
+  finally{RB.busy=false;JOB=null;$b('.rbgo').disabled=false;$b('.rbmd').disabled=false;rbUi('',null);rbPos()}}
+$b('.rbgo').addEventListener('click',rbStart);
+window.rbOpen=rbStart;window.rbRun=rbRun;window.rbTarget=rbTarget;window.RBAI=RB;
 })();
 
 /*TOOLS-END*/
