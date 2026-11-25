@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 228</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 229</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8357,7 +8357,7 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Clipping Mask',sub:()=>[{t:'Make',k:'Ctrl+7',f:clipMake,en:S},{t:'Release',k:'Ctrl+Alt+7',f:clipRelease,en:S}]},
     {t:'Compound Path',sub:()=>[{t:'Make',k:'Ctrl+8',f:makeCompound,en:S},{t:'Release',k:'Ctrl+Alt+8',f:releaseCompound,en:S}]},
     {t:'Artboards',sub:()=>[{t:'Convert to Artboards',f:()=>window.abConvert(),en:S},{t:'Rearrange All Artboards…',f:()=>window.abRearrange()},sep,{t:'Fit to Artwork Bounds',f:()=>window.abFitTo(window.abBounds(objs)),en:()=>objs.length>0},{t:'Fit to Selected Art',f:()=>window.abFitTo(window.abBounds([...sel])),en:S}]},
-    {t:'Remove Background…',f:()=>window.rbOpen(),en:S},{t:'Mask to Path…',f:()=>window.rbToPath(),en:()=>sel.size===1&&window.RBMASK&&RBMASK.masked([...sel][0])},{t:'Die-Cut Outline…',f:()=>window.rbDieCut(),en:()=>sel.size===1&&window.RBMASK&&RBMASK.masked([...sel][0])},{t:'Collect for Export',sub:()=>[{t:'As Single Asset',f:()=>window.axCollect(true),en:S},{t:'As Multiple Assets',f:()=>window.axCollect(false),en:S}]},
+    {t:'Remove Background…',f:()=>window.rbOpen(),en:S},{t:'Upscale Image…',f:()=>window.rbUpscale(),en:S},{t:'Mask to Path…',f:()=>window.rbToPath(),en:()=>sel.size===1&&window.RBMASK&&RBMASK.masked([...sel][0])},{t:'Die-Cut Outline…',f:()=>window.rbDieCut(),en:()=>sel.size===1&&window.RBMASK&&RBMASK.masked([...sel][0])},{t:'Collect for Export',sub:()=>[{t:'As Single Asset',f:()=>window.axCollect(true),en:S},{t:'As Multiple Assets',f:()=>window.axCollect(false),en:S}]},
     {t:'Blend',sub:()=>{const B=()=>[...sel].some(o=>window.bnHas&&bnHas(o.g));return[{t:'Make',k:'Ctrl+Alt+B',f:()=>window.blendMake(),en:()=>sel.size>1},{t:'Release',k:'Ctrl+Alt+Shift+B',f:()=>window.blendRelease(),en:B},sep,{t:'Blend Options…',f:()=>window.blendOptions(),en:()=>true},{t:'Expand',f:()=>window.blendExpand(),en:B},sep,{t:'Replace Spine',f:()=>window.blendReplaceSpine(),en:()=>sel.size===2&&B()},{t:'Reverse Spine',f:()=>window.blendReverseSpine(),en:B},{t:'Reverse Front to Back',f:()=>window.blendReverseFB(),en:B}]}},sep,
     {t:'Expand…',f:()=>window.openExpand(),en:S},{t:'Expand Appearance',f:()=>window.pxExpand(),en:()=>[...sel].some(o=>o.g.dataset&&o.g.dataset.pxon&&fxList(o).some(e=>e.t==='px'))},{t:'Make Pixel Perfect',f:()=>window.pathPixel(),en:S},{t:'Create Trim Marks',f:()=>window.createTrimMarks()},sep,{t:'Isolate Selected Group',f:()=>{const G=[...sel];if(G.length===1&&isGroup(G[0]))isoEnter(G[0])},en:()=>sel.size===1&&hasGrp()&&!ISO},{t:'Exit Isolation Mode',f:isoExit,en:()=>!!ISO}]],
    ['Type',()=>[
@@ -10165,6 +10165,33 @@ function W(){
     let model=null,dt=S.dt(dev,f16);
     try{model=await T.AutoModel.from_pretrained(S.id,{device:dev,dtype:dt,progress_callback:pc,session_options:so(dev)})}catch(e){if(dev==='webgpu'){dev='wasm';dt=S.dt('wasm',false);model=await T.AutoModel.from_pretrained(S.id,{device:dev,dtype:dt,progress_callback:pc,session_options:so(dev)})}else throw e}
     const proc=S.pre?null:await T.AutoProcessor.from_pretrained(S.id,{progress_callback:pc});return C[k]={model,proc,dev,dt,sig:S.sig,mm:!!S.mm,pre:S.pre}}
+  /* ---- Upscale (Real-ESRGAN, BSD-3-Clause): tiled, runs in this worker ---- */
+  const UPM={general:{m:'https://huggingface.co/TheGuy444/Real-ESRGAN-ONNX/resolve/main/onnx/model.onnx',d:'https://huggingface.co/TheGuy444/Real-ESRGAN-ONNX/resolve/main/onnx/model.data',T:128,pad:8},
+    detail:{m:'https://huggingface.co/imgdesignart/realesrgan-x4-onnx/resolve/main/onnx/model.onnx',T:64,pad:6}},UPS={};
+  async function fetchCached(url,id){let cache=null;try{cache=await caches.open('masar-models');const hit=await cache.match(url);if(hit)return await hit.arrayBuffer()}catch(_){cache=null}
+    const r=await fetch(url);if(!r.ok)throw new Error('Model download failed (HTTP '+r.status+').');const tot=+r.headers.get('content-length')||0,rd=r.body.getReader(),parts=[];let got=0;
+    for(;;){const{done,value}=await rd.read();if(done)break;parts.push(value);got+=value.length;postMessage({t:'prog',id,f:url,l:got,s:tot||got})}
+    const u8=new Uint8Array(got);let o=0;parts.forEach(p=>{u8.set(p,o);o+=p.length});try{if(cache)await cache.put(url,new Response(u8.buffer.slice(0),{headers:{'content-type':'application/octet-stream'}}))}catch(_){}return u8.buffer}
+  async function upLoad(k,id){if(UPS[k])return UPS[k];if(!self.ort){importScripts(ORTU+'ort.webgpu.min.js');ort.env.wasm.wasmPaths=ORTU;ort.env.wasm.numThreads=1}
+    const S=UPM[k],buf=await fetchCached(S.m,id),opt={graphOptimizationLevel:'all'};if(S.d)opt.externalData=[{path:'model.data',data:new Uint8Array(await fetchCached(S.d,id))}];
+    let s=null,ep='wasm';if(self.navigator&&navigator.gpu){try{s=await ort.InferenceSession.create(buf,{...opt,executionProviders:['webgpu']});ep='webgpu'}catch(_){s=null}}
+    if(!s){s=await ort.InferenceSession.create(buf,{...opt,executionProviders:['wasm']});ep='wasm'}return UPS[k]={s,ep,T:S.T,pad:S.pad,name:s.inputNames[0]}}
+  async function upscale(m){const U=await upLoad(m.model,m.id);postMessage({t:'dev',id:m.id,dev:U.ep,dt:'tiled'});
+    const bmp=await createImageBitmap(m.blob),W=bmp.width,H=bmp.height,sc=4,T=U.T,pad=U.pad,core=T-2*pad,nw=Math.ceil(W/core),nh=Math.ceil(H/core),total=nw*nh;
+    const so=new OffscreenCanvas(W,H),sx=so.getContext('2d',{willReadFrequently:true});sx.drawImage(bmp,0,0);const src=sx.getImageData(0,0,W,H).data;
+    const oc=new OffscreenCanvas(W*sc,H*sc),ox=oc.getContext('2d'),st=m.strength==null?1:m.strength,N=T*T;let done=0,alpha=false;for(let i=3;i<src.length;i+=4)if(src[i]<255){alpha=true;break}
+    const rf=(v,n)=>{if(v<0)v=-v-1;if(v>=n)v=2*n-v-1;return v<0?0:v>=n?n-1:v};
+    for(let ty=0;ty<nh;ty++)for(let tx=0;tx<nw;tx++){const x0=tx*core,y0=ty*core,f=new Float32Array(3*N);
+      for(let y=0;y<T;y++){const sy=rf(y0+y-pad,H)*W;for(let x=0;x<T;x++){const p=(sy+rf(x0+x-pad,W))*4,o=y*T+x;f[o]=src[p]/255;f[N+o]=src[p+1]/255;f[2*N+o]=src[p+2]/255}}
+      const res=await U.s.run({[U.name]:new ort.Tensor('float32',f,[1,3,T,T])}),y4=res[U.s.outputNames[0]].data,T4=T*sc,cw=Math.min(core,W-x0),ch=Math.min(core,H-y0),w4=cw*sc,h4=ch*sc,td=new ImageData(w4,h4),d=td.data;
+      let bic=null;if(st<1||alpha){const bc=new OffscreenCanvas(w4,h4),bx=bc.getContext('2d',{willReadFrequently:true});bx.imageSmoothingQuality='high';bx.drawImage(bmp,x0,y0,cw,ch,0,0,w4,h4);bic=bx.getImageData(0,0,w4,h4).data}
+      const N4=T4*T4,off=pad*sc;
+      for(let y=0;y<h4;y++)for(let x=0;x<w4;x++){const q=(y+off)*T4+x+off,o=(y*w4+x)*4;let r=y4[q],g=y4[N4+q],b=y4[2*N4+q];
+        if(st<1){r=bic[o]/255*(1-st)+r*st;g=bic[o+1]/255*(1-st)+g*st;b=bic[o+2]/255*(1-st)+b*st}
+        d[o]=r<=0?0:r>=1?255:r*255+.5;d[o+1]=g<=0?0:g>=1?255:g*255+.5;d[o+2]=b<=0?0:b>=1?255:b*255+.5;d[o+3]=bic&&alpha?bic[o+3]:255}
+      ox.putImageData(td,x0*sc,y0*sc);done++;if(done%2===0||done===total)postMessage({t:'uprog',id:m.id,i:done,n:total})}
+    let fin=oc;const k=m.scale/4;if(k!==1){fin=new OffscreenCanvas(Math.round(W*sc*k),Math.round(H*sc*k));const fx=fin.getContext('2d');fx.imageSmoothingQuality='high';fx.drawImage(oc,0,0,fin.width,fin.height)}
+    const blob=await fin.convertToBlob(alpha?{type:'image/png'}:{type:'image/jpeg',quality:.93});postMessage({t:'upres',id:m.id,blob,w:fin.width,h:fin.height,dev:U.ep,alpha})}
   /* ---- SlimSAM (Apache-2.0): click-to-select ---- */
   const SS={};
   async function samLoad(id){if(SS.m)return;const T=await tf(),pc=p=>{if(p&&(p.status==='progress'||p.status==='initiate'||p.status==='done'))postMessage({t:'prog',id,f:p.file||p.name||'',l:p.loaded||0,s:p.total||0,st:p.status})};
@@ -10178,7 +10205,7 @@ function W(){
     const H=mk.dims[mk.dims.length-2],W=mk.dims[mk.dims.length-1],n=mk.dims[mk.dims.length-3];let best=0;for(let i=1;i<sc.length;i++)if(sc[i]>sc[best])best=i;
     const pick=m.size>=0&&m.size<n?m.size:best,u=new Uint8Array(H*W),off=pick*H*W;for(let i=0;i<H*W;i++)u[i]=mk.data[off+i]?255:0;
     postMessage({t:'sres',id:m.id,w:W,h:H,data:u,pick,n,score:sc[pick]},[u.buffer])}
-  onmessage=async e=>{const m=e.data;try{if(m.cmd==='sam_embed'||m.cmd==='sam_point'){await sam(m);return}if(m.cmd!=='run')return;const T=await tf(),M=await get(m.model,m.id);postMessage({t:'dev',id:m.id,dev:M.dev,dt:M.dt});
+  onmessage=async e=>{const m=e.data;try{if(m.cmd==='sam_embed'||m.cmd==='sam_point'){await sam(m);return}if(m.cmd==='upscale'){await upscale(m);return}if(m.cmd!=='run')return;const T=await tf(),M=await get(m.model,m.id);postMessage({t:'dev',id:m.id,dev:M.dev,dt:M.dt});
       const img=await T.RawImage.fromBlob(m.blob),nm=(M.model.sessions&&M.model.sessions.model&&M.model.sessions.model.inputNames||['input'])[0];
       /* BiRefNet has a fixed 1024 x 1024 input; it needs GPU memory (the CPU/WASM build is limited to 2 GB) */
       let res=null;try{let pixel_values;if(M.pre){/* own pre-processing: the model's published processor type is unknown to transformers.js */const q=M.pre,r=(await img.resize(q.s,q.s)).rgb(),N2=q.s*q.s,f=new Float32Array(3*N2),d=r.data;for(let i=0;i<N2;i++){f[i]=(d[i*3]/255-q.m[0])/q.d[0];f[N2+i]=(d[i*3+1]/255-q.m[1])/q.d[1];f[2*N2+i]=(d[i*3+2]/255-q.m[2])/q.d[2]}pixel_values=new T.Tensor('float32',f,[1,3,q.s,q.s])}else pixel_values=(await M.proc(img)).pixel_values;res=await M.model({[nm]:pixel_values})}catch(er){const t=String(er&&er.message||er);throw new Error(m.model==='studio'&&/^\d+$/.test(t)?'Studio needs WebGPU and enough graphics memory on this computer.':t)}
@@ -10190,11 +10217,12 @@ function W(){
 }
 const RB={w:null,jobs:new Map(),n:0,busy:false};
 function rbCancel(){if(RB.w){RB.w.terminate();RB.w=null}RB.jobs.forEach(j=>j.no(new Error('Cancelled')));RB.jobs.clear()}
-function rbWorker(){if(RB.w)return RB.w;const url=URL.createObjectURL(new Blob(['const TFU='+JSON.stringify(TFU)+';('+W.toString()+')()'],{type:'text/javascript'}));
+function rbWorker(){if(RB.w)return RB.w;const url=URL.createObjectURL(new Blob(['const TFU='+JSON.stringify(TFU)+',ORTU='+JSON.stringify('https://cdn.jsdelivr.net/npm/onnxruntime-web@1.20.1/dist/')+';('+W.toString()+')()'],{type:'text/javascript'}));
   const w=new Worker(url);w.onmessage=e=>{const m=e.data,j=RB.jobs.get(m.id);if(!j)return;
     if(m.t==='prog'){j.files[m.f]=j.files[m.f]||{l:0,s:0};if(m.s)j.files[m.f].s=m.s;j.files[m.f].l=m.l;let L=0,S=0;for(const k in j.files){L+=j.files[k].l;S+=j.files[k].s}j.cb&&j.cb({phase:'download',f:S?Math.min(1,L/S):0,mb:L/1048576,tot:S/1048576})}
     else if(m.t==='dev'){j.dev=m.dev+' · '+m.dt;j.cb&&j.cb({phase:'infer',dev:j.dev})}
     else if(m.t==='res'){RB.jobs.delete(m.id);j.ok({w:m.w,h:m.h,data:m.data,dev:j.dev})}
+    else if(m.t==='uprog'){j.cb&&j.cb({phase:'tile',i:m.i,n:m.n})}else if(m.t==='upres'){RB.jobs.delete(m.id);j.ok(m)}
     else if(m.t==='sdone'){RB.jobs.delete(m.id);j.ok({w:m.w,h:m.h})}else if(m.t==='sres'){RB.jobs.delete(m.id);j.ok(m)}
     else if(m.t==='err'){RB.jobs.delete(m.id);j.no(new Error(m.msg))}};
   w.onerror=e=>{const msg='The AI worker failed: '+(e.message||'unknown error');RB.jobs.forEach(j=>j.no(new Error(msg)));RB.jobs.clear();RB.w=null};return RB.w=w}
@@ -10212,7 +10240,7 @@ function rbApplyMatte(o,im,url){const A=a=>im.getAttribute(a);
 const mdlKey=()=>{try{const v=localStorage.getItem('masar.rbmodel');if(MODELS.some(m=>m.id===v))return v}catch(_){}return'balanced'};
 /* ---- contextual action bar (shown when exactly one image is selected) ---- */
 const BAR=document.createElement('div');BAR.id='rbctx';BAR.style.display='none';document.body.appendChild(BAR);
-BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbpk" title="Click the subject you want to keep (AI selection, runs on this computer)">Pick Subject</button><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbed" title="Edit the mask: brush, edge, colour fringe">Edit Mask</button><button type="button" class="rbpt" title="Trace the mask into an editable vector path (Pen / Direct Selection)">Mask to Path</button><button type="button" class="rbdc" title="Create a cut line (offset outline) around the subject for stickers and print">Die-Cut</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i><button type="button" class="rbx" title="Close (while the AI works: cancel)">✕</button>';
+BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbup" title="Upscale: raise the pixel resolution with AI (Real-ESRGAN)">Upscale</button><button type="button" class="rbpk" title="Click the subject you want to keep (AI selection, runs on this computer)">Pick Subject</button><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbed" title="Edit the mask: brush, edge, colour fringe">Edit Mask</button><button type="button" class="rbpt" title="Trace the mask into an editable vector path (Pen / Direct Selection)">Mask to Path</button><button type="button" class="rbdc" title="Create a cut line (offset outline) around the subject for stickers and print">Die-Cut</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i><button type="button" class="rbx" title="Close (while the AI works: cancel)">✕</button>';
 {const st=document.createElement('style');st.textContent='#rbctx{position:fixed;z-index:40;display:flex;align-items:center;gap:6px;padding:4px 6px;background:var(--panel,#2b2b2b);border:1px solid var(--line,#444);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.4);font:12px "Segoe UI",Cairo,sans-serif;color:var(--fg,#ddd);white-space:nowrap}#rbctx button{font:inherit;padding:3px 10px;border-radius:4px;border:1px solid var(--line,#555);background:var(--field,#3a3a3a);color:inherit;cursor:default}#rbctx button:hover:not(:disabled){background:var(--hover,#4a4a4a)}#rbctx button:active:not(:disabled){background:var(--press,#555)}#rbctx button:disabled{opacity:.5;cursor:default}#rbctx select{font:inherit;max-width:230px;background:var(--field,#3a3a3a);color:inherit;border:1px solid var(--line,#555);border-radius:4px;padding:2px}#rbctx .rbx{padding:3px 8px;margin-left:2px}#rbctx .rbst{opacity:.85;max-width:260px;overflow:hidden;text-overflow:ellipsis}#rbctx .rbpg{display:none;width:60px;height:4px;background:var(--line,#555);border-radius:2px;overflow:hidden}#rbctx .rbpg b{display:block;height:100%;width:0;background:#9a9a9a}#rbov{position:fixed;z-index:39;pointer-events:none;display:none;border:1px dashed #aaa;background:rgba(0,0,0,.18);color:#fff;font:12px "Segoe UI",Cairo,sans-serif;align-items:center;justify-content:center;text-shadow:0 1px 3px #000}';document.head.appendChild(st)}
 const OV=document.createElement('div');OV.id='rbov';document.body.appendChild(OV);
 const $b=s=>BAR.querySelector(s);let JOB=null,DISMISS=null;
@@ -10239,9 +10267,11 @@ async function rbStart(){if(RB.busy)return;const L=[...sel];if(L.length!==1||!rb
   catch(e){if(String(e.message)==='Cancelled')say('Remove Background cancelled');else{say('Remove Background: '+(e.message||e));try{aiAlert(String(e.message||e))}catch(_){}}}
   finally{RB.busy=false;JOB=null;$b('.rbgo').disabled=false;$b('.rbmd').disabled=false;rbUi('',null);rbPos()}}
 $b('.rbgo').addEventListener('click',rbStart);
+$b('.rbup').addEventListener('click',()=>window.rbUpscale&&window.rbUpscale());
 $b('.rbpk').addEventListener('click',()=>{const o=[...sel][0];if(o&&window.rbPick)window.rbPick(o)});
 $b('.rbx').addEventListener('click',()=>{if(RB.busy){rbCancel();return}DISMISS=[...sel][0]||null;rbPos()});$b('.rbpt').addEventListener('click',()=>window.rbToPath());$b('.rbdc').addEventListener('click',()=>window.rbDieCut());$b('.rbed').addEventListener('click',()=>{const o=[...sel][0];if(o&&window.rbEditStart)window.rbEditStart(o)});
 $b('.rbtg').addEventListener('click',()=>{const o=[...sel][0];if(o)RBMASK.toggle(o)});$b('.rbrm').addEventListener('click',()=>{const o=[...sel][0];if(o&&RBMASK.remove(o))say('Mask removed: original image restored.')});window.rbBar=()=>{try{rbPos()}catch(_){}};
+window.RBUP={run:(blob,o,cb)=>{const wk=rbWorker(),id=++RB.n;return new Promise((ok,no)=>{RB.jobs.set(id,{ok,no,cb,files:{}});wk.postMessage({cmd:'upscale',id,blob,model:o.model,scale:o.scale,strength:o.strength})})},cancel:()=>rbCancel(),busy:()=>RB.busy};
 window.RBSAM={embed:(blob,cb)=>{const wk=rbWorker(),id=++RB.n;return new Promise((ok,no)=>{RB.jobs.set(id,{ok,no,cb,files:{}});wk.postMessage({cmd:'sam_embed',id,blob})})},point:(points,size)=>{const wk=rbWorker(),id=++RB.n;return new Promise((ok,no)=>{RB.jobs.set(id,{ok,no,files:{}});wk.postMessage({cmd:'sam_point',id,points,size:size==null?-1:size})})},busyJobs:()=>RB.jobs.size};window.rbOpen=rbStart;window.rbRun=rbRun;window.rbTarget=rbTarget;window.RBAI=RB;
 })();
 
@@ -10322,7 +10352,8 @@ const lp=document.getElementById('lyp');
 if(lp)lp.addEventListener('click',e=>{const t=e.target.closest('[data-rbt]');if(!t)return;e.stopPropagation();e.preventDefault();const row=t.closest('.lyr'),o=objs.find(q=>oid(q)===+row.dataset.id);if(!o)return;
   if(e.shiftKey){sel=new Set([o]);dsSel=new Set();toggle(o);return}
   sel=new Set([o]);dsSel=new Set();const P=parts(o.g);EDIT=P?P.mk.getAttribute('data-rbm'):null;draw();window.rbBar&&window.rbBar();if(window.rbEditStart)window.rbEditStart(o)},true);
-window.RBMASK={U:{box,blurF,guided,refine,decontam},make,toggle,remove,masked,parts,sync,pack,unpack,exportFix,thumb,newMask,MSK,URLS,get edit(){return EDIT},set edit(v){EDIT=v},hrefOf,maskImg,srcImg};
+function replaceSrc(o,url){const P=parts(o.g);if(!P)return false;const sid='s'+(++N);P.sr.setAttribute('href',url);P.sr.setAttribute('data-rbsid',sid);P.out.removeAttribute('data-rbk');return true}
+window.RBMASK={U:{box,blurF,guided,refine,decontam},replaceSrc,make,toggle,remove,masked,parts,sync,pack,unpack,exportFix,thumb,newMask,MSK,URLS,get edit(){return EDIT},set edit(v){EDIT=v},hrefOf,maskImg,srcImg};
 window.rbThumb=thumb;window.rbPack=pack;window.rbUnpack=unpack;window.rbExportFix=exportFix;
 })();
 
@@ -10587,6 +10618,36 @@ function end(){S=null;busy=false;queued=false;CAP.style.display='none';OVC.style
 addEventListener('resize',()=>{if(S)place()});
 addEventListener('keydown',e=>{if(!S)return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();end()}else if(e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();apply()}else if(e.key==='['||e.key===']'){e.preventDefault();e.stopImmediatePropagation();cycle(e.key===']'?1:-1)}},true);
 window.rbPick=start;window.rbPickEnd=end;window.rbPicking=()=>!!S;window.RBPICK={get S(){return S}};
+})();
+
+
+/* ======================= Upscale Image (build 229): Real-ESRGAN in the worker, tiled ======================= */
+(()=>{
+const R=window.RBMASK;let BUSY=false;
+const target=o=>{if(!o||!o.g)return null;if(R.masked(o))return{kind:'mask',im:R.parts(o.g).sr};const im=window.rbTarget&&window.rbTarget(o);return im?{kind:'plain',im}:null};
+const href=e=>e.getAttribute('href')||e.getAttributeNS('http://www.w3.org/1999/xlink','href')||'';
+const blobOf=async u=>{const r=await fetch(u);return await r.blob()};
+const toURL=b=>new Promise((ok,no)=>{const f=new FileReader();f.onload=()=>ok(f.result);f.onerror=()=>no(new Error('Could not read the result.'));f.readAsDataURL(b)});
+async function open(){const o=[...sel][0];if(sel.size!==1||!target(o)){try{aiAlert('Select one placed image (or an image with a mask), then run Upscale Image.')}catch(_){}return}if(BUSY)return;
+  const T=target(o),img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('image decode failed'));i.src=href(T.im)}).catch(e=>{try{aiAlert(String(e.message))}catch(_){}return null});if(!img)return;
+  const w=img.naturalWidth,h=img.naturalHeight;
+  const body='<label>Model<select data-k="mdl"><option value="general">General · fast, works everywhere (Real-ESRGAN, 5 MB)</option><option value="detail">Detail · best quality, slow without a graphics card (Real-ESRGAN x4+, 64 MB)</option></select></label>'+
+   '<label>Scale<select data-k="sc"><option value="2">2×</option><option value="4" selected>4×</option></select></label>'+
+   '<label>Strength<span><input type="range" data-k="st" min="40" max="100" value="85" style="width:130px"> <b data-o="st">85</b> %</span></label>'+
+   '<label class="fxp"><input type="checkbox" data-k="keep"> Keep the original (place the result as a copy)</label>'+
+   '<div id="upinfo" style="margin:6px 0;opacity:.85"></div><div id="upbar" style="height:4px;background:var(--line);margin:2px 0"><i style="display:block;height:100%;width:0;background:#9a9a9a"></i></div>';
+  const M=dkModal('Upscale Image',body,[{t:'Cancel',c:1,f:()=>{if(BUSY)RBUP.cancel();BUSY=false}},{t:'Upscale',p:1,f:b=>{if(BUSY)return false;run(b);return false}}]);
+  const bx=M.box,Q=k=>bx.querySelector('[data-k="'+k+'"]'),info=bx.querySelector('#upinfo'),bar=bx.querySelector('#upbar i'),go=bx.querySelector('[data-k="Upscale"]');
+  const upd=()=>{const sc=+Q('sc').value,W=w*sc,H=h*sc,mp=W*H/1e6;info.textContent='Original '+w+' × '+h+' px  →  '+W+' × '+H+' px ('+mp.toFixed(1)+' MP)'+(mp>60?'  ·  too large: choose 2× or a smaller image':mp>25?'  ·  large: this will take a while':'');go.disabled=mp>60};
+  bx.addEventListener('input',e=>{const k=e.target.dataset&&e.target.dataset.k;if(k==='st')bx.querySelector('[data-o="st"]').textContent=e.target.value;upd()});upd();
+  async function run(b){const mdl=Q('mdl').value,sc=+Q('sc').value,st=+Q('st').value/100,keep=Q('keep').checked;BUSY=true;go.disabled=true;Q('mdl').disabled=Q('sc').disabled=true;info.textContent='Starting…';
+    try{const blob=await blobOf(href(T.im)),res=await RBUP.run(blob,{model:mdl,scale:sc,strength:st},p=>{if(p.phase==='download'){info.textContent='Downloading the model '+p.mb.toFixed(0)+(p.tot?' / '+p.tot.toFixed(0):'')+' MB (first time only)';bar.style.width=(p.f*100)+'%'}else if(p.phase==='infer'){info.textContent='Upscaling… ('+p.dev+')'}else if(p.phase==='tile'){info.textContent='Upscaling… '+Math.round(p.i/p.n*100)+'%';bar.style.width=(p.i/p.n*100)+'%'}});
+      if(!objs.includes(o))throw new Error('The image was deleted while it was being upscaled.');info.textContent='Saving the result…';const url=await toURL(res.blob);
+      if(keep&&T.kind==='plain'){const A=a=>T.im.getAttribute(a),n=add('<image href="'+url+'" x="'+A('x')+'" y="'+A('y')+'" width="'+A('width')+'" height="'+A('height')+'" preserveAspectRatio="none"/>');const t=o.g.getAttribute('transform');if(t)n.g.setAttribute('transform',t);n.m=Object.assign({},o.m);n.ly=o.ly;n.nm=(o.nm||'Image')+' (upscaled)';try{n.bb=n.g.getBBox()}catch(_){}sel=new Set([n]);dsSel=new Set()}
+      else if(T.kind==='mask')R.replaceSrc(o,url);else{T.im.setAttribute('href',url)}
+      BUSY=false;M.close();commit();draw();if(typeof tb5Msg==='function')tb5Msg('Upscaled to '+res.w+' × '+res.h+' px ('+res.dev+'). Undo = Ctrl+Z')}
+    catch(e){BUSY=false;go.disabled=false;Q('mdl').disabled=Q('sc').disabled=false;bar.style.width='0';info.textContent=String(e.message)==='Cancelled'?'Cancelled':'Error: '+(e.message||e)}}}
+window.rbUpscale=open;
 })();
 
 /*TOOLS-END*/
