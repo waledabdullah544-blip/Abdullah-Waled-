@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 227</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 228</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10165,7 +10165,20 @@ function W(){
     let model=null,dt=S.dt(dev,f16);
     try{model=await T.AutoModel.from_pretrained(S.id,{device:dev,dtype:dt,progress_callback:pc,session_options:so(dev)})}catch(e){if(dev==='webgpu'){dev='wasm';dt=S.dt('wasm',false);model=await T.AutoModel.from_pretrained(S.id,{device:dev,dtype:dt,progress_callback:pc,session_options:so(dev)})}else throw e}
     const proc=S.pre?null:await T.AutoProcessor.from_pretrained(S.id,{progress_callback:pc});return C[k]={model,proc,dev,dt,sig:S.sig,mm:!!S.mm,pre:S.pre}}
-  onmessage=async e=>{const m=e.data;try{if(m.cmd!=='run')return;const T=await tf(),M=await get(m.model,m.id);postMessage({t:'dev',id:m.id,dev:M.dev,dt:M.dt});
+  /* ---- SlimSAM (Apache-2.0): click-to-select ---- */
+  const SS={};
+  async function samLoad(id){if(SS.m)return;const T=await tf(),pc=p=>{if(p&&(p.status==='progress'||p.status==='initiate'||p.status==='done'))postMessage({t:'prog',id,f:p.file||p.name||'',l:p.loaded||0,s:p.total||0,st:p.status})};
+    SS.m=await T.SamModel.from_pretrained('Xenova/slimsam-77-uniform',{device:'wasm',dtype:'fp32',progress_callback:pc,session_options:so('wasm')});SS.p=await T.AutoProcessor.from_pretrained('Xenova/slimsam-77-uniform',{progress_callback:pc})}
+  async function sam(m){const T=await tf();
+    if(m.cmd==='sam_embed'){await samLoad(m.id);const img=await T.RawImage.fromBlob(m.blob),inputs=await SS.p(img);SS.inputs=inputs;SS.emb=await SS.m.get_image_embeddings(inputs);SS.w=img.width;SS.h=img.height;postMessage({t:'sdone',id:m.id,w:img.width,h:img.height});return}
+    if(!SS.emb)throw new Error('Pick Subject: the image is not analysed yet.');
+    const rs=SS.inputs.reshaped_input_sizes[0],pts=m.points.map(p=>[p[0]*rs[1],p[1]*rs[0]]);
+    const ip=new T.Tensor('float32',Float32Array.from(pts.flat()),[1,1,pts.length,2]),il=new T.Tensor('int64',BigInt64Array.from(m.points.map(p=>BigInt(p[2]))),[1,1,pts.length]);
+    const out=await SS.m({...SS.emb,input_points:ip,input_labels:il}),masks=await SS.p.post_process_masks(out.pred_masks,SS.inputs.original_sizes,SS.inputs.reshaped_input_sizes),mk=masks[0],sc=Array.from(out.iou_scores.data);
+    const H=mk.dims[mk.dims.length-2],W=mk.dims[mk.dims.length-1],n=mk.dims[mk.dims.length-3];let best=0;for(let i=1;i<sc.length;i++)if(sc[i]>sc[best])best=i;
+    const pick=m.size>=0&&m.size<n?m.size:best,u=new Uint8Array(H*W),off=pick*H*W;for(let i=0;i<H*W;i++)u[i]=mk.data[off+i]?255:0;
+    postMessage({t:'sres',id:m.id,w:W,h:H,data:u,pick,n,score:sc[pick]},[u.buffer])}
+  onmessage=async e=>{const m=e.data;try{if(m.cmd==='sam_embed'||m.cmd==='sam_point'){await sam(m);return}if(m.cmd!=='run')return;const T=await tf(),M=await get(m.model,m.id);postMessage({t:'dev',id:m.id,dev:M.dev,dt:M.dt});
       const img=await T.RawImage.fromBlob(m.blob),nm=(M.model.sessions&&M.model.sessions.model&&M.model.sessions.model.inputNames||['input'])[0];
       /* BiRefNet has a fixed 1024 x 1024 input; it needs GPU memory (the CPU/WASM build is limited to 2 GB) */
       let res=null;try{let pixel_values;if(M.pre){/* own pre-processing: the model's published processor type is unknown to transformers.js */const q=M.pre,r=(await img.resize(q.s,q.s)).rgb(),N2=q.s*q.s,f=new Float32Array(3*N2),d=r.data;for(let i=0;i<N2;i++){f[i]=(d[i*3]/255-q.m[0])/q.d[0];f[N2+i]=(d[i*3+1]/255-q.m[1])/q.d[1];f[2*N2+i]=(d[i*3+2]/255-q.m[2])/q.d[2]}pixel_values=new T.Tensor('float32',f,[1,3,q.s,q.s])}else pixel_values=(await M.proc(img)).pixel_values;res=await M.model({[nm]:pixel_values})}catch(er){const t=String(er&&er.message||er);throw new Error(m.model==='studio'&&/^\d+$/.test(t)?'Studio needs WebGPU and enough graphics memory on this computer.':t)}
@@ -10182,6 +10195,7 @@ function rbWorker(){if(RB.w)return RB.w;const url=URL.createObjectURL(new Blob([
     if(m.t==='prog'){j.files[m.f]=j.files[m.f]||{l:0,s:0};if(m.s)j.files[m.f].s=m.s;j.files[m.f].l=m.l;let L=0,S=0;for(const k in j.files){L+=j.files[k].l;S+=j.files[k].s}j.cb&&j.cb({phase:'download',f:S?Math.min(1,L/S):0,mb:L/1048576,tot:S/1048576})}
     else if(m.t==='dev'){j.dev=m.dev+' · '+m.dt;j.cb&&j.cb({phase:'infer',dev:j.dev})}
     else if(m.t==='res'){RB.jobs.delete(m.id);j.ok({w:m.w,h:m.h,data:m.data,dev:j.dev})}
+    else if(m.t==='sdone'){RB.jobs.delete(m.id);j.ok({w:m.w,h:m.h})}else if(m.t==='sres'){RB.jobs.delete(m.id);j.ok(m)}
     else if(m.t==='err'){RB.jobs.delete(m.id);j.no(new Error(m.msg))}};
   w.onerror=e=>{const msg='The AI worker failed: '+(e.message||'unknown error');RB.jobs.forEach(j=>j.no(new Error(msg)));RB.jobs.clear();RB.w=null};return RB.w=w}
 /* image -> max 1024 px blob (the model never sees more) -> worker -> small 8-bit matte */
@@ -10198,7 +10212,7 @@ function rbApplyMatte(o,im,url){const A=a=>im.getAttribute(a);
 const mdlKey=()=>{try{const v=localStorage.getItem('masar.rbmodel');if(MODELS.some(m=>m.id===v))return v}catch(_){}return'balanced'};
 /* ---- contextual action bar (shown when exactly one image is selected) ---- */
 const BAR=document.createElement('div');BAR.id='rbctx';BAR.style.display='none';document.body.appendChild(BAR);
-BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbed" title="Edit the mask: brush, edge, colour fringe">Edit Mask</button><button type="button" class="rbpt" title="Trace the mask into an editable vector path (Pen / Direct Selection)">Mask to Path</button><button type="button" class="rbdc" title="Create a cut line (offset outline) around the subject for stickers and print">Die-Cut</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i><button type="button" class="rbx" title="Close (while the AI works: cancel)">✕</button>';
+BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbpk" title="Click the subject you want to keep (AI selection, runs on this computer)">Pick Subject</button><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbed" title="Edit the mask: brush, edge, colour fringe">Edit Mask</button><button type="button" class="rbpt" title="Trace the mask into an editable vector path (Pen / Direct Selection)">Mask to Path</button><button type="button" class="rbdc" title="Create a cut line (offset outline) around the subject for stickers and print">Die-Cut</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i><button type="button" class="rbx" title="Close (while the AI works: cancel)">✕</button>';
 {const st=document.createElement('style');st.textContent='#rbctx{position:fixed;z-index:40;display:flex;align-items:center;gap:6px;padding:4px 6px;background:var(--panel,#2b2b2b);border:1px solid var(--line,#444);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.4);font:12px "Segoe UI",Cairo,sans-serif;color:var(--fg,#ddd);white-space:nowrap}#rbctx button{font:inherit;padding:3px 10px;border-radius:4px;border:1px solid var(--line,#555);background:var(--field,#3a3a3a);color:inherit;cursor:default}#rbctx button:hover:not(:disabled){background:var(--hover,#4a4a4a)}#rbctx button:active:not(:disabled){background:var(--press,#555)}#rbctx button:disabled{opacity:.5;cursor:default}#rbctx select{font:inherit;max-width:230px;background:var(--field,#3a3a3a);color:inherit;border:1px solid var(--line,#555);border-radius:4px;padding:2px}#rbctx .rbx{padding:3px 8px;margin-left:2px}#rbctx .rbst{opacity:.85;max-width:260px;overflow:hidden;text-overflow:ellipsis}#rbctx .rbpg{display:none;width:60px;height:4px;background:var(--line,#555);border-radius:2px;overflow:hidden}#rbctx .rbpg b{display:block;height:100%;width:0;background:#9a9a9a}#rbov{position:fixed;z-index:39;pointer-events:none;display:none;border:1px dashed #aaa;background:rgba(0,0,0,.18);color:#fff;font:12px "Segoe UI",Cairo,sans-serif;align-items:center;justify-content:center;text-shadow:0 1px 3px #000}';document.head.appendChild(st)}
 const OV=document.createElement('div');OV.id='rbov';document.body.appendChild(OV);
 const $b=s=>BAR.querySelector(s);let JOB=null,DISMISS=null;
@@ -10206,7 +10220,7 @@ $b('.rbmd').value=mdlKey();$b('.rbmd').addEventListener('change',()=>{try{localS
 function rbPos(){const L=[...sel],o=L.length===1?L[0]:null;if(DISMISS&&DISMISS!==o&&!(JOB&&JOB.o===DISMISS))DISMISS=null;const dis=!!o&&DISMISS===o&&!(JOB&&JOB.o===o),mk=!!o&&!!window.RBMASK&&RBMASK.masked(o),show=!!o&&objs.includes(o)&&(!!rbTarget(o)||mk||(JOB&&JOB.o===o));
   if(!show||dis||typeof ted_s!=='undefined'&&ted_s){BAR.style.display='none';OV.style.display='none';return}
   const r=cv.getBoundingClientRect(),b=wbox(o),x0=r.left+b.x*z+px,y0=r.top+b.y*z+py,w=b.w*z,h=b.h*z;
-  BAR.style.display='flex';{const P=mk&&RBMASK.parts(o.g),off=P&&P.mk.getAttribute('data-rbon')==='0';$b('.rbgo').style.display=mk?'none':'';$b('.rbmd').style.display=mk?'none':'';$b('.rbtg').style.display=mk?'':'none';$b('.rbrm').style.display=mk?'':'none';$b('.rbed').style.display=mk?'':'none';$b('.rbpt').style.display=mk?'':'none';$b('.rbdc').style.display=mk?'':'none';if(window.rbEditing&&window.rbEditing())BAR.style.display='none';$b('.rbtg').textContent=off?'Mask: Off':'Mask: On'}const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
+  BAR.style.display='flex';{const P=mk&&RBMASK.parts(o.g),off=P&&P.mk.getAttribute('data-rbon')==='0';$b('.rbgo').style.display=mk?'none':'';$b('.rbpk').style.display=mk?'none':'';$b('.rbmd').style.display=mk?'none':'';$b('.rbtg').style.display=mk?'':'none';$b('.rbrm').style.display=mk?'':'none';$b('.rbed').style.display=mk?'':'none';$b('.rbpt').style.display=mk?'':'none';$b('.rbdc').style.display=mk?'':'none';if(window.rbEditing&&window.rbEditing()||window.rbPicking&&window.rbPicking())BAR.style.display='none';$b('.rbtg').textContent=off?'Mask: Off':'Mask: On'}const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
   BAR.style.left=Math.max(r.left+4,Math.min(r.right-bw-4,x))+'px';BAR.style.top=y+'px';
   if(JOB&&JOB.o===o){OV.style.display='flex';OV.style.left=x0+'px';OV.style.top=y0+'px';OV.style.width=w+'px';OV.style.height=h+'px'}else OV.style.display='none'}
 function rbUi(t,f){$b('.rbst').textContent=t||'';const p=$b('.rbpg');if(f==null){p.style.display='none'}else{p.style.display='block';p.firstChild.style.width=(f*100).toFixed(0)+'%'}OV.textContent=t||''}
@@ -10225,9 +10239,10 @@ async function rbStart(){if(RB.busy)return;const L=[...sel];if(L.length!==1||!rb
   catch(e){if(String(e.message)==='Cancelled')say('Remove Background cancelled');else{say('Remove Background: '+(e.message||e));try{aiAlert(String(e.message||e))}catch(_){}}}
   finally{RB.busy=false;JOB=null;$b('.rbgo').disabled=false;$b('.rbmd').disabled=false;rbUi('',null);rbPos()}}
 $b('.rbgo').addEventListener('click',rbStart);
+$b('.rbpk').addEventListener('click',()=>{const o=[...sel][0];if(o&&window.rbPick)window.rbPick(o)});
 $b('.rbx').addEventListener('click',()=>{if(RB.busy){rbCancel();return}DISMISS=[...sel][0]||null;rbPos()});$b('.rbpt').addEventListener('click',()=>window.rbToPath());$b('.rbdc').addEventListener('click',()=>window.rbDieCut());$b('.rbed').addEventListener('click',()=>{const o=[...sel][0];if(o&&window.rbEditStart)window.rbEditStart(o)});
 $b('.rbtg').addEventListener('click',()=>{const o=[...sel][0];if(o)RBMASK.toggle(o)});$b('.rbrm').addEventListener('click',()=>{const o=[...sel][0];if(o&&RBMASK.remove(o))say('Mask removed: original image restored.')});window.rbBar=()=>{try{rbPos()}catch(_){}};
-window.rbOpen=rbStart;window.rbRun=rbRun;window.rbTarget=rbTarget;window.RBAI=RB;
+window.RBSAM={embed:(blob,cb)=>{const wk=rbWorker(),id=++RB.n;return new Promise((ok,no)=>{RB.jobs.set(id,{ok,no,cb,files:{}});wk.postMessage({cmd:'sam_embed',id,blob})})},point:(points,size)=>{const wk=rbWorker(),id=++RB.n;return new Promise((ok,no)=>{RB.jobs.set(id,{ok,no,files:{}});wk.postMessage({cmd:'sam_point',id,points,size:size==null?-1:size})})},busyJobs:()=>RB.jobs.size};window.rbOpen=rbStart;window.rbRun=rbRun;window.rbTarget=rbTarget;window.RBAI=RB;
 })();
 
 
@@ -10513,6 +10528,65 @@ const scan=()=>document.querySelectorAll(SEL).forEach(watch);
 scan();new MutationObserver(m=>{m.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1&&n.matches&&n.matches(SEL))watch(n)}))}).observe(document.body,{childList:true});
 /* menus are created lazily: re-scan when a menu opens */
 document.addEventListener('pointerdown',()=>setTimeout(scan,0),true);document.addEventListener('contextmenu',()=>setTimeout(scan,0),true);
+})();
+
+
+/* ======================= Pick Subject (SlimSAM click-to-select) → mask (build 228) ======================= */
+(()=>{
+const R=window.RBMASK,U=R.U;let S=null;
+const mk=(t,id,css)=>{const e=document.createElement(t);e.id=id;e.style.cssText=css;document.body.appendChild(e);return e};
+const CAP=mk('div','rbpcap','position:fixed;z-index:38;display:none;cursor:crosshair;touch-action:none');
+const OVC=mk('canvas','rbpov','position:fixed;left:0;top:0;z-index:37;display:none;pointer-events:none;transform-origin:0 0');
+const PN=mk('div','rbpick','position:fixed;z-index:41;display:none;align-items:center;gap:6px;padding:4px 6px;background:var(--panel,#2b2b2b);border:1px solid var(--line,#444);border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.4);font:12px "Segoe UI",Cairo,sans-serif;color:var(--fg,#ddd);white-space:nowrap');
+PN.innerHTML='<span class="pt">Click the subject · Alt+click or right-click excludes</span><button type="button" data-a="size" title="The AI proposes up to 3 selections: Auto picks the best, or switch with [ and ]">Option: Auto</button><button type="button" data-a="undo">Undo point</button><button type="button" data-a="apply" class="pri" disabled>Apply</button><button type="button" data-a="x" title="Cancel (Esc)">✕</button>';
+{const st=document.createElement('style');st.textContent='#rbpick button{font:inherit;padding:3px 10px;border-radius:4px;border:1px solid var(--line,#555);background:var(--field,#3a3a3a);color:inherit;cursor:default}#rbpick button:hover:not(:disabled){background:var(--hover,#4a4a4a)}#rbpick button:active:not(:disabled){background:var(--press,#5a5a5a)}#rbpick button:disabled{opacity:.5}#rbpick .pt{opacity:.9;max-width:300px;overflow:hidden;text-overflow:ellipsis}';document.head.appendChild(st)}
+const geom=()=>{if(!S)return null;const im=S.im;if(!im.isConnected)return null;const m=im.getScreenCTM();return m?{x:+im.getAttribute('x'),y:+im.getAttribute('y'),w:+im.getAttribute('width'),h:+im.getAttribute('height'),m}:null};
+function place(){const G=geom();if(!G)return;const r=cv.getBoundingClientRect();CAP.style.left=r.left+'px';CAP.style.top=r.top+'px';CAP.style.width=r.width+'px';CAP.style.height=r.height+'px';
+  const m=G.m;OVC.style.transform='matrix('+m.a+','+m.b+','+m.c+','+m.d+','+m.e+','+m.f+') translate('+G.x+'px,'+G.y+'px) scale('+(G.w/OVC.width)+','+(G.h/OVC.height)+')';
+  PN.style.left=Math.max(4,r.left+r.width/2-PN.offsetWidth/2)+'px';PN.style.top=(r.top+8)+'px'}
+function paint(){if(!S)return;const x=OVC.getContext('2d'),W=OVC.width,H=OVC.height;x.clearRect(0,0,W,H);
+  if(S.mask){const id=x.createImageData(W,H),d=id.data,mk=S.mask;for(let i=0;i<W*H;i++)if(mk[i]){d[i*4]=60;d[i*4+1]=140;d[i*4+2]=255;d[i*4+3]=120}x.putImageData(id,0,0);
+    /* outline */x.strokeStyle='rgba(30,100,230,.9)';x.lineWidth=Math.max(1,W/700)}
+  S.pts.forEach(p=>{x.beginPath();x.arc(p[0]*W,p[1]*H,Math.max(4,W/150),0,6.2832);x.fillStyle=p[2]?'#2ecc71':'#e74c3c';x.fill();x.lineWidth=Math.max(1.5,W/400);x.strokeStyle='#fff';x.stroke()})}
+let busy=false,queued=false;
+async function decode(){if(!S)return;if(!S.pts.length){S.mask=null;paint();PN.querySelector('[data-a=apply]').disabled=true;return}
+  if(busy){queued=true;return}busy=true;try{const r=await RBSAM.point(S.pts,S.size<0?null:S.size);if(!S)return;S.res=r;
+    /* r.data is at the analysed image size: scale to the overlay size */
+    const c=document.createElement('canvas');c.width=r.w;c.height=r.h;const cx=c.getContext('2d'),id=cx.createImageData(r.w,r.h);for(let i=0;i<r.w*r.h;i++){const v=r.data[i];id.data[i*4]=id.data[i*4+1]=id.data[i*4+2]=v;id.data[i*4+3]=255}cx.putImageData(id,0,0);S.mc=c;
+    const o=document.createElement('canvas');o.width=OVC.width;o.height=OVC.height;const ox=o.getContext('2d',{willReadFrequently:true});ox.drawImage(c,0,0,o.width,o.height);const d=ox.getImageData(0,0,o.width,o.height).data,mk=new Uint8Array(o.width*o.height);for(let i=0;i<mk.length;i++)mk[i]=d[i*4]>127?1:0;S.mask=mk;
+    PN.querySelector('[data-a=apply]').disabled=false;PN.querySelector('.pt').textContent='Click more to add · Alt+click excludes · [ ] switch between the 3 AI options · Enter applies';paint()}
+  catch(e){PN.querySelector('.pt').textContent=String(e.message||e)}finally{busy=false;if(queued){queued=false;decode()}}}
+function pos(e){const G=geom();if(!G)return null;const p=new DOMPoint(e.clientX,e.clientY).matrixTransform(G.m.inverse()),u=(p.x-G.x)/G.w,v=(p.y-G.y)/G.h;return u<0||v<0||u>1||v>1?null:[u,v]}
+CAP.addEventListener('pointerdown',e=>{if(!S||busy&&false)return;const p=pos(e);if(!p)return;e.preventDefault();S.pts.push([p[0],p[1],(e.altKey||e.button===2)?0:1]);paint();decode()});
+CAP.addEventListener('contextmenu',e=>e.preventDefault());
+CAP.addEventListener('wheel',e=>{e.preventDefault();document.getElementById('cv').dispatchEvent(new WheelEvent('wheel',e))},{passive:false});
+const SIZES=['Auto','Option 1','Option 2','Option 3'];
+PN.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||!S)return;const a=b.dataset.a;
+  if(a==='x')end();else if(a==='undo'){S.pts.pop();decode()}else if(a==='size'){S.size=S.size>=2?-2:S.size;cycle(1)}else if(a==='apply')apply()});
+function cycle(d){d=d||1;S.size=Math.max(-1,Math.min(2,S.size+d));PN.querySelector('[data-a=size]').textContent='Option: '+SIZES[S.size+1];decode()}
+async function apply(){if(!S||!S.res)return;const o=S.o,im=S.im,res=S.res;PN.querySelector('[data-a=apply]').disabled=true;PN.querySelector('.pt').textContent='Building mask…';
+  const k=Math.min(1,4096/Math.max(S.nw,S.nh)),W=Math.max(1,Math.round(S.nw*k)),H=Math.max(1,Math.round(S.nh*k));
+  /* soft mask: scale the binary mask, then snap it to the real edges of the picture with the guided filter */
+  const wk=Math.min(1,1536/Math.max(W,H)),w=Math.max(2,Math.round(W*wk)),h=Math.max(2,Math.round(H*wk)),m=document.createElement('canvas');m.width=w;m.height=h;const mx=m.getContext('2d',{willReadFrequently:true});mx.imageSmoothingQuality='high';mx.drawImage(S.mc,0,0,w,h);
+  const md=mx.getImageData(0,0,w,h).data,al=new Float32Array(w*h);for(let i=0;i<al.length;i++)al[i]=md[i*4]/255;
+  const g=document.createElement('canvas');g.width=w;g.height=h;const gx=g.getContext('2d',{willReadFrequently:true});gx.drawImage(S.img,0,0,w,h);const gd=gx.getImageData(0,0,w,h).data,gl=new Float32Array(w*h);for(let i=0;i<gl.length;i++)gl[i]=(gd[i*4]*.2126+gd[i*4+1]*.7152+gd[i*4+2]*.0722)/255;
+  const ref=U.refine(U.blurF(al,w,h,.7),gl,w,h,{detail:4,shift:0,feather:0}),out=document.createElement('canvas');out.width=w;out.height=h;const ox=out.getContext('2d'),od=ox.createImageData(w,h);for(let i=0;i<w*h;i++){const v=Math.round(ref[i]*255);od.data[i*4]=od.data[i*4+1]=od.data[i*4+2]=v;od.data[i*4+3]=255}ox.putImageData(od,0,0);
+  const fin=document.createElement('canvas');fin.width=W;fin.height=H;const fx=fin.getContext('2d');fx.imageSmoothingQuality='high';fx.drawImage(out,0,0,W,H);
+  const oo=S.o,imm=S.im;end();await R.make(oo,imm,fin);if(!oo.nm)oo.nm='Subject';commit();draw();if(typeof tb5Msg==='function')tb5Msg('Subject selected: non-destructive mask (Undo = Ctrl+Z). Use Edit Mask to refine.')}
+async function start(o){if(S)end();const im=window.rbTarget&&window.rbTarget(o);if(!im)return;
+  const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('image decode failed'));i.src=im.getAttribute('href')});
+  S={o,im,img,pts:[],mask:null,size:-1,nw:img.naturalWidth,nh:img.naturalHeight};
+  const kk=Math.min(1,1024/Math.max(img.naturalWidth,img.naturalHeight)),w=Math.max(8,Math.round(img.naturalWidth*kk)),h=Math.max(8,Math.round(img.naturalHeight*kk));OVC.width=w;OVC.height=h;
+  const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);const blob=await new Promise(r=>c.toBlob(r,'image/png'));
+  PN.style.display='flex';CAP.style.display='block';OVC.style.display='block';CAP.style.cursor='wait';window.rbBar&&window.rbBar();PN.querySelector('[data-a=apply]').disabled=true;PN.querySelector('[data-a=size]').textContent='Option: Auto';place();
+  try{await RBSAM.embed(blob,p=>{if(!S)return;if(p.phase==='download')PN.querySelector('.pt').textContent='Downloading the selection model '+p.mb.toFixed(0)+(p.tot?' / '+p.tot.toFixed(0):'')+' MB (first time only)';else PN.querySelector('.pt').textContent='Analysing the image…'});
+    if(!S)return;CAP.style.cursor='crosshair';PN.querySelector('.pt').textContent='Click the subject · Alt+click or right-click excludes';place()}
+  catch(e){if(S){PN.querySelector('.pt').textContent=String(e.message||e)==='Cancelled'?'Cancelled':'Error: '+(e.message||e);if(String(e.message)==='Cancelled')end()}}}
+function end(){S=null;busy=false;queued=false;CAP.style.display='none';OVC.style.display='none';PN.style.display='none'}
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(S){if(!S.o||!objs.includes(S.o))end();else place()}}catch(_){}return r}}
+addEventListener('resize',()=>{if(S)place()});
+addEventListener('keydown',e=>{if(!S)return;if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();end()}else if(e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();apply()}else if(e.key==='['||e.key===']'){e.preventDefault();e.stopImmediatePropagation();cycle(e.key===']'?1:-1)}},true);
+window.rbPick=start;window.rbPickEnd=end;window.rbPicking=()=>!!S;window.RBPICK={get S(){return S}};
 })();
 
 /*TOOLS-END*/

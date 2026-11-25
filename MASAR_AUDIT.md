@@ -388,3 +388,8 @@
 ## 5-ؿ build 227 — ✕ on every menu / popup list
 - A ✕ row (top-right) is injected into: menu-bar dropdowns, the canvas context menu, panel/popup menus (#pmMn), the tool flyouts (#fly…#fly5) and the dock flyout. It acts like Esc (closes; menu bar state is not left stuck). Keyboard navigation and items are untouched. Submenus close with their parent; the control-bar overflow list is excluded on purpose (it closes with » / outside click / Esc, and a header row broke its layout/test).
 - Tests: mx.js, mx2.js; ovt.js stays green.
+
+## 5-ـ build 228 — Pick Subject (SlimSAM click-to-select)
+- Context bar › Pick Subject on a plain image: SlimSAM (Xenova/slimsam-77-uniform, Apache-2.0, ~40 MB, CPU/WASM, same Web Worker, lazy download with progress). The image (≤1024 px) is analysed once (~13 s on this CPU), then every click is decoded in the worker: left click = include (green), Alt+click or right-click = exclude (red); live blue overlay aligned to the image's exact SVG transform; `[` `]` switch between the 3 selections the model proposes (Auto = best score); Undo point; Enter / Apply builds the non-destructive mask (binary mask → guided filter on the real image edges → full resolution); Esc / ✕ cancels.
+- Verified on the sunset silhouette: one click on the hoodie = hoodie; 3 clicks (head, body, legs) = the whole person; Apply → mask; Undo removes it.
+- Test: rb8.js.
