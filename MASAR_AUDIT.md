@@ -374,3 +374,10 @@
 - Auto Die-Cut Outline…: exact Euclidean distance transform → offset field → contour (round, sub-pixel), optional hole filling (single outer cut line), white sticker fill, magenta cut-line stroke, created BELOW the image; offset adjustable live.
 - Access: context bar (Mask to Path / Die-Cut) and Object menu. Results are normal paths, editable with Pen / Direct Selection and Offset Path.
 - Tests: rb6.js (bbox, holes, undo/redo, clip option, cancel), perf: 1400² mask traced in ~0.2 s, die-cut in ~0.45 s.
+
+## 5-ؽ build 225 — fixes from the user's real-machine test
+- Remove Background quality: the user's sunset-silhouette photo failed with MODNet (portrait-only model, reproduced). New default **Balanced = IS-Net general (Apache-2.0, 170 MB)**: verified in the browser on CPU/WASM (25 s) with a clean cut-out; Studio (BiRefNet lite) stays opt-in, needs WebGPU (WASM hits the 2 GB heap limit at its fixed 1024 input; native CPU run confirmed the model itself is excellent) and now falls back to Balanced automatically; Fast (MODNet) is labelled "portraits only". IS-Net uses its own pre-processing (its published processor type is unknown to transformers.js). WASM session options: basic graph optimisation, no mem arena.
+- ✕ buttons: context bar (dismiss for the current selection; while the AI works it CANCELS the job and terminates the worker) and the Mask Brush panel.
+- "Colours do not change": cause = the document was in **Outline** view (Ctrl+Y, Illustrator parity; on Windows it is also the habit for Redo). Added an always-visible "Outline view" badge with a "Preview ✕" button.
+- Cursor: removed every pointing-hand / grab-hand over panels, tabs, swatches, buttons (arrow everywhere like Illustrator); the grab hand stays only for the Hand tool / Space on the canvas.
+- Tests: rb7.js.
