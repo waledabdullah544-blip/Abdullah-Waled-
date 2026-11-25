@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 229</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 230</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -2536,6 +2536,10 @@ function jnTee(L,C,D,R,T,tol){
   const e=KA[KA.length-1];e.x=KB[0].x;e.y=KB[0].y;e.o=KB[0].o;
   normalizeObj(B);const pb=eps(B)[0];pb.__sp=[{pts:other,closed:false}];writeSP(pb);touch(B);
   normalizeObj(A);const pa=eps(A)[0];pa.__sp=[{pts:KA.concat(KB.slice(1)),closed:false}];writeSP(pa);touch(A);commit();draw();return true}
+/* remove duplicate and collinear straight anchors left by a join */
+function jnClean(P,closed){const out=[];for(const q of P){const l=out[out.length-1];if(l&&Math.hypot(q.x-l.x,q.y-l.y)<1e-3&&!l.o&&!q.i){continue}out.push(q)}
+  for(let i=out.length-2;i>=1;i--){const a=out[i-1],b=out[i],c=out[i+1];if(b.i||b.o||a.o||c.i)continue;const cr=(b.x-a.x)*(c.y-b.y)-(b.y-a.y)*(c.x-b.x),dt=(b.x-a.x)*(c.x-b.x)+(b.y-a.y)*(c.y-b.y);if(Math.abs(cr)<1e-6&&dt>0)out.splice(i,1)}
+  return out.length>=2?out:P}
 function finishJoin(L){
   const R=8/z,CA=jnCands(),C=CA.filter(o=>nearBox(o,L,R*2));if(!CA.length)return false;
   const D=new Map(C.map(o=>[o,jnSamples(o)]));
@@ -2552,7 +2556,7 @@ function finishJoin(L){
       else{const ea=sideOf(ta,sA),eb=sideOf(tb,sB);ok=ea!==0&&eb!==0;
         const da=ea>0?Math.min(...ta.filter(v=>v>sA))-sA:sA-Math.max(...ta.filter(v=>v<sA)),db=eb>0?Math.min(...tb.filter(v=>v>sB))-sB:sB-Math.max(...tb.filter(v=>v<sB));cost=da+db;if(ok)X.ea=ea,X.eb=eb}
       if(ok&&(!best||cost<best.cost))best={A,B,sA,sB,X,cost}}}
-  const fin=(A,pts,closed,B)=>{normalizeObj(A);const pe=eps(A)[0];pe.__sp=[{pts,closed}];writeSP(pe);
+  const fin=(A,pts,closed,B)=>{pts=jnClean(pts,closed);normalizeObj(A);const pe=eps(A)[0];pe.__sp=[{pts,closed}];writeSP(pe);
     if(B&&B!==A){B.g.remove();objs.splice(objs.indexOf(B),1);sel.delete(B)}touch(A);commit();draw();return true};
   if(best){const{A,B,X}=best,P=X.p,a=D.get(A),b=D.get(B),pin=(q,at)=>{q.x=r3(P[0]);q.y=r3(P[1]);return q};
     if(A===B){const s1=Math.min(best.sA,best.sB),s2=Math.max(best.sA,best.sB),K=segsRange(a.S,s1,s2);if(K.length>2){pin(K[0]);const z0=K.pop();K[0].i=z0.i;return fin(A,K,true)}}
@@ -2770,6 +2774,13 @@ function shpRecognize(P){
   /* rectangle at 45° */
   {const c=Math.SQRT1_2,R=P.map(q=>[(q[0]+q[1])*c,(q[1]-q[0])*c]),u=R.map(q=>q[0]),v=R.map(q=>q[1]),u0=Math.min(...u),u1=Math.max(...u),v0=Math.min(...v),v1=Math.max(...v);
     const bk=q=>[(q[0]-q[1])*c,(q[0]+q[1])*c];C.push({k:'rect45',e:shpPolyErr(P,[[u0,v0],[u1,v0],[u1,v1],[u0,v1]].map(bk))*1.08,cx:(x0+x1)/2,cy:(y0+y1)/2,w:u1-u0,h:v1-v0,ctr:bk([(u0+u1)/2,(v0+v1)/2])})}
+  /* rectangle at ANY angle: minimum-area bounding box of the convex hull (rotating calipers) */
+  {const HH=shpHull(P);let bs=null;for(let i=0;i<HH.length;i++){const a=HH[i],b=HH[(i+1)%HH.length],th=Math.atan2(b[1]-a[1],b[0]-a[0]),c=Math.cos(th),sn=Math.sin(th);let u0=1e9,u1=-1e9,v0=1e9,v1=-1e9;
+      for(const q of HH){const u=q[0]*c+q[1]*sn,v=-q[0]*sn+q[1]*c;if(u<u0)u0=u;if(u>u1)u1=u;if(v<v0)v0=v;if(v>v1)v1=v}
+      const ar=(u1-u0)*(v1-v0);if(!bs||ar<bs.ar)bs={ar,th,c,sn,u0,u1,v0,v1}}
+    if(bs){let d=bs.th%(Math.PI/2);if(d<0)d+=Math.PI/2;const ang=Math.min(d,Math.PI/2-d);
+      if(ang>.05&&Math.abs(ang-Math.PI/4)>.05){const bk=(u,v)=>[u*bs.c-v*bs.sn,u*bs.sn+v*bs.c],V=[bk(bs.u0,bs.v0),bk(bs.u1,bs.v0),bk(bs.u1,bs.v1),bk(bs.u0,bs.v1)];
+        C.push({k:'rectO',e:shpPolyErr(P,V)*1.12,th:bs.th,w:bs.u1-bs.u0,h:bs.v1-bs.v0,ctr:bk((bs.u0+bs.u1)/2,(bs.v0+bs.v1)/2)})}}}
   /* ellipse */
   {const cx=(x0+x1)/2,cy=(y0+y1)/2,rx=w/2,ry=h/2;let s=0;for(const q of P){const dx=q[0]-cx,dy=q[1]-cy,r=Math.hypot(dx,dy),rho=Math.hypot(dx/rx,dy/ry);s+=rho>1e-9?Math.abs(rho-1)*r/rho:Math.min(rx,ry)}C.push({k:'ell',e:s/P.length,x:x0,y:y0,w,h})}
   /* equilateral triangle and hexagon */
@@ -2781,13 +2792,13 @@ function shpRecognize(P){
       best.e*=1.05;C.push(best)})}
   C.sort((p,q)=>p.e-q.e);const r=C[0];if(r.e>.16*sz)return null;
   if((r.k==='rect'||r.k==='ell')&&Math.abs(r.w-r.h)<.12*Math.max(r.w,r.h)){const m=(r.w+r.h)/2,cx=r.x+r.w/2,cy=r.y+r.h/2;r.x=cx-m/2;r.y=cy-m/2;r.w=r.h=m}
-  if(r.k==='rect45'&&Math.abs(r.w-r.h)<.12*Math.max(r.w,r.h))r.w=r.h=(r.w+r.h)/2;
+  if((r.k==='rect45'||r.k==='rectO')&&Math.abs(r.w-r.h)<.12*Math.max(r.w,r.h))r.w=r.h=(r.w+r.h)/2;
   return r}
 function shpMake(r){let o;const n=r3;
   if(r.k==='line')o=add('<path d="M'+n(r.a[0])+' '+n(r.a[1])+'L'+n(r.b[0])+' '+n(r.b[1])+'" '+openStyle()+'/>');
   else if(r.k==='rect')o=add(liveMarkup('m',r.x,r.y,r.w,r.h));
   else if(r.k==='ell')o=add(liveMarkup('l',r.x,r.y,r.w,r.h));
-  else if(r.k==='rect45'){const P={x:n(-r.w/2),y:n(-r.h/2),w:n(r.w),h:n(r.h),r:0},c=Math.SQRT1_2,X=[c,c,-c,c,n(r.ctr[0]),n(r.ctr[1])];
+  else if(r.k==='rect45'||r.k==='rectO'){const P={x:n(-r.w/2),y:n(-r.h/2),w:n(r.w),h:n(r.h),r:0},c=r.k==='rectO'?Math.cos(r.th):Math.SQRT1_2,sn=r.k==='rectO'?Math.sin(r.th):Math.SQRT1_2,X=[+c.toFixed(6),+sn.toFixed(6),+(-sn).toFixed(6),+c.toFixed(6),n(r.ctr[0]),n(r.ctr[1])];
     o=add('<path d="'+liveD('rr',P,X)+'" '+closedStyle()+' data-shape="rr" data-p=\''+JSON.stringify(P)+'\' data-xf=\''+JSON.stringify(X)+'\'/>')}
   else{const P={cx:n(r.cx),cy:n(r.cy),R:n(r.R),th:+r.th.toFixed(6),n:r.n};o=add('<path d="'+shapeD('po',P)+'" '+closedStyle()+' data-shape="po" data-p=\''+JSON.stringify(P)+'\'/>')}
   sel=new Set([o]);commit();draw();return o}
@@ -4120,8 +4131,8 @@ function openShapeDlg(t,at){
     sel=new Set([ob]);commit();draw()})}
 function rememberShape(s){try{if(!s.o)return;if(s.mode==='draw'){const b=wbox(s.o);SHOPT[s.t].w=r3(b.w);SHOPT[s.t].h=r3(b.h)}
   else{const P=JSON.parse(s.o.g.firstElementChild.getAttribute('data-p')||'{}');if(s.t==='rr'){SHOPT.rr.w=P.w;SHOPT.rr.h=P.h}else if(s.t==='po')SHOPT.po.r=P.R;else if(s.t==='sr')SHOPT.sr.r1=P.R}}catch(_){}}
-const PCO={fid:3,fill:0,keep:1,altSm:0,close:1,closeD:15,edit:1,editD:12},BRO={fid:3,fill:0,keep:1,edit:1,editD:12},SMO={fid:3},EYO={fill:1,stroke:1,ch:1,pa:1,tr:1,size:1},EYA={fill:1,stroke:1,tr:1,ch:1,pa:1},BBO={keep:1,merge:0,fid:3,angle:0,round:100,vsz:'f',vszv:5,vang:'f',vangv:15,vrnd:'f',vrndv:20};
-const FIDK=[.8,1.5,2.5,5,9],BRK=[.6,.9,1.2,2,3.5],SMK=[3,5,8,12,18];
+const PCO={fid:2,fill:0,keep:1,altSm:0,close:1,closeD:15,edit:1,editD:12},BRO={fid:2,fill:0,keep:1,edit:1,editD:12},SMO={fid:3},EYO={fill:1,stroke:1,ch:1,pa:1,tr:1,size:1},EYA={fill:1,stroke:1,tr:1,ch:1,pa:1},BBO={keep:1,merge:0,fid:2,angle:0,round:100,vsz:'f',vszv:5,vang:'f',vangv:15,vrnd:'f',vrndv:20};
+const FIDK=[.4,1,2,4,8],BRK=[.3,.6,1.2,2.4,4.8],SMK=[3,5,8,12,18];
 const FIDF={type:'range',k:'fid',label:'Fidelity',min:1,max:5,lo:'Accurate',hi:'Smooth'};
 const VAROP=[['f','Fixed'],['r','Random'],['p','Pressure']];
 const ODLG={
@@ -4328,7 +4339,7 @@ function openFlareDlg(at){
     FLO,v=>{v.d=Math.max(1,v.d);['op','br','hf','rf'].forEach(k=>v[k]=Math.max(0,Math.min(100,v[k])));v.rn=Math.max(0,Math.round(v.rn));v.rnum=Math.max(0,Math.round(v.rnum));Object.assign(FLO,v);
       if(!at){draw();return}const ob=flareMake(at.x,at.y,FLO,null,(Date.now()^Math.floor(Math.random()*1e9))>>>0);sel=new Set([ob]);commit();draw()})}
 /* arrows change sides / points / radius of the selected live shape while its drawing tool is active */
-addEventListener('keydown',e=>{if(st||(e.key!=='ArrowUp'&&e.key!=='ArrowDown')||!['po','sr','rr'].includes(tool)||!sel.size)return;const t=e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT')return;
+addEventListener('keydown',e=>{if(st||!e.altKey||(e.key!=='ArrowUp'&&e.key!=='ArrowDown')||!['po','sr','rr'].includes(tool)||!sel.size)return;const t=e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT')return;
   const L=[...sel].filter(o=>shapeEl(o)===tool);if(!L.length)return;e.preventDefault();e.stopImmediatePropagation();const d=e.key==='ArrowUp'?1:-1;let v;
   L.forEach(o=>{const P=JSON.parse(o.g.firstElementChild.getAttribute('data-p'));if(tool==='rr'){v=Math.max(0,Math.min(P.w/2,P.h/2,(P.r||0)+d));setShape(o,{r:v})}else{v=Math.max(3,Math.min(1000,P.n+d));setShape(o,{n:v})}});
   if(tool==='rr')SHD.rr.r=v;else SHD[tool].n=v;commit();draw();

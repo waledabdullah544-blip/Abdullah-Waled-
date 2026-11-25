@@ -1,0 +1,12 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;
+const pts=(n)=>Array.from({length:n+1},(_,i)=>[420+120*Math.cos(i/n*6.2832),300+90*Math.sin(i/n*6.2832)]);
+const stroke=async p=>{await pg.mouse.move(H.R.x+p[0][0],H.R.y+p[0][1]);await pg.mouse.down();for(const q of p.slice(1))await pg.mouse.move(H.R.x+q[0],H.R.y+q[1],{steps:3});await pg.mouse.up();await pg.waitForTimeout(300)};
+await pg.keyboard.press('Shift+b');await pg.evaluate(()=>setTool('bb'));
+await pg.evaluate(()=>{DEF.fill='#d02080';DEF.fillSet=true});
+await stroke(pts(48));
+const info=await pg.evaluate(()=>objs.map(o=>{const ps=[...o.g.querySelectorAll('path')];return{paths:ps.length,segs:ps.map(p=>(p.getAttribute('d').match(/[MLCZ]/gi)||[]).length),L:ps.map(p=>(p.getAttribute('d').match(/L/g)||[]).length),C:ps.map(p=>(p.getAttribute('d').match(/C/g)||[]).length),fill:ps[0]&&ps[0].getAttribute('fill')}}));
+console.log('blob circle-ish stroke',JSON.stringify(info));
+await pg.evaluate(()=>{const b=wbox(objs[0]);z=5;px=-b.x*5+300;py=-b.y*5+100;view();draw()});await pg.waitForTimeout(300);
+await pg.screenshot({path:'/tmp/mdl/prec_blob.png',clip:{x:H.R.x,y:H.R.y+60,width:700,height:420}});
+await H.b.close()})();
