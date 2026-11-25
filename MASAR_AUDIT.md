@@ -409,3 +409,8 @@
 - Pencil / Paintbrush / Blob Brush accuracy: fidelity tolerances tightened (Pencil 0.4/1/2/4/8 px, Brush & Blob 0.3/0.6/1.2/2.4/4.8 px) and the default moved from the middle to level 2 (Pencil 1 px, Blob 0.6 px). Slider unchanged (Accurate ↔ Smooth).
 - Shaper: new "rectangle at any angle" recognition (minimum-area box of the convex hull, snapped square when w≈h) — a tilted rectangle used to be turned into an ellipse; ellipse / hexagon / pentagon / triangle / circle / line unchanged.
 - Join tool: duplicate and collinear anchors left by a join are removed (clean corner: M…L corner L end).
+
+## 5-ٴ build 231 — Area Type: free typing (no clipping, no red + marker)
+- User (latest build, real machine): typed text in Area Type runs to the bottom of the shape and then disappears completely; wants to keep typing without limits and the red "+" overflow marker removed.
+- areaLayout: the last frame no longer clips (GROW): when the shape is full the text keeps flowing BELOW it at the full width of the frame; nothing is hidden, so `of` stays false and the overflow marker never appears. Not applied to threaded frames (Remove Threading / linked text) or vertical area type (they still behave like Illustrator). Safety counter prevents any infinite layout loop; narrow star tips no longer produce one-letter lines below the shape.
+- Test: ovf.js (rectangle + ellipse: every character rendered, persists after leaving the text). typem.js Smart Punctuation failure is the old known one.

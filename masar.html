@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 230</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 231</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -3442,15 +3442,20 @@ function areaLayout(raw,size,fam,fd,ao,rtl,ri0,Y,PA,cont,tt,vt){
     if(ao.fl==='col'){for(let c=0;c<nc;c++)for(let r=0;r<nr;r++)mkC(r,c)}else{for(let r=0;r<nr;r++)for(let c=0;c<nc;c++)mkC(r,c)}}
   else cells.push({R:R0,b:[x0,y0,x1,y1]});
   const lines=[];let ri=ri0||0,done=ri>=raw.length,c0=null,sbFor=-1;const pst=[0];for(let q=raw.indexOf('\n');q>=0;q=raw.indexOf('\n',q+1))pst.push(q+1);
-  for(const C of cells){if(done)break;const[cx0,cy0,cx1,cy1]=C.b,L0=lines.length;
+  /* free typing: the last frame does not clip - text keeps flowing below the shape, nothing disappears and no overflow marker (not for threaded or vertical frames) */
+  const GROW=!cont&&!vt;let lastIv=null,gd=0;
+  for(const C of cells){if(done)break;const[cx0,cy0,cx1,cy1]=C.b,L0=lines.length,cyL=GROW&&C===cells[cells.length-1]?1e12:cy1;
     let y=cy0+ins+(ao.fb==='lead'?lead:ao.fb==='fixed'?Math.max(0,+ao.fbm||0):asc);
     if(!c0)c0=[rtl?cx1-ins:cx0+ins,y];
-    while(!done&&y+dsc<=cy1-ins+1e-6){
+    while(!done&&y+dsc<=cyL-ins+1e-6){
+      if(++gd>raw.length*4+600)break;/* safety: the layout can never loop forever */
+      const ovz=GROW&&C===cells[cells.length-1]&&y>cy1-ins-lead;
       let pi=0;{let lo=0,hi=pst.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(pst[m]<=ri)lo=m;else hi=m-1}pi=lo}
       const P=PD1(PA&&PA[pi]),first=ri===pst[pi];
       /* space before: not at the top of a frame / column */
-      if(first&&lines.length>L0&&sbFor!==ri){sbFor=ri;if(P.sb){y+=P.sb;if(y+dsc>cy1-ins+1e-6)break}}
+      if(first&&lines.length>L0&&sbFor!==ri){sbFor=ri;if(P.sb){y+=P.sb;if(y+dsc>cyL-ins+1e-6)break}}
       let I=[y-asc*.85,y-asc*.5,y-asc*.15,y+dsc*.85].map(v=>scanX(C.R,v)).reduce(ivX);I=I.map(v=>[v[0]+ins,v[1]-ins]).filter(v=>v[1]-v[0]>size*.6);
+      if(ovz)I=[[cx0+ins,Math.max(cx1-ins,cx0+ins+size*4)]];/* below the shape: the text keeps the full width of the frame */
       if(!I.length){y+=lead;continue}
       const iv=I.reduce((a,b)=>b[1]-b[0]>a[1]-a[0]?b:a);
       let pe=raw.indexOf('\n',ri);if(pe<0)pe=raw.length;const text=raw.slice(ri,pe),ps=raw.lastIndexOf('\n',ri-1)+1,prtl=!vt&&isRTL(raw.slice(ps,pe)||raw);
@@ -3463,14 +3468,14 @@ function areaLayout(raw,size,fam,fd,ao,rtl,ri0,Y,PA,cont,tt,vt){
       const tryHy=base=>{const mm=/^[A-Za-z]+/.exec(text.slice(base));if(!mm||mm[0].length<6)return 0;const wd=mm[0];for(let k=wd.length-3;k>=2;k--)if(mw(text.slice(0,base)+wd.slice(0,k)+'-')<=w)return base+k;return 0};
       while((m=re.exec(text))){const end=m.index+m[0].length;if(e===0||mw(text.slice(0,end).replace(/\s+$/,''))<=w)e=end;else break;if(e===end&&e>0&&mw(text.slice(0,e).replace(/\s+$/,''))>w)break}
       if(mw(text.slice(0,e).replace(/\s+$/,''))>w){/* the first word does not fit: leave this narrow line empty when a wider line can follow, otherwise break the word */
-        if(w<(cx1-cx0-2*ins-P.li-P.ri-(first?Math.max(0,P.fi):0))*.97){y+=lead;continue}let k=1;while(k<text.length&&mw(text.slice(0,k+1))<=w)k++;e=k;if(P.hy){const h=tryHy(0);if(h)e=h,hy=1}}
+        if(!ovz&&w<(cx1-cx0-2*ins-P.li-P.ri-(first?Math.max(0,P.fi):0))*.97){y+=lead;continue}let k=1;while(k<text.length&&mw(text.slice(0,k+1))<=w)k++;e=k;if(P.hy){const h=tryHy(0);if(h)e=h,hy=1}}
       else if(P.hy&&e<text.length){const h=tryHy(e);if(h)e=h,hy=1}
       if(cont&&pe>=raw.length&&ri+e>=raw.length&&cont.h)hy=1;/* Remove Threading: this frame's text was cut mid-paragraph (and at a hyphen) */
       const lt=text.slice(0,e).replace(/\s+$/,''),fin=!hy&&ri+e>=pe&&!(cont&&pe>=raw.length),nsp=(lt.match(/ /g)||[]).length,lw=mw(lt+(hy?'-':'')),tj=lt.indexOf('\t')>=0?tabJus(mw0,lt+(hy?'-':''),ri,w):null,can=tj?!tj.no:nsp>0&&w>lw+1e-6,[A,jus]=paAlign(al0,fin,can,auto),[px0,an]=place(A);
       if(CUR_RN){/* character runs: the line takes its ascent / leading from its biggest characters */
         const M=rnLineM(raw,ri,ri+lt.length,size,Y),fmL=FMt(M.ms,vt?1:Math.max(1,Y.vs*((Y.sup||Y.sub)?SUPK:1)));
         if(lines.length===L0){if(ao.fb==='asc')y+=fmL.asc-asc;else if(ao.fb==='lead')y+=M.ml-lead}else y+=M.ml-lead;
-        if(y+fmL.dsc>cy1-ins+1e-6)break}
+        if(y+fmL.dsc>cyL-ins+1e-6)break}
       lines.push({t:lt,r:ri,x:px0,y,rtl:prtl,an,ws:jus&&!tj?(w-lw)/nsp:0,tws:jus&&tj&&!tj.no?tj.ws:0,hy});ri+=e;
       if(ri>=pe){if(pe>=raw.length)done=true;else ri=pe+1}
       y+=lead+(fin?P.sa:0)}
