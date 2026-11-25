@@ -399,3 +399,7 @@
 - Result replaces the image in place (placed size unchanged → higher effective resolution), or "Keep the original" places a copy. For masked images the hidden original is replaced and the mask re-rendered at the new resolution (RBMASK.replaceSrc). Undo restores the small original.
 - Verified: 90×112 → 360×448 (CPU/WASM 4.7 s), undo/redo, cancel, keep-copy, masked image. Native comparison on a 4× down-scaled portrait: both models clearly beat bicubic (see sr_portrait.png).
 - Not verified: speed/quality of Detail on large photos without a GPU (slow), WebGPU path on a real GPU.
+
+## 5-ٲ build 229b — Upscale: faithful options after the user's real-machine feedback
+- User: the Real-ESRGAN result "changes the real shape" (confirmed natively: realesr-general-x4v3 re-draws the eyes). Added **Faithful** (Swin2SR realworld x4 PSNR, Apache-2.0, 54 MB, dynamic 64 px tiles): keeps the real look (no GAN hallucination) but is **very slow on WASM** (≈6.5 s per 48×48 core tile ⇒ ~45 min / MP on CPU), so the dialog shows an estimate and warns; default is now **Natural** = General blended 60 % with the plain upscale (Strength slider 20–100). ETA shown while running.
+- Text tools (Area Type / Type on a Path / vertical) reported "no text appears, caret keeps dropping, text vanishes": NOT reproduced here (Area/Vertical Area/Path/Point type, EN+AR, zoom 63 %, DPR 1.5, 1366×768, rotated/scaled/sheared frames, ellipse/star/polygon/rect, real Cairo font loaded, red/white/none frame fill) — all type, wrap and persist. Waiting for exact steps + build number from the user.
