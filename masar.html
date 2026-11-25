@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 225</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 226</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10484,6 +10484,18 @@ const sync=()=>{const on=cv.classList.contains('outlv');B.style.display=on?'flex
 B.querySelector('button').addEventListener('click',()=>{cv.classList.remove('outlv');view()});
 {const _v=view;view=function(){const r=_v.apply(this,arguments);try{sync()}catch(_){}return r}}
 addEventListener('resize',sync);sync();
+})();
+
+
+/* ======================= build 226: ✕ close button on every dialog (Color Picker, New Document, Offset…, #dlg dialogs) ======================= */
+(()=>{
+const st=document.createElement('style');st.textContent='.fxb{box-sizing:border-box;max-height:calc(100vh - 24px);overflow:auto}.fxb>b.hasx,#dlg>b.hasx{display:flex;align-items:center;justify-content:space-between}.dlgx{flex:none;width:24px;height:22px;margin-left:12px;padding:0;font:14px/1 "Segoe UI",Arial,sans-serif;border:1px solid transparent;border-radius:4px;background:transparent;color:var(--mute,#aaa);cursor:default}.dlgx:hover{background:var(--hover,#4a4a4a);color:var(--fg,#fff)}.dlgx:active{background:var(--press,#5a5a5a)}';document.head.appendChild(st);
+function addX(box){const t=box.querySelector(':scope > b');if(!t||t.classList.contains('hasx'))return;t.classList.add('hasx');const x=document.createElement('button');x.type='button';x.className='dlgx';x.title='Close (Esc)';x.setAttribute('aria-label','Close');x.textContent='✕';
+  x.addEventListener('click',e=>{e.stopPropagation();const cn=[...box.querySelectorAll('button')].find(b=>b!==x&&/^\s*(cancel|close)\s*$/i.test(b.textContent));if(cn)cn.click();else window.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',code:'Escape',bubbles:true,cancelable:true}))});
+  x.addEventListener('pointerdown',e=>e.stopPropagation());t.appendChild(x)}
+const scan=root=>{(root.querySelectorAll?root.querySelectorAll('.fxm .fxb, #dlg'):[]).forEach(addX);if(root.matches&&root.matches('.fxb,#dlg'))addX(root)};
+new MutationObserver(m=>{m.forEach(r=>{r.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)});if(r.target&&r.target.id==='dlg')addX(r.target)})}).observe(document.body,{childList:true,subtree:true});
+scan(document.body);
 })();
 
 /*TOOLS-END*/

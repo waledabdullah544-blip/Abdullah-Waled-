@@ -381,3 +381,6 @@
 - "Colours do not change": cause = the document was in **Outline** view (Ctrl+Y, Illustrator parity; on Windows it is also the habit for Redo). Added an always-visible "Outline view" badge with a "Preview ✕" button.
 - Cursor: removed every pointing-hand / grab-hand over panels, tabs, swatches, buttons (arrow everywhere like Illustrator); the grab hand stays only for the Hand tool / Space on the canvas.
 - Tests: rb7.js.
+
+## 5-ؾ build 226 — ✕ on every dialog
+- Color Picker, New Document, Document Setup, Place/Offset/etc. (`.fxm .fxb`) and the `#dlg` dialogs (Move, Rotate…) now have a ✕ in the title bar (acts like Cancel / Esc). Dialogs are capped to the window height (scroll) so the buttons are reachable on small screens (the user's Color Picker was cut off). Test: dlgx.js.
