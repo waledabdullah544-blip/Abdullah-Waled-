@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 226</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 227</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10496,6 +10496,23 @@ function addX(box){const t=box.querySelector(':scope > b');if(!t||t.classList.co
 const scan=root=>{(root.querySelectorAll?root.querySelectorAll('.fxm .fxb, #dlg'):[]).forEach(addX);if(root.matches&&root.matches('.fxb,#dlg'))addX(root)};
 new MutationObserver(m=>{m.forEach(r=>{r.addedNodes.forEach(n=>{if(n.nodeType===1)scan(n)});if(r.target&&r.target.id==='dlg')addX(r.target)})}).observe(document.body,{childList:true,subtree:true});
 scan(document.body);
+})();
+
+
+/* ======================= build 227: ✕ on every menu / popup list ======================= */
+(()=>{
+const SEL='.mdd:not(.msub),#pmMn,#fly,#fly2,#fly3,#fly4,#fly5,#dkFly';
+{const st=document.createElement('style');st.textContent='.mxh{display:flex;align-self:stretch;width:auto;box-sizing:border-box;justify-content:flex-end;align-items:center;min-height:18px;margin:-2px -2px 2px;padding:0 2px;pointer-events:auto}body .mxh button.mx{width:20px!important;height:16px!important;min-width:0!important;padding:0!important;margin:0!important;border:0;border-radius:3px;background:transparent;color:var(--mute,#aaa);font:12px/1 "Segoe UI",Arial,sans-serif!important;cursor:default;display:block!important;flex:none!important}body .mxh button.mx:hover:not(:disabled){background:var(--hover,#4a4a4a);color:var(--fg,#fff)}body .mxh button.mx:active{background:var(--press,#5a5a5a)}';document.head.appendChild(st)}
+const WS=new WeakSet();
+function close(h){window.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',code:'Escape',bubbles:true,cancelable:true}));setTimeout(()=>{if(h.isConnected&&getComputedStyle(h).display!=='none'){h.style.display='none';h.classList.remove('on','open','show')}},0)}
+function ensure(h){if(h.firstElementChild&&h.firstElementChild.classList.contains('mxh'))return;if(!h.children.length)return;
+  const r=document.createElement('div');r.className='mxh';const b=document.createElement('button');b.type='button';b.className='mx';b.textContent='✕';b.title='Close (Esc)';b.setAttribute('aria-label','Close menu');
+  b.addEventListener('pointerdown',e=>e.stopPropagation());b.addEventListener('mousedown',e=>e.stopPropagation());b.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();close(h)});r.appendChild(b);h.insertBefore(r,h.firstChild)}
+function watch(h){if(WS.has(h))return;WS.add(h);new MutationObserver(()=>ensure(h)).observe(h,{childList:true});ensure(h)}
+const scan=()=>document.querySelectorAll(SEL).forEach(watch);
+scan();new MutationObserver(m=>{m.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1&&n.matches&&n.matches(SEL))watch(n)}))}).observe(document.body,{childList:true});
+/* menus are created lazily: re-scan when a menu opens */
+document.addEventListener('pointerdown',()=>setTimeout(scan,0),true);document.addEventListener('contextmenu',()=>setTimeout(scan,0),true);
 })();
 
 /*TOOLS-END*/

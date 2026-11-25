@@ -384,3 +384,7 @@
 
 ## 5-ؾ build 226 — ✕ on every dialog
 - Color Picker, New Document, Document Setup, Place/Offset/etc. (`.fxm .fxb`) and the `#dlg` dialogs (Move, Rotate…) now have a ✕ in the title bar (acts like Cancel / Esc). Dialogs are capped to the window height (scroll) so the buttons are reachable on small screens (the user's Color Picker was cut off). Test: dlgx.js.
+
+## 5-ؿ build 227 — ✕ on every menu / popup list
+- A ✕ row (top-right) is injected into: menu-bar dropdowns, the canvas context menu, panel/popup menus (#pmMn), the tool flyouts (#fly…#fly5) and the dock flyout. It acts like Esc (closes; menu bar state is not left stuck). Keyboard navigation and items are untouched. Submenus close with their parent; the control-bar overflow list is excluded on purpose (it closes with » / outside click / Esc, and a header row broke its layout/test).
+- Tests: mx.js, mx2.js; ovt.js stays green.
