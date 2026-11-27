@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 235</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 236</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -1191,9 +1191,13 @@ $('#ffile').addEventListener('change',async e=>{
   e.target.value='';buildFontSelect();
   if(last){$('#ff').value=last;$('#ff').dispatchEvent(new Event('change'))}
   $('#hint').textContent=bad?('Could not read '+bad+' file(s) (must be a valid TTF, OTF or WOFF)'):(last?('Font added: '+last):'')});
-if('queryLocalFonts' in window){$('#fsys').style.display='';$('#fsys').addEventListener('click',async()=>{
-  try{const L=await queryLocalFonts();OUTL_LOC=L;sysFonts=[...new Set(L.map(f=>f.family))].sort();buildFontSelect();$('#hint').textContent='Loaded '+sysFonts.length+' fonts from your device'}
-  catch(err){$('#hint').textContent='The browser blocked access to system fonts (it will work in the desktop version)'}})}
+if('queryLocalFonts' in window){$('#fsys').style.display='';
+  /* the fonts installed on the computer are read automatically: when the browser has already granted access they load at start-up, otherwise on the very first click / key press (one browser permission prompt, remembered afterwards) */
+  let sysTried=false;const loadSys=async(quiet)=>{if(sysTried&&quiet)return;sysTried=true;
+    try{const L=await queryLocalFonts();OUTL_LOC=L;sysFonts=[...new Set(L.map(f=>f.family))].sort();buildFontSelect();$('#hint').textContent='Loaded '+sysFonts.length+' fonts from your device'}
+    catch(err){if(!quiet)$('#hint').textContent='The browser blocked access to system fonts. Allow "Fonts" for this page (the lock icon next to the address), then press the fonts button again'}};
+  $('#fsys').addEventListener('click',()=>loadSys(false));
+  try{navigator.permissions.query({name:'local-fonts'}).then(r=>{if(r.state==='granted')loadSys(true);else if(r.state==='prompt'){const once=()=>{removeEventListener('pointerdown',once,true);removeEventListener('keydown',once,true);loadSys(true)};addEventListener('pointerdown',once,true);addEventListener('keydown',once,true)}}).catch(()=>{})}catch(_){}}
 
 const DSM=t=>t==='a'||t==='gs'||t==='ap'||t==='dp'||t==='cp'||t==='ls';
 const PG=['p','cu','ap','dp','cp'],PKEY={p:'P',cu:'Shift+~',ap:'+',dp:'-',cp:'Shift+C'};
@@ -10602,7 +10606,7 @@ window.rbToPath=()=>dialog('path');window.rbDieCut=()=>dialog('die');window.RBVE
   let cur=null,hide=0,rep=0,rep2=0;
   const place=i=>{const r=i.getBoundingClientRect();if(!r.width||r.bottom<0||r.top>innerHeight){B.style.display='none';return}B.style.display='flex';B.style.height=Math.min(24,Math.max(18,r.height-4))+'px';B.style.left=(r.right-17)+'px';B.style.top=(r.top+(r.height-B.offsetHeight)/2)+'px'};
   const ok=i=>i&&i.tagName==='INPUT'&&i.type==='number'&&!i.disabled&&!i.readOnly&&i.offsetParent!==null;
-  const show=i=>{clearTimeout(hide);cur=i;place(i)};const off=()=>{hide=setTimeout(()=>{if(cur&&document.activeElement===cur)return;B.style.display='none';cur=null},250)};
+  const show=i=>{clearTimeout(hide);cur=i;place(i)};const off=()=>{clearTimeout(hide);hide=setTimeout(()=>{if(cur&&(document.activeElement===cur||cur.matches(':hover')||B.matches(':hover')))return;B.style.display='none';cur=null},250)};
   document.addEventListener('pointerover',e=>{const i=e.target.closest&&e.target.closest('input[type=number]');if(ok(i))show(i);else if(!B.contains(e.target))off()},true);
   document.addEventListener('focusin',e=>{if(ok(e.target))show(e.target)},true);document.addEventListener('focusout',()=>off(),true);
   B.addEventListener('pointerenter',()=>clearTimeout(hide));B.addEventListener('pointerleave',off);
