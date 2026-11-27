@@ -421,3 +421,8 @@
 - **Type on a Path**: text that does not fit on the path used to be hidden (and a red marker shown). It now continues in a straight line from the path's end (a separate `text[data-tpt]` tail that is rebuilt on every edit, so lengthening the path simply pulls the text back onto it); the red overflow marker is no longer drawn. An explicit end bracket still cuts the text (user's choice).
 - **Vertical Type on a Path** was broken (glyphs printed on top of each other because writing-mode:vertical-rl + rotate=90 were combined with textPath): it now flows along the path like readable sideways text (top→down on a vertical path).
 - typem.js "Smart Punctuation" is the old known failure.
+
+## 7 — User's 28-item list (build 233 onward). Status log
+Batch A2 (build 233): #1 Up/Down arrows add/remove sides again while Polygon/Star tool is active + the control-bar Sides/Points field; #23 every numeric field has ▲▼ steppers (hover/focus; Shift ×10; hold to repeat; fires input+change); #15 every flyout/pop-up list is clamped inside the window (tests/flyclamp.js); #20 Preferences: Light and Medium Light removed, Canvas "White" removed, Medium Dark deepened (#464646); stored light/white prefs fall back to Dark/match; #6 (interpreted) View › Trim View hides artwork outside the artboards.
+Not reproducible here (waiting for exact steps from the user): #27 (shape/colour disappears), #26 (layer items disappear). Tried: Color Picker OK/Cancel RGB+CMYK, swatches fill/stroke, toolbox chips, Outline view (Ctrl+Y) — all work; the Outline badge was added in build 225.
+Remaining: B1 (#2 #3 #4 #21), B2 (#7 #8 #11 #12 #13), B3 (#9 #10 #14), B4 (#24 #25 #26 #28), B5 (#5), C1 (#16), C2 (#18 #19), C3 (#17 #22).

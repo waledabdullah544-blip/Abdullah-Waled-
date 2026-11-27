@@ -3,12 +3,16 @@ const L=require('./lib.js');
 const nPts=()=>pg.evaluate(()=>{const o=objs[objs.length-1],p=JSON.parse(o.g.firstElementChild.getAttribute('data-p')||'{}');return{n:p.n,x:Math.round(wbox(o).x),y:Math.round(wbox(o).y),sd:SHD.po.n}});
 await pg.evaluate(()=>setTool('po'));await H.drag(300,300,380,300);
 let a=await nPts();ok('polygon default has 6 sides '+JSON.stringify(a),a.n===6&&a.sd===6);
-for(let i=0;i<5;i++)await pg.keyboard.press('ArrowUp');await pg.waitForTimeout(150);
-let b=await nPts();ok('plain Up arrows do NOT add sides (they nudge) '+JSON.stringify(b),b.n===6&&b.sd===6&&b.y<a.y);
-await pg.keyboard.press('Alt+ArrowUp');await pg.waitForTimeout(100);let c=await nPts();ok('Alt+Up adds a side '+JSON.stringify(c),c.n===7);
-await pg.keyboard.press('Alt+ArrowDown');await pg.keyboard.press('Alt+ArrowDown');await pg.waitForTimeout(100);
+for(let i=0;i<3;i++)await pg.keyboard.press('ArrowUp');await pg.waitForTimeout(150);
+let b=await nPts();ok('Up arrows add sides while the Polygon tool is active '+JSON.stringify(b),b.n===9);
+for(let i=0;i<3;i++)await pg.keyboard.press('ArrowDown');await pg.waitForTimeout(100);
+// the control-bar Sides field has ▲▼ steppers
+await pg.mouse.move(700,500);await pg.waitForTimeout(100);await pg.hover('#shn');await pg.waitForTimeout(300);
+const sb=await pg.evaluate(()=>{const r=document.getElementById('numstp').getBoundingClientRect();return{x:r.x+r.width/2,y1:r.y+r.height*.25,y2:r.y+r.height*.75}});
+await pg.mouse.click(sb.x,sb.y1);await pg.waitForTimeout(150);let c=await nPts();ok('stepper ▲ adds a side '+JSON.stringify(c),c.n===7);
+await pg.mouse.click(sb.x,sb.y2);await pg.mouse.click(sb.x,sb.y2);await pg.waitForTimeout(150);let c2=await nPts();ok('stepper ▼ removes sides '+JSON.stringify(c2),c2.n===5);
 await pg.evaluate(()=>{SHD.po.n=6});
-await H.drag(500,300,580,300);let d=await nPts();ok('the next polygon is a hexagon again '+JSON.stringify(d),d.n===6);
+await H.drag(500,300,580,300);let d=await nPts();ok('a new polygon uses the remembered count '+JSON.stringify(d),d.n===6);
 // Shaper: a rotated rectangle stays a rectangle, a circle stays an ellipse
 const stroke=async P=>{await pg.evaluate(()=>setTool('shp'));await pg.mouse.move(H.R.x+P[0][0],H.R.y+P[0][1]);await pg.mouse.down();for(const q of P.slice(1))await pg.mouse.move(H.R.x+q[0],H.R.y+q[1],{steps:2});await pg.mouse.up();await pg.waitForTimeout(300)};
 const seg=(a,b,n=14)=>Array.from({length:n},(_,i)=>[a[0]+(b[0]-a[0])*i/n,a[1]+(b[1]-a[1])*i/n]);

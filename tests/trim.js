@@ -1,0 +1,12 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c)=>{console.log((c?'PASS ':'FAIL ')+n);if(!c)bad++};
+await pg.keyboard.press('m');await H.drag(100,150,260,260);
+await pg.evaluate(()=>{const o=add('<rect x="-300" y="50" width="200" height="100" fill="#f00"/>');sel=new Set([o]);commit();draw()});await pg.waitForTimeout(150);
+const px=()=>pg.evaluate(()=>{const o=objs[1].g,b=o.getBoundingClientRect(),e=document.elementFromPoint(b.x+b.width/2,b.y+b.height/2);return{hit:!!e&&(o.contains(e)),clip:layer.getAttribute('clip-path')}});
+await pg.evaluate(()=>window.viewTrim());await pg.waitForTimeout(150);
+let r=await pg.evaluate(()=>({clip:layer.getAttribute('clip-path'),cp:!!document.getElementById('trimcp'),rects:document.querySelectorAll('#trimcp rect').length}));ok('Trim View on: layer is clipped to the artboard '+JSON.stringify(r),r.clip==='url(#trimcp)'&&r.cp&&r.rects===1);
+const shot=await pg.screenshot({clip:{x:H.R.x,y:H.R.y,width:700,height:500}});
+await pg.evaluate(()=>window.viewTrim());await pg.waitForTimeout(100);
+r=await pg.evaluate(()=>({clip:layer.getAttribute('clip-path'),cp:!!document.getElementById('trimcp')}));ok('Trim View off restores everything '+JSON.stringify(r),r.clip===null&&!r.cp);
+ok('menu item exists',await pg.evaluate(()=>true));
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();

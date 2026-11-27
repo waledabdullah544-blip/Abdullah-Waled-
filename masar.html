@@ -9,7 +9,7 @@
 <script>try{var __p=JSON.parse(localStorage.getItem("masar.ui.v1")||"null");if(__p&&/^(dark|md|ml|light)$/.test(__p.b))document.documentElement.setAttribute("data-theme",__p.b);if(__p&&__p.c==="white")document.documentElement.setAttribute("data-canvas","white")}catch(e){}</script>
 <style>
 :root{--bg:#323232;--panel:#323232;--pnl2:#262626;--tabs:#282828;--ink:#e6e6e6;--ink2:#b4b4b4;--mute:#a0a0a0;--mute2:#b4b4b4;--line:#1f1f1f;--sep:#2b2b2b;--bdr:#3d3d3d;--field:#262626;--fldh:#2d2d2d;--hov:#3c3c3c;--hov2:#444444;--on:#4a4a4a;--on2:#555555;--on3:#6a6a6a;--onink:#fff;--canvas:#1f1f1f;--cnv:#1f1f1f;--sel:#575757;--tipbg:#323232;--tipbd:#1f1f1f;--tipink:#e6e6e6;--tipx:#b4b4b4;--tipkbg:#262626;--tipkbd:#4a4a4a;--tipsep:#2b2b2b;--tipbtn:#8a8a8a;--brand:#9a9a9a;--acc:#5f5f5f;--acch:#6d6d6d;--acca:#4f4f4f;--accink:#fff;--prs:#2b2b2b;--brand-h:var(--acch);--brand-p:var(--acca);--brand-ink:#fff;--ai:var(--brand);--teal:var(--brand);color-scheme:dark;accent-color:var(--brand);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-:root[data-theme="md"]{--brand:#d0d0d0;--acc:#767676;--acch:#838383;--acca:#686868;--accink:#fff;--prs:#444444;--bg:#535353;--panel:#535353;--pnl2:#474747;--tabs:#494949;--ink:#f2f2f2;--ink2:#dcdcdc;--mute:#cdcdcd;--mute2:#dcdcdc;--line:#3f3f3f;--sep:#4c4c4c;--bdr:#666666;--field:#474747;--fldh:#4f4f4f;--hov:#5f5f5f;--hov2:#686868;--on:#6c6c6c;--on2:#737373;--on3:#9a9a9a;--onink:#fff;--canvas:#404040;--cnv:#404040;--sel:#686868;--tipbg:#535353;--tipbd:#3a3a3a;--tipink:#f2f2f2;--tipx:#d8d8d8;--tipkbg:#474747;--tipkbd:#6a6a6a;--tipsep:#4c4c4c;--tipbtn:#aaaaaa;color-scheme:dark}
+:root[data-theme="md"]{--brand:#d0d0d0;--acc:#767676;--acch:#838383;--acca:#686868;--accink:#fff;--prs:#363636;--bg:#464646;--panel:#464646;--pnl2:#3c3c3c;--tabs:#404040;--ink:#f2f2f2;--ink2:#dcdcdc;--mute:#cdcdcd;--mute2:#dcdcdc;--line:#323232;--sep:#3a3a3a;--bdr:#585858;--field:#3a3a3a;--fldh:#424242;--hov:#525252;--hov2:#5a5a5a;--on:#5e5e5e;--on2:#666666;--on3:#9a9a9a;--onink:#fff;--canvas:#383838;--cnv:#383838;--sel:#5a5a5a;--tipbg:#464646;--tipbd:#303030;--tipink:#f2f2f2;--tipx:#d8d8d8;--tipkbg:#3a3a3a;--tipkbd:#6a6a6a;--tipsep:#3a3a3a;--tipbtn:#aaaaaa;color-scheme:dark}
 :root[data-theme="ml"]{--brand:#5c5c5c;--acc:#6f6f6f;--acch:#606060;--acca:#525252;--accink:#fff;--prs:#9c9c9c;--bg:#b8b8b8;--panel:#b8b8b8;--pnl2:#acacac;--tabs:#aeaeae;--ink:#1a1a1a;--ink2:#262626;--mute:#404040;--mute2:#333333;--line:#8d8d8d;--sep:#9f9f9f;--bdr:#8f8f8f;--field:#e0e0e0;--fldh:#ececec;--hov:#c8c8c8;--hov2:#cacaca;--on:#a2a2a2;--on2:#8e8e8e;--on3:#777777;--onink:#000;--canvas:#d0d0d0;--cnv:#d0d0d0;--sel:#9c9c9c;--tipbg:#b8b8b8;--tipbd:#8f8f8f;--tipink:#1a1a1a;--tipx:#333333;--tipkbg:#e0e0e0;--tipkbd:#8f8f8f;--tipsep:#a0a0a0;--tipbtn:#555555;color-scheme:light}
 :root[data-theme="light"]{--brand:#5c5c5c;--acc:#6d6d6d;--acch:#5e5e5e;--acca:#505050;--accink:#fff;--prs:#c4c4c4;--bg:#f0f0f0;--panel:#f0f0f0;--pnl2:#e4e4e4;--tabs:#e6e6e6;--ink:#222222;--ink2:#2b2b2b;--mute:#595959;--mute2:#444444;--line:#c4c4c4;--sep:#d4d4d4;--bdr:#b5b5b5;--field:#ffffff;--fldh:#f5f5f5;--hov:#dedede;--hov2:#dcdcdc;--on:#cfcfcf;--on2:#b8b8b8;--on3:#a0a0a0;--onink:#000;--canvas:#e3e3e3;--cnv:#e3e3e3;--sel:#bcbcbc;--tipbg:#f0f0f0;--tipbd:#b5b5b5;--tipink:#222222;--tipx:#444444;--tipkbg:#ffffff;--tipkbd:#b5b5b5;--tipsep:#d4d4d4;--tipbtn:#6a6a6a;color-scheme:light}
 :root[data-canvas="white"]{--cnv:#fff}
@@ -495,7 +495,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 232</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 233</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -4351,7 +4351,7 @@ function openFlareDlg(at){
     FLO,v=>{v.d=Math.max(1,v.d);['op','br','hf','rf'].forEach(k=>v[k]=Math.max(0,Math.min(100,v[k])));v.rn=Math.max(0,Math.round(v.rn));v.rnum=Math.max(0,Math.round(v.rnum));Object.assign(FLO,v);
       if(!at){draw();return}const ob=flareMake(at.x,at.y,FLO,null,(Date.now()^Math.floor(Math.random()*1e9))>>>0);sel=new Set([ob]);commit();draw()})}
 /* arrows change sides / points / radius of the selected live shape while its drawing tool is active */
-addEventListener('keydown',e=>{if(st||!e.altKey||(e.key!=='ArrowUp'&&e.key!=='ArrowDown')||!['po','sr','rr'].includes(tool)||!sel.size)return;const t=e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT')return;
+addEventListener('keydown',e=>{if(st||e.altKey||e.ctrlKey||e.metaKey||(e.key!=='ArrowUp'&&e.key!=='ArrowDown')||!['po','sr','rr'].includes(tool)||!sel.size)return;const t=e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT')return;
   const L=[...sel].filter(o=>shapeEl(o)===tool);if(!L.length)return;e.preventDefault();e.stopImmediatePropagation();const d=e.key==='ArrowUp'?1:-1;let v;
   L.forEach(o=>{const P=JSON.parse(o.g.firstElementChild.getAttribute('data-p'));if(tool==='rr'){v=Math.max(0,Math.min(P.w/2,P.h/2,(P.r||0)+d));setShape(o,{r:v})}else{v=Math.max(3,Math.min(1000,P.n+d));setShape(o,{n:v})}});
   if(tool==='rr')SHD.rr.r=v;else SHD[tool].n=v;commit();draw();
@@ -8407,7 +8407,7 @@ if(!DK.restore())wsApply('Essentials');
     {t:'Raster Effects',hd:1},
     {t:'Blur',sub:()=>[{t:'Gaussian Blur…',f:()=>fxDlg('gb'),en:S}]}]}],
    ['View',()=>[
-    {t:()=>cv.classList.contains('outlv')?'Preview':'Outline',k:'Ctrl+Y',f:()=>{cv.classList.toggle('outlv');view()}},{t:'Pixel Preview',k:'Ctrl+Alt+Y',c:()=>window.viewState('px'),f:()=>window.viewToggle('px')},sep,
+    {t:()=>cv.classList.contains('outlv')?'Preview':'Outline',k:'Ctrl+Y',f:()=>{cv.classList.toggle('outlv');view()}},{t:'Pixel Preview',k:'Ctrl+Alt+Y',c:()=>window.viewState('px'),f:()=>window.viewToggle('px')},{t:'Trim View',c:()=>!!window.__trim,f:()=>window.viewTrim()},sep,
     {t:'Zoom In',k:'Ctrl++',f:()=>{const r=cv.getBoundingClientRect();zoomAt(1.25,r.width/2,r.height/2)}},{t:'Zoom Out',k:'Ctrl+-',f:()=>{const r=cv.getBoundingClientRect();zoomAt(.8,r.width/2,r.height/2)}},
     {t:'Fit Artboard in Window',k:'Ctrl+0',f:fit},{t:'Fit All in Window',k:'Ctrl+Alt+0',f:fitAll},{t:'Actual Size',k:'Ctrl+1',f:zoom100},sep,
     {t:()=>window.viewState('he')?'Show Edges':'Hide Edges',k:'Ctrl+H',f:()=>window.viewToggle('he')},{t:()=>window.viewState('ab')?'Hide Artboards':'Show Artboards',k:'Ctrl+Shift+H',f:()=>window.viewToggle('ab')},{t:()=>window.viewState('bb')?'Show Bounding Box':'Hide Bounding Box',k:'Ctrl+Shift+B',f:()=>window.viewToggle('bb')},{t:()=>window.viewState('tg')?'Hide Transparency Grid':'Show Transparency Grid',k:'Ctrl+Shift+D',f:()=>window.viewToggle('tg')},sep,
@@ -8902,9 +8902,9 @@ swp.addEventListener('click',e=>{const b=e.target.closest('button[data-act]');if
 </script>
 <script id="prefs149">
 (()=>{
-const KEY='masar.ui.v1',TH=[['dark','Dark','#323232','#e4e4e4'],['md','Medium Dark','#535353','#f2f2f2'],['ml','Medium Light','#b8b8b8','#1a1a1a'],['light','Light','#f0f0f0','#222222']];
+const KEY='masar.ui.v1',TH=[['dark','Dark','#323232','#e4e4e4'],['md','Medium Dark','#464646','#f2f2f2']];
 const R=document.documentElement;
-const get=()=>{let p=null;try{p=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}return{b:p&&TH.some(t=>t[0]===p.b)?p.b:'dark',c:p&&p.c==='white'?'white':'match'}};
+const get=()=>{let p=null;try{p=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}return{b:p&&TH.some(t=>t[0]===p.b)?p.b:'dark',c:'match'}};
 const apply=p=>{R.setAttribute('data-theme',p.b);if(p.c==='white')R.setAttribute('data-canvas','white');else R.removeAttribute('data-canvas');try{window.view&&window.view()}catch(_){}};
 const save=p=>{try{localStorage.setItem(KEY,JSON.stringify(p))}catch(_){}};
 window.uiPrefs={get,apply,save};
@@ -8941,7 +8941,7 @@ window.prefOpen=(page)=>{if(open)return;open=true;if(window.mbClose)try{window.m
   bg.innerHTML='<div class="pbx"><div class="pt">Preferences</div><div class="pm"><div class="pl"><button type="button" data-p="gen">General</button><button type="button" data-p="ui">User Interface</button></div><div class="pr" id="prr"></div></div><div class="pf"><button type="button" id="pcn">Cancel</button><button type="button" class="pri" id="pok">OK</button></div></div>';
   const rr=bg.querySelector('#prr');
   const draw=()=>{bg.querySelectorAll('.pl button').forEach(b=>b.classList.toggle('on',b.dataset.p===pg));
-    if(pg==='ui'){rr.innerHTML='<h4>Brightness</h4><div class="bg" role="radiogroup" aria-label="Brightness">'+TH.map(t=>'<button type="button" role="radio" data-b="'+t[0]+'" aria-pressed="'+(cur.b===t[0])+'"><i style="background:'+t[2]+';color:'+t[3]+'">Aa</i><span>'+t[1]+'</span></button>').join('')+'</div><h4>Canvas Color</h4><label class="rd"><input type="radio" name="pcv" value="match"'+(cur.c==='match'?' checked':'')+'> Match User Interface Brightness</label><label class="rd"><input type="radio" name="pcv" value="white"'+(cur.c==='white'?' checked':'')+'> White</label>';
+    if(pg==='ui'){rr.innerHTML='<h4>Brightness</h4><div class="bg" role="radiogroup" aria-label="Brightness">'+TH.map(t=>'<button type="button" role="radio" data-b="'+t[0]+'" aria-pressed="'+(cur.b===t[0])+'"><i style="background:'+t[2]+';color:'+t[3]+'">Aa</i><span>'+t[1]+'</span></button>').join('')+'</div><h4>Canvas Color</h4><label class="rd"><input type="radio" name="pcv" value="match"'+(cur.c==='match'?' checked':'')+'> Match User Interface Brightness</label>';
       rr.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{cur.b=b.dataset.b;apply(cur);draw()});
       rr.querySelectorAll('input[name=pcv]').forEach(i=>i.onchange=()=>{cur.c=i.value;apply(cur)})}
     else{rr.innerHTML='<h4>General</h4><label class="rd" style="gap:8px"><span style="width:150px">Keyboard Increment:</span><input id="pgkb" type="number" min="0.001" step="0.1" style="width:70px" value="'+(gcur.kbi)+'"> px</label><p style="margin:2px 0 10px;color:var(--mute)">Arrow keys move by this distance; Shift+arrow moves 10 times as far.</p><label class="rd"><input id="pgtip" type="checkbox"'+(gcur.tips?' checked':'')+'> Show Tool Tips</label><p style="margin:12px 0;color:var(--mute)">Interface appearance is under User Interface. Preferences are stored in this browser.</p><button type="button" class="rst" id="prst">Reset Preferences</button>';
@@ -10543,6 +10543,26 @@ window.rbToPath=()=>dialog('path');window.rbDieCut=()=>dialog('die');window.RBVE
 
 /* ======================= build 225: Outline badge + arrow cursor everywhere in the interface ======================= */
 (()=>{
+/* View > Trim View: artwork outside the artboards is hidden (it is still there; turn Trim View off to see and edit it) */
+{const NSV='http://www.w3.org/2000/svg';window.__trim=false;
+  const sync=()=>{const md=document.getElementById('mdefs');if(!md)return;let cp=document.getElementById('trimcp');if(!window.__trim){if(cp)cp.remove();layer.removeAttribute('clip-path');return}
+    if(!cp){cp=document.createElementNS(NSV,'clipPath');cp.id='trimcp';cp.setAttribute('clipPathUnits','userSpaceOnUse');md.appendChild(cp)}cp.replaceChildren(...ARTS.map(a=>{const r=document.createElementNS(NSV,'rect');r.setAttribute('x',a.x);r.setAttribute('y',a.y);r.setAttribute('width',a.w);r.setAttribute('height',a.h);return r}));layer.setAttribute('clip-path','url(#trimcp)')};
+  window.viewTrim=()=>{window.__trim=!window.__trim;sync();if(typeof tb5Msg==='function')tb5Msg(window.__trim?'Trim View: artwork outside the artboards is hidden':'Trim View off')};
+  {const _a=abRender;abRender=function(){const r=_a.apply(this,arguments);try{sync()}catch(_){}return r}}}
+/* every numeric field gets up / down arrows (increase / decrease; Shift = x10; hold to repeat) */
+{const st=document.createElement('style');st.textContent='input[type=number]::-webkit-inner-spin-button,input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none!important;display:none!important;margin:0}input[type=number]{-moz-appearance:textfield}#numstp{position:fixed;z-index:9990;display:none;flex-direction:column;width:15px;border:1px solid var(--bdr,#666);border-radius:2px;background:var(--panel,#444);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.4)}#numstp button{flex:1;height:11px;min-height:0;padding:0;border:0;background:none;color:var(--ink,#ddd);font:8px/11px Arial,sans-serif;cursor:default}#numstp button:hover{background:var(--hover,#5a5a5a)}#numstp button:active{background:var(--press,#666)}';document.head.appendChild(st);
+  const B=document.createElement('div');B.id='numstp';B.innerHTML='<button type="button" tabindex="-1" data-d="1" aria-label="Increase">\u25B2</button><button type="button" tabindex="-1" data-d="-1" aria-label="Decrease">\u25BC</button>';document.body.appendChild(B);
+  let cur=null,hide=0,rep=0,rep2=0;
+  const place=i=>{const r=i.getBoundingClientRect();if(!r.width||r.bottom<0||r.top>innerHeight){B.style.display='none';return}B.style.display='flex';B.style.height=Math.min(24,Math.max(18,r.height-4))+'px';B.style.left=(r.right-17)+'px';B.style.top=(r.top+(r.height-B.offsetHeight)/2)+'px'};
+  const ok=i=>i&&i.tagName==='INPUT'&&i.type==='number'&&!i.disabled&&!i.readOnly&&i.offsetParent!==null;
+  const show=i=>{clearTimeout(hide);cur=i;place(i)};const off=()=>{hide=setTimeout(()=>{if(cur&&document.activeElement===cur)return;B.style.display='none';cur=null},250)};
+  document.addEventListener('pointerover',e=>{const i=e.target.closest&&e.target.closest('input[type=number]');if(ok(i))show(i);else if(!B.contains(e.target))off()},true);
+  document.addEventListener('focusin',e=>{if(ok(e.target))show(e.target)},true);document.addEventListener('focusout',()=>off(),true);
+  B.addEventListener('pointerenter',()=>clearTimeout(hide));B.addEventListener('pointerleave',off);
+  const step=(i,d,sh)=>{const raw=parseFloat(i.step),stp=(isFinite(raw)&&raw>0?raw:1)*(sh?10:1),v=parseFloat(i.value),mn=i.min!==''?parseFloat(i.min):-Infinity,mx=i.max!==''?parseFloat(i.max):Infinity,dec=Math.max(0,((String(i.step||'1').split('.')[1]||'').length),((String(i.value).split('.')[1]||'').length));let n=(isNaN(v)?0:v)+d*stp;n=Math.max(mn,Math.min(mx,n));i.value=n.toFixed(Math.min(dec,6)).replace(/(\.\d*?)0+$/,'$1').replace(/\.$/,'');i.dispatchEvent(new Event('input',{bubbles:true}));i.dispatchEvent(new Event('change',{bubbles:true}))};
+  B.addEventListener('pointerdown',e=>{const b=e.target.closest('button');if(!b||!cur)return;e.preventDefault();const d=+b.dataset.d,i=cur,sh=e.shiftKey;step(i,d,sh);clearTimeout(rep2);clearInterval(rep);rep2=setTimeout(()=>{rep=setInterval(()=>step(i,d,sh),70)},420)});
+  addEventListener('pointerup',()=>{clearTimeout(rep2);clearInterval(rep)},true);
+  addEventListener('scroll',()=>{if(cur)place(cur)},true);addEventListener('resize',()=>{if(cur)place(cur)})}
 /* Illustrator never shows the pointing hand over panels, tabs, swatches or buttons: always the arrow. */
 {const st=document.createElement('style');st.textContent='button,a,summary,label,select,[role="button"],[role="tab"],[role="menuitem"],[role="option"]{cursor:default}';document.head.appendChild(st)}
 /* Ctrl+Y = Outline (as in Illustrator). On Windows it is also the habit for Redo, so the mode is made impossible to miss: a badge with a way back. */
@@ -10578,8 +10598,16 @@ function ensure(h){if(h.firstElementChild&&h.firstElementChild.classList.contain
   const r=document.createElement('div');r.className='mxh';const b=document.createElement('button');b.type='button';b.className='mx';b.textContent='✕';b.title='Close (Esc)';b.setAttribute('aria-label','Close menu');
   b.addEventListener('pointerdown',e=>e.stopPropagation());b.addEventListener('mousedown',e=>e.stopPropagation());b.addEventListener('click',e=>{e.stopPropagation();e.preventDefault();close(h)});r.appendChild(b);h.insertBefore(r,h.firstChild)}
 function watch(h){if(WS.has(h))return;WS.add(h);new MutationObserver(()=>ensure(h)).observe(h,{childList:true});ensure(h)}
-const scan=()=>document.querySelectorAll(SEL).forEach(watch);
-scan();new MutationObserver(m=>{m.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1&&n.matches&&n.matches(SEL))watch(n)}))}).observe(document.body,{childList:true});
+/* every pop-up list / flyout stays fully inside the window (a flyout opened from the lower tools used to go below the screen) */
+const CLS='#fly,#fly2,#fly3,#fly4,#fly5,.fgly,#dkFly,#pmMn,.mdd,.msub',CL=new WeakSet();
+function clampOn(h){if(CL.has(h))return;CL.add(h);let busy=false;const fix=()=>{if(busy||h.style.display==='none'||!h.isConnected)return;const r=h.getBoundingClientRect();if(!r.width||!r.height)return;busy=true;
+    const t=parseFloat(h.style.top),l=parseFloat(h.style.left);let nt=isNaN(t)?r.top:t,nl=isNaN(l)?r.left:l;const mh=innerHeight-8;
+    if(r.height>mh){h.style.maxHeight=mh+'px';h.style.overflowY='auto'}
+    const r2=h.getBoundingClientRect();if(r2.bottom>innerHeight-4)nt=Math.max(4,nt-(r2.bottom-(innerHeight-4)));if(r2.right>innerWidth-4)nl=Math.max(4,nl-(r2.right-(innerWidth-4)));
+    if(nt<4)nt=4;if(nl<0)nl=0;if(Math.abs(nt-(isNaN(t)?r.top:t))>.5)h.style.top=nt+'px';if(Math.abs(nl-(isNaN(l)?r.left:l))>.5)h.style.left=nl+'px';busy=false};
+  new MutationObserver(()=>requestAnimationFrame(fix)).observe(h,{attributes:true,attributeFilter:['style','class']});fix()}
+const scan=()=>{document.querySelectorAll(SEL).forEach(watch);document.querySelectorAll(CLS).forEach(clampOn)};
+scan();new MutationObserver(m=>{m.forEach(r=>r.addedNodes.forEach(n=>{if(n.nodeType===1&&n.matches){if(n.matches(SEL))watch(n);if(n.matches(CLS))clampOn(n)}}))}).observe(document.body,{childList:true});
 /* menus are created lazily: re-scan when a menu opens */
 document.addEventListener('pointerdown',()=>setTimeout(scan,0),true);document.addEventListener('contextmenu',()=>setTimeout(scan,0),true);
 })();
