@@ -414,3 +414,10 @@
 - User (latest build, real machine): typed text in Area Type runs to the bottom of the shape and then disappears completely; wants to keep typing without limits and the red "+" overflow marker removed.
 - areaLayout: the last frame no longer clips (GROW): when the shape is full the text keeps flowing BELOW it at the full width of the frame; nothing is hidden, so `of` stays false and the overflow marker never appears. Not applied to threaded frames (Remove Threading / linked text) or vertical area type (they still behave like Illustrator). Safety counter prevents any infinite layout loop; narrow star tips no longer produce one-letter lines below the shape.
 - Test: ovf.js (rectangle + ellipse: every character rendered, persists after leaving the text). typem.js Smart Punctuation failure is the old known one.
+
+## 5-ٵ build 232 — all type tools behave the same: typing never stops, text never disappears
+- Review of every type tool (Point, Area, Path, Vertical, Vertical Area, Vertical Path; EN + AR): test typeall.js.
+- Area Type (since 231) and now **Vertical Area Type** keep flowing past the frame (columns continue beyond the shape) instead of clipping.
+- **Type on a Path**: text that does not fit on the path used to be hidden (and a red marker shown). It now continues in a straight line from the path's end (a separate `text[data-tpt]` tail that is rebuilt on every edit, so lengthening the path simply pulls the text back onto it); the red overflow marker is no longer drawn. An explicit end bracket still cuts the text (user's choice).
+- **Vertical Type on a Path** was broken (glyphs printed on top of each other because writing-mode:vertical-rl + rotate=90 were combined with textPath): it now flows along the path like readable sideways text (top→down on a vertical path).
+- typem.js "Smart Punctuation" is the old known failure.
