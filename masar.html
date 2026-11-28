@@ -503,7 +503,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 283</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 284</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -4094,7 +4094,9 @@ function openLineDlg(at){
   const l=I('#lnl');l.focus();l.select()}
 /* ---------- Line group: Arc, Spiral, Rectangular Grid, Polar Grid ---------- */
 const GEN=['ar','spi','rgr','pgr'],LG=['ln',...GEN];
-const GOPT={ar:{w:100,h:100,ref:'tl',closed:0,axis:'x',slope:50,fill:0},spi:{r:50,decay:80,seg:10,ccw:1},rgr:{w:100,h:100,ref:'tl',hd:5,hs:0,vd:5,vs:0,frame:1,fill:0},pgr:{w:100,h:100,ref:'tl',cd:5,cs:0,rd:5,rs:0,comp:0,fill:0}};
+/* polygon / star: the values from the tool's Options (click on the canvas); arrows while drawing change only that shape */
+var SHDB={};
+const GOPT={ar:{w:100,h:100,ref:'tl',closed:0,axis:'x',slope:50,fill:0},spi:{r:50,decay:80,seg:20,ccw:1},rgr:{w:100,h:100,ref:'tl',hd:5,hs:0,vd:5,vs:0,frame:1,fill:0},pgr:{w:100,h:100,ref:'tl',cd:5,cs:0,rd:5,rs:0,comp:0,fill:0}};
 const KB=.5523,f3=n=>Math.round(n*1000)/1000;
 function arcK(s){const a=Math.abs(s);return a<=50?a/50*KB:KB+(a-50)/50*(1-KB)}
 function geomArc(x0,y0,x1,y1,o){const w=x1-x0,h=y1-y0,k=arcK(o.slope),cn=o.axis==='y'?[x1,y0]:[x0,y1],away=o.slope>=0,toB=(o.axis==='y')!==away;
@@ -4142,13 +4144,13 @@ function genAdjust(t,o,k){let hit=true;
   else if(t==='rgr'){if(k==='ArrowUp')o.hd++;else if(k==='ArrowDown')o.hd=Math.max(0,o.hd-1);else if(k==='ArrowRight')o.vd++;else if(k==='ArrowLeft')o.vd=Math.max(0,o.vd-1);else if(k==='x'||k==='X')o.vs-=10;else if(k==='c'||k==='C')o.vs+=10;else if(k==='v'||k==='V')o.hs+=10;else if(k==='f'||k==='F')o.hs-=10;else hit=false}
   else if(t==='pgr'){if(k==='ArrowUp')o.cd++;else if(k==='ArrowDown')o.cd=Math.max(0,o.cd-1);else if(k==='ArrowRight')o.rd++;else if(k==='ArrowLeft')o.rd=Math.max(0,o.rd-1);else if(k==='x'||k==='X')o.cs-=10;else if(k==='c'||k==='C')o.cs+=10;else if(k==='v'||k==='V')o.rs+=10;else if(k==='f'||k==='F')o.rs-=10;else hit=false}
   return hit}
-function genKey(e){if(!st||st.mode!=='gen'||!st.moved)return false;if(!genAdjust(st.t,st.opt,e.key))return false;Object.assign(GOPT[st.t],st.opt);e.preventDefault();genRender();return true}
+function genKey(e){if(!st||st.mode!=='gen'||!st.moved)return false;if(!genAdjust(st.t,st.opt,e.key))return false;e.preventDefault();genRender();return true}
 /* after drawing: arrows / letters keep editing the selected grid, spiral or arc while its tool is active */
 function genSave(o,t,a,b,ev,opt,os,fs){o.g.dataset.gen=JSON.stringify({t,a,b,ev:ev?{shiftKey:!!ev.shiftKey,altKey:!!ev.altKey}:null,opt:{...opt},os,fs})}
 function genMarkupS(items,os,fs){return items.map(it=>'<path d="'+it.d+'" '+(it.fill?fs:os)+(it.eo?' fill-rule="evenodd"':'')+'/>').join('')}
 addEventListener('keydown',e=>{if(st||!GEN.includes(tool)||sel.size!==1||!e.key.startsWith('Arrow')||e.ctrlKey||e.metaKey||e.altKey)return;const tg=e.target.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT')return;
   const o=[...sel][0];let D;try{D=JSON.parse(o.g.dataset.gen||'null')}catch(_){}if(!D||D.t!==tool)return;if(!genAdjust(tool,D.opt,e.key))return;
-  e.preventDefault();e.stopImmediatePropagation();Object.assign(GOPT[tool],D.opt);o.g.innerHTML=genMarkupS(genItems(D.t,D.a,D.b,D.opt,D.ev),D.os,D.fs);o.g.dataset.gen=JSON.stringify(D);touch(o);commit();draw();
+  e.preventDefault();e.stopImmediatePropagation();o.g.innerHTML=genMarkupS(genItems(D.t,D.a,D.b,D.opt,D.ev),D.os,D.fs);o.g.dataset.gen=JSON.stringify(D);touch(o);commit();draw();
   const ev=window.__lastPtr,O=D.opt;if(ev){const m={rgr:'Rows: '+(O.hd+1)+'   Columns: '+(O.vd+1),pgr:'Rings: '+O.cd+'   Lines: '+O.rd,spi:'Segments: '+O.seg,ar:'Slope: '+O.slope}[tool];showMeas(ev,m)}clearTimeout(window.__mt);window.__mt=setTimeout(hideMeas,900)},true);
 addEventListener('keydown',e=>{if(genKey(e))e.stopImmediatePropagation()},true);
 /* generic tool options dialog */
@@ -4220,7 +4222,7 @@ function openShapeDlg(t,at){
     if(t==='m'||t==='l'){ob=add(liveMarkup(t,at.x,at.y,v.w,v.h))}
     else if(t==='rr'){SHD.rr.r=Math.max(0,v.r);const P={x:r3(at.x),y:r3(at.y),w:r3(v.w),h:r3(v.h),r:SHD.rr.r};ob=add('<path d="'+shapeD('rr',P)+'" '+closedStyle()+' data-shape="rr" data-p=\''+JSON.stringify(P)+'\'/>')}
     else{const R=t==='sr'?v.r1:v.r;if(!(R>0)){draw();return}const n=Math.max(3,Math.min(1000,Math.round(v.n)));SHD[t].n=n;
-      const P={cx:r3(at.x),cy:r3(at.y),R:r3(R),th:-1.570796,n};if(t==='sr'){P.k=Math.max(.001,v.r2/R);SHD.sr.k=P.k;SHOPT.sr.r1=R}else SHOPT.po.r=R;
+      const P={cx:r3(at.x),cy:r3(at.y),R:r3(R),th:-1.570796,n};if(t==='sr'){P.k=Math.max(.001,v.r2/R);SHD.sr.k=P.k;SHOPT.sr.r1=R}else SHOPT.po.r=R;SHDB[t]={...SHD[t]};
       ob=add('<path d="'+shapeD(t,P)+'" '+closedStyle()+' data-shape="'+t+'" data-p=\''+JSON.stringify(P)+'\'/>')}
     sel=new Set([ob]);commit();draw()})}
 function rememberShape(s){try{if(!s.o)return;if(s.mode==='draw'){const b=wbox(s.o);SHOPT[s.t].w=r3(b.w);SHOPT[s.t].h=r3(b.h)}
@@ -4439,7 +4441,7 @@ function openFlareDlg(at){
 addEventListener('keydown',e=>{if(st||e.altKey||e.ctrlKey||e.metaKey||(e.key!=='ArrowUp'&&e.key!=='ArrowDown')||!['po','sr','rr'].includes(tool)||!sel.size)return;const t=e.target.tagName;if(t==='INPUT'||t==='TEXTAREA'||t==='SELECT')return;
   const L=[...sel].filter(o=>shapeEl(o)===tool);if(!L.length)return;e.preventDefault();e.stopImmediatePropagation();const d=e.key==='ArrowUp'?1:-1;let v;
   L.forEach(o=>{const P=JSON.parse(o.g.firstElementChild.getAttribute('data-p'));if(tool==='rr'){v=Math.max(0,Math.min(P.w/2,P.h/2,(P.r||0)+d));setShape(o,{r:v})}else{v=Math.max(3,Math.min(1000,P.n+d));setShape(o,{n:v})}});
-  if(tool==='rr')SHD.rr.r=v;else SHD[tool].n=v;commit();draw();
+  if(tool==='rr')SHD.rr.r=v;commit();draw();
   const ev=window.__lastPtr;if(ev)showMeas(ev,(tool==='rr'?'Radius: ':tool==='sr'?'Points: ':'Sides: ')+fmt4(v));clearTimeout(window.__mt);window.__mt=setTimeout(hideMeas,900)},true);
 addEventListener('pointermove',e=>{window.__lastPtr={clientX:e.clientX,clientY:e.clientY}},true);
 /* ---------- Polygon sides widget (Selection tool) ---------- */
@@ -4734,7 +4736,7 @@ cv.addEventListener('pointerdown',e=>{
   if((tool==='v'||SG.includes(tool))&&e.target.dataset&&e.target.dataset.sides&&sel.size===1){const o=[...sel][0];st={p,moved:false,mode:'sides',o,n0:JSON.parse(o.g.firstElementChild.getAttribute('data-p')).n};return}
   if((tool==='v'||SG.includes(tool))&&e.target.dataset&&e.target.dataset.pie&&sel.size===1){st={p,moved:false,mode:'pie',o:[...sel][0],which:e.target.dataset.pie};return}
   if((tool==='v'||SG.includes(tool))&&e.target.dataset&&e.target.dataset.lc!=null&&sel.size===1){st={p,moved:false,mode:'lc',o:[...sel][0],i:+e.target.dataset.lc,alt:e.altKey};return}
-  if(tool==='rr'||tool==='po'||tool==='sr'){sel=new Set();draw();st={p,moved:false,mode:'shape',t:tool};return}
+  if(tool==='rr'||tool==='po'||tool==='sr'){sel=new Set();draw();if(tool!=='rr'){SHDB[tool]=SHDB[tool]||{...SHD[tool]};Object.assign(SHD[tool],SHDB[tool])}st={p,moved:false,mode:'shape',t:tool};return}
   if(tool==='m'||tool==='l'){sel=new Set();draw();st={p,moved:false,mode:'draw',t:tool};return}
   const h=e.target.dataset&&e.target.dataset.h;
   st={p,moved:false};

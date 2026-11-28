@@ -666,3 +666,8 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Lasso: a drag that starts on a selected anchor now draws a new lasso instead of dragging the point (Illustrator: the Lasso only selects).
 - Layer audit (tests/lyaudit.js, 15 checks): eraser / knife / scissors / Shape Builder / Pathfinder / Select All + Delete with locked and hidden layers, undo, delete layer + undo, new shapes into the active layer. All pass; no loss reproduced.
 - Tests: tests/selcolor.js, tests/lyaudit.js.
+
+## build 284 — spiral, grids, polygon, star start from their basic shape every time
+- Arrow keys while drawing (and on the selected shape afterwards) change only that shape; the next spiral / rectangular grid / polar grid / polygon / star starts again from the tool's own settings. Values set in the tool's Options (double-click the tool, or click on the canvas for polygon / star) are still kept.
+- Spiral default: 20 segments (winds into the centre).
+- Test: tests/gendefault.js.
