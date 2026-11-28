@@ -13,7 +13,7 @@ await H.drag(150,140,250,190);let b=await L();
 chk('V drag moves by (100,50)',Math.abs(b.x-a.x-100)<1.5&&Math.abs(b.y-a.y-50)<1.5,{a,b});
 await H.drag(250,190,350,215,['Shift']);let c=await L();
 chk('V Shift+drag constrains to axis (horizontal here)',Math.abs(c.y-b.y)<1.5&&c.x-b.x>50,{b,c});
-await H.drag(250,190,330,190,['Alt']);let s=await S();
+await H.drag(c.x+c.w/2,c.y+c.h/2,c.x+c.w/2+80,c.y+c.h/2,['Alt']);let s=await S();
 chk('V Alt+drag duplicates (n=2)',s.n===2,s.n);
 await H.pg.keyboard.press('Control+z');await H.pg.waitForTimeout(60);s=await S();
 chk('undo duplicate (n=1)',s.n===1,s.n);
