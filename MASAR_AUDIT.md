@@ -625,3 +625,15 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Offline: keeps working for grace_days (default 7) from the last server answer, then asks to connect.
 - Home: "Free trial: N days left" / "ends in N days" banner, the admin's announcement card, Account page (name, plan, status, paid-until, reminders on/off, plans, payment history, sign out), templates loaded from the server (categories, search; files only for trial / paid accounts).
 - Tests: tests/sub.js (24 checks), tests/cloud.js updated, tests/cloudmock.js extended.
+
+## admin.html — the owner's control panel
+- Sign in with an admin account (email/password or Google). Customers are refused.
+- Dashboard: customers, paying (monthly / yearly), on trial, ended, revenue 30 days / all time, templates; free-plan limits with bars (database 500 MB, emails per provider per day, SES, failures).
+- Customers: search; +30 days / +1 year / End (for payments by InstaPay or by hand); make / remove admin.
+- Payments: every Paymob payment with the customer email, amount and transaction id.
+- Plans & trial: trial days, monthly and yearly prices, currency, offline days, reminder days.
+- Templates: drop many SVG / .masar files at once (each becomes a draft, size read from the file, thumbnail made from the SVG); title, category, tags, order, publish, custom thumbnail, delete.
+- Home banner: title, text, https link, image upload; shows on everyone's Home.
+- Emails: log of every email and which provider sent it, failures with the reason.
+- masar-config.js: one place for the server URL + anon key, used by masar.html and admin.html.
+- Test: tests/admin.js (18 checks).
