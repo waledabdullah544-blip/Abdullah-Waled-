@@ -497,7 +497,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 264</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 265</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -11274,7 +11274,10 @@ function breakLink(){const L=[...sel].filter(instOf);if(!L.length)return;L.forEa
 function redefine(){if(SEL<0)return;const L=[...sel].filter(o=>objs.includes(o));if(!L.length)return;const s=SY[SEL],c=capture(L.map(o=>{if(instOf(o)){const f={...o,g:o.g.cloneNode(true)};const w=f.g.firstElementChild;while(w.firstChild)f.g.insertBefore(w.firstChild,w);w.remove();return f}return o}));
   const oldC=[s.b[0]+s.b[2]/2,s.b[1]+s.b[3]/2],newC=[c.b[0]+c.b[2]/2,c.b[1]+c.b[3]/2];s.h=c.h;s.b=c.b;save();
   /* every instance gets the new artwork and keeps its place and size */
-  objs.forEach(o=>{if(instOf(o)!==s.id)return;o.g.firstElementChild.innerHTML=s.h;o.m.tx+=(oldC[0]-newC[0])*o.m.sx;o.m.ty+=(oldC[1]-newC[1])*o.m.sy;apply(o);touch(o)});commit();draw();render()}
+  objs.forEach(o=>{if(instOf(o)!==s.id)return;o.g.firstElementChild.innerHTML=s.h;o.m.tx+=(oldC[0]-newC[0])*o.m.sx;o.m.ty+=(oldC[1]-newC[1])*o.m.sy;apply(o);touch(o)});
+  /* instances inside symbol sets (Symbol Sprayer) follow too: their last translate is the symbol's centre */
+  layer.querySelectorAll('g[data-ssym="'+s.id+'"]').forEach(m=>{const w=m.querySelector(':scope > g[data-sym]');if(w)w.innerHTML=s.h;const t=m.getAttribute('transform')||'';m.setAttribute('transform',t.replace(/translate\(([-\d.e]+) ([-\d.e]+)\)\s*$/,'translate('+(-newC[0]).toFixed(2)+' '+(-newC[1]).toFixed(2)+')'))});
+  objs.forEach(o=>{if(o.g.querySelector('g[data-ssym="'+s.id+'"]'))try{touch(o)}catch(_){}});commit();draw();render()}
 function del(){if(SEL<0)return;const s=SY[SEL],used=objs.filter(o=>instOf(o)===s.id);
   dkModal('Delete Symbol',used.length?'The symbol "'+esc(s.n)+'" is used by '+used.length+' instance(s). Expand the instances and delete the symbol?':'Delete the symbol "'+esc(s.n)+'"?',[{t:'No',c:1},{t:'Yes',p:1,f:()=>{if(used.length){const k=sel;sel=new Set(used);breakLink();sel=k}SY.splice(SEL,1);SEL=-1;save();render()}}])}
 P.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.i!=null){SEL=+b.dataset.i;render();return}
@@ -11290,7 +11293,7 @@ DK.reg('symbols','Symbols','<svg width="18" height="18" viewBox="0 0 24 24" fill
    menu:()=>[{t:'New Symbol…',f:newSymbol,en:sel.size>0},{t:'Place Symbol Instance',f:()=>place(SEL),en:SEL>=0},{t:'Redefine Symbol',f:redefine,en:SEL>=0&&sel.size>0},{t:'Break Link to Symbol',f:breakLink,en:[...sel].some(instOf)},{t:'Select All Instances',f:()=>{if(SEL<0)return;sel=new Set(objs.filter(o=>instOf(o)===SY[SEL].id));draw()},en:SEL>=0},{sep:1},{t:'Delete Symbol',f:del,en:SEL>=0}]});
 {const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(P.style.display!=='none'&&!dr)render()}catch(_){}return r}}
 addEventListener('keydown',e=>{if(e.key==='F11'&&e.shiftKey&&(e.ctrlKey||e.metaKey)&&!e.altKey){e.preventDefault();e.stopImmediatePropagation();DK.toggle?DK.toggle('symbols'):DK.open('symbols')}},true);
-window.SYMS={list:()=>SY,place,redefine,breakLink,newSymbol,instOf,select:i=>{SEL=i;render()}};
+window.SYMS={list:()=>SY,place,redefine,breakLink,newSymbol,instOf,select:i=>{SEL=i;render()},current:()=>SY[SEL]||SY[0]||null};
 })();
 
 
@@ -11498,6 +11501,43 @@ addEventListener('keydown',e=>{if(document.querySelector('.fxm'))return;const c=
   if(k==='F9'&&c&&!a&&!s)id='gradient';else if(k==='F3'&&s&&!c&&!a)id='colorguide';else if(k==='F11'&&c&&!a&&!s)id='attributes';else if(k==='KeyT'&&c&&a&&s)id='opentype';
   else if(k==='F8'&&!c&&!a&&!s)f=()=>{if(sel.size&&window.SYMS)SYMS.newSymbol()};
   if(!id&&!f)return;e.preventDefault();e.stopImmediatePropagation();if(id)tog(id);else f()},true);
+})();
+
+
+/* ======================= build 265: Symbol Sprayer Tool (Shift+S) ======================= */
+(()=>{
+const KEY='masar.spray.v1',DEFO={dia:80,int:8,den:5,size:100,sv:20,rot:0,rv:30};let O={...DEFO};try{Object.assign(O,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(_){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(O))}catch(_){}};
+const ring=(p,del)=>{peng.replaceChildren(el('circle',{cx:p.x,cy:p.y,r:O.dia/2/z,fill:'none',stroke:del?'#e8423c':'#3a3a3a','stroke-width':1.5/z,'stroke-dasharray':(4/z)+' '+(3/z),'pointer-events':'none'}),el('circle',{cx:p.x,cy:p.y,r:O.dia/2/z,fill:'none',stroke:'#f0c374','stroke-width':.8/z,'pointer-events':'none'}))};
+let set=null,last=null,acc=0,sym=null,alt=false,changed=false;
+const isSet=o=>!!(o&&o.g.querySelector(':scope > g[data-mem][data-ssym]'));
+function addInst(p){const s=sym,c=[s.b[0]+s.b[2]/2,s.b[1]+s.b[3]/2],r=Math.sqrt(Math.random())*O.dia/2/z,a=Math.random()*Math.PI*2,x=p.x+Math.cos(a)*r,y=p.y+Math.sin(a)*r;
+  const k=O.size/100*(1+(Math.random()*2-1)*O.sv/100),rot=O.rot+(Math.random()*2-1)*O.rv;
+  const g=el('g',{'data-mem':'1','data-ssym':s.id,transform:'translate('+x.toFixed(2)+' '+y.toFixed(2)+') rotate('+rot.toFixed(1)+') scale('+k.toFixed(3)+') translate('+(-c[0]).toFixed(2)+' '+(-c[1]).toFixed(2)+')'});
+  g.innerHTML='<g data-sym="'+s.id+'">'+s.h+'</g>';
+  /* the set's own transform is undone so the instance lands under the pointer */
+  const m=set.m;g.setAttribute('transform','translate('+(-m.tx/m.sx)+' '+(-m.ty/m.sy)+') scale('+(1/m.sx)+' '+(1/m.sy)+') '+g.getAttribute('transform'));set.g.appendChild(g);changed=true}
+function removeAt(p){if(!set)return;const R=O.dia/2/z;[...set.g.querySelectorAll(':scope > g[data-ssym]')].forEach(g=>{const b=g.getBBox(),m=set.m,cx=(b.x+b.width/2)*m.sx+m.tx,cy=(b.y+b.height/2)*m.sy+m.ty;
+  /* getBBox is in the set's space but without the child transform: use the screen box instead */const r=g.getBoundingClientRect(),cr=cv.getBoundingClientRect(),wx=(r.left+r.width/2-cr.left-px)/z,wy=(r.top+r.height/2-cr.top-py)/z;
+  if(Math.hypot(wx-p.x,wy-p.y)<=R&&Math.random()<.08+O.int/80){g.remove();changed=true}})}
+addTool({id:'syn',name:'Symbol Sprayer Tool',key:'Shift+S',after:'sbd',svg:'<path d="M5 19l5-5"/><rect x="9" y="7" width="6" height="8" rx="1.5" transform="rotate(-45 12 11)"/><circle cx="17" cy="5" r="1"/><circle cx="20" cy="8" r="1"/><circle cx="16" cy="2.5" r=".8"/>',
+  hint:'Symbol Sprayer · pick a symbol in the Symbols panel, then drag to spray it · Alt+drag removes instances · [ ] brush size · double-click the icon for options',
+  dbl:()=>dialog(),enter:()=>{const s=window.SYMS&&SYMS.current();if(!s)tb5Msg('Symbol Sprayer: make a symbol first (select artwork, then F8 or Window > Symbols > New Symbol)')},leave:()=>peng.replaceChildren(),
+  card:{d:'Sprays copies of the selected symbol as one symbol set',m:['Choose a symbol in the Symbols panel','Drag to spray instances; hold longer for more','Alt+drag removes instances from the selected set','[ and ] change the diameter']}});
+tlDrag('syn',{down:(p,e)=>{sym=window.SYMS&&SYMS.current();if(!sym){tb5Msg('Symbol Sprayer: make a symbol first (select artwork, then F8)');return false}alt=e.altKey;changed=false;
+    const cur=[...sel][0];set=isSet(cur)?cur:null;
+    if(!set&&!alt){set=add('');set.g.setAttribute('data-symset',sym.id);set.nm='Symbol Set';try{if(typeof LAYACT!=='undefined')set.ly=LAYACT}catch(_){}}
+    last=p;acc=0;if(alt)removeAt(p);else for(let i=0;i<Math.max(1,Math.round(O.int/3));i++)addInst(p);ring(p,alt);return true},
+  move:(p,e)=>{const d=Math.hypot(p.x-last.x,p.y-last.y)*z;acc+=d;last=p;const step=Math.max(2,O.dia/(O.den*1.6));
+    while(acc>=step){acc-=step;if(alt)removeAt(p);else for(let i=0;i<Math.max(1,Math.round(O.int/6));i++)addInst(p)}ring(p,alt)},
+  up:()=>{peng.replaceChildren();if(set){if(!set.g.querySelector(':scope > g[data-ssym]')){set.g.remove();objs.splice(objs.indexOf(set),1);sel=new Set()}else{try{touch(set)}catch(_){}sel=new Set([set])}}if(changed)commit();draw();set=null},
+  esc:()=>{peng.replaceChildren();if(set&&!set.g.querySelector(':scope > g[data-ssym]')){set.g.remove();objs.splice(objs.indexOf(set),1)}set=null;draw()}});
+cv.addEventListener('pointermove',e=>{if(tool!=='syn'||PDOWN)return;ring(pt(e),e.altKey)});
+addEventListener('keydown',e=>{if(tool!=='syn'||e.ctrlKey||e.metaKey)return;if(e.key==='['||e.key===']'){O.dia=Math.max(10,Math.min(1000,O.dia+(e.key===']'?10:-10)));save();e.preventDefault();e.stopImmediatePropagation();$('#hint').textContent='Symbol Sprayer diameter: '+O.dia+' px'}},true);
+function dialog(){const f=(k,l,u,min,max)=>'<label>'+l+'<input type="number" data-k="'+k+'" value="'+O[k]+'" min="'+min+'" max="'+max+'"> '+u+'</label>';
+  dkModal('Symbolism Tools Options',f('dia','Diameter','px',10,1000)+f('int','Intensity','',1,10)+f('den','Symbol Set Density','',1,10)+'<b>Instances</b>'+f('size','Size','%',5,500)+f('sv','Size variation','± %',0,100)+f('rot','Rotation','°',-180,180)+f('rv','Rotation variation','± °',0,180),
+   [{t:'Reset',f:b=>{O={...DEFO};save();return true}},{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{b.querySelectorAll('[data-k]').forEach(i=>{const v=parseFloat(i.value);if(isFinite(v))O[i.dataset.k]=Math.max(+i.min,Math.min(+i.max,v))});save()}}])}
+window.SPRAY={opts:()=>O};
 })();
 
 /*TOOLS-END*/
