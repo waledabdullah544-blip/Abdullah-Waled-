@@ -1,0 +1,10 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
+await pg.keyboard.press('m');await H.drag(300,200,420,300);await pg.waitForTimeout(150);
+const cnt=()=>pg.evaluate(()=>document.querySelectorAll('#selg path, #selg rect').length);
+const with0=await cnt();
+await pg.evaluate(()=>{const e=objs[0].g.querySelector('rect');e.setAttribute('fill','none');e.setAttribute('stroke','none');draw()});await pg.waitForTimeout(150);
+const with1=await cnt();ok('an invisible (fill none + stroke none) selected shape shows its path outline',with1>with0,with0+' -> '+with1);
+await pg.evaluate(()=>{const e=objs[0].g.querySelector('rect');e.setAttribute('fill','#f00');draw()});await pg.waitForTimeout(100);
+ok('a visible shape does not get an extra outline',await cnt()===with0);
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();
