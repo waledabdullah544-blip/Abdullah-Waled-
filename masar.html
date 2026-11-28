@@ -499,7 +499,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 276</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 277</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10157,7 +10157,7 @@ addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!e.altKey||e.code!=='
   const place=()=>{PL.value='';PL.click()};
   function printDoc(){const svg=fileSVGString(),fr=document.createElement('iframe');fr.style.cssText='position:fixed;left:-99999px;top:0;width:'+ABW+'px;height:'+ABH+'px;border:0';document.body.appendChild(fr);const d=fr.contentDocument;d.open();d.write('<!doctype html><html><head><title>'+(window.DOCNAME||'Untitled-1')+'</title><style>@page{margin:0;size:'+ABW+'px '+ABH+'px}html,body{margin:0;background:#fff}svg{display:block;width:100%;height:auto}</style></head><body>'+svg.replace(/^<\?xml[^>]*>\s*/,'')+'</body></html>');d.close();setTimeout(()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}finally{setTimeout(()=>fr.remove(),1500)}},250)}
   window.docCreate=(w,h,name,unit,o)=>{o=o||{};const go=()=>{window.docClear();DUNIT=UN[unit]?unit:'px';try{localStorage.setItem('masar.docunit',DUNIT)}catch(_){}window.DOCNAME=name||'Untitled-1';if(o.mode)setMode(o.mode);
-    const na=Math.max(1,Math.min(50,Math.round(+o.na||1))),gap=Math.max(0,+(o.gap==null?20:o.gap));ARTS=[];for(let i=0;i<na;i++)ARTS.push({id:i+1,n:'Artboard '+(i+1),x:i*(w+gap),y:0,w,h});ABN=na;ABI=0;abSync();abRender();fit();try{RLO={x:0,y:0};rlDraw()}catch(_){}if(window.abChanged)abChanged();commit();draw();if(window.dkSaved)dkSaved();tb5Msg('New document: '+w+' × '+h+' px')};
+    const na=Math.max(1,Math.min(50,Math.round(+o.na||1))),gap=Math.max(0,+(o.gap==null?20:o.gap));ARTS=[];for(let i=0;i<na;i++)ARTS.push({id:i+1,n:'Artboard '+(i+1),x:i*(w+gap),y:0,w,h});ABN=na;ABI=0;abSync();abRender();fit();try{RLO={x:0,y:0};rlDraw()}catch(_){}if(window.abChanged)abChanged();commit();draw();if(window.dkSaved)dkSaved();tb5Msg('New document: '+w+' × '+h+' px');if(o.after){o.after();if(window.dkSaved)dkSaved()}};
   if(window.docDirty())dkModal('New Document','Do you want to save changes to '+(window.DOCNAME||'Untitled-1')+' before creating a new document?',[{t:'Cancel',c:1},{t:"Don't Save",f:go},{t:'Save',p:1,f:()=>{fileSave();go()}}]);else go()};
 
   /* ---- New Document (Illustrator layout): category tabs, blank document presets, Preset Details on the right ---- */
@@ -10520,7 +10520,7 @@ const rbTarget=o=>{if(!o||!o.g)return null;if(o.g.querySelector('[data-opmask]')
 function rbApplyMatte(o,im,url){const A=a=>im.getAttribute(a);
   const n=add('<image href="'+url+'" x="'+A('x')+'" y="'+A('y')+'" width="'+A('width')+'" height="'+A('height')+'" preserveAspectRatio="none"/>');
   const t=o.g.getAttribute('transform');if(t)n.g.setAttribute('transform',t);n.m=Object.assign({},o.m);try{n.bb=n.g.getBBox()}catch(_){}
-  sel=new Set([o,n]);dsSel=new Set();const ok=opmMake();if(ok){const g=[...sel][0];if(g)g.nm='Background removed'}return ok}
+  sel=new Set([o,n]);dsSel=new Set();const ok=opmMake();if(ok){const g=[...sel][0];if(g)g.nm='Background removed'}try{if(ok&&window.genAdd)genAdd('Remove Background',url,+A('width'),+A('height'))}catch(_){}return ok}
 /* build 263: Pro (BEN2) is the default where the graphics card can run it (WebGPU); on a CPU-only computer Balanced stays the default (Pro still works there, slower) */
 const mdlKey=()=>{try{const v=localStorage.getItem('masar.rbmodel');if(MODELS.some(m=>m.id===v))return v}catch(_){}return navigator.gpu?'pro':'balanced'};
 /* ---- contextual action bar (shown when exactly one image is selected) ---- */
@@ -10955,7 +10955,7 @@ async function open(){const o=[...sel][0];if(sel.size!==1||!target(o)){try{aiAle
   Q('mdl').addEventListener('change',()=>{const v=Q('mdl').value==='faithful'?100:Q('mdl').value==='photo'?100:60;Q('st').value=v;bx.querySelector('#upattr').style.display=Q('mdl').value==='photo'?'':'none';bx.querySelector('[data-o="st"]').textContent=v;upd()});upd();
   async function run(b){const mdl=Q('mdl').value,sc=+Q('sc').value,st=+Q('st').value/100,keep=Q('keep').checked;BUSY=true;go.disabled=true;Q('mdl').disabled=Q('sc').disabled=true;info.textContent='Starting…';let T0=0,I0=0;
     try{const blob=await blobOf(href(T.im)),res=await RBUP.run(blob,{model:mdl,scale:sc,strength:st,lock:!!(b.querySelector('[data-k="lock"]')||{checked:true}).checked},p=>{if(p.phase==='download'){info.textContent='Downloading the model '+p.mb.toFixed(0)+(p.tot?' / '+p.tot.toFixed(0):'')+' MB (first time only)';bar.style.width=(p.f*100)+'%'}else if(p.phase==='infer'){info.textContent='Upscaling… ('+p.dev+')'}else if(p.phase==='tile'){if(!T0){T0=performance.now();I0=p.i}const el=(performance.now()-T0)/1000,left=p.i>I0?el/(p.i-I0)*(p.n-p.i):0,fm=v=>v<90?Math.round(v)+' s':Math.round(v/60)+' min';info.textContent='Upscaling… '+Math.round(p.i/p.n*100)+'%'+(left?'  ·  about '+fm(left)+' left':'');bar.style.width=(p.i/p.n*100)+'%'}});
-      if(!objs.includes(o))throw new Error('The image was deleted while it was being upscaled.');info.textContent='Saving the result…';const url=await toURL(res.blob);
+      if(!objs.includes(o))throw new Error('The image was deleted while it was being upscaled.');info.textContent='Saving the result…';const url=await toURL(res.blob);try{window.genAdd&&genAdd('Upscale '+sc+'×',url,res.w,res.h)}catch(_){}
       if(keep&&T.kind==='plain'){const A=a=>T.im.getAttribute(a),n=add('<image href="'+url+'" x="'+A('x')+'" y="'+A('y')+'" width="'+A('width')+'" height="'+A('height')+'" preserveAspectRatio="none"/>');const t=o.g.getAttribute('transform');if(t)n.g.setAttribute('transform',t);n.m=Object.assign({},o.m);n.ly=o.ly;n.nm=(o.nm||'Image')+' (upscaled)';try{n.bb=n.g.getBBox()}catch(_){}sel=new Set([n]);dsSel=new Set()}
       else if(T.kind==='mask')R.replaceSrc(o,url);else{T.im.setAttribute('href',url)}
       BUSY=false;M.close();commit();draw();if(typeof tb5Msg==='function')tb5Msg('Upscaled to '+res.w+' × '+res.h+' px ('+res.dev+'). Undo = Ctrl+Z')}
@@ -12087,6 +12087,34 @@ header>.brand{display:none!important}
 #home .hlc b{display:block;margin-bottom:3px}#home .hlc span{color:var(--mute);font-size:11.5px;line-height:1.35}#home kbd{font:600 10px inherit;font-family:inherit;border:1px solid var(--bdr,var(--line));border-radius:3px;padding:0 4px;margin-left:4px;color:var(--mute)}
 #home .hbt{height:26px;padding:0 12px;border-radius:13px;border:1px solid var(--bdr,var(--line));background:transparent;color:var(--ink);font:inherit;cursor:pointer}#home .hbt:hover{background:color-mix(in srgb,var(--ink) 10%,transparent)}
 #home tr.rf:focus-visible td,#home .hgc:focus-visible,#home .hnav a:focus-visible{outline:1px solid #f0c374}
+#home .hs{flex:0 0 240px;padding:14px 16px 16px;gap:8px;overflow:auto}
+#home .hhd{display:flex;align-items:center;gap:8px;margin:0 0 14px}
+#home .hs .hback{width:26px;height:26px;border:0;border-radius:4px;background:none;color:var(--ink);font:400 24px/1 inherit;font-family:inherit;padding:0;display:flex;align-items:center;justify-content:center}
+#home .hlogo{width:44px;height:44px;line-height:0}#home .hlogo svg{width:44px;height:44px;border-radius:8px}
+#home .hs .hopen{border-color:transparent;text-align:left;padding:0 18px}
+#home .hs hr{border:0;border-top:1px solid var(--sep,var(--line));margin:8px 0}
+#home .hs .hnav{margin-top:0}
+#home .hs .hnav a{display:flex;align-items:center;gap:10px;padding:7px 10px;position:relative}
+#home .hs .hnav a.on::before{content:'';position:absolute;left:-6px;top:6px;bottom:6px;width:3px;border-radius:2px;background:#f0c374}
+#home .hs .hnav a em{font-style:normal;font-size:10px;border:1px solid var(--bdr,var(--line));border-radius:9px;padding:0 7px;margin-left:2px;color:var(--mute)}
+#home .hsec{font:700 10.5px inherit;font-family:inherit;letter-spacing:.8px;color:var(--mute);margin:14px 10px 4px}
+#home .hfoot{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:10px}
+#home .hcl{display:flex;align-items:center;gap:10px;width:100%;height:36px;border-radius:4px!important;border:1px solid var(--bdr,var(--line));background:transparent;color:var(--ink);padding:0 12px;font:600 12.5px inherit;font-family:inherit;text-align:left}
+#home .hcl.ok{border-color:#f0c374}#home .hcl .st{margin-left:auto;font-weight:400;color:var(--mute);font-size:11px}
+#home .hss{margin-top:0}
+#home h2.dev{margin-top:26px}
+#home .tpg{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:16px}
+#home .tpc{border:1px solid var(--bdr,var(--line));border-radius:6px;background:var(--panel);padding:10px;text-align:left;color:var(--ink);font:inherit;cursor:pointer}#home .tpc:hover{border-color:#f0c374}
+#home .tpv{height:150px;display:flex;align-items:center;justify-content:center;margin-bottom:8px;background:color-mix(in srgb,var(--ink) 6%,transparent);border-radius:4px;padding:8px;box-sizing:border-box}#home .tpv svg{max-width:100%;max-height:100%;box-shadow:0 1px 4px rgba(0,0,0,.35)}
+#home .tpc b{display:block}#home .tpc span{color:var(--mute);font-size:11px}
+#home .hgt img{max-width:100%;max-height:100%}#home .rth img{max-width:100%;max-height:100%}
+#home .hgt.chk{background:repeating-conic-gradient(#ddd 0 25%,#fff 0 50%) 0 0/16px 16px}
+#home .hgt.fold{background:transparent}
+#home .gact{margin-top:8px;display:flex;gap:6px;align-items:center}#home .hgc.gen{cursor:default}#home .hgc.gen .rdel{position:static;margin-left:auto}
+#home .hbt.pri{background:#f0c374;border-color:#f0c374;color:#2a2a2a;font-weight:600}
+#home .crumb{color:var(--mute);margin:0 0 8px}#home .crumb a,#home .sub a{color:#f0c374;cursor:pointer}
+#home td select{height:24px;font-size:12px}
+
 `;document.head.appendChild(st);
 const HOUSE='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.6L1 7.8l1 1.1 1-.9V14.4h4V10.4h2v4h4V8l1 .9 1-1.1z"/></svg>';
 const w=document.createElement('div');w.id='mbhw';const br=document.querySelector('header>.brand .btile');
@@ -12100,65 +12128,140 @@ window.recentList=()=>rget().map(r=>({n:r.n,t:r.t,s:r.s}));
 const openRecent=i=>{const r=rget()[i];if(!r)return;let D=null;if(!/^\s*</.test(r.d)){try{D=JSON.parse(r.d)}catch(_){}}
   const go=()=>{if(D&&D.masar&&Array.isArray(D.objs)){fileLoadMasar(D);tb5Msg('Opened '+r.n)}else{const q=fileImportSVG(r.d);tb5Msg(q&&q.n?'Opened '+r.n:'Could not open '+r.n)}const a=rget();const k=a.findIndex(x=>x.n===r.n);if(k>=0){const[x]=a.splice(k,1);x.t=Date.now();a.unshift(x);rset(a)}};
   close();if(window.docDirty())dkModal('Open','Do you want to save changes to '+(window.DOCNAME||'Untitled-1')+' before opening '+r.n.replace(/</g,'&lt;')+'?',[{t:'Cancel',c:1},{t:"Don't Save",f:go},{t:'Save',p:1,f:()=>{fileSave();go()}}]);else go()};
-/* ---- the screen (Illustrator Home): New file / Open, Home · Learn · Your files · Deleted ---- */
+/* ---- the screen (Illustrator Home): back + logo · New file / Open · Home, Learn · MASAR AI: Generation history · FILES: Your files, Shared with you, Projects, Templates, Deleted · Masar Cloud ---- */
 const QS=[['print','Letter'],['print','A4'],['art','Postcard'],['web','Common'],['mobile','iPhone X'],['film','HDV/HDTV 1080']];
-const DK2='masar.recent.del.v1',VK='masar.home.view',SK='masar.home.sort';
-const dget=()=>{try{const a=JSON.parse(localStorage.getItem(DK2)||'[]');return Array.isArray(a)?a:[]}catch(_){return[]}},dset=a=>{for(;;){try{localStorage.setItem(DK2,JSON.stringify(a));return}catch(_){if(!a.length)return;a=a.slice(0,-1)}}};
+const DK2='masar.recent.del.v1',VK='masar.home.view',SK='masar.home.sort',PK='masar.projects.v1';
+const jget=k=>{try{const a=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(a)?a:[]}catch(_){return[]}};
+const dget=()=>jget(DK2),dset=a=>{for(;;){try{localStorage.setItem(DK2,JSON.stringify(a));return}catch(_){if(!a.length)return;a=a.slice(0,-1)}}};
+const pget=()=>jget(PK),pset=a=>{try{localStorage.setItem(PK,JSON.stringify(a))}catch(_){}};
 const H=document.createElement('div');H.id='home';H.setAttribute('role','dialog');H.setAttribute('aria-label','Home');document.body.appendChild(H);
-const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
 const ago=t=>{const s=(Date.now()-t)/1000;if(s<60)return'Just now';if(s<3600)return Math.round(s/60)+' minute'+(Math.round(s/60)>1?'s':'')+' ago';if(s<86400)return Math.round(s/3600)+' hour'+(Math.round(s/3600)>1?'s':'')+' ago';const d=Math.round(s/86400);return d<30?d+' day'+(d>1?'s':'')+' ago':new Date(t).toLocaleDateString()};
 const kb=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(1)+' MB';
 const kind=r=>/^\s*</.test(r.d||'')?'SVG':'Masar';
-const thumb=r=>{if(/^\s*</.test(r.d)&&r.d.length<200000){const m=r.d.match(/<svg[\s\S]*<\/svg>/i);if(m&&!/<script|<foreignObject/i.test(m[0]))return m[0].replace(/<svg/i,'<svg preserveAspectRatio="xMidYMid meet"').replace(/\s(width|height)="[^"]*"/g,'').replace(/\son\w+\s*=\s*("[^"]*"|'[^']*')/gi,'').replace(/(href\s*=\s*["'])\s*javascript:/gi,'$1#')}
-  return'<svg viewBox="0 0 16 16" width="20" height="20" fill="none" stroke="#888" stroke-width="1.1"><path d="M4 1.5h6l3 3v10H4z M10 1.5v3h3"/></svg>'};
-let tab='home',flt='',view=localStorage.getItem(VK)||'list',sort=localStorage.getItem(SK)||'t';
-const sorted=()=>{let R=rget().map((r,i)=>({...r,i}));if(flt)R=R.filter(r=>r.n.toLowerCase().includes(flt.toLowerCase()));R.sort(sort==='n'?(a,b)=>a.n.localeCompare(b.n):sort==='s'?(a,b)=>b.s-a.s:(a,b)=>b.t-a.t);return R};
+const cleanSvg=x=>x.replace(/<svg/i,'<svg preserveAspectRatio="xMidYMid meet"').replace(/(<svg[^>]*?)\s(width|height)="[^"]*"/g,'$1').replace(/(<svg[^>]*?)\s(width|height)="[^"]*"/g,'$1').replace(/\son\w+\s*=\s*("[^"]*"|'[^']*')/gi,'').replace(/(href\s*=\s*["'])\s*javascript:/gi,'$1#');
+const FILEI='<svg viewBox="0 0 16 16" width="20" height="20" fill="none" stroke="#888" stroke-width="1.1"><path d="M4 1.5h6l3 3v10H4z M10 1.5v3h3"/></svg>';
+const thumb=r=>{if(r.th&&/^data:image\//.test(r.th))return'<img alt="" src="'+r.th+'">';if(/^\s*</.test(r.d||'')&&r.d.length<200000){const m=r.d.match(/<svg[\s\S]*<\/svg>/i);if(m&&!/<script|<foreignObject/i.test(m[0]))return cleanSvg(m[0])}return FILEI};
+/* small preview of the current artwork (for Recent / Cloud): the artboard rendered to a 240 px JPEG */
+window.docThumb=()=>new Promise(res=>{try{const sv=fileSVGString();if(!sv||sv.length>6e6)return res(null);const im=new Image();im.onload=()=>{try{const k=240/Math.max(im.naturalWidth||1,im.naturalHeight||1),c=document.createElement('canvas');c.width=Math.max(1,Math.round((im.naturalWidth||1)*k));c.height=Math.max(1,Math.round((im.naturalHeight||1)*k));const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,c.width,c.height);x.drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/jpeg',.72))}catch(_){res(null)}};im.onerror=()=>res(null);im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(sv)}catch(_){res(null)}});
+{const _ra=window.recentAdd;window.recentAdd=(name,text)=>{_ra(name,text);if(/^\s*</.test(text||''))return;docThumb().then(th=>{if(!th)return;const a=rget(),r=a.find(x=>x.n===name);if(r){r.th=th;rset(a);if(H.classList.contains('on'))render()}})}}
+let tab='home',flt='',view=localStorage.getItem(VK)||'list',sort=localStorage.getItem(SK)||'t',proj=null;
+const sorted=L=>{let R=L.map((r,i)=>({...r,i}));if(flt)R=R.filter(r=>r.n.toLowerCase().includes(flt.toLowerCase()));R.sort(sort==='n'?(a,b)=>a.n.localeCompare(b.n):sort==='s'?(a,b)=>b.s-a.s:(a,b)=>b.t-a.t);return R};
 const pvb=(w,h)=>{const k=60/Math.max(w,h);return'<i style="width:'+Math.round(w*k)+'px;height:'+Math.round(h*k)+'px"></i>'};
-const unitTxt=(v,u)=>{const k={px:1,pt:1,in:72,mm:72/25.4,cm:72/2.54,pc:12}[u]||1;const x=v/k;return u==='px'||u==='pt'?+x.toFixed(2):+x.toFixed(2)};
-function filesBlock(title){const R=sorted();
-  const bar='<div class="hfb"><h2>'+title+'</h2><span class="sp"></span><label class="hsrt">Sort<select data-sort aria-label="Sort"><option value="t"'+(sort==='t'?' selected':'')+'>Last opened</option><option value="n"'+(sort==='n'?' selected':'')+'>Name</option><option value="s"'+(sort==='s'?' selected':'')+'>Size</option></select></label>'+
+const unitTxt=(v,u)=>{const k={px:1,pt:1,in:72,mm:72/25.4,cm:72/2.54,pc:12}[u]||1;return+(v/k).toFixed(2)};
+const projSel=r=>{const P=pget();if(!P.length)return'';return'<select data-mv="'+r.i+'" aria-label="Project" title="Project"><option value="">No project</option>'+P.map(p=>'<option value="'+p.id+'"'+(r.p===p.id?' selected':'')+'>'+esc(p.n)+'</option>').join('')+'</select>'};
+const projName=id=>{const p=pget().find(x=>x.id===id);return p?p.n:''};
+function toolbar(title){return'<div class="hfb"><h2>'+title+'</h2><span class="sp"></span><label class="hsrt">Sort<select data-sort aria-label="Sort"><option value="t"'+(sort==='t'?' selected':'')+'>Last opened</option><option value="n"'+(sort==='n'?' selected':'')+'>Name</option><option value="s"'+(sort==='s'?' selected':'')+'>Size</option></select></label>'+
     '<input type="search" data-flt placeholder="Filter Recent Files" value="'+esc(flt)+'" aria-label="Filter Recent Files">'+
     '<button type="button" class="hv'+(view==='grid'?' on':'')+'" data-view="grid" title="Grid view" aria-label="Grid view"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="1" y="1" width="5" height="5"/><rect x="8" y="1" width="5" height="5"/><rect x="1" y="8" width="5" height="5"/><rect x="8" y="8" width="5" height="5"/></svg></button>'+
-    '<button type="button" class="hv'+(view==='list'?' on':'')+'" data-view="list" title="List view" aria-label="List view"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="1" y="2" width="12" height="2"/><rect x="1" y="6" width="12" height="2"/><rect x="1" y="10" width="12" height="2"/></svg></button></div>';
-  if(!rget().length)return bar+'<div class="empty">No recent files. Files you open or save in Masar appear here.</div>';
-  if(!R.length)return bar+'<div class="empty">No files match “'+esc(flt)+'”.</div>';
-  if(view==='grid')return bar+'<div class="hgr">'+R.map(r=>'<div class="hgc rf" data-r="'+r.i+'" title="Open '+esc(r.n)+'" tabindex="0"><div class="hgt">'+thumb(r)+'</div><b>'+esc(r.n)+'</b><span>'+ago(r.t)+'</span><button type="button" class="rdel" data-del="'+r.i+'" title="Remove from Recent" aria-label="Remove from Recent">×</button></div>').join('')+'</div>';
-  return bar+'<table><thead><tr><th style="width:60px"></th><th>Name</th><th>Last opened</th><th>Size</th><th>Kind</th><th style="width:30px"></th></tr></thead><tbody>'+R.map(r=>'<tr class="rf" data-r="'+r.i+'" title="Open '+esc(r.n)+'" tabindex="0"><td><div class="rth">'+thumb(r)+'</div></td><td>'+esc(r.n)+'</td><td>'+ago(r.t)+'</td><td>'+kb(r.s)+'</td><td>'+kind(r)+'</td><td><button type="button" class="rdel" data-del="'+r.i+'" title="Remove from Recent" aria-label="Remove from Recent">×</button></td></tr>').join('')+'</tbody></table>'}
+    '<button type="button" class="hv'+(view==='list'?' on':'')+'" data-view="list" title="List view" aria-label="List view"><svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="1" y="2" width="12" height="2"/><rect x="1" y="6" width="12" height="2"/><rect x="1" y="10" width="12" height="2"/></svg></button></div>'}
+function fileList(L,emptyMsg){const R=sorted(L);
+  if(!L.length)return'<div class="empty">'+emptyMsg+'</div>';if(!R.length)return'<div class="empty">No files match “'+esc(flt)+'”.</div>';
+  if(view==='grid')return'<div class="hgr">'+R.map(r=>'<div class="hgc rf" data-r="'+r.i+'" title="Open '+esc(r.n)+'" tabindex="0"><div class="hgt">'+thumb(r)+'</div><b>'+esc(r.n)+'</b><span>'+ago(r.t)+(r.p?' · '+esc(projName(r.p)):'')+'</span><button type="button" class="rdel" data-del="'+r.i+'" title="Remove from Recent" aria-label="Remove from Recent">×</button></div>').join('')+'</div>';
+  const P=pget().length;return'<table><thead><tr><th style="width:60px"></th><th>Name</th><th>Last opened</th><th>Size</th><th>Kind</th>'+(P?'<th>Project</th>':'')+'<th style="width:30px"></th></tr></thead><tbody>'+R.map(r=>'<tr class="rf" data-r="'+r.i+'" title="Open '+esc(r.n)+'" tabindex="0"><td><div class="rth">'+thumb(r)+'</div></td><td>'+esc(r.n)+'</td><td>'+ago(r.t)+'</td><td>'+kb(r.s)+'</td><td>'+kind(r)+'</td>'+(P?'<td>'+projSel(r)+'</td>':'')+'<td><button type="button" class="rdel" data-del="'+r.i+'" title="Remove from Recent" aria-label="Remove from Recent">×</button></td></tr>').join('')+'</tbody></table>'}
 function learnBlock(){const ids=Object.keys(TNAME).filter(id=>document.querySelector('nav [data-t="'+id+'"]')||(TL.tools&&TL.tools[id]));
   const ico=id=>{const b=document.querySelector('nav [data-t="'+id+'"] svg');if(b)return b.outerHTML;const T=TL.tools&&TL.tools[id];return T&&T.svg?'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'+T.svg+'</svg>':''};
   return'<h1>Learn</h1><p class="sub">Every tool in Masar, what it does and its shortcut. Click a card to start using the tool.</p><input type="search" data-lflt placeholder="Search tools" aria-label="Search tools" style="margin-bottom:16px">'+
     '<div class="hln">'+ids.map(id=>{const T=TL.tools&&TL.tools[id],c=T&&T.card,k=FKEY[id];return'<button type="button" class="hlc" data-tool="'+id+'" data-q="'+esc((TNAME[id]+' '+(HINT[id]||'')).toLowerCase())+'"><div class="hli">'+ico(id)+'</div><div><b>'+esc(TNAME[id])+(k?' <kbd>'+esc(k)+'</kbd>':'')+'</b><span>'+esc(c&&c.d?c.d:String(HINT[id]||'').split(' · ').slice(0,2).join(' · '))+'</span></div></button>'}).join('')+'</div>'}
-function deletedBlock(){const D=dget();return'<h1>Deleted</h1><p class="sub">Files you removed from Recent. Restore one to put it back, or delete it for good.</p>'+
-  (D.length?'<table><thead><tr><th style="width:60px"></th><th>Name</th><th>Removed</th><th>Size</th><th style="width:190px"></th></tr></thead><tbody>'+D.map((r,i)=>'<tr><td><div class="rth">'+thumb(r)+'</div></td><td>'+esc(r.n)+'</td><td>'+ago(r.x||r.t)+'</td><td>'+kb(r.s)+'</td><td style="text-align:right"><button type="button" class="hbt" data-rest="'+i+'">Restore</button> <button type="button" class="hbt" data-perm="'+i+'">Delete</button></td></tr>').join('')+'</tbody></table><p style="margin-top:14px"><button type="button" class="hbt" data-empty>Delete all</button></p>':'<div class="empty">Nothing here.</div>')}
-function render(){const nav=[['home','Home'],['learn','Learn'],['files','Your files'],['deleted','Deleted']];
-  let main='';if(tab==='home'){main='<h1>Welcome to Masar</h1><p class="sub">Create a new file from a preset, or pick up where you left off.</p><h2>Quick start a new file</h2><div class="pres">'+
+function deletedBlock(){const D=dget();return'<h1>Deleted</h1><p class="sub">Files you removed from Recent. Restore one to put it back, or delete it for good.</p><div data-cloud="deleted"></div>'+
+  (D.length?'<h2>On this device</h2><table><thead><tr><th style="width:60px"></th><th>Name</th><th>Removed</th><th>Size</th><th style="width:190px"></th></tr></thead><tbody>'+D.map((r,i)=>'<tr><td><div class="rth">'+thumb(r)+'</div></td><td>'+esc(r.n)+'</td><td>'+ago(r.x||r.t)+'</td><td>'+kb(r.s)+'</td><td style="text-align:right"><button type="button" class="hbt" data-rest="'+i+'">Restore</button> <button type="button" class="hbt" data-perm="'+i+'">Delete</button></td></tr>').join('')+'</tbody></table><p style="margin-top:14px"><button type="button" class="hbt" data-empty>Delete all</button></p>':'<div class="empty">Nothing removed on this device.</div>')}
+/* ---- Templates: original Masar starter designs (shapes + editable text) ---- */
+const TX=(raw,x,y,size,fill,b)=>{const t=buildText(raw,x,y,size,fill,FAM);return b?t.replace('<text ','<text font-weight="700" '):t};
+const RC=(x,y,w,h,f,rx,op)=>'<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'"'+(rx?' rx="'+rx+'"':'')+' fill="'+f+'"'+(op?' fill-opacity="'+op+'"':'')+'/>';
+const CI=(x,y,r,f,op)=>'<ellipse cx="'+x+'" cy="'+y+'" rx="'+r+'" ry="'+r+'" fill="'+f+'"'+(op?' fill-opacity="'+op+'"':'')+'/>';
+const TPL=[
+ {n:'Business Card',c:'Print',w:252,h:144,u:'in',it:[RC(0,0,252,144,'#1f1f1f'),RC(0,0,8,144,'#f0c374'),CI(214,40,14,'#f0c374'),TX('YOUR NAME',24,54,18,'#ffffff',1),TX('Job Title',24,70,9,'#f0c374'),TX('+20 100 000 0000',24,106,7.5,'#cfcfcf'),TX('name@example.com',24,118,7.5,'#cfcfcf')]},
+ {n:'Event Flyer',c:'Print',w:595.28,h:841.89,u:'mm',it:[RC(0,0,595.28,841.89,'#fbf8f2'),RC(0,0,595.28,230,'#2b2b2b'),TX('EVENT TITLE',40,120,46,'#ffffff',1),TX('Saturday · 7 PM · City Hall',40,165,18,'#f0c374'),CI(56,318,10,'#f0c374'),TX('Speaker sessions',80,325,20,'#2b2b2b'),CI(56,388,10,'#f0c374'),TX('Live music',80,395,20,'#2b2b2b'),CI(56,458,10,'#f0c374'),TX('Free entry',80,465,20,'#2b2b2b'),RC(0,780,595.28,61.89,'#f0c374'),TX('www.yoursite.com',40,817,16,'#2b2b2b',1)]},
+ {n:'Poster',c:'Print',w:1296,h:1728,u:'in',it:[RC(0,0,1296,1728,'#e9e4da'),CI(880,520,380,'#d1495b'),CI(440,900,300,'#edae49',.92),CI(820,1060,200,'#00798c',.9),TX('POSTER TITLE',90,1500,120,'#1f1f1f',1),TX('Date · Place',90,1590,48,'#1f1f1f')]},
+ {n:'Instagram Post',c:'Social',w:1080,h:1080,u:'px',it:[RC(0,0,1080,1080,'#f4efe6'),CI(860,220,260,'#f0c374'),TX('Your Headline',80,600,96,'#2b2b2b',1),RC(80,650,920,8,'#2b2b2b'),TX('Short description goes here',80,740,40,'#555555'),TX('@yourbrand',80,980,32,'#2b2b2b',1)]},
+ {n:'Arabic Post',c:'Social',w:1080,h:1350,u:'px',it:[RC(0,0,1080,1350,'#20323f'),CI(210,250,180,'#f0c374',.9),TX('عنوانك هنا',1000,640,110,'#ffffff',1),TX('اكتب وصفاً قصيراً هنا',1000,740,44,'#d9e2e8'),RC(640,1080,360,96,'#f0c374',48),TX('اطلب الآن',955,1142,40,'#20323f',1)]},
+ {n:'Story',c:'Social',w:1080,h:1920,u:'px',it:[RC(0,0,1080,1920,'#2b2140'),CI(900,300,260,'#f0c374',.85),CI(180,1300,200,'#8e7cc3',.6),TX('New Collection',90,820,110,'#ffffff',1),TX('Discover what is new this season',90,910,46,'#cfc6e6'),RC(90,1600,420,110,'#f0c374',55),TX('Shop now',175,1672,46,'#2b2140',1)]},
+ {n:'YouTube Thumbnail',c:'Video',w:1280,h:720,u:'px',it:[RC(0,0,1280,720,'#111111'),RC(0,0,560,720,'#f0c374'),TX('HOW TO',50,330,110,'#111111',1),TX('DESIGN',620,330,120,'#ffffff',1),TX('FASTER',620,470,120,'#f0c374',1)]},
+ {n:'Presentation',c:'Video',w:1920,h:1080,u:'px',it:[RC(0,0,1920,1080,'#ffffff'),RC(0,0,24,1080,'#f0c374'),TX('Presentation Title',140,480,110,'#1f1f1f',1),TX('Subtitle or speaker name',140,570,48,'#666666'),RC(140,640,240,8,'#f0c374')]},
+ {n:'Logo Sheet',c:'Brand',w:800,h:600,u:'px',it:[RC(0,0,800,600,'#ffffff'),CI(400,240,90,'#2b2b2b'),CI(400,240,40,'#f0c374'),TX('BRAND',300,430,64,'#2b2b2b',1),TX('tagline here',318,470,22,'#777777')]}];
+window.TEMPLATES=TPL;
+const tplPrev=T=>'<svg viewBox="0 0 '+T.w+' '+T.h+'" preserveAspectRatio="xMidYMid meet">'+T.it.join('')+'</svg>';
+window.templateOpen=i=>{const T=TPL[i];if(!T)return false;close();window.docCreate(T.w,T.h,T.n,T.u,{after:()=>{sel=new Set();T.it.forEach((m,k)=>{const o=add(m);try{if(typeof LAYACT!=='undefined')o.ly=LAYACT}catch(_){}if(k===0&&/^<rect x="0" y="0"/.test(m))o.nm='Background'});commit();draw();tb5Msg('Template: '+T.n)}});return true};
+function templatesBlock(){const cats=[...new Set(TPL.map(t=>t.c))];return'<h1>Templates</h1><p class="sub">Start from a ready design. Everything in it is real artwork you can edit: shapes, colours and text.</p>'+
+  cats.map(c=>'<h2>'+c+'</h2><div class="tpg">'+TPL.map((t,i)=>t.c!==c?'':'<button type="button" class="tpc" data-tpl="'+i+'" title="Use '+esc(t.n)+'"><div class="tpv">'+tplPrev(t)+'</div><b>'+esc(t.n)+'</b><span>'+unitTxt(t.w,t.u==='px'?'px':'pt')+' x '+unitTxt(t.h,t.u==='px'?'px':'pt')+' '+(t.u==='px'?'px':'pt')+'</span></button>').join('')+'</div>').join('')}
+/* ---- Generation history: results of Masar AI (Remove Background, Upscale) kept in this browser (IndexedDB) ---- */
+const GDB={db:null,open(){return this.db?Promise.resolve(this.db):new Promise((ok,no)=>{try{const r=indexedDB.open('masar-gen',1);r.onupgradeneeded=()=>r.result.createObjectStore('g',{keyPath:'id'});r.onsuccess=()=>{this.db=r.result;ok(this.db)};r.onerror=()=>no(r.error)}catch(e){no(e)}})},
+  async all(){const db=await this.open();return new Promise(ok=>{const q=db.transaction('g').objectStore('g').getAll();q.onsuccess=()=>ok((q.result||[]).sort((a,b)=>b.t-a.t));q.onerror=()=>ok([])})},
+  async put(v){const db=await this.open();return new Promise(ok=>{const t=db.transaction('g','readwrite');t.objectStore('g').put(v);t.oncomplete=()=>ok(true);t.onerror=()=>ok(false)})},
+  async del(id){const db=await this.open();return new Promise(ok=>{const t=db.transaction('g','readwrite');id==null?t.objectStore('g').clear():t.objectStore('g').delete(id);t.oncomplete=()=>ok(true);t.onerror=()=>ok(false)})}};
+const smallThumb=url=>new Promise(res=>{const im=new Image();im.onload=()=>{try{const k=200/Math.max(im.naturalWidth,im.naturalHeight,1),c=document.createElement('canvas');c.width=Math.max(1,Math.round(im.naturalWidth*k));c.height=Math.max(1,Math.round(im.naturalHeight*k));c.getContext('2d').drawImage(im,0,0,c.width,c.height);res(c.toDataURL('image/png'))}catch(_){res(url)}};im.onerror=()=>res(null);im.src=url});
+window.genAdd=async(op,url,w,h)=>{try{if(/^blob:/.test(url)){const b=await (await fetch(url)).blob();url=await new Promise(ok=>{const f=new FileReader();f.onload=()=>ok(f.result);f.readAsDataURL(b)})}if(!/^data:image\//.test(url))return;
+  const th=await smallThumb(url);await GDB.put({id:Date.now()+'-'+Math.random().toString(36).slice(2,7),op,t:Date.now(),url,w:Math.round(w||0),h:Math.round(h||0),th});
+  const A=await GDB.all();for(const x of A.slice(40))await GDB.del(x.id);if(H.classList.contains('on')&&tab==='gen')render()}catch(_){}};
+window.genList=()=>GDB.all();
+const genPlace=async id=>{const g=(await GDB.all()).find(x=>x.id===id);if(!g)return;close();const A=ARTS[ABI]||{x:0,y:0,w:ABW,h:ABH};let w=g.w||A.w,h=g.h||A.h;const k=Math.min(1,A.w*.8/w,A.h*.8/h);w*=k;h*=k;
+  const o=add('<image href="'+g.url+'" x="'+(A.x+(A.w-w)/2)+'" y="'+(A.y+(A.h-h)/2)+'" width="'+w+'" height="'+h+'" preserveAspectRatio="none"/>');o.nm=g.op;try{if(typeof LAYACT!=='undefined')o.ly=LAYACT}catch(_){}sel=new Set([o]);commit();draw();tb5Msg('Placed: '+g.op)};
+function genBlock(){return'<h1>Generation history</h1><p class="sub">Results from Masar AI (Remove Background, Upscale) on this browser. Place one back into your document or download it.</p><div id="hgen" class="empty">Loading…</div>'}
+async function genFill(){const el=H.querySelector('#hgen');if(!el)return;const A=await GDB.all().catch(()=>[]);if(!H.contains(el))return;
+  if(!A.length){el.className='empty';el.textContent='Nothing yet. When you use Remove Background or Upscale, the results appear here.';return}
+  el.className='';el.innerHTML='<div class="hgr">'+A.map(g=>'<div class="hgc gen" data-gid="'+g.id+'"><div class="hgt chk"><img alt="" src="'+(g.th||g.url)+'"></div><b>'+esc(g.op)+'</b><span>'+ago(g.t)+(g.w?' · '+g.w+' × '+g.h+' px':'')+'</span><div class="gact"><button type="button" class="hbt" data-gp="'+g.id+'">Place</button> <button type="button" class="hbt" data-gd="'+g.id+'">Download</button> <button type="button" class="rdel" data-gx="'+g.id+'" title="Delete" aria-label="Delete">×</button></div></div>').join('')+'</div><p style="margin-top:14px"><button type="button" class="hbt" data-gclr>Clear history</button></p>'}
+/* ---- Projects (folders for your files) ---- */
+function projectsBlock(){const P=pget(),R=rget();
+  if(proj){const p=P.find(x=>x.id===proj);if(p){const L=R.map((r,i)=>({...r,i})).filter(r=>r.p===p.id);return'<p class="crumb"><a data-proj="">Projects</a> › '+esc(p.n)+'</p><h1>'+esc(p.n)+'</h1><p class="sub">'+L.length+' file'+(L.length===1?'':'s')+' · <a data-prn="'+p.id+'">Rename</a> · <a data-pdel="'+p.id+'">Delete project</a></p>'+toolbar('Files')+fileList(L.map(r=>{const{i,...x}=r;return x}),'No files in this project yet. In Your files, choose this project in the Project column.').replace(/data-r="(\d+)"/g,(m,k)=>'data-r="'+L[+k]?.i+'"').replace(/data-del="(\d+)"/g,(m,k)=>'data-del="'+L[+k]?.i+'"').replace(/data-mv="(\d+)"/g,(m,k)=>'data-mv="'+L[+k]?.i+'"')}proj=null}
+  return'<h1>Projects</h1><p class="sub">Keep the files of one job together.</p><p><button type="button" class="hbt pri" data-pnew>New project</button></p><div data-cloud="projects"></div>'+
+   (P.length?'<div class="hgr">'+P.map(p=>{const n=R.filter(r=>r.p===p.id).length;return'<div class="hgc prj" data-proj="'+p.id+'" tabindex="0"><div class="hgt fold"><svg width="54" height="44" viewBox="0 0 54 44"><path d="M2 6a4 4 0 0 1 4-4h14l5 5h23a4 4 0 0 1 4 4v27a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4z" fill="#f0c374"/></svg></div><b>'+esc(p.n)+'</b><span>'+n+' file'+(n===1?'':'s')+'</span></div>'}).join('')+'</div>':'<div class="empty">No projects yet.</div>')}
+function sharedBlock(){return'<h1>Shared with you</h1><p class="sub">Files other Masar users shared with your email.</p><div data-cloud="shared"><div class="empty">Sign in to Masar Cloud to see files shared with you.</div></div>'}
+const IC={home:'<path d="M8 1.8L1.5 7.6l.9 1 .9-.8v6.6h3.6V10.6h2.2v3.8h3.6V7.8l.9.8.9-1z" fill="currentColor"/>',learn:'<path d="M6 12.5h4M6.5 14.5h3M8 2.5a4 4 0 0 0-2.3 7.3c.4.3.6.7.6 1.2v.5h3.4V11c0-.5.2-.9.6-1.2A4 4 0 0 0 8 2.5z"/><path d="M8 .5v.8M2.6 2.7l.6.6M13.4 2.7l-.6.6M.8 7.5h.8M14.4 7.5h.8"/>',
+  gen:'<path d="M2.5 8a5.5 5.5 0 1 0 1.6-3.9"/><path d="M1.8 2.5v2.4h2.4M8 5v3.2l2.2 1.4"/>',files:'<path d="M3.5 1.5h6l3 3v10h-9z"/><path d="M9.5 1.5v3h3"/>',shared:'<circle cx="6" cy="5.5" r="2.5"/><path d="M1.5 14c0-2.6 2-4.3 4.5-4.3s4.5 1.7 4.5 4.3"/><circle cx="11.5" cy="5" r="2"/><path d="M11.6 9.4c1.8.2 3.2 1.6 3.2 3.9"/>',
+  projects:'<path d="M1.5 4a1 1 0 0 1 1-1h3.5l1.5 1.5h6a1 1 0 0 1 1 1V12.5a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1z"/><path d="M1.5 7h13"/>',templates:'<rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M4 11l2.8-3.5 2 2.2 1.4-1.6L12.5 11z" fill="currentColor"/>',
+  deleted:'<path d="M2.5 4h11M6 4V2.5h4V4M3.8 4l.7 10h7l.7-10M6.5 6.5v5M9.5 6.5v5"/>'};
+const ico=k=>'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[k]+'</svg>';
+const navA=(k,t,b)=>'<a data-t="'+k+'" class="'+(tab===k?'on':'')+'" tabindex="0">'+ico(k)+'<span>'+t+'</span>'+(b?'<em>'+b+'</em>':'')+'</a>';
+function render(){
+  let main='';
+  if(tab==='home'){main='<h1>Welcome to Masar</h1><p class="sub">Create a new file from a preset, or pick up where you left off.</p><h2>Quick start a new file</h2><div class="pres">'+
      QS.map(([c,n])=>{const P=(window.NDPRESETS&&NDPRESETS[c]||[0,[]])[1].find(x=>x[0]===n);if(!P)return'';return'<button type="button" class="pc" data-qc="'+c+'" data-qn="'+esc(n)+'"><div class="pv">'+pvb(P[1],P[2])+'</div><b>'+esc(n)+'</b><span>'+unitTxt(P[1],P[3])+' x '+unitTxt(P[2],P[3])+' '+P[3]+'</span></button>'}).join('')+
-     '<button type="button" class="pc more" data-a="new"><div class="pv">+</div><b>More presets</b><span>All sizes…</span></button></div>'+filesBlock('Recent')}
-  else if(tab==='files')main='<h1>Your files</h1><p class="sub">Files opened or saved in Masar on this browser.</p>'+filesBlock('Files');else if(tab==='learn')main=learnBlock();else main=deletedBlock();
-  H.innerHTML='<div class="hs"><button type="button" class="pri" data-a="new">New file</button><button type="button" data-a="open">Open</button><div class="hnav">'+nav.map(n=>'<a data-t="'+n[0]+'" class="'+(tab===n[0]?'on':'')+'" tabindex="0">'+n[1]+'</a>').join('')+'</div>'+
-    '<label class="hss"><input type="checkbox" data-start'+(startOn()?' checked':'')+'> Show Home at startup</label></div><div class="hm">'+main+'</div>'}
+     '<button type="button" class="pc more" data-a="new"><div class="pv">+</div><b>More presets</b><span>All sizes…</span></button></div>'+toolbar('Recent')+'<div data-cloud="recent"></div>'+fileList(rget(),'No recent files. Files you open or save in Masar appear here.')}
+  else if(tab==='files')main='<h1>Your files</h1><p class="sub">Your Masar Cloud files and the files opened or saved on this browser.</p>'+toolbar('Files')+'<div data-cloud="files"></div><h2 class="dev">On this device</h2>'+fileList(rget(),'No files on this device yet.');
+  else if(tab==='learn')main=learnBlock();else if(tab==='gen')main=genBlock();else if(tab==='templates')main=templatesBlock();else if(tab==='projects')main=projectsBlock();else if(tab==='shared')main=sharedBlock();else main=deletedBlock();
+  const logo=document.getElementById('mblogo');
+  H.innerHTML='<div class="hs"><div class="hhd"><button type="button" class="hback" data-a="back" title="Back to the document" aria-label="Back to the document">‹</button><span class="hlogo">'+(logo?logo.innerHTML:'')+'</span></div>'+
+    '<button type="button" class="pri" data-a="new">New file</button><button type="button" class="hopen" data-a="open">Open</button><hr>'+
+    '<div class="hnav">'+navA('home','Home')+navA('learn','Learn')+'<div class="hsec">MASAR AI</div>'+navA('gen','Generation history')+'<div class="hsec">FILES</div>'+navA('files','Your files')+navA('shared','Shared with you')+navA('projects','Projects','New')+navA('templates','Templates','New')+navA('deleted','Deleted')+'</div>'+
+    '<div class="hfoot"><div id="hcloud"></div><label class="hss"><input type="checkbox" data-start'+(startOn()?' checked':'')+'> Show Home at startup</label></div></div><div class="hm">'+main+'</div>';
+  if(window.MCLOUD&&MCLOUD.fill)try{MCLOUD.fill(H,tab,{flt,sort,view,esc,ago,kb,proj})}catch(_){}else{const c=H.querySelector('#hcloud');if(c)c.innerHTML='<button type="button" class="hcl" disabled>'+CLOUDI+'<span>Masar Cloud</span></button>'}
+  if(tab==='gen')genFill()}
+const CLOUDI='<svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor" aria-hidden="true"><path d="M5 13.5a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 15 6.2 3.7 3.7 0 0 1 14 13.5z"/></svg>';
+window.HOMEUI={render:()=>{if(H.classList.contains('on'))render()},CLOUDI,thumb,esc,ago,kb,toolbar,sorted:L=>sorted(L)};
 const startOn=()=>{try{return localStorage.getItem('masar.home.start')!=='0'}catch(_){return true}};
 function place(){const r=bar.getBoundingClientRect();H.style.top=r.bottom+'px'}
-function open(t){if(window.mbClose)try{mbClose()}catch(_){}tab=t||'home';render();place();H.classList.add('on');hb.classList.add('on');hb.setAttribute('aria-pressed','true');const b=H.querySelector('.pri');if(b)b.focus()}
+function open(t){if(window.mbClose)try{mbClose()}catch(_){}tab=t||'home';proj=null;render();place();H.classList.add('on');hb.classList.add('on');hb.setAttribute('aria-pressed','true');const b=H.querySelector('.pri');if(b)b.focus()}
 function close(){H.classList.remove('on');hb.classList.remove('on');hb.setAttribute('aria-pressed','false')}
 const hb=w.querySelector('#mbhome');hb.addEventListener('click',e=>{e.stopPropagation();H.classList.contains('on')?close():open()});
 const removeRecent=i=>{const a=rget(),[x]=a.splice(i,1);if(!x)return;rset(a);const D=dget();x.x=Date.now();D.unshift(x);dset(D.slice(0,20))};
-H.addEventListener('click',e=>{const t=e.target.closest('[data-t],[data-a],[data-qc],[data-del],[data-r],[data-view],[data-tool],[data-rest],[data-perm],[data-empty]');if(!t)return;
-  if(t.dataset.t){tab=t.dataset.t;flt='';render();return}
+const ask=(title,label,val,cb)=>{const M=dkModal(title,'<label>'+label+'<input type="text" data-k="v" value="'+esc(val)+'" style="min-width:220px"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{const v=(b.querySelector('[data-k="v"]').value||'').trim();if(v)cb(v)}}]);const f=M.box.querySelector('[data-k="v"]');f.focus();f.select()};
+H.addEventListener('click',e=>{const t=e.target.closest('[data-t],[data-a],[data-qc],[data-del],[data-r],[data-view],[data-tool],[data-rest],[data-perm],[data-empty],[data-tpl],[data-gp],[data-gd],[data-gx],[data-gclr],[data-pnew],[data-proj],[data-prn],[data-pdel]');if(!t||t.closest('[data-cloud],#hcloud'))return;
+  if(t.dataset.t){tab=t.dataset.t;flt='';proj=null;render();return}
   if(t.dataset.del!=null){e.stopPropagation();removeRecent(+t.dataset.del);render();return}
   if(t.dataset.view){view=t.dataset.view;try{localStorage.setItem(VK,view)}catch(_){}render();return}
   if(t.dataset.rest!=null){const D=dget(),[x]=D.splice(+t.dataset.rest,1);dset(D);if(x){delete x.x;const a=rget().filter(r=>r.n!==x.n);a.unshift(x);rset(a.slice(0,MAXR))}render();return}
   if(t.dataset.perm!=null){const D=dget();D.splice(+t.dataset.perm,1);dset(D);render();return}
   if(t.dataset.empty!=null){dkModal('Delete all','Delete all removed files for good?',[{t:'Cancel',c:1},{t:'Delete',p:1,f:()=>{dset([]);render()}}]);return}
   if(t.dataset.tool){close();setTool(t.dataset.tool);return}
+  if(t.dataset.tpl!=null){window.templateOpen(+t.dataset.tpl);return}
+  if(t.dataset.gp){genPlace(t.dataset.gp);return}
+  if(t.dataset.gd){GDB.all().then(A=>{const g=A.find(x=>x.id===t.dataset.gd);if(!g)return;const a=document.createElement('a');a.href=g.url;a.download='masar-'+g.op.toLowerCase().replace(/[^a-z0-9]+/g,'-')+'.png';document.body.appendChild(a);a.click();a.remove()});return}
+  if(t.dataset.gx){GDB.del(t.dataset.gx).then(render);return}
+  if(t.dataset.gclr!=null){dkModal('Clear history','Delete all generation history on this browser?',[{t:'Cancel',c:1},{t:'Delete',p:1,f:()=>{GDB.del(null).then(render)}}]);return}
+  if(t.dataset.pnew!=null){ask('New Project','Project name','Untitled Project',v=>{const P=pget();P.push({id:'p'+Date.now().toString(36),n:v,t:Date.now()});pset(P);render()});return}
+  if(t.dataset.prn){const P=pget(),p=P.find(x=>x.id===t.dataset.prn);if(p)ask('Rename Project','Project name',p.n,v=>{p.n=v;pset(P);render()});return}
+  if(t.dataset.pdel){const id=t.dataset.pdel;dkModal('Delete project','Delete this project? Its files stay in Your files.',[{t:'Cancel',c:1},{t:'Delete',p:1,f:()=>{pset(pget().filter(p=>p.id!==id));const a=rget();a.forEach(r=>{if(r.p===id)delete r.p});rset(a);proj=null;render()}}]);return}
+  if(t.dataset.proj!=null){proj=t.dataset.proj||null;render();return}
+  if(t.dataset.a==='back'){close();return}
   if(t.dataset.a==='new'){close();window.docNew();return}
   if(t.dataset.a==='open'){close();fileOpen();return}
   if(t.dataset.qc){close();window.docNewPreset(t.dataset.qc,t.dataset.qn);return}
-  if(t.dataset.r!=null)openRecent(+t.dataset.r)});
-H.addEventListener('keydown',e=>{if(e.key==='Enter'){const t=e.target.closest&&e.target.closest('[data-r],[data-t]');if(t&&t.tagName!=='BUTTON'){e.preventDefault();t.click()}}});
+  if(t.dataset.r!=null&&!e.target.closest('select'))openRecent(+t.dataset.r)});
+H.addEventListener('keydown',e=>{if(e.key==='Enter'){const t=e.target.closest&&e.target.closest('[data-r],[data-t],[data-proj]');if(t&&t.tagName!=='BUTTON'){e.preventDefault();t.click()}}});
 H.addEventListener('input',e=>{if(e.target.matches('[data-flt]')){flt=e.target.value;const p=e.target.selectionStart;render();const f=H.querySelector('[data-flt]');f.focus();try{f.setSelectionRange(p,p)}catch(_){}}
   else if(e.target.matches('[data-lflt]')){const v=e.target.value.toLowerCase();H.querySelectorAll('.hlc').forEach(c=>c.style.display=!v||c.dataset.q.includes(v)?'':'none')}});
-H.addEventListener('change',e=>{if(e.target.matches('[data-sort]')){sort=e.target.value;try{localStorage.setItem(SK,sort)}catch(_){}render()}else if(e.target.matches('[data-start]')){try{localStorage.setItem('masar.home.start',e.target.checked?'1':'0')}catch(_){}}});
+H.addEventListener('change',e=>{if(e.target.matches('[data-sort]')){sort=e.target.value;try{localStorage.setItem(SK,sort)}catch(_){}render()}else if(e.target.matches('[data-start]')){try{localStorage.setItem('masar.home.start',e.target.checked?'1':'0')}catch(_){}}
+  else if(e.target.matches('[data-mv]')){const a=rget(),r=a[+e.target.dataset.mv];if(r){if(e.target.value)r.p=e.target.value;else delete r.p;rset(a)}}});
 addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('on')&&!document.querySelector('.fxm')){e.preventDefault();e.stopImmediatePropagation();close()}},true);
 addEventListener('resize',place);
 window.HOME={open,close,isOpen:()=>H.classList.contains('on'),startOn};

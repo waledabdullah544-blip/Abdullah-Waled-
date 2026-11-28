@@ -601,3 +601,11 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - New Document (Ctrl+N, New file, More presets): tabs Recent, Saved, Mobile, Web, Print, Film & Video, Art & Illustration with the blank document presets (sizes in Illustrator units, 2 decimals), Preset Details (name, Save Preset, width, height, units, orientation, artboards, spacing, color mode), Close / Create; double-click a preset creates it. Recent remembers created sizes; Saved keeps user presets.
 - Not included (no real feature behind them yet): Bleed, Raster Effects, Preview Mode, Adobe cloud items (Shared with you, Stock templates).
 - tests/lib.js turns startup Home off for the other tests; tests home, doc, file, dlgx updated.
+
+## build 277 — Home sidebar like Illustrator, Templates, Generation history, Projects
+- Sidebar: back arrow + large Masar logo; New file, Open; Home, Learn; MASAR AI › Generation history; FILES › Your files, Shared with you, Projects (New), Templates (New), Deleted; Masar Cloud button and "Show Home at startup" at the bottom. The active page has a gold marker.
+- Templates: 9 original starter designs (Business Card, Event Flyer, Poster, Instagram Post, Arabic Post, Story, YouTube Thumbnail, Presentation, Logo Sheet). They open as real documents: editable shapes and text.
+- Generation history: every Remove Background / Upscale result is kept in this browser (IndexedDB, last 40) with Place, Download, Delete, Clear history.
+- Projects: create / rename / delete projects; put files in a project from the Project column in Your files.
+- Recent files saved from Masar now get a real thumbnail of the artboard (docThumb).
+- Shared with you and the Masar Cloud button need the cloud (next build).

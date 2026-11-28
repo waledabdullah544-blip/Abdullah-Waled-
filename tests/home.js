@@ -4,7 +4,22 @@ ok('Home shows at startup (first thing the customer sees)',await pg.evaluate(()=
 await pg.screenshot({path:'/tmp/mdl/home.png'});
 const g=await pg.evaluate(()=>{const r=e=>document.querySelector(e).getBoundingClientRect();return{l:r('#mblogo').x,h:r('#mbhome').x,f:r('#mbFile').x}});
 ok('menu bar: Masar logo, Home, then File',g.l<g.h&&g.h<g.f,JSON.stringify(g));
-ok('nav: Home, Learn, Your files, Deleted',await pg.evaluate(()=>[...document.querySelectorAll('#home .hnav a')].map(a=>a.textContent).join('|')==='Home|Learn|Your files|Deleted'));
+ok('sidebar like Illustrator',await pg.evaluate(()=>[...document.querySelectorAll('#home .hnav a span,#home .hnav .hsec')].map(a=>a.textContent).join('|')==='Home|Learn|MASAR AI|Generation history|FILES|Your files|Shared with you|Projects|Templates|Deleted'),await pg.evaluate(()=>[...document.querySelectorAll('#home .hnav a span,#home .hnav .hsec')].map(a=>a.textContent).join('|')));
+ok('back arrow and big logo on top, Masar Cloud at the bottom',await pg.evaluate(()=>!!document.querySelector('#home .hback')&&!!document.querySelector('#home .hlogo svg')&&!!document.querySelector('#home #hcloud .hcl')));
+// templates
+await pg.click('#home .hnav a[data-t=templates]');ok('Templates page lists the starter designs',await pg.evaluate(()=>document.querySelectorAll('#home .tpc').length===TEMPLATES.length&&TEMPLATES.length>=8));
+await pg.screenshot({path:'/tmp/mdl/tpl.png'});
+await pg.click('#home .tpc[title="Use Business Card"]');await pg.waitForTimeout(250);ok('a template opens as a real, editable document',await pg.evaluate(()=>!HOME.isOpen()&&ARTS[0].w===252&&objs.length===7&&objs.filter(isText).length===4));
+await pg.evaluate(()=>{window.dkSaved&&dkSaved()});
+// generation history
+await pg.evaluate(async()=>{const c=document.createElement('canvas');c.width=40;c.height=30;const x=c.getContext('2d');x.fillStyle='#f00';x.fillRect(0,0,40,30);await genAdd('Remove Background',c.toDataURL('image/png'),40,30)});
+await pg.click('#mbhome');await pg.click('#home .hnav a[data-t=gen]');await pg.waitForTimeout(300);ok('Generation history shows the result',await pg.evaluate(()=>document.querySelectorAll('#home .hgc.gen').length===1));
+const n0=await pg.evaluate(()=>objs.length);await pg.click('#home [data-gp]');await pg.waitForTimeout(300);ok('Place puts it back into the document',await pg.evaluate(n0=>objs.length===n0+1&&!!objs[objs.length-1].g.querySelector('image'),n0));
+await pg.evaluate(()=>{window.dkSaved&&dkSaved()});
+// projects
+await pg.click('#mbhome');await pg.click('#home .hnav a[data-t=projects]');await pg.click('#home [data-pnew]');await pg.waitForTimeout(100);await pg.keyboard.press('Control+a');await pg.keyboard.type('Client A');await pg.keyboard.press('Enter');await pg.waitForTimeout(100);
+ok('New project',await pg.evaluate(()=>document.querySelectorAll('#home .hgc.prj').length===1));await pg.keyboard.press('Escape');
+await pg.evaluate(()=>HOME.open('home'));
 ok('quick start: Letter, A4, Postcard, Common, iPhone X, HDV/HDTV 1080, More presets',await pg.evaluate(()=>[...document.querySelectorAll('#home .pc b')].map(b=>b.textContent).join('|')==='Letter|A4|Postcard|Common|iPhone X|HDV/HDTV 1080|More presets'));
 ok('Letter card reads 612 x 792 pt',await pg.evaluate(()=>/612 x 792 pt/.test(document.querySelector('#home .pc span').textContent)));
 await pg.click('#home .pc[data-qn="iPhone X"]');await pg.waitForTimeout(200);ok('iPhone X preset creates a 375 x 812 document and closes Home',await pg.evaluate(()=>!HOME.isOpen()&&ARTS.length===1&&ARTS[0].w===375&&ARTS[0].h===812));
@@ -12,7 +27,7 @@ await pg.click('#home .pc[data-qn="iPhone X"]');await pg.waitForTimeout(200);ok(
 await pg.evaluate(()=>{add('<rect x="10" y="10" width="50" height="40" fill="#e03131"/>');commit();draw();window.fileDownload=()=>{}});await pg.evaluate(()=>fileSave());await pg.waitForTimeout(100);await pg.keyboard.press('Enter');await pg.waitForTimeout(100);
 ok('saved file appears in Recent',await pg.evaluate(()=>recentList().length===1));
 await pg.evaluate(()=>{objs.slice().forEach(o=>o.g.remove());objs=[];commit();draw();window.dkSaved&&dkSaved()});
-await pg.click('#mbhome');await pg.waitForTimeout(150);await pg.click('#home [data-view=grid]');ok('grid view',await pg.evaluate(()=>!!document.querySelector('#home .hgc')));
+await pg.click('#mbhome');await pg.waitForTimeout(150);await pg.click('#home .hnav a[data-t=files]');await pg.selectOption('#home [data-mv]',{label:'Client A'});ok('a file can be put in a project',await pg.evaluate(()=>JSON.parse(localStorage.getItem('masar.recent.v1'))[0].p));await pg.click('#home .hnav a[data-t=home]');await pg.click('#home [data-view=grid]');ok('grid view',await pg.evaluate(()=>!!document.querySelector('#home .hgc')));
 await pg.fill('#home [data-flt]','zzz');ok('filter hides non-matching files',await pg.evaluate(()=>!document.querySelector('#home .rf')));await pg.fill('#home [data-flt]','');
 await pg.click('#home [data-view=list]');await pg.click('#home tr.rf');await pg.waitForTimeout(250);ok('clicking a recent file opens it',await pg.evaluate(()=>objs.length===1&&!HOME.isOpen()));
 await pg.click('#mbhome');await pg.click('#home tr.rf .rdel');ok('× moves it to Deleted',await pg.evaluate(()=>recentList().length===0));
