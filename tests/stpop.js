@@ -1,0 +1,11 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined&&!c?' '+JSON.stringify(x):''));if(!c)bad++};
+await pg.evaluate(()=>{const o=add('<rect x="100" y="100" width="200" height="150" fill="#1971c2" stroke="#000" stroke-width="2"/>');sel=new Set([o]);commit();draw();DK.open('props')});await pg.waitForTimeout(300);
+await pg.click('#prp .prlk[data-pn=stroke]');await pg.waitForTimeout(300);
+ok('clicking Stroke opens the Stroke panel in a window next to Properties',await pg.evaluate(()=>{const b=document.getElementById('prpop'),p=document.getElementById('prp').getBoundingClientRect(),r=b.getBoundingClientRect();return b.classList.contains('on')&&b.textContent.includes('Weight')&&r.right<=p.left+1}));
+await pg.screenshot({path:'/tmp/mdl/stpop.png'});
+const wsel=await pg.evaluate(()=>{const i=[...document.querySelectorAll('#prpop input')].find(x=>/weight/i.test((x.closest('label,.row,div')||{}).textContent||''));return !!i});ok('the weight field is there',wsel);
+await pg.mouse.click(H.R.x+600,H.R.y+500);await pg.waitForTimeout(200);ok('a click outside closes it',await pg.evaluate(()=>!document.getElementById('prpop').classList.contains('on')));
+await pg.evaluate(()=>{sel=new Set([objs[0]]);draw()});await pg.click('#prp .prlk[data-pn=stroke]');await pg.waitForTimeout(200);await pg.keyboard.press('Escape');ok('Esc closes it',await pg.evaluate(()=>!document.getElementById('prpop').classList.contains('on')));
+await pg.evaluate(()=>DK.open('stroke'));await pg.waitForTimeout(200);ok('the Stroke panel still works in the dock afterwards',await pg.evaluate(()=>{const p=DK.P.stroke.el;return p.isConnected&&!document.getElementById('prpop').contains(p)&&p.getBoundingClientRect().height>50}));
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();

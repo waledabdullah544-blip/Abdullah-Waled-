@@ -671,3 +671,8 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Arrow keys while drawing (and on the selected shape afterwards) change only that shape; the next spiral / rectangular grid / polar grid / polygon / star starts again from the tool's own settings. Values set in the tool's Options (double-click the tool, or click on the canvas for polygon / star) are still kept.
 - Spiral default: 20 segments (winds into the centre).
 - Test: tests/gendefault.js.
+
+## build 285 — ruler marks, Stroke window from Properties
+- The red pointer marks on the rulers follow the pointer only over the canvas; they hide over the toolbar, its flyouts and the panels (they were drawn on top of them).
+- Properties › Stroke / Opacity / Appearance (the underlined words) open that panel in a small window next to the Properties panel (Illustrator); a click outside or Esc closes it, and the panel goes back to its place in the dock.
+- Tests: tests/stpop.js, tests/rulermark.js.

@@ -503,7 +503,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 284</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 285</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -6730,7 +6730,7 @@ function gdEnd(e){const G=GDG;GDG=null;if(!G)return;const r=cv.getBoundingClient
   SGC=null;gdDraw();draw()}
 
 /* ---- the rulers ---- */
-(()=>{const t=document.createElement('style');t.textContent='.rlr{position:absolute;z-index:6;display:none;background:var(--panel);touch-action:none;user-select:none}.rlr canvas{display:block;width:100%;height:100%}#rlT{left:0;top:0;right:0;height:'+RLW+'px;cursor:default;border-bottom:1px solid var(--line)}#rlL{left:0;top:'+RLW+'px;bottom:0;width:'+RLW+'px;border-right:1px solid var(--line)}#rlC{left:0;top:0;width:'+RLW+'px;height:'+RLW+'px;z-index:7;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}#rlC:after{content:"";position:absolute;left:5px;top:5px;width:8px;height:8px;border:1px solid var(--mute);border-radius:50%}body.rlon .rlr{display:block}.rlm{position:absolute;z-index:8;background:#ff3b30;pointer-events:none;display:none}body.rlon .rlm{display:block}'
+(()=>{const t=document.createElement('style');t.textContent='.rlr{position:absolute;z-index:6;display:none;background:var(--panel);touch-action:none;user-select:none}.rlr canvas{display:block;width:100%;height:100%}#rlT{left:0;top:0;right:0;height:'+RLW+'px;cursor:default;border-bottom:1px solid var(--line)}#rlL{left:0;top:'+RLW+'px;bottom:0;width:'+RLW+'px;border-right:1px solid var(--line)}#rlC{left:0;top:0;width:'+RLW+'px;height:'+RLW+'px;z-index:7;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}#rlC:after{content:"";position:absolute;left:5px;top:5px;width:8px;height:8px;border:1px solid var(--mute);border-radius:50%}body.rlon .rlr{display:block}.rlm{position:absolute;z-index:6;background:#ff3b30;pointer-events:none;display:none}body.rlon .rlm{display:block}'
   +'#rlmenu,#tbm{position:fixed;display:none;z-index:80;min-width:210px;background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:4px;box-shadow:0 4px 14px rgba(0,0,0,.4);color:var(--ink)}#rlmenu button,#tbm button{display:flex;align-items:center;gap:8px;width:100%;height:26px;padding:0 10px;border:0;border-radius:3px;background:none;color:var(--ink);font:inherit;white-space:nowrap;cursor:default;text-align:start}#rlmenu button:hover,#tbm button:hover:not(:disabled){background:var(--hov)}#tbm button:disabled{opacity:.4;cursor:default}#tbm button i,#rlmenu button i{width:14px;font-style:normal}#tbm button span{margin-inline-start:auto;color:var(--mute);padding-inline-start:18px}#tbm hr{border:0;border-top:1px solid var(--line);margin:4px 0}'
   +'#sglab{position:fixed;z-index:71;display:none;pointer-events:none;background:#fff;color:#c000c0;border:1px solid #ff00ff;font:600 11px/1 Cairo,"Segoe UI",sans-serif;padding:3px 6px;border-radius:3px;white-space:pre}.tbmb{height:18px;border:0;background:none;color:var(--mute);font:inherit;cursor:default;padding:0 4px}.tbmb:hover{color:var(--ink)}';
   document.head.appendChild(t)})();
@@ -6923,7 +6923,9 @@ addEventListener('pointerdown',e=>{SGC=null;if(e.button!==0||!cv.contains(e.targ
   if(GDSEL.size&&!e.shiftKey){GDSEL=new Set();gdDraw()}},true);
 addEventListener('pointermove',e=>{
   if(GDG){e.stopImmediatePropagation();gdMove(e);return}
-  if(RLON){const r=cv.getBoundingClientRect();rlMx.style.left=Math.max(0,e.clientX-r.left)+'px';rlMy.style.top=Math.max(0,e.clientY-r.top)+'px'}
+  if(RLON){const r=cv.getBoundingClientRect(),inC=e.clientX>=r.left&&e.clientX<=r.right&&e.clientY>=r.top&&e.clientY<=r.bottom&&!(e.target&&e.target.closest&&e.target.closest('nav,.fly,.flyout,.dkpn,#dock,.fxm,.mdd,#mbar,header,.tbfly,[role=menu]'));
+    /* the red marks follow the pointer only over the canvas; over the toolbar, its flyouts and the panels they hide (they never draw on top of them) */
+    rlMx.style.visibility=rlMy.style.visibility=inC?'':'hidden';if(inC){rlMx.style.left=Math.max(0,e.clientX-r.left)+'px';rlMy.style.top=Math.max(0,e.clientY-r.top)+'px'}}
   sgHover(e);
   if(!PDOWN&&!st&&['v','a','gs'].includes(tool)&&GDVIS&&!GDLOCK&&GD.length&&cv.contains(e.target)){const g=gdHit(tb5wp(e));setTimeout(()=>{if(PDOWN||st)return;if(g){const c=g.t==='h'?'row-resize':g.t==='v'?'col-resize':'move';if(cv.style.cursor!==c){cv.style.cursor=c;cv.__cur=c;cv.__gc=1}}else if(cv.__gc){cv.style.cursor='';cv.__cur=null;cv.__gc=0}},0)}},true);
 addEventListener('pointerup',e=>{if(GDG){e.stopImmediatePropagation();gdEnd(e);return}sgClear();if(SGON)hideMeas()},true);
@@ -7129,7 +7131,7 @@ function newGroup(ids,geo){const el=document.createElement('div');el.className='
   el.innerHTML='<div class="dkt"></div><div class="dkb"></div><div class="dkrh" title="Drag to resize"></div><div class="dkrc" title="Drag to resize"></div>';
   const g={id:++DK.n,t:ids.slice(),a:ids[0],m:'float',x:geo.x,y:geo.y,w:geo.w,h:geo.h||null,c:!!geo.c,el,st:el.children[0],bd:el.children[1]};el.__g=g;return g}
 function strip(g){g.st.innerHTML=g.t.map(id=>{const p=DK.P[id];return'<button type="button" class="tb'+(id===g.a?' on':'')+'" data-p="'+id+'" title="'+p.title+'"><span class="tt">'+p.title+'</span><span class="x" data-x="'+id+'" title="Close">×</span></button>'}).join('')+'<span class="sp"></span><button type="button" class="mn" title="Panel Menu">\u2261</button><button type="button" class="cl" title="Collapse / Expand (double-click the title bar)">'+(g.c?'▸':'▾')+'</button>'}
-function body(g){g.t.forEach(id=>{const p=DK.P[id];p.el.classList.add('dkpe');if(p.el.parentNode!==g.bd)g.bd.appendChild(p.el);p.el.classList.toggle('dkh',id!==g.a)});g.el.classList.toggle('clp',!!g.c);
+function body(g){g.t.forEach(id=>{const p=DK.P[id];if(p.el.__pop)return;/* shown in the Properties pop-up window for now */p.el.classList.add('dkpe');if(p.el.parentNode!==g.bd)g.bd.appendChild(p.el);p.el.classList.toggle('dkh',id!==g.a)});g.el.classList.toggle('clp',!!g.c);
   const b=g.st.querySelector('.cl');if(b)b.textContent=g.c?'▸':'▾'}
 function geom(g){const s=g.el.style;if(g.m==='float'){g.el.classList.add('fl');s.left=g.x+'px';s.top=g.y+'px';s.width=(g.w||300)+'px';s.height=g.c?'':(g.h?g.h+'px':'')}
   else{g.el.classList.remove('fl');s.left=s.top=s.width='';s.height=g.c?'':(g.h?g.h+'px':'')}}
@@ -8344,7 +8346,7 @@ $p('#prF').addEventListener('click',e=>openSw('fill',e.currentTarget));$p('#prS'
 $p('#prff').addEventListener('change',()=>{$('#ff').value=$p('#prff').value;$('#ff').dispatchEvent(new Event('change',{bubbles:true}))});
 $p('#prfs').addEventListener('change',()=>{$('#fs').value=$p('#prfs').value;$('#fs').dispatchEvent(new Event('change',{bubbles:true}))});
 $p('#prFxa').addEventListener('change',()=>{const k=$p('#prFxa').value;$p('#prFxa').value='';if(k&&window.fxDlg)fxDlg(k)});
-P.addEventListener('click',e=>{const lk=e.target.closest('.prlk');if(lk){const n=lk.dataset.pn;if(n==='fill')openSw('fill',$p('#prF'));else DK.open(n);return}
+P.addEventListener('click',e=>{const lk=e.target.closest('.prlk');if(lk){const n=lk.dataset.pn;if(n==='fill')openSw('fill',$p('#prF'));else if(window.prPop&&prPop(n,lk))return;else DK.open(n);return}
   const b=e.target.closest('button'),r=e.target.closest('.prfx');
   if(b&&b.dataset.del!==undefined){fxRemove(+b.dataset.del);return}
   if(r&&!b){fxDlg(null,+r.dataset.i);return}
@@ -12569,6 +12571,22 @@ if(canFS){const _s=fileSave;fileSave=function(){if(window.DOCCLOUD&&window.MCLOU
 {const _c=window.docClear;window.docClear=function(){HANDLE=null;return _c.apply(this,arguments)}}
 /* File menu: Install Masar… */
 if(window.MENUS){const fm=MENUS.find(m=>m[0]==='File');if(fm){const g=fm[1];fm[1]=()=>{const it=g();if(web&&!installed())it.push({sep:1},{t:'Install Masar…',__p:'File>Install Masar',f:install});return it}}}
+})();
+
+/* ======================= build 285: Properties › Stroke / Opacity / Appearance open their panel in a small window next to the link (Illustrator) ======================= */
+(()=>{const st=document.createElement('style');st.textContent='#prpop{position:fixed;z-index:95;width:270px;max-height:calc(100vh - 20px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:4px;box-shadow:0 10px 30px rgba(0,0,0,.5);display:none}#prpop.on{display:block}#prpop>.pph{display:flex;align-items:center;justify-content:space-between;padding:4px 8px;font:600 11px "Segoe UI",Cairo,sans-serif;color:var(--mute);border-bottom:1px solid var(--sep,var(--line))}#prpop>.pph button{border:0;background:none;color:var(--mute);font-size:14px;cursor:default}';document.head.appendChild(st);
+const B=document.createElement('div');B.id='prpop';B.setAttribute('role','dialog');document.body.appendChild(B);let CUR=null;
+function close(){if(!CUR)return;const{el,par,next,disp,id,dkh}=CUR;CUR=null;delete el.__pop;el.classList.toggle('dkh',dkh);if(par){par.insertBefore(el,next&&next.parentNode===par?next:null)}el.style.display=disp;B.classList.remove('on');B.replaceChildren();const p=DK.P[id];try{p&&p.refresh&&p.refresh()}catch(_){}}
+window.prPop=(id,anchor)=>{const p=DK.P[id];if(!p||!p.el||!['stroke','transparency','appearance'].includes(id))return false;
+  if(CUR&&CUR.id===id){close();return true}close();
+  const el=p.el;CUR={id,el,par:el.parentNode,next:el.nextSibling,disp:el.style.display,dkh:el.classList.contains('dkh')};el.__pop=true;el.classList.remove('dkh');
+  const hd=document.createElement('div');hd.className='pph';hd.innerHTML='<span>'+(p.title||id)+'</span><button type="button" aria-label="Close" title="Close">×</button>';hd.lastChild.onclick=close;
+  B.replaceChildren(hd,el);el.style.display='';B.classList.add('on');try{p.open&&p.open()}catch(_){}try{p.refresh&&p.refresh()}catch(_){}
+  const r=anchor.getBoundingClientRect(),pr=(anchor.closest('.dkpn')||anchor).getBoundingClientRect(),w=B.offsetWidth,h=B.offsetHeight;
+  let left=pr.left-w-6;if(left<4)left=Math.min(innerWidth-w-4,r.right+6);B.style.left=left+'px';B.style.top=Math.max(4,Math.min(innerHeight-h-4,r.top-8))+'px';return true};
+addEventListener('pointerdown',e=>{if(!CUR)return;if(B.contains(e.target)||(e.target.closest&&e.target.closest('.prlk,.fxm,.mdd,[role=menu],.swpop,#swpop')))return;close()},true);
+addEventListener('keydown',e=>{if(CUR&&e.key==='Escape'&&!document.querySelector('.fxm')){e.preventDefault();e.stopImmediatePropagation();close()}},true);
+window.prPopClose=close;
 })();
 /*TOOLS-END*/
 })();
