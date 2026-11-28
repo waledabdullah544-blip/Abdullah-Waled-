@@ -684,3 +684,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Preset Details: Bleed top / bottom / left / right with up/down steppers and a link button; Background Contents (Transparent, White, Custom Color); Advanced Options: Color Mode, Raster Effects (72 / 150 / 300 ppi).
 - The document keeps them (DOCMETA, saved in .masar): the bleed is a red line around each artboard, a custom background colours the artboards, PNG export starts with the document's resolution and background. Document Setup edits the bleed.
 - Test: tests/ndoc.js (17 checks); tests/home.js updated.
+
+## tools check (Scissors, Eraser, Knife, Reflect, Scale)
+- tests/tools5.js (14 checks) compares each with Illustrator: Scissors opens / splits closed and open paths; Eraser splits filled shapes and open strokes, respects the selection, Alt = rectangle erase, Shift = straight, [ ] size; Knife cuts closed shapes only, Alt = straight; Reflect about a clicked point, Alt = copy, Alt-click = dialog; Scale about the centre or a clicked origin, Shift proportional, Alt-click = dialog. All pass; no difference found yet. Waiting for the owner's exact steps.
