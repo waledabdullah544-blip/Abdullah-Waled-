@@ -2,10 +2,10 @@ const L=require('./lib.js'),M=require('./cloudmock.js');
 (async()=>{const {srv,url}=await M.start();let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
 const boot=async()=>{const H=await L.open(),pg=H.pg;await pg.addInitScript(u=>{localStorage.setItem('masar.cloud.cfg',JSON.stringify({url:u,key:'anon-key-for-tests'}))},url);await pg.reload();await pg.waitForTimeout(600);return H};
 const A=await boot(),pa=A.pg;
-await pa.evaluate(()=>HOME.open());await pa.waitForTimeout(100);
-ok('Home shows the Masar Cloud button (Sign in)',await pa.evaluate(()=>/Masar Cloud/.test(document.querySelector('#hcloud .hcl').textContent)&&/Sign in/.test(document.querySelector('#hcloud .hcl').textContent)));
-await pa.click('#hcloud .hcl');await pa.waitForTimeout(150);await pa.fill('.fxb [data-k="e"]','ali@example.com');await pa.fill('.fxb [data-k="p"]','secret123');await pa.click('.fxb button:has-text("Create account")');await pa.waitForTimeout(400);
-ok('Create account signs in, the button says Connected + email',await pa.evaluate(()=>MCLOUD.signedIn()&&/Connected/.test(document.querySelector('#hcloud .hcl').textContent)&&/ali@example.com/.test(document.querySelector('#hcloud .hcl').textContent)));
+ok('a connected copy asks to sign in first (no account = no app)',await pa.evaluate(()=>document.getElementById('paywall').classList.contains('on')&&document.getElementById('paywall').dataset.mode==='signin'));
+await pa.click('#paywall [data-pw=email]');await pa.waitForTimeout(150);await pa.fill('.fxb [data-k="e"]','ali@example.com');await pa.fill('.fxb [data-k="p"]','secret123');await pa.click('.fxb button:has-text("Create account")');await pa.waitForTimeout(500);
+await pa.evaluate(()=>HOME.open());await pa.waitForTimeout(200);
+ok('Create account signs in, starts the trial, the button says Connected + email',await pa.evaluate(()=>MCLOUD.signedIn()&&!document.getElementById('paywall').classList.contains('on')&&/Connected/.test(document.querySelector('#hcloud .hcl').textContent)&&/ali@example.com/.test(document.querySelector('#hcloud .hcl').textContent)));
 await pa.keyboard.press('Escape');
 await pa.evaluate(()=>{add('<rect x="20" y="20" width="100" height="60" fill="#1971c2"/>');commit();draw()});
 // File > Save to Masar Cloud

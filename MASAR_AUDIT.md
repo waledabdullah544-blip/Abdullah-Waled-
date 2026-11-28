@@ -616,3 +616,12 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Home: cloud files in Recent and Your files (thumbnail, modified, size, Share, ×), Shared with you (with who shared it; read-only original), Masar Cloud projects (new / rename / delete), Deleted (Restore / Delete for good).
 - Server: Supabase (open source). cloud/masar-cloud.sql makes the tables and the Row Level Security rules; cloud/README.md has the set-up steps. The owner puts the project URL + anon key in MASAR_CLOUD_CONFIG (or Server settings).
 - Tests: tests/cloud.js (19 checks, two users, against tests/cloudmock.js) and tests/cloudsql.mjs (15 checks of the security rules on real Postgres via PGlite).
+
+## build 279 — subscriptions in the app
+- Only when this copy is connected to a Masar server (MASAR_CLOUD_CONFIG). Without a server Masar works as before (all older tests unchanged).
+- No account: a full-screen welcome asks to sign up (Continue with Google, or email). New accounts start the free trial (length set by the admin).
+- Trial over / subscription over: plans page (monthly, yearly with "Save N%"), Subscribe opens Paymob checkout; "I already paid" re-checks; "Open a file and export it" (SVG / PNG) so customers never lose their work; Sign out.
+- Back from Paymob (?paid=1): Masar checks the server until the payment shows and confirms.
+- Offline: keeps working for grace_days (default 7) from the last server answer, then asks to connect.
+- Home: "Free trial: N days left" / "ends in N days" banner, the admin's announcement card, Account page (name, plan, status, paid-until, reminders on/off, plans, payment history, sign out), templates loaded from the server (categories, search; files only for trial / paid accounts).
+- Tests: tests/sub.js (24 checks), tests/cloud.js updated, tests/cloudmock.js extended.
