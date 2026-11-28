@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 238</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 239</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -4606,7 +4606,7 @@ function modeFly(id,btn,items){const fl=document.createElement('div');fl.id=id;f
   return{fl,click:f=>btn.addEventListener('click',e=>{if(sw){sw=false;return}f(e)})}}
 const dmB=$('#dmBtn'),dmF=modeFly('fg-dm',dmB,[{k:'n',n:'Draw Normal',ic:DMI.n,key:'Shift+D',f:()=>setDrawMode('n')},{k:'b',n:'Draw Behind',ic:DMI.b,key:'Shift+D',f:()=>setDrawMode('b')},{k:'i',n:'Draw Inside',ic:DMI.i,key:'Shift+D',f:()=>setDrawMode('i')}]);
 function setDrawMode(m){DM=m;dmB.innerHTML=DMI[m];dmB.dataset.dm=m;dmB.title=DMN[m]+' (Shift+D)';dmB.classList.toggle('on',m!=='n');dmF.fl.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.m===m));
-  if(m==='i'&&!(sel.size===1))$('#hint').textContent='Draw Inside: select one object first (the new art is clipped by it)';else $('#hint').textContent=m==='n'?HINT[tool]:DMN[m]+' (Shift+D)'}
+  if(m==='i'&&!(sel.size===1))$('#hint').textContent='Draw Inside: select one object first (the new art is clipped by it)';else $('#hint').textContent=m==='n'?HINT[tool]:DMN[m]+' (Shift+D)';try{if(typeof draw==='function'&&typeof selg!=='undefined')draw()}catch(_){}}
 function cycleDrawMode(){setDrawMode(DM==='n'?'b':DM==='b'?'i':'n')}
 dmF.click(()=>cycleDrawMode());setDrawMode('n');
 window.setDrawMode=setDrawMode;window.cycleDrawMode=cycleDrawMode;window.drawMode=()=>DM;
@@ -9025,8 +9025,8 @@ addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&!e.altKey
 (()=>{const h=document.querySelector('header');if(!h||document.getElementById('ctlmenu'))return;
   const b=document.createElement('button');b.id='ctlmenu';b.type='button';b.title='Control panel menu';b.setAttribute('aria-label','Control panel menu');b.textContent='\u2261';
   b.style.cssText='margin-left:auto;position:sticky;right:0;flex:none;width:24px;height:24px;border:0;border-radius:3px;background:var(--panel);color:var(--ink);font-size:16px;line-height:1;cursor:default';h.appendChild(b);
-  let pos='top';try{pos=localStorage.getItem('masar-ctl')==='bottom'?'bottom':'top'}catch(_){}
-  const apply=p=>{pos=p;document.body.classList.toggle('ctl-bottom',p==='bottom');try{localStorage.setItem('masar-ctl',p)}catch(_){}dispatchEvent(new Event('resize'))};apply(pos);
+  let pos='top';try{localStorage.removeItem('masar-ctl')}catch(_){} /* always opens docked at the top, as Illustrator's default workspace */
+  const apply=p=>{pos=p;document.body.classList.toggle('ctl-bottom',p==='bottom');dispatchEvent(new Event('resize'))};apply(pos);
   const dd=document.createElement('div');dd.className='mdd';dd.setAttribute('role','menu');document.body.appendChild(dd);
   const close=()=>{dd.style.display='none'};
   b.onclick=e=>{e.stopPropagation();if(dd.style.display==='block'){close();return}
@@ -10815,6 +10815,28 @@ DK.reg('gradient','Gradient','<svg viewBox="0 0 24 24" width="18" height="18"><d
 window.gradPanelOpen=()=>{DK.open('gradient');render()};
 })();
 
+
+/* ======================= build 239: Draw Inside safety (Illustrator behaviour) ======================= */
+(()=>{
+/* Draw Inside only lives while ONE object is selected: when the user deselects (click on empty canvas, Esc, Ctrl+Shift+A) or
+   selects several objects with a non-drawing tool, the mode goes back to Draw Normal (it used to stay on silently, so every
+   new shape went inside the first one and "disappeared"). While a drawing tool is dragging, the target is kept. */
+let down=false,lastOff=0;
+addEventListener('pointerdown',()=>{down=true},true);addEventListener('pointerup',()=>{setTimeout(()=>{down=false;try{draw()}catch(_){}},0)},true);
+const tgt=()=>{if(sel.size===1)return[...sel][0];return null};
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{
+  const dm=window.drawMode&&window.drawMode();
+  if(dm==='i'&&!down&&!st&&sel.size!==1&&!DRAWT.has(tool)){window.setDrawMode('n');if(Date.now()-lastOff>500){lastOff=Date.now();document.getElementById('hint').textContent='Draw Inside turned off: it needs one selected object (Shift+D to turn it on again)'}}
+  else if(dm==='i'){const o=tgt();if(o&&objs.includes(o)){
+    const b=wbox(o),s=1/z,L=Math.min(14*s,b.w/3,b.h/3),p=4*s,x0=b.x-p,y0=b.y-p,x1=b.x+b.w+p,y1=b.y+b.h+p;
+    const d='M'+x0+' '+(y0+L)+'V'+y0+'H'+(x0+L)+'M'+(x1-L)+' '+y0+'H'+x1+'V'+(y0+L)+'M'+x1+' '+(y1-L)+'V'+y1+'H'+(x1-L)+'M'+(x0+L)+' '+y1+'H'+x0+'V'+(y1-L);
+    selg.append(el('path',{d,fill:'none',stroke:'#e0e0e0','stroke-width':3*s,'pointer-events':'none','data-dmi':'1'}));
+    selg.append(el('path',{d,fill:'none',stroke:'#222','stroke-width':1.2*s,'stroke-dasharray':(3*s)+' '+(2*s),'pointer-events':'none'}))}}
+}catch(_){}return r}}
+/* a shape drawn completely outside the clipping object is hidden: tell the user why */
+{const _cm=commit;commit=function(){const dm=window.drawMode&&window.drawMode(),r=_cm.apply(this,arguments);
+  try{if(dm==='i'&&sel.size===1){const o=[...sel][0],cl=o.g.querySelector(':scope > [data-clipmask]'),mem=[...o.g.querySelectorAll(':scope > g[data-mem]')].pop();if(cl&&mem){const B=cl.getBBox(),m=mem.getBBox();if(m.x>B.x+B.width||m.x+m.width<B.x||m.y>B.y+B.height||m.y+m.height<B.y)document.getElementById('hint').textContent='Draw Inside is ON: the new shape is outside the clipping shape, so it is hidden. Press Shift+D for Draw Normal.'}}}catch(_){}return r}}
+})();
 /*TOOLS-END*/
 })();
 </script>
