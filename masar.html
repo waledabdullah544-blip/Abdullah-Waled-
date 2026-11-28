@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 250</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 251</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -585,12 +585,11 @@ function draw(){
         c.setAttribute('fill','none');c.setAttribute('stroke','#8C8C8C');c.setAttribute('stroke-width',s);c.setAttribute('pointer-events','none');
         const gt=el('g',{});const tr=o.g.getAttribute('transform');if(tr)gt.setAttribute('transform',tr);const et=e.getAttribute('transform');if(et)c.setAttribute('transform',et);gt.appendChild(c);selg.append(gt)}})}catch(_){}});
   /* Rotate / Scale / Reflect / Shear (Illustrator): no bounding box, the selected paths themselves are highlighted and turn with the object */
-  if(XT.includes(tool)&&!L.some(isText)){L.forEach(o=>{if(o.g.style.display!=='none')try{drawCreate(o)}catch(_){}})}
+  if(tool==='mw'){/* Magic Wand: no bounding box (build 251 draws each path) */}
+  else if(XT.includes(tool)&&!L.some(isText)){L.forEach(o=>{if(o.g.style.display!=='none')try{drawCreate(o)}catch(_){}})}
   else selg.append(el('rect',{x:u.x,y:u.y,width:u.w,height:u.h,fill:'none',stroke:'#8C8C8C','stroke-width':s,'pointer-events':'none'}));
   drawAreaUI(L,s);
   if(!((tool==='v'||SG.includes(tool))&&L.length===1))L.forEach(o=>{if(isText(o)&&o.g.querySelector('text[data-tpov]'))tpOvMark(selg,o,s)});
-  /* Magic Wand (Illustrator): every object it picked shows its own highlighted path and anchor points */
-  if(tool==='mw')L.forEach(o=>{if(!isText(o)&&o.g.style.display!=='none')try{drawCreate(o)}catch(_){}});
   if(TG.includes(tool)||tool==='mw'||tool==='gr'||XT.includes(tool)){if(tool==='tt')drawTT();if(XT.includes(tool))drawOrigin();if(tool==='gr')drawGrad();return}
   {const ro=rotSel();if(ro){selg.lastChild&&selg.lastChild.remove();drawRotBox(ro);if((tool==='v'||SG.includes(tool))&&L.length===1)drawLiveW(L[0]);return}}
   for(const k in HP){if((u.h*z<1.5&&k!=='e'&&k!=='w')||(u.w*z<1.5&&k!=='n'&&k!=='s'))continue;const[fx,fy]=HP[k];const r=el('rect',{x:u.x+u.w*fx-4*s,y:u.y+u.h*fy-4*s,width:8*s,height:8*s,fill:'#fff',stroke:'#8C8C8C','stroke-width':1.5*s,'data-h':k});r.style.cursor=scaleCur(Math.atan2(Math.sign(fy-.5),Math.sign(fx-.5))*180/Math.PI);selg.append(r)}
@@ -11043,6 +11042,28 @@ addEventListener('blur',()=>setTimeout(()=>{PDOWN=false;reset()},0));
 const _o=DK.open.bind(DK);DK.open=function(k){const r=_o.apply(DK,arguments);setTimeout(()=>{try{const p=DK.P&&DK.P[k],el=(p&&(p.el||p.body||p.p))||null,pn=el&&el.nodeType?el:document.getElementById({stroke:'stp',gradient:'grdp',props:'prp'}[k]||'');
   const g=pn&&pn.closest&&pn.closest('.dkg');const col=g&&g.closest('.dkgs');if(!g||!col)return;const gr=g.getBoundingClientRect(),cr=col.getBoundingClientRect();
   if(gr.bottom>cr.bottom)col.scrollTop+=Math.min(gr.bottom-cr.bottom+4,gr.top-cr.top);else if(gr.top<cr.top)col.scrollTop-=cr.top-gr.top}catch(_){}},30);return r};
+})();
+
+
+/* ======================= build 251: Illustrator selection highlight ======================= */
+(()=>{/* every selected path is highlighted in its layer colour with its anchor points as small solid squares and the
+   centre point - with the Selection tool (together with the bounding box), the Magic Wand, Lasso and Group Selection */
+const ON=new Set(['v','mw','ls','gs']);
+const lyc=o=>{try{const l=lyBy(o.ly);return(l&&l.color)||'#8C8C8C'}catch(_){return'#8C8C8C'}};
+function selPaths(o,g,budget){const s=1/z,c=lyc(o),fk={...o,g:o.g.cloneNode(true)};try{ensurePath(fk)}catch(_){return budget}
+  let d='';const A=[];
+  eps(fk).forEach(pe=>{if(pe.closest('defs,[data-clipmask],[data-opmask]'))return;const S=getSP(pe);if(!S)return;
+    d+=S.map(sp=>{const P=sp.pts.map(q=>{const w=W(o,q.x,q.y),f=h=>h&&W(o,h[0],h[1]);A.push(w);return{x:w[0],y:w[1],i:f(q.i),o:f(q.o)}});return P.length?penD(P,sp.closed):''}).join('')});
+  if(d)g.append(el('path',{d,fill:'none',stroke:c,'stroke-width':s,'pointer-events':'none'}));
+  if(A.length<=budget){const h=3*s;A.forEach(w=>g.append(el('rect',{x:w[0]-h,y:w[1]-h,width:2*h,height:2*h,fill:c,stroke:'none','pointer-events':'none'})))}
+  const b=wbox(o),k=2*s;g.append(el('rect',{x:b.x+b.w/2-k,y:b.y+b.h/2-k,width:2*k,height:2*k,fill:c,'pointer-events':'none'}));
+  return budget-A.length}
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{
+  if(!ON.has(tool)||!sel.size||(st&&st.moved&&tool!=='mw'))return r;if(tool==='gs'||tool==='a')return r;
+  const L=[...sel].filter(o=>objs.includes(o)&&o.g.style.display!=='none'&&!isText(o));if(!L.length||L.length>400)return r;
+  const g=el('g',{'pointer-events':'none','data-selhl':'1'});let budget=3000;for(const o of L)budget=selPaths(o,g,budget);
+  selg.insertBefore(g,selg.firstChild)}catch(_){}return r}}
+window.selLayerColor=lyc;
 })();
 
 /*TOOLS-END*/
