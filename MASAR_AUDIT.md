@@ -698,3 +698,7 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - The hover card shows the first three "how to use" steps right away (drag / Alt+drag / Shift…); "More" shows the rest.
 - Every movement in the card animations eases in and out (it only did for shape changes and the pointer before; lines, erasing, pencil strokes moved at a stiff constant speed).
 - tests/tips2.js fails the same way before and after (it reads TIPS, which is not global): stale test, not a regression.
+
+## build 289 — Perspective Grid could not be hidden
+- The grid's "on" state was saved in the browser, so it came back every time Masar opened and on every new document; it could only be hidden with Ctrl+Shift+I or View. Now it starts hidden (its geometry is still remembered), a new document hides it, and the plane widget (top-left of the canvas, shown while the grid is on) has a × that hides it.
+- Test: tests/pgridhide.js.

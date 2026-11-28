@@ -503,7 +503,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 289</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 290</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -11970,7 +11970,7 @@ window.MESH={getM,setM,makeMesh,locate,addLines,delLines,render,createDlg,expand
 (()=>{
 const KEY='masar.pgrid.v1';
 const DEFG=()=>{const A=ARTS[ABI]||{x:0,y:0,w:800,h:600};return{hY:A.y+A.h*.42,vl:A.x-A.w*.35,vr:A.x+A.w*1.35,ox:A.x+A.w*.5,oy:A.y+A.h*.78,cell:A.h*.06,n:10,m:10,on:false,act:'L'}};
-let G=null;try{G=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}if(!G)G=DEFG();
+let G=null;try{G=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}if(!G)G=DEFG();G.on=false;/* build 289: the grid starts hidden (its geometry is remembered); it never comes back on by itself */
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(G))}catch(_){}};
 /* ---- projective maps: plane coords (grid units) -> artboard coords, one 3x3 homography per plane ---- */
 function solveH(src,dst){/* 4 point correspondences -> 3x3 */const A=[],b=[];for(let i=0;i<4;i++){const[x,y]=src[i],[u,v]=dst[i];A.push([x,y,1,0,0,0,-u*x,-u*y]);b.push(u);A.push([0,0,0,x,y,1,-v*x,-v*y]);b.push(v)}
@@ -11999,9 +11999,10 @@ function drawGrid(){if(!G.on)return;const s=1/z,g=el('g',{'pointer-events':'none
   wid.style.display='flex'}
 const wid=document.createElement('div');wid.id='pgwid';wid.style.cssText='position:fixed;z-index:58;display:none;gap:3px;padding:4px;background:var(--panel);border:1px solid #1b1b1b;border-radius:4px;box-shadow:0 3px 12px #0007';
 wid.innerHTML=[['L','Left Grid (1)'],['F','Horizontal Grid (2)'],['R','Right Grid (3)'],['N','No Active Grid (4)']].map(([k,t])=>'<button type="button" data-pl="'+k+'" title="'+t+'" style="width:26px;height:24px;border:0;border-radius:3px;background:none;cursor:default;color:var(--ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">'+(k==='L'?'<path d="M3 6l9 3v12L3 18z" fill="'+COL.L+'" fill-opacity=".5"/>':k==='R'?'<path d="M21 6l-9 3v12l9-3z" fill="'+COL.R+'" fill-opacity=".5"/>':k==='F'?'<path d="M12 13l9 3-9 4-9-4z" fill="'+COL.F+'" fill-opacity=".5"/>':'<circle cx="12" cy="12" r="7"/><path d="M7 17L17 7"/>')+'</svg></button>').join('');
+wid.insertAdjacentHTML('beforeend','<span style="width:1px;background:var(--line);margin:2px 2px"></span><button type="button" data-x="1" title="Hide Perspective Grid (Ctrl+Shift+I)" aria-label="Hide Perspective Grid" style="width:26px;height:24px;border:0;border-radius:3px;background:none;cursor:default;color:var(--ink);font-size:16px">×</button>');
 document.body.appendChild(wid);
-const wsync=()=>{wid.querySelectorAll('button').forEach(b=>b.style.background=b.dataset.pl===G.act?'#ffffff2e':'none');const r=cv.getBoundingClientRect();wid.style.left=(r.left+10)+'px';wid.style.top=(r.top+48)+'px';if(!G.on)wid.style.display='none'};
-wid.addEventListener('pointerdown',e=>e.stopPropagation());wid.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;G.act=b.dataset.pl;save();wsync();draw()});
+const wsync=()=>{wid.querySelectorAll('button[data-pl]').forEach(b=>b.style.background=b.dataset.pl===G.act?'#ffffff2e':'none');const r=cv.getBoundingClientRect();wid.style.left=(r.left+10)+'px';wid.style.top=(r.top+48)+'px';if(!G.on)wid.style.display='none'};
+wid.addEventListener('pointerdown',e=>e.stopPropagation());wid.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.x){show(false);if(tool==='pg'||tool==='pgs')setTool('v');return}G.act=b.dataset.pl;save();wsync();draw()});
 {const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{drawGrid();wsync()}catch(_){}return r}}
 const show=on=>{G.on=on==null?!G.on:!!on;save();draw();tb5Msg(G.on?'Perspective Grid shown':'Perspective Grid hidden')};
 /* ---- objects on a plane keep their plane coordinates (data-psp) so they can be moved in perspective ---- */
@@ -12042,6 +12043,7 @@ window.__KSPRE.unshift(e=>{const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.te
   if(G.on&&(tool==='pg'||tool==='pgs')&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&/^Digit[1-4]$/.test(e.code)){G.act=['L','F','R','N'][+e.code[5]-1];save();e.preventDefault();e.stopImmediatePropagation();draw();return true}return false});
 if(window.MENUS){const vm=MENUS.find(m=>m[0]==='View');if(vm){const g=vm[1];vm[1]=()=>{const it=g();it.push({t:'Perspective Grid',__p:'View>Perspective Grid',sub:()=>[{t:G.on?'Hide Grid':'Show Grid',k:'Ctrl+Shift+I',__p:'View>Perspective Grid>Show Grid',f:()=>show()},{t:'Reset Grid',__p:'View>Perspective Grid>Reset',f:()=>{const on=G.on;G=DEFG();G.on=on;upd();objs.forEach(o=>{if(hostE(o))reproj(o)});commit();draw()}},{t:'Release with Perspective',__p:'View>Perspective Grid>Release',f:()=>{[...sel].forEach(o=>{const e=hostE(o);if(e)e.removeAttribute('data-psp')});commit()},en:()=>[...sel].some(hostE)}]});return it}}}
 window.PGRID={get:()=>G,set:o=>{Object.assign(G,o);upd();draw()},toW,toP,attach,reproj,show};
+{const _c=window.docClear;window.docClear=function(){if(G.on){G.on=false;save()}return _c.apply(this,arguments)}}
 })();
 
 
