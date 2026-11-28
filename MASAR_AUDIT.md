@@ -687,3 +687,9 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## tools check (Scissors, Eraser, Knife, Reflect, Scale)
 - tests/tools5.js (14 checks) compares each with Illustrator: Scissors opens / splits closed and open paths; Eraser splits filled shapes and open strokes, respects the selection, Alt = rectangle erase, Shift = straight, [ ] size; Knife cuts closed shapes only, Alt = straight; Reflect about a clicked point, Alt = copy, Alt-click = dialog; Scale about the centre or a clicked origin, Shift proportional, Alt-click = dialog. All pass; no difference found yet. Waiting for the owner's exact steps.
+
+## build 287 — shaky hands: Pencil, Paintbrush, Blob Brush, Shaper
+- Pencil / Paintbrush / Blob Brush measure the tremor of each stroke (how far it wanders around a heavily smoothed copy of itself) and smooth at least that much, scaled by the Accurate <-> Smooth slider. At the default setting a stroke shaking ±6 px now comes out smooth (direction wobble 46-75 -> 4-6, anchors 36-51 -> 8-18); a steady hand keeps its details (a deliberate wave keeps its shape within 2-3 px).
+- Shaper: a shaky straight stroke is recognised as a line (it was sometimes dropped); rectangles, ellipses and triangles were already recognised. 36/36 in the test.
+- Eraser: re-checked freehand, several passes, stroke-only shapes, groups, moved / scaled shapes, pencil / brush / blob strokes, thick strokes, zoom 0.5-3, rotated view, a single click (hole). All correct; waiting for the owner's steps.
+- Tests: tests/shaky.js, tests/shaperrec.js.
