@@ -592,3 +592,12 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Home screen (covers the workspace, menus stay usable; Esc or the Home button closes it): New file (New Document dialog), Open, Quick start presets (A4, Letter, Postcard, Common, HDV/HDTV 1080, Square post, Story, More presets), Recent files with thumbnail, time and size; × removes an entry.
 - Recent files are remembered in this browser when a file is opened or saved (up to 8, 1.5 MB each); clicking one reopens it (asks to save unsaved changes first).
 - window.docCreate(w,h,name,unit) creates a one-artboard document. Test: tests/home.js.
+
+## build 276 — Home screen and New Document like Illustrator
+- Home opens at startup (option "Show Home at startup" at the bottom of Home). Sidebar: New file, Open, Home, Learn, Your files, Deleted.
+- Home: quick start Letter, A4, Postcard, Common, iPhone X, HDV/HDTV 1080, More presets; Recent with Sort (Last opened / Name / Size), Filter Recent Files, grid / list view, kind column.
+- Your files: the full recent list. Deleted: files removed from Recent, with Restore / Delete / Delete all.
+- Learn: every tool with its icon, shortcut and description, searchable; clicking a card picks the tool.
+- New Document (Ctrl+N, New file, More presets): tabs Recent, Saved, Mobile, Web, Print, Film & Video, Art & Illustration with the blank document presets (sizes in Illustrator units, 2 decimals), Preset Details (name, Save Preset, width, height, units, orientation, artboards, spacing, color mode), Close / Create; double-click a preset creates it. Recent remembers created sizes; Saved keeps user presets.
+- Not included (no real feature behind them yet): Bleed, Raster Effects, Preview Mode, Adobe cloud items (Shared with you, Stock templates).
+- tests/lib.js turns startup Home off for the other tests; tests home, doc, file, dlgx updated.

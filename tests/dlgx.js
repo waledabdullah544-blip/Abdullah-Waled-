@@ -12,8 +12,8 @@ ok('small window: dialog fits the window ('+JSON.stringify(r)+') and X is visibl
 await pg.click('.cpb .dlgx');await pg.waitForTimeout(200);await pg.setViewportSize({width:1500,height:900});
 // New Document (dkModal)
 await pg.keyboard.press('Control+n');await pg.waitForTimeout(400);
-ok('New Document dialog has X',await pg.evaluate(()=>!!document.querySelector('.fxm .fxb > b .dlgx')));
-await pg.click('.fxm .dlgx');await pg.waitForTimeout(300);
+ok('New Document dialog has X',await pg.evaluate(()=>!!document.querySelector('#ndd .dlgx')));
+await pg.click('#ndd .dlgx');await pg.waitForTimeout(300);
 ok('X closes New Document',await pg.evaluate(()=>!document.querySelector('.fxm')));
 // #dlg (Move…)
 await pg.keyboard.press('m');await H.drag(200,200,300,300);await pg.keyboard.press('v');await pg.keyboard.press('Control+Shift+m');await pg.waitForTimeout(400);

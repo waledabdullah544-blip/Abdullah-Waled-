@@ -1,8 +1,9 @@
 const {chromium}=require('playwright');
 exports.open=async(o)=>{const b=await chromium.launch(o&&o.launch),pg=await b.newPage(Object.assign({viewport:{width:1500,height:900}},o&&o.page));const errs=[];
 pg.on('pageerror',e=>errs.push(String(e)));
+if(!(o&&o.home))await pg.addInitScript(()=>{try{if(localStorage.getItem('masar.home.start')==null)localStorage.setItem('masar.home.start','0')}catch(_){}});
 await pg.goto('file://'+require('path').resolve(__dirname,'../masar.html'));await pg.waitForTimeout(700);
-const r=await pg.evaluate(()=>{const c=document.getElementById('cv').getBoundingClientRect();return{x:c.left,y:c.top,w:c.width,h:c.height}});
+await pg.evaluate(()=>{});const r=await pg.evaluate(()=>{const c=document.getElementById('cv').getBoundingClientRect();return{x:c.left,y:c.top,w:c.width,h:c.height}});
 const H={pg,b,errs,R:r,
  key:async k=>{await pg.keyboard.press(k);await pg.waitForTimeout(40)},
  // canvas-relative coords
