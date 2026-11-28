@@ -514,3 +514,7 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 ## build 259: لوحة Brushes (Window > Brushes، F5)
 - قايمة الفرش بصورة لكل فرشة (Basic، 5 pt. Round، Calligraphic، Tapered، وأي فرشة جديدة). ضغطة = تطبيق على المسار المتحدد وكمان بتختارها للـ Paintbrush. New Brush (Calligraphic أو Tapered: الحجم، الزاوية، الاستدارة، مع معاينة حية)، دبل كليك = Brush Options (كل المسارات اللي مستخدماها بتتحدث)، Duplicate، Delete (لو مستخدمة بيرجّع الخطوط Basic)، Remove Brush Stroke. الفرش الجديدة بتتحفظ في المتصفح. F5 مبقاش بيعمل Reload للصفحة. (tests/brushes.js)
 - لسه مش موجود: Art Brush بصورة/رسمة على طول المسار، Scatter و Pattern brushes.
+
+## build 260: #16 تحريك الواجهة (الجزء 1)
+- اتفحص بالماوس: اللوحات (سحب التاب لبرّه = لوحة عايمة، رجوعها تاب في مجموعة أو تركيبها يمين/شمال، تغيير الحجم، الطي لأيقونات)، شريط الأدوات (يتشال ويتحرك ويرجع يتركّب يمين أو شمال، عمود أو عمودين)، شريط التحكم (فوق/تحت) — كلهم كانوا شغالين.
+- الجديد: كل نوافذ الحوار (Offset Path، Swatch Options، Layer Options، Color Picker، Graphic Style/Symbol/Brush Options…) بتتسحب من عنوانها، وكل نافذة بتفتكر مكانها وتفتح فيه تاني زي اليستريتور. شريط الـ Free Transform الصغير ليه مقبض يتسحب منه ويفتكر مكانه، ونافذة لون نقطة الـ Gradient بتتسحب. Window > Workspace > Reset Essentials بيرجّع كل ده لمكانه الأصلي. (tests/movable.js)
