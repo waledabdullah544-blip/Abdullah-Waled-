@@ -618,7 +618,7 @@ function info(L){
   const on=L.length>0,u=on?uni(L):{x:'',y:'',w:'',h:''};
   for(const k in F){F[k].disabled=!on;if(document.activeElement!==F[k])F[k].value=on?(+(k==='x'?u.x+REF[0]*u.w:k==='y'?u.y+REF[1]*u.h:u[k])).toFixed(2):''}
 }
-var VROT=window.VROT||0;/* build 270: Rotate View angle (degrees), about the artwork origin so zoom-at-cursor and panning keep their maths */
+var VROT=window.VROT||0;/* artwork point -> canvas point (with the view rotation) */function w2s(x,y){if(!VROT)return[x*z+px,y*z+py];const a=VROT*Math.PI/180,X=x*z,Y=y*z;return[px+X*Math.cos(a)-Y*Math.sin(a),py+X*Math.sin(a)+Y*Math.cos(a)]}/* build 270: Rotate View angle (degrees), about the artwork origin so zoom-at-cursor and panning keep their maths */
 function view(){world.setAttribute('transform',`translate(${px} ${py})`+(VROT?` rotate(${VROT})`:'')+` scale(${z})`);zm.textContent=Math.round(z*100)+'%';$('#tab').textContent=(window.DOCNAME||'Untitled-1')+' @ '+Math.round(z*100)+'% '+(cv.classList.contains('outlv')?'('+(window.DOCMODE||'RGB')+'/Outline)':'('+(window.DOCMODE||'RGB')+'/Preview)');draw();penDraw();cuDraw();placeEditor();if(typeof tbView==='function')tbView();try{abLabels()}catch(_){}}
 /* ---- artboards: ARTS = [{id,n,x,y,w,h}] in artwork coordinates; ABI = the active one, ABX/ABY/ABW/ABH its rectangle ---- */
 let ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:800,h:600}],ABI=0,ABN=1,ABX=0,ABY=0,ABW=800,ABH=600;
@@ -942,7 +942,7 @@ function readTextE(o){const t=o.g.querySelector('text');if(!t)return null;const 
 function placeEditor(){const E=ted_s;if(!E)return;const s=E.size*(E.k||1)*z;
   ted.style.fontSize=s+'px';ted.style.lineHeight='1.2';ted.style.fontFamily=E.fam;ted.dir=isRTL(ted.value)?'rtl':'ltr';
   const c=E.cp||[E.lx,E.ly],w=E.kind==='area'&&E.box?E.box[2]*(E.k||1)*z:0;
-  ted.style.whiteSpace=w?'pre-wrap':'pre';ted.style.width=(w||40)+'px';ted.style.height=(s*1.3)+'px';ted.style.left=(px+c[0]*z)+'px';ted.style.top=(py+c[1]*z-s)+'px';tedCaret()}
+  ted.style.whiteSpace=w?'pre-wrap':'pre';ted.style.width=(w||40)+'px';ted.style.height=(s*1.3)+'px';{const q=w2s(c[0],c[1]);ted.style.left=q[0]+'px';ted.style.top=(q[1]-s)+'px'}tedCaret()}
 function svgMap(t){const out=[];t.querySelectorAll(':scope > tspan[data-r], :scope > textPath[data-r]').forEach(sp=>{const r=+sp.getAttribute('data-r');if(sp.hasAttribute('data-e')){out.push({r,e:1});return}const hy=sp.hasAttribute('data-hy'),n=sp.textContent.length-(hy?1:0);for(let k=0;k<n;k++)out.push({r:r+k});if(hy)out.push({r:-2,h:1,bk:r+n})});return out}
 function tedRender(){const E=ted_s;if(!E)return;const raw=ted.value.replace(/\r/g,'');E.pv=raw;
   if(E.th&&E.o&&E.o.g.isConnected){storyFrames(E.th).forEach(o=>o.g.querySelector('text').setAttribute('data-raw',raw));storyReflow(E.th,raw,chY(E,true));sel=new Set();draw();placeEditor();tedCtlSync();uhNote();return}
@@ -4895,7 +4895,7 @@ function up(e){
   if(st.mode==='zoom'){mq.setAttribute('display','none');const q=e?pt(e):st.p;
     cv.style.cursor=tool==='z'?(ZOUT?CZO:CZI):'';cv.__cur=null;zIcon(ZOUT);
     if(st.moved);
-    else zoomStep((st.hz?!!(st.alt||(e&&e.altKey)):((st.alt||(e&&e.altKey))!==ZOUT))?-1:1,st.p.x*z+px,st.p.y*z+py);
+    else zoomStep((st.hz?!!(st.alt||(e&&e.altKey)):((st.alt||(e&&e.altKey))!==ZOUT))?-1:1,...w2s(st.p.x,st.p.y));
     st=null;return}
   if(st.mode==='lc'||st.mode==='pie'||st.mode==='sides'||st.mode==='tpb'){hideMeas();if(st.moved)commit();st=null;return}
   if(st.mode==='pathedit'){peng.replaceChildren();if(st.changed)commit();st=null;return}
@@ -10418,7 +10418,7 @@ const $b=s=>BAR.querySelector(s);let JOB=null,DISMISS=null;
 $b('.rbmd').value=mdlKey();$b('.rbmd').addEventListener('change',()=>{try{localStorage.setItem('masar.rbmodel',$b('.rbmd').value)}catch(_){}});
 function rbPos(){const L=[...sel],o=L.length===1?L[0]:null;if(DISMISS&&DISMISS!==o&&!(JOB&&JOB.o===DISMISS))DISMISS=null;const dis=!!o&&DISMISS===o&&!(JOB&&JOB.o===o),mk=!!o&&!!window.RBMASK&&RBMASK.masked(o),show=!!o&&objs.includes(o)&&(!!rbTarget(o)||mk||(JOB&&JOB.o===o));
   if(!show||dis||typeof ted_s!=='undefined'&&ted_s){BAR.style.display='none';OV.style.display='none';return}
-  const r=cv.getBoundingClientRect(),b=wbox(o),x0=r.left+b.x*z+px,y0=r.top+b.y*z+py,w=b.w*z,h=b.h*z;
+  const r=cv.getBoundingClientRect();let x0,y0,w,h;if(VROT){const q=o.g.getBoundingClientRect();x0=q.left;y0=q.top;w=q.width;h=q.height}else{const b=wbox(o);x0=r.left+b.x*z+px;y0=r.top+b.y*z+py;w=b.w*z;h=b.h*z}
   BAR.style.display='flex';{const P=mk&&RBMASK.parts(o.g),off=P&&P.mk.getAttribute('data-rbon')==='0';$b('.rbgo').style.display=mk?'none':'';$b('.rbpk').style.display=mk?'none':'';$b('.rbmd').style.display=mk?'none':'';$b('.rbtg').style.display=mk?'':'none';$b('.rbrm').style.display=mk?'':'none';$b('.rbed').style.display=mk?'':'none';$b('.rbpt').style.display=mk?'':'none';$b('.rbdc').style.display=mk?'':'none';if(window.rbEditing&&window.rbEditing()||window.rbPicking&&window.rbPicking())BAR.style.display='none';$b('.rbtg').textContent=off?'Mask: Off':'Mask: On'}const bw=BAR.offsetWidth,bh=BAR.offsetHeight;let x=x0+w/2-bw/2,y=y0-bh-10;if(y<r.top+4)y=Math.min(r.bottom-bh-4,y0+h+10);if(y<r.top+4)y=r.top+4;
   BAR.style.left=Math.max(r.left+4,Math.min(r.right-bw-4,x))+'px';BAR.style.top=y+'px';
   if(JOB&&JOB.o===o){OV.style.display='flex';OV.style.left=x0+'px';OV.style.top=y0+'px';OV.style.width=w+'px';OV.style.height=h+'px'}else OV.style.display='none'}
@@ -11866,7 +11866,9 @@ window.PGRID={get:()=>G,set:o=>{Object.assign(G,o);upd();draw()},toW,toP,attach,
 const C=()=>{const r=cv.getBoundingClientRect();return[r.width/2,r.height/2]};
 function setRot(deg){deg=((deg%360)+540)%360-180;if(Math.abs(deg)<.01)deg=0;const[cx,cy]=C(),a0=VROT*Math.PI/180,a1=deg*Math.PI/180;
   /* world point under the canvas centre stays there */const X=cx-px,Y=cy-py,wx=(X*Math.cos(-a0)-Y*Math.sin(-a0))/z,wy=(X*Math.sin(-a0)+Y*Math.cos(-a0))/z;
-  VROT=deg;px=cx-(wx*Math.cos(a1)-wy*Math.sin(a1))*z;py=cy-(wx*Math.sin(a1)+wy*Math.cos(a1))*z;view();ind()}
+  VROT=deg;px=cx-(wx*Math.cos(a1)-wy*Math.sin(a1))*z;py=cy-(wx*Math.sin(a1)+wy*Math.cos(a1))*z;view();ind();
+  /* the rulers measure the unrotated artboard: they are dimmed while the view is turned */document.body.classList.toggle('vrot',!!VROT);['rlT','rlL'].forEach(id=>{const e=document.getElementById(id);if(e)e.title=VROT?'The view is rotated '+Math.round(-VROT)+'°: the rulers show the unrotated artboard (Shift+Ctrl+1 resets)':''})}
+{const q=document.createElement('style');q.textContent='body.vrot #rlT,body.vrot #rlL{opacity:.35}';document.head.appendChild(q)}
 const ind=()=>{let b=document.getElementById('rvind');if(!b){b=document.createElement('button');b.id='rvind';b.type='button';b.title='Reset Rotate View (Shift+Ctrl+1)';b.style.cssText='position:fixed;z-index:58;height:22px;padding:0 8px;border:1px solid #1b1b1b;border-radius:11px;background:var(--panel);color:var(--ink);font:11px "Segoe UI",sans-serif;cursor:default';b.onclick=()=>setRot(0);document.body.appendChild(b)}
   const r=cv.getBoundingClientRect();b.style.display=VROT?'':'none';b.textContent='↻ '+Math.round(-VROT)+'°';b.style.right=(innerWidth-r.right+10)+'px';b.style.top=(r.top+10)+'px'};
 /* Fit Artboard keeps the rotation and centres the artboard */

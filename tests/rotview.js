@@ -21,5 +21,9 @@ await pg.evaluate(()=>setTool('v'));const before=await pg.evaluate(()=>{const e=
 await pg.mouse.move(H.R.x+500,H.R.y+300);await pg.keyboard.down('Control');await pg.mouse.wheel(0,-300);await pg.keyboard.up('Control');await pg.waitForTimeout(200);
 const after=await pg.evaluate(()=>{const e={clientX:cv.getBoundingClientRect().left+500,clientY:cv.getBoundingClientRect().top+300};return pt(e)});ok('zooming at the pointer keeps the same artwork point under it',Math.abs(after.x-before.x)<2&&Math.abs(after.y-before.y)<2,JSON.stringify([before,after]));
 ok('the rotation indicator shows 30°',await pg.evaluate(()=>/30/.test(document.getElementById('rvind').textContent)&&document.getElementById('rvind').style.display!=='none'));
+// the remove-background bar and the text editor follow the rotated object
+await pg.evaluate(()=>{const o=objs[0],b=o.g.getBoundingClientRect();window.__rb=b});
+ok('rulers are dimmed while the view is rotated',await pg.evaluate(()=>document.body.classList.contains('vrot')));
+const zp=await pg.evaluate(()=>{const p={x:200,y:200},q=w2s(p.x,p.y),r=cv.getBoundingClientRect();return pt({clientX:r.left+q[0],clientY:r.top+q[1]})});ok('w2s and pt are exact inverses',Math.abs(zp.x-200)<1e-6&&Math.abs(zp.y-200)<1e-6,JSON.stringify(zp));
 await pg.keyboard.press('Control+Shift+1');await pg.waitForTimeout(100);ok('Shift+Ctrl+1 resets the view',await pg.evaluate(()=>RVIEW.get()===0&&!/rotate/.test(world.getAttribute('transform'))));
 console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();
