@@ -637,3 +637,13 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Emails: log of every email and which provider sent it, failures with the reason.
 - masar-config.js: one place for the server URL + anon key, used by masar.html and admin.html.
 - Test: tests/admin.js (18 checks).
+
+## build 280 — Masar as an app, automatic deploys, setup guide
+- PWA: manifest (name, icons, standalone, opens .masar / .svg files), service worker (opens offline; network first so updates arrive at once; keeps the AI photo model after the first download), "Install Masar app" in Home and File › Install Masar….
+- Real files: on http(s) Chrome / Edge, Open uses the file picker and Ctrl+S writes back into the same .masar file; Save As asks where to save. Files opened by double-click (launchQueue) open in Masar.
+- The photo upscaler model is served by the site itself first (works with a private repository).
+- Session renewal: only one refresh request at a time (refresh tokens are single-use) in masar.html and admin.html.
+- Site: build.sh → dist/ (Cloudflare Pages), _redirects (/ → masar.html), _headers.
+- GitHub Actions: server.yml (Supabase migrations + functions on main), reminders.yml (daily), tests.yml (tests/ci.sh on every push), claude.yml (optional "@claude" in issues → pull request).
+- SETUP.md: the whole set-up in Arabic, including what to verify with Paymob.
+- Tests: tests/pwa.js (12 checks), tests/ci.sh runs everything.

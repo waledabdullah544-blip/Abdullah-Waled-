@@ -1,44 +1,4 @@
-# Masar Cloud — تشغيل السيرفر (مرة واحدة)
+# Masar Cloud
 
-Masar Cloud بيحفظ شغل كل عميل على حسابه بالإيميل، ويفتحه من أي جهاز، ويشاركه مع إيميلات تانية.
-السيرفر مبني على **Supabase** (قاعدة بيانات Postgres + تسجيل دخول بالإيميل). Supabase مفتوح المصدر (Apache-2.0) وفيه خطة مجانية للبداية.
-
-## الخطوات
-
-1. اعمل حساب في https://supabase.com واعمل **New project** (اختار أقرب منطقة لعملائك).
-2. من القائمة الشمال افتح **SQL Editor** › New query، وانسخ محتوى الملف `supabase/migrations/` (الملفات بالترتيب) كله واضغط **Run**.
-   (الملف آمن تشغله أكتر من مرة.)
-3. افتح **Authentication › Providers** واتأكد إن **Email** شغال.
-   - لو عاوز العميل يأكد إيميله قبل ما يدخل، سيب "Confirm email" شغال.
-   - للإطلاق الحقيقي اربط SMTP خاص بيك من **Authentication › Emails › SMTP Settings**، لأن الإيميل الافتراضي بتاع Supabase عليه حد صغير في عدد الرسائل.
-4. افتح **Project Settings › API** وخد:
-   - **Project URL** (زي `https://abcd1234.supabase.co`)
-   - **anon public key**
-5. حطهم في مسار بطريقة من دول:
-   - **للكل (الأفضل):** في `masar.html` دور على `MASAR_CLOUD_CONFIG` وحط القيم:
-     ```js
-     window.MASAR_CLOUD_CONFIG=window.MASAR_CLOUD_CONFIG||{url:'https://abcd1234.supabase.co',key:'eyJhbGciOi...'};
-     ```
-   - **للتجربة على جهازك بس:** Home › زرار Masar Cloud تحت › Set up، واكتب الـ URL والـ key.
-
-مفتاح الـ anon ده معمول عشان يتحط في البرنامج نفسه. الحماية جاية من قواعد Row Level Security اللي في ملف الـ SQL:
-كل عميل يشوف ملفاته ومشاريعه بس، والملفات اللي اتشاركت مع إيميله (للقراءة بس). **متحطش أبداً مفتاح `service_role` في مسار.**
-
-## اللي العميل يقدر يعمله
-
-- Home › Masar Cloud: إنشاء حساب / تسجيل دخول / نسيت الباسورد / تسجيل خروج.
-- File › **Save to Masar Cloud…** (اسم + مشروع)، وبعدها **Ctrl+S** يحدّث نفس الملف على السحابة.
-- Home › Your files: ملفات السحابة + ملفات الجهاز. زرار **Share** يشارك الملف مع أي إيميل.
-- Home › Shared with you: الملفات اللي اتشاركت معاه، ويقدر يفتحها ويحفظ نسخة لنفسه (الأصل ميتعدلش غير من صاحبه).
-- Home › Projects: مشاريع على السحابة.
-- Home › Deleted: الملفات اللي اتمسحت، مع Restore أو Delete نهائي.
-
-## حدود لازم تعرفها
-
-- الملف بيتحفظ كنص JSON جوه قاعدة البيانات، والصور المدموجة بتكبّره. الملفات الضخمة جداً ممكن السيرفر يرفضها، ومسار هيعرض رسالة الخطأ.
-- المساحة وعدد المستخدمين حسب خطة Supabase اللي تختارها.
-
-## الاختبار
-
-- `tests/cloud.js` بيشغّل مسار على سيرفر تجريبي محلي (`tests/cloudmock.js`) بيقلد Supabase: حساب، حفظ، Ctrl+S، مشاركة، Shared with you، Deleted، مشاريع، تجديد الجلسة، خروج.
-- قواعد الأمان في `supabase/migrations` اتجربت على Postgres حقيقي (PGlite): العميل التاني ميقدرش يشوف أو يعدل أو يمسح أو يشارك ملفات غيره.
+The full Arabic setup guide (server, payments, emails, website, admin) is in [../SETUP.md](../SETUP.md).
+Database: `supabase/migrations/` · Server functions: `supabase/functions/` · Settings: `masar-config.js`.

@@ -1,0 +1,17 @@
+# Runs Masar's checks on every push and pull request, so a change that breaks something is caught before it goes live.
+name: Masar tests
+on:
+  push:
+  pull_request:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm i --no-save playwright@1.49.1 @electric-sql/pglite@0.3.14 aws4@1.13.2
+      - run: npx playwright install --with-deps chromium
+      - run: bash tests/ci.sh

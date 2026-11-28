@@ -1,0 +1,13 @@
+# Once a day: emails customers whose subscription or free trial ends soon.
+# Needs: variable SUPABASE_URL, secret CRON_SECRET (the same value as the CRON_SECRET function secret in Supabase).
+name: Masar daily reminders
+on:
+  schedule:
+    - cron: '23 7 * * *'
+  workflow_dispatch:
+jobs:
+  remind:
+    if: ${{ vars.SUPABASE_URL != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS -X POST "${{ vars.SUPABASE_URL }}/functions/v1/reminders" -H "x-cron-secret: ${{ secrets.CRON_SECRET }}"

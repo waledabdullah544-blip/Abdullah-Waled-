@@ -39,7 +39,10 @@ await pa.evaluate(()=>HOME.open('projects'));await pa.waitForTimeout(300);await 
 ok('New cloud project',srv.T.projects.length===1&&srv.T.projects[0].name==='Client A');
 // session expiry -> refresh token
 await pa.evaluate(()=>{const s=JSON.parse(localStorage.getItem('masar.cloud.session'));s.exp=0;localStorage.setItem('masar.cloud.session',JSON.stringify(s))});await pa.waitForTimeout(1500);await pa.reload();await pa.waitForTimeout(600);
+await pa.waitForFunction(()=>window.MCLOUD&&MCLOUD.signedIn(),null,{timeout:3000}).catch(()=>{});
+const nRef0=srv.log.filter(l=>/refresh_token/.test(l)).length;
 ok('the session survives a reload and refreshes itself',await pa.evaluate(async()=>{const L=await MCLOUD.api.mine();return MCLOUD.signedIn()&&L.length===1}));
+ok('only one renewal request even when several calls need a token',srv.log.filter(l=>/refresh_token/.test(l)).length-nRef0<=1);
 await pa.evaluate(()=>MCLOUD.api.signOut());ok('Sign out',await pa.evaluate(()=>!MCLOUD.signedIn()));
 const wrong=await pa.evaluate(async()=>{try{await MCLOUD.api.signIn('ali@example.com','nope1234');return'no error'}catch(e){return e.message}});ok('a wrong password shows the server message',/Invalid login/.test(wrong),wrong);
 console.log('errs',A.errs,B.errs);console.log(bad?'FAILED '+bad:'ALL OK');await A.b.close();await B.b.close();srv.close()})();
