@@ -676,3 +676,11 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - The red pointer marks on the rulers follow the pointer only over the canvas; they hide over the toolbar, its flyouts and the panels (they were drawn on top of them).
 - Properties › Stroke / Opacity / Appearance (the underlined words) open that panel in a small window next to the Properties panel (Illustrator); a click outside or Esc closes it, and the panel goes back to its place in the dock.
 - Tests: tests/stpop.js, tests/rulermark.js.
+
+## build 286 — New Document like Illustrator (2)
+- Title bar "New Document" (drag it to move the window); tabs Recent, Saved, Mobile, Web, Print, Branding, Social, Art & Illustration, Film & Video, Free Templates; the tab row scrolls sideways (wheel or drag) when the window is narrow.
+- Branding (Square Logo 160 x 160, Wide Logo, Business Card, Letterheads, Envelope DL, Email Signature, Favicon) and Social (Instagram post / portrait / story, Facebook post / cover, X, LinkedIn, YouTube thumbnail / banner, Pinterest, TikTok, Ads half page / medium rectangle / leaderboard) sizes.
+- Free Templates tab: Masar's templates (from the server when connected) with previews and search ("Search Masar templates" at the bottom); Create opens the template.
+- Preset Details: Bleed top / bottom / left / right with up/down steppers and a link button; Background Contents (Transparent, White, Custom Color); Advanced Options: Color Mode, Raster Effects (72 / 150 / 300 ppi).
+- The document keeps them (DOCMETA, saved in .masar): the bleed is a red line around each artboard, a custom background colours the artboards, PNG export starts with the document's resolution and background. Document Setup edits the bleed.
+- Test: tests/ndoc.js (17 checks); tests/home.js updated.

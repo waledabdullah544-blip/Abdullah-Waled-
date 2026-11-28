@@ -38,7 +38,7 @@ await pg.click('#home .hlc[data-tool=p]');ok('Learn card picks the tool',await p
 // New Document dialog
 await pg.click('#mbhome');await pg.click('#home .hs [data-a=new]');await pg.waitForTimeout(150);
 ok('New file opens the New Document dialog',await pg.evaluate(()=>!!document.getElementById('ndd')&&!HOME.isOpen()));
-ok('tabs: Recent, Saved, Mobile, Web, Print, Film & Video, Art & Illustration',await pg.evaluate(()=>[...document.querySelectorAll('#ndd .ndt [data-tab]')].map(b=>b.textContent).join('|')==='Recent|Saved|Mobile|Web|Print|Film & Video|Art & Illustration'));
+ok('tabs like Illustrator',await pg.evaluate(()=>[...document.querySelectorAll('#ndd .ndt [data-tab]')].map(b=>b.textContent).join('|')==='Recent|Saved|Mobile|Web|Print|Branding|Social|Art & Illustration|Film & Video|Free Templates'));
 await pg.screenshot({path:'/tmp/mdl/newdoc.png'});
 await pg.click('#ndd [data-tab=print]');await pg.click('#ndd .ndc[title="A4"]');ok('A4 fills the details (595.28 x 841.89 pt)',await pg.evaluate(()=>document.getElementById('ndw').value==='595'||document.getElementById('ndw').value==='595.28'),await pg.evaluate(()=>document.getElementById('ndw').value));
 await pg.selectOption('#ndu','mm');ok('units switch to mm shows 210',await pg.evaluate(()=>Math.abs(+document.getElementById('ndw').value-210)<0.05),await pg.evaluate(()=>document.getElementById('ndw').value));
