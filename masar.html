@@ -497,7 +497,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 271</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 272</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -11690,7 +11690,25 @@ const setM=(o,M)=>{host(o).setAttribute('data-mesh',JSON.stringify(M));render(o)
 const at=(M,i,j)=>M.P[i*(M.c+1)+j];
 /* smooth surface through the grid points: Catmull-Rom in both directions (positions and colours) */
 const cr=(a,b,c,d,t)=>{const t2=t*t,t3=t2*t;return .5*(2*b+(-a+c)*t+(2*a-5*b+4*c-d)*t2+(-a+3*b-3*c+d)*t3)};
-function sample(M,u,v){/* u in [0,c], v in [0,r] */const i=Math.min(M.r-1,Math.floor(v)),j=Math.min(M.c-1,Math.floor(u)),tv=v-i,tu=u-j,out=[0,0,0,0,0];
+/* build 272: meshes made on a shape follow its outline: grid positions = Coons patch of the outline's 4 sides + the user's offsets */
+function sides(o){const e=o.g.querySelector(':scope > path[data-mesh]');const S=getSP(e);if(!S||!S[0])return null;const P=[];
+  spSegs({m:{sx:1,sy:1,tx:0,ty:0}},S[0]).forEach(g=>{const m=g.cv?32:4;for(let j=0;j<m;j++)P.push(bzP(g.c,j/m))});if(P.length<8)return null;
+  let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;P.forEach(q=>{x0=Math.min(x0,q[0]);y0=Math.min(y0,q[1]);x1=Math.max(x1,q[0]);y1=Math.max(y1,q[1])});
+  const near=(cx,cy)=>{let b=0,bd=1e18;P.forEach((q,i)=>{const d=(q[0]-cx)**2+(q[1]-cy)**2;if(d<bd){bd=d;b=i}});return b};
+  const tl=near(x0,y0),tr=near(x1,y0),br=near(x1,y1),bl=near(x0,y1),n=P.length;
+  const seg=(a,b)=>{const out=[];for(let i=a;;i=(i+1)%n){out.push(P[i]);if(i===b)break;if(out.length>n)break}return out};
+  /* outline direction: clockwise on screen goes tl -> tr -> br -> bl */
+  const cw=((tr-tl+n)%n)<((tl-tr+n)%n);const T=cw?seg(tl,tr):seg(tr,tl).reverse(),R=cw?seg(tr,br):seg(br,tr).reverse(),Bm=cw?seg(bl,br).length>1?seg(br,bl).reverse():seg(bl,br):seg(bl,br),L=cw?seg(bl,tl).reverse():seg(tl,bl);
+  const rs=A=>{/* resample to 33 points by arc length */const C=[0];for(let i=1;i<A.length;i++)C.push(C[i-1]+Math.hypot(A[i][0]-A[i-1][0],A[i][1]-A[i-1][1]));const Lt=C[C.length-1]||1,o=[];let k=1;
+    for(let s=0;s<=32;s++){const d=Lt*s/32;while(k<C.length-1&&C[k]<d)k++;const t=(d-C[k-1])/((C[k]-C[k-1])||1),a=A[k-1],b=A[Math.min(k,A.length-1)];o.push([+(a[0]+(b[0]-a[0])*t).toFixed(3),+(a[1]+(b[1]-a[1])*t).toFixed(3)])}return o};
+  return{t:rs(T),r:rs(R),b:rs(Bm),l:rs(L)}}
+const ev=(A,u)=>{const x=Math.max(0,Math.min(1,u))*32,i=Math.min(31,Math.floor(x)),f=x-i;return[A[i][0]+(A[i+1][0]-A[i][0])*f,A[i][1]+(A[i+1][1]-A[i][1])*f]};
+function coons(B,u,v){const T=ev(B.t,u),Bm=ev(B.b,u),L=ev(B.l,v),R=ev(B.r,v),T0=B.t[0],T1=B.t[32],B0=B.b[0],B1=B.b[32];
+  return[0,1].map(k=>(1-v)*T[k]+v*Bm[k]+(1-u)*L[k]+u*R[k]-((1-u)*(1-v)*T0[k]+u*(1-v)*T1[k]+(1-u)*v*B0[k]+u*v*B1[k]))}
+const Uof=(M,u)=>{const j=Math.max(0,Math.min(M.c-1,Math.floor(u))),f=u-j;return M.U[j]+(M.U[j+1]-M.U[j])*f},Vof=(M,v)=>{const i=Math.max(0,Math.min(M.r-1,Math.floor(v))),f=v-i;return M.V[i]+(M.V[i+1]-M.V[i])*f};
+const offs=M=>{if(M.__o)return M.__o.v;const v=[];for(let i=0;i<=M.r;i++)for(let j=0;j<=M.c;j++){const q=at(M,i,j),b=coons(M.B,M.U[j],M.V[i]);v.push([q[0]-b[0],q[1]-b[1]])}Object.defineProperty(M,'__o',{value:{v},enumerable:false,configurable:true,writable:true});return v};
+function sample(M,u,v){if(M.B&&M.U&&M.V){const base=sampleRaw(M,u,v),O=offs(M),row=k=>Math.max(0,Math.min(M.r,k)),col=k=>Math.max(0,Math.min(M.c,k)),i=Math.min(M.r-1,Math.floor(v)),j=Math.min(M.c-1,Math.floor(u)),tv=v-i,tu=u-j,ov=[0,1].map(q=>{const R=[-1,0,1,2].map(di=>cr(O[row(i+di)*(M.c+1)+col(j-1)][q],O[row(i+di)*(M.c+1)+col(j)][q],O[row(i+di)*(M.c+1)+col(j+1)][q],O[row(i+di)*(M.c+1)+col(j+2)][q],tu));return cr(R[0],R[1],R[2],R[3],tv)}),b=coons(M.B,Uof(M,u),Vof(M,v));base[0]=b[0]+ov[0];base[1]=b[1]+ov[1];return base}return sampleRaw(M,u,v)}
+function sampleRaw(M,u,v){/* u in [0,c], v in [0,r] */const i=Math.min(M.r-1,Math.floor(v)),j=Math.min(M.c-1,Math.floor(u)),tv=v-i,tu=u-j,out=[0,0,0,0,0];
   const row=k=>Math.max(0,Math.min(M.r,k)),col=k=>Math.max(0,Math.min(M.c,k));
   const val=(ii,jj,q)=>{const p=at(M,row(ii),col(jj));return q<2?p[q]:hx(p[2])[q-2]};
   for(let q=0;q<5;q++){const R=[-1,0,1,2].map(di=>cr(val(i+di,j-1,q),val(i+di,j,q),val(i+di,j+1,q),val(i+di,j+2,q),tu));out[q]=cr(R[0],R[1],R[2],R[3],tv)}return out}
@@ -11708,7 +11726,9 @@ function render(o){const e=host(o);if(!e)return;const M=getM(o);if(!M)return;let
   e.setAttribute('fill','none');if(!e.getAttribute('stroke'))e.setAttribute('stroke','none')}
 /* a plain filled shape becomes a 1x1 mesh with its fill at the four corners */
 function makeMesh(o){if(host(o))return true;if(isText(o)||isGroup(o))return false;ensurePath(o);const E=eps(o);if(E.length!==1)return false;const e=E[0],b=e.getBBox();let f=e.getAttribute('fill');if(!f||f==='none'||/^url/.test(f))f='#ffffff';
-  e.setAttribute('data-mesh',JSON.stringify({r:1,c:1,P:[[b.x,b.y,hexOf(f)],[b.x+b.width,b.y,hexOf(f)],[b.x,b.y+b.height,hexOf(f)],[b.x+b.width,b.y+b.height,hexOf(f)]]}));e.setAttribute('data-meshfill',f);render(o);return true}
+  let M0={r:1,c:1,P:[[b.x,b.y,hexOf(f)],[b.x+b.width,b.y,hexOf(f)],[b.x,b.y+b.height,hexOf(f)],[b.x+b.width,b.y+b.height,hexOf(f)]]};e.setAttribute('data-mesh',JSON.stringify(M0));
+  try{const B=sides(o);if(B){M0.B=B;M0.U=[0,1];M0.V=[0,1];M0.P=[[0,0],[1,0],[0,1],[1,1]].map((uv,k)=>{const q=coons(B,uv[0],uv[1]);return[q[0],q[1],M0.P[k][2]]});e.setAttribute('data-mesh',JSON.stringify(M0))}}catch(_){}
+  e.setAttribute('data-meshfill',f);render(o);return true}
 /* where is a point in the grid: inverse of the bilinear cell (Newton), returns {i,j,u,v} */
 function locate(M,p){for(let i=0;i<M.r;i++)for(let j=0;j<M.c;j++){const A=at(M,i,j),B=at(M,i,j+1),C=at(M,i+1,j+1),D=at(M,i+1,j);let u=.5,v=.5;
     for(let k=0;k<20;k++){const X=(1-u)*(1-v)*A[0]+u*(1-v)*B[0]+u*v*C[0]+(1-u)*v*D[0]-p[0],Y=(1-u)*(1-v)*A[1]+u*(1-v)*B[1]+u*v*C[1]+(1-u)*v*D[1]-p[1];
@@ -11718,10 +11738,14 @@ function addLines(M,L,col){/* a new column at u inside column j and a new row at
   const lerpP=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,toHex(hx(a[2]).map((v,k)=>v+(hx(b[2])[k]-v)*t))];
   const N={r:M.r,c:M.c+1,P:[]};for(let i=0;i<=M.r;i++)for(let j=0;j<=M.c;j++){N.P.push(at(M,i,j));if(j===L.j)N.P.push(lerpP(at(M,i,j),at(M,i,j+1),L.u))}
   const R={r:N.r+1,c:N.c,P:[]};for(let i=0;i<=N.r;i++){for(let j=0;j<=N.c;j++)R.P.push(N.P[i*(N.c+1)+j]);if(i===L.i)for(let j=0;j<=N.c;j++)R.P.push(lerpP(N.P[i*(N.c+1)+j],N.P[(i+1)*(N.c+1)+j],L.v))}
+  if(M.B&&M.U&&M.V){R.B=M.B;R.U=[...M.U.slice(0,L.j+1),M.U[L.j]+(M.U[L.j+1]-M.U[L.j])*L.u,...M.U.slice(L.j+1)];R.V=[...M.V.slice(0,L.i+1),M.V[L.i]+(M.V[L.i+1]-M.V[L.i])*L.v,...M.V.slice(L.i+1)];
+    /* the new row / column sit on the patch (plus the neighbours' offsets) instead of on straight lines */const O=offs(M);for(let i=0;i<=R.r;i++)for(let j=0;j<=R.c;j++){const isNew=j===L.j+1||i===L.i+1;if(!isNew)continue;const q=R.P[i*(R.c+1)+j],b=coons(R.B,R.U[j],R.V[i]);
+      const oi=Math.min(M.r,i>L.i+1?i-1:i),oj=Math.min(M.c,j>L.j+1?j-1:j),oo=O[Math.min(M.r,oi)*(M.c+1)+Math.min(M.c,oj)]||[0,0];R.P[i*(R.c+1)+j]=[b[0]+oo[0]*.5,b[1]+oo[1]*.5,q[2]]}}
   const k=(L.i+1)*(R.c+1)+(L.j+1);if(col)R.P[k]=[R.P[k][0],R.P[k][1],hexOf(col)];return{M:R,k}}
 function delLines(M,k){const i=Math.floor(k/(M.c+1)),j=k%(M.c+1);let N=M;
-  if(j>0&&j<M.c){const P=[];for(let a=0;a<=N.r;a++)for(let b=0;b<=N.c;b++)if(b!==j)P.push(N.P[a*(N.c+1)+b]);N={r:N.r,c:N.c-1,P}}
-  if(i>0&&i<M.r){const P=[];for(let a=0;a<=N.r;a++)if(a!==i)for(let b=0;b<=N.c;b++)P.push(N.P[a*(N.c+1)+b]);N={r:N.r-1,c:N.c,P}}return N}
+  const X=q=>q.B?{B:q.B,U:q.U,V:q.V}:{};
+  if(j>0&&j<M.c){const P=[];for(let a=0;a<=N.r;a++)for(let b=0;b<=N.c;b++)if(b!==j)P.push(N.P[a*(N.c+1)+b]);N={r:N.r,c:N.c-1,P,...X(M)};if(N.U)N.U=N.U.filter((_,q)=>q!==j)}
+  if(i>0&&i<M.r){const P=[];for(let a=0;a<=N.r;a++)if(a!==i)for(let b=0;b<=N.c;b++)P.push(N.P[a*(N.c+1)+b]);N={r:N.r-1,c:N.c,P,...X(N.B?N:M)};if(N.V)N.V=N.V.filter((_,q)=>q!==i)}return N}
 let MS=null;/* {o,k} selected mesh point */
 const toL=(o,p)=>[(p.x-o.m.tx)/o.m.sx,(p.y-o.m.ty)/o.m.sy];
 const nearPt=(o,M,p)=>{const L=toL(o,p),tol=7/z/Math.abs(o.m.sx);let best=-1,bd=1e9;M.P.forEach((q,k)=>{const d=Math.hypot(q[0]-L[0],q[1]-L[1]);if(d<bd){bd=d;best=k}});return bd<=tol?best:-1};
@@ -11749,8 +11773,8 @@ tlDrag('mesh',{down:(p,e)=>{const hitG=document.elementFromPoint(e.clientX,e.cli
 /* Object > Create Gradient Mesh… (rows x columns) and Expand back to a plain fill */
 function createDlg(){const o=[...sel][0];if(!o)return;dkModal('Create Gradient Mesh','<label>Rows<input type="number" data-k="r" value="4" min="1" max="50"></label><label>Columns<input type="number" data-k="c" value="4" min="1" max="50"></label><label>Appearance<select data-k="a"><option value="flat">Flat</option><option value="center">To Center</option><option value="edge">To Edge</option></select></label><label>Highlight<input type="number" data-k="h" value="100" min="0" max="100"> %</label>',
   [{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{const R=Math.max(1,+b.querySelector('[data-k=r]').value|0),C=Math.max(1,+b.querySelector('[data-k=c]').value|0),ap=b.querySelector('[data-k=a]').value,hl=(+b.querySelector('[data-k=h]').value||0)/100;
-    if(!makeMesh(o))return;const e=host(o),bb=e.getBBox(),base=hx(getM(o).P[0][2]),P=[];for(let i=0;i<=R;i++)for(let j=0;j<=C;j++){const u=j/C,v=i/R,dc=Math.min(1,Math.hypot(u-.5,v-.5)/.7072);let k=ap==='center'?(1-dc)*hl:ap==='edge'?dc*hl:0;P.push([bb.x+bb.width*u,bb.y+bb.height*v,toHex(base.map(c=>c+(255-c)*k))])}
-    setM(o,{r:R,c:C,P});touch(o);commit();draw()}}])}
+    if(!makeMesh(o))return;const e=host(o),bb=e.getBBox(),base=hx(getM(o).P[0][2]),P=[];for(let i=0;i<=R;i++)for(let j=0;j<=C;j++){const u=j/C,v=i/R,dc=Math.min(1,Math.hypot(u-.5,v-.5)/.7072);let k=ap==='center'?(1-dc)*hl:ap==='edge'?dc*hl:0;const B0=getM(o).B,q=B0?coons(B0,u,v):[bb.x+bb.width*u,bb.y+bb.height*v];P.push([q[0],q[1],toHex(base.map(c=>c+(255-c)*k))])}
+    {const B0=getM(o).B;setM(o,B0?{r:R,c:C,P,B:B0,U:Array.from({length:C+1},(_,j)=>j/C),V:Array.from({length:R+1},(_,i)=>i/R)}:{r:R,c:C,P})}touch(o);commit();draw()}}])}
 function expand(){[...sel].forEach(o=>{const e=host(o);if(!e)return;e.setAttribute('fill',e.getAttribute('data-meshfill')||'#ffffff');e.removeAttribute('data-mesh');e.removeAttribute('data-meshfill');o.g.querySelectorAll(':scope > image[data-meshimg], :scope > defs').forEach(x=>x.remove());touch(o)});commit();draw()}
 if(window.MENUS){const objM=MENUS.find(m=>m[0]==='Object');if(objM){const g=objM[1];objM[1]=()=>{const it=g();const i=it.findIndex(x=>x&&x.t==='Graph');it.splice(i>=0?i+1:it.length,0,{t:'Create Gradient Mesh…',__p:'Object>Create Gradient Mesh',f:createDlg,en:()=>sel.size===1},{t:'Release Gradient Mesh',__p:'Object>Release Gradient Mesh',f:expand,en:()=>[...sel].some(o=>host(o))});return it}}}
 window.MESH={getM,setM,makeMesh,locate,addLines,delLines,render,createDlg,expand,sel:()=>MS};

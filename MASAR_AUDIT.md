@@ -570,3 +570,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 271: Art / Scatter / Pattern Brushes
 - New Brush بقى فيه 5 أنواع: Calligraphic، Tapered، Art، Scatter، Pattern. الـ 3 الجداد بياخدوا الرسمة المتحددة (بألوانها) وبيبقوا فرشة: Art بيشدّها على طول الخط، Scatter بيرش نسخ منها (Spacing، Size/Scatter/Rotation variation)، Pattern بيكررها بلاطات ماشية مع الانحناء. Width % للعرض، معاينة حية، "Use the selected artwork" لتغيير الرسمة، والـ Paintbrush بيرسم بيهم. المسار نفسه بيفضل قابل للتعديل وبيتعاد رسم الفرشة عليه. (tests/artbrush.js)
+
+## build 272: شبكة الـ Mesh بتمشي مع شكل الحاجة
+- الشبكة بتتبني من حدود الشكل نفسه (Coons patch من 4 جوانب الحدود) زي Create Gradient Mesh في اليستريتور: على الدايرة الشبكة بتبقى كروية، وعلى أي شكل بتلزق في حوافه، والألوان بتغطي الشكل كله. سحب النقط بيتحسب كإزاحة فوق الشبكة دي، والخطوط الجديدة بتنزل على الشكل. الـ Mesh القديمة (من غير حدود) بتفضل شغالة زي ما هي.
