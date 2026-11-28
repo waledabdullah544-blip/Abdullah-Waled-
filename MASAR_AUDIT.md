@@ -518,3 +518,4 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 ## build 260: #16 تحريك الواجهة (الجزء 1)
 - اتفحص بالماوس: اللوحات (سحب التاب لبرّه = لوحة عايمة، رجوعها تاب في مجموعة أو تركيبها يمين/شمال، تغيير الحجم، الطي لأيقونات)، شريط الأدوات (يتشال ويتحرك ويرجع يتركّب يمين أو شمال، عمود أو عمودين)، شريط التحكم (فوق/تحت) — كلهم كانوا شغالين.
 - الجديد: كل نوافذ الحوار (Offset Path، Swatch Options، Layer Options، Color Picker، Graphic Style/Symbol/Brush Options…) بتتسحب من عنوانها، وكل نافذة بتفتكر مكانها وتفتح فيه تاني زي اليستريتور. شريط الـ Free Transform الصغير ليه مقبض يتسحب منه ويفتكر مكانه، ونافذة لون نقطة الـ Gradient بتتسحب. Window > Workspace > Reset Essentials بيرجّع كل ده لمكانه الأصلي. (tests/movable.js)
+- Workspaces: مكان شريط الأدوات (عايم/مركّب، عمود/عمودين، يمين/شمال) بقى جزء من الـ Workspace. New Workspace بيحفظه، والرجوع لـ Essentials بيرجّع الأدوات مركّبة شمال؛ قبل كده كانت الأدوات بتفضل مكانها. (tests/wscycle.js)

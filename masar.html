@@ -8373,10 +8373,11 @@ let WSCUR='Essentials';try{WSCUR=localStorage.getItem('masar-ws')||'Essentials'}
 const wsCustom=()=>{try{return JSON.parse(localStorage.getItem('masar-wsx')||'{}')||{}}catch(_){return{}}};
 window.WSP=WSP;
 window.wsApply=name=>{const j=WSP[name]||wsCustom()[name];if(!j)return false;DK.reset();document.body.classList.remove('hp-all','hp-sub');DK.restore(JSON.parse(JSON.stringify(j)));WSCUR=name;
+  /* build 260: the toolbar is part of the workspace (presets: docked, two columns) */try{const t=j.tb||{cols:2,float:null};TB.cols=t.cols===1?1:2;TB.float=t.float?{...t.float}:null;if(t.side==='R')TB.side='R';else delete TB.side;applyTB()}catch(_){}
   try{localStorage.setItem('masar-ws',name)}catch(_){}DK.save();dispatchEvent(new Event('resize'));tb5Msg('Workspace: '+name);return true};
 window.wsCurrent=()=>WSCUR;
 window.wsNew=()=>{dkModal('New Workspace','<label>Name:<input type="text" id="wsn" value="My Workspace"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{const n=box.querySelector('#wsn').value.trim();if(!n||WSP[n])return false;
-  const x=wsCustom();x[n]=JSON.parse(JSON.stringify(DK.serialize()));try{localStorage.setItem('masar-wsx',JSON.stringify(x));localStorage.setItem('masar-ws',n)}catch(_){}WSCUR=n}}])};
+  const x=wsCustom();x[n]=JSON.parse(JSON.stringify(DK.serialize()));try{x[n].tb=JSON.parse(JSON.stringify(TB))}catch(_){}try{localStorage.setItem('masar-wsx',JSON.stringify(x));localStorage.setItem('masar-ws',n)}catch(_){}WSCUR=n}}])};
 window.wsManage=()=>{const draw=()=>{const cu=Object.keys(wsCustom());return cu.length?cu.map(n=>'<label class="wsm"><input type="radio" name="wsr" value="'+n.replace(/"/g,'&quot;')+'"> '+n.replace(/</g,'&lt;')+'</label>').join(''):'<span style="color:var(--mute)">No custom workspaces. Arrange the panels and choose Window > Workspace > New Workspace.</span>'};
   const m=dkModal('Manage Workspaces','<div id="wsml" style="min-width:260px;max-height:220px;overflow:auto">'+draw()+'</div><label>Name:<input type="text" id="wsmn"></label>',[
     {t:'Rename',f:box=>{const r=box.querySelector('input[name=wsr]:checked'),nn=box.querySelector('#wsmn').value.trim();if(!r||!nn||WSP[nn]||wsCustom()[nn])return false;const x=wsCustom();x[nn]=x[r.value];delete x[r.value];try{localStorage.setItem('masar-wsx',JSON.stringify(x));if(WSCUR===r.value){WSCUR=nn;localStorage.setItem('masar-ws',nn)}}catch(_){}box.querySelector('#wsml').innerHTML=draw();box.querySelector('#wsmn').value='';return false}},
