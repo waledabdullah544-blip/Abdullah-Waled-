@@ -1,0 +1,16 @@
+# Supabase CLI settings for Masar (used by the GitHub Action that deploys the database and the functions).
+project_id = "masar"
+
+# These are called by Paymob, by Supabase Auth and by the daily schedule, not by a signed-in customer:
+# they check their own signature / secret instead of a customer token.
+[functions.paymob-webhook]
+verify_jwt = false
+
+[functions.send-email]
+verify_jwt = false
+
+[functions.reminders]
+verify_jwt = false
+
+[functions.paymob-checkout]
+verify_jwt = true
