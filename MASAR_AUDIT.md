@@ -456,3 +456,7 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 ## build 245
 - Align: لما يكون في شكل واحد متحدد، الـ Align بيرصه على الـ Artboard تلقائيًا زي اليستريتور (كانت الزراير مطفية/رمادي). شكلين أو أكتر بيترصوا على بعض زي الأول.
 - Properties: كلمة Stroke بتفتح لوحة الـ Stroke، وOpacity بتفتح الـ Transparency، وAppearance بتفتح الـ Appearance، وFill بتفتح الـ Swatches (الكلمات عليها خط تحتها). (tests/propal.js)
+
+## build 246
+- Free Transform: الشريط الصغير بتاع اليستريتور بيظهر مع الأداة: Constrain / Free Transform / Perspective Distort / Free Distort، والتشويه والمنظور بقوا يشتغلوا من غير ما تمسك Ctrl+Alt+Shift (القديم لسه شغال بالأزرار). (tests/ftw.js)
+- التحديد مبقاش بيقف: لو لوحة حصل فيها خطأ وهي بتتحدث مبقتش بتوقف رسم التحديد، ولو حصل خطأ في نص سحبة الحالة بتترجع لطبيعتها.

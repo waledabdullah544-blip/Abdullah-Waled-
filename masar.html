@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 245</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 246</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10971,6 +10971,44 @@ let cS=-1,cT=0,cXY=[0,0];cv.addEventListener('pointerdown',e=>{if(tool!=='gr'||!
   if(h.i===cS&&now-cT<450&&Math.hypot(e.clientX-cXY[0],e.clientY-cXY[1])<5){cS=-1;gsi=h.i;const x=e.clientX,y=e.clientY;setTimeout(()=>open(x,y),0);return}cS=h.i;cT=now;cXY=[e.clientX,e.clientY]},true);
 cv.addEventListener('dblclick',e=>{if(tool==='gr'&&P.style.display==='block'){e.stopImmediatePropagation()}},true);
 window.gradStopPop=open;
+})();
+
+
+/* ======================= build 246: Free Transform widget (Illustrator) ======================= */
+(()=>{/* Constrain · Free Transform · Perspective Distort · Free Distort - no modifier keys needed */
+const ic=d=>'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round">'+d+'</svg>';
+const W=document.createElement('div');W.id='ftw';W.setAttribute('role','toolbar');W.setAttribute('aria-label','Free Transform');
+W.innerHTML='<button data-k="c" title="Constrain (keep proportions)">'+ic('<path d="M9 15l6-6M7.5 12.5L6 14a3 3 0 0 0 4.2 4.2l1.5-1.5M16.5 11.5L18 10a3 3 0 0 0-4.2-4.2l-1.5 1.5"/>')+'</button><i></i>'+
+ '<button data-k="ft" title="Free Transform">'+ic('<rect x="5" y="5" width="14" height="14"/><rect x="3.5" y="3.5" width="3" height="3" fill="currentColor"/><rect x="17.5" y="17.5" width="3" height="3" fill="currentColor"/>')+'</button>'+
+ '<button data-k="pd" title="Perspective Distort">'+ic('<path d="M8 5h8l4 14H4z"/><rect x="2.5" y="17.5" width="3" height="3" fill="currentColor"/>')+'</button>'+
+ '<button data-k="fd" title="Free Distort">'+ic('<path d="M5 6l13-2 2 15-15-3z"/><rect x="16.5" y="2.5" width="3" height="3" fill="currentColor"/>')+'</button>';
+const css=document.createElement('style');css.textContent='#ftw{position:fixed;z-index:60;display:none;flex-direction:column;gap:2px;padding:4px;background:var(--panel);border:1px solid #1b1b1b;border-radius:4px;box-shadow:0 3px 12px #0007}#ftw button{width:30px;height:28px;border:0;border-radius:3px;background:none;color:var(--ink);display:grid;place-items:center;cursor:default}#ftw button:hover{background:#ffffff18}#ftw button.on{background:#ffffff2e;color:#fff}#ftw i{height:1px;background:#ffffff22;margin:2px 3px}';document.head.appendChild(css);
+document.body.appendChild(W);
+const S={c:false,m:'ft'};window.FTW=S;
+const sync=()=>{W.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k==='c'?S.c:b.dataset.k===S.m));W.querySelector('[data-k=c]').disabled=S.m!=='ft';W.querySelector('[data-k=c]').style.opacity=S.m!=='ft'?.4:1};
+W.addEventListener('pointerdown',e=>e.stopPropagation());
+W.addEventListener('click',e=>{const b=e.target.closest('button');if(!b||b.disabled)return;if(b.dataset.k==='c')S.c=!S.c;else S.m=b.dataset.k;sync();
+  $('#hint').textContent={ft:'Free Transform: drag a handle to scale, outside a corner to rotate',pd:'Perspective Distort: drag a corner handle',fd:'Free Distort: drag any corner handle'}[S.m]+(S.c&&S.m==='ft'?' · Constrain on':'')});
+sync();
+const place=()=>{const on=tool==='ft'&&sel.size>0;W.style.display=on?'flex':'none';if(!on)return;const r=cv.getBoundingClientRect();W.style.left=(r.left+10)+'px';W.style.top=(r.top+10)+'px'};
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{place()}catch(_){}return r}}
+addEventListener('resize',place);
+/* the modes are applied by giving the events the modifiers Illustrator would need (Ctrl = distort, Ctrl+Alt+Shift = perspective, Shift = constrain) */
+const force=(e,k)=>{try{Object.defineProperty(e,k,{value:true,configurable:true})}catch(_){}};
+addEventListener('pointerdown',e=>{if(tool!=='ft'||!sel.size||e.button!==0||!cv.contains(e.target))return;const h=e.target&&e.target.dataset&&e.target.dataset.h;
+  if((S.m==='fd'||S.m==='pd')&&h&&FTC[h]!==undefined){force(e,'ctrlKey');force(e,'metaKey')}
+  if(S.m==='ft'&&S.c)force(e,'shiftKey')},true);
+const mv=e=>{if(tool!=='ft'||!st)return;if(st.mode==='ftd'&&(S.m==='pd'||S.m==='fd')){force(e,'ctrlKey');force(e,'metaKey');if(S.m==='pd'){force(e,'altKey');force(e,'shiftKey')}}else if(S.c&&S.m==='ft'&&st.mode!=='ftd')force(e,'shiftKey')};addEventListener('pointermove',mv,true);addEventListener('pointerup',mv,true);
+})();
+
+
+/* ======================= build 246: selection never gets stuck ======================= */
+(()=>{/* a failure in one panel refresh used to abort draw() (no handles, clicks seemed to do nothing), and an error in the middle
+   of a gesture could leave a half-finished drag state behind. Both are now contained. */
+{const _i=info;info=function(L){try{return _i.apply(this,arguments)}catch(e){console.warn('panel refresh',e)}}}
+const reset=()=>{try{if(!PDOWN&&st&&!['flare2'].includes(st.mode)){st=null;try{peng.replaceChildren()}catch(_){}cv.classList.remove('hg');try{draw()}catch(_){}}}catch(_){}};
+addEventListener('error',()=>setTimeout(reset,0));addEventListener('unhandledrejection',()=>setTimeout(reset,0));
+addEventListener('blur',()=>setTimeout(()=>{PDOWN=false;reset()},0));
 })();
 
 /*TOOLS-END*/
