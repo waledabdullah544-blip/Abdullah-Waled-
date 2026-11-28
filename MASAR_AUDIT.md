@@ -693,3 +693,8 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Shaper: a shaky straight stroke is recognised as a line (it was sometimes dropped); rectangles, ellipses and triangles were already recognised. 36/36 in the test.
 - Eraser: re-checked freehand, several passes, stroke-only shapes, groups, moved / scaled shapes, pencil / brush / blob strokes, thick strokes, zoom 0.5-3, rotated view, a single click (hole). All correct; waiting for the owner's steps.
 - Tests: tests/shaky.js, tests/shaperrec.js.
+
+## build 288 — tool cards
+- The hover card shows the first three "how to use" steps right away (drag / Alt+drag / Shift…); "More" shows the rest.
+- Every movement in the card animations eases in and out (it only did for shape changes and the pointer before; lines, erasing, pencil strokes moved at a stiff constant speed).
+- tests/tips2.js fails the same way before and after (it reads TIPS, which is not global): stale test, not a regression.
