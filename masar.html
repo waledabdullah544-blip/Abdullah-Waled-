@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 247</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 248</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -584,7 +584,9 @@ function draw(){
       if((f==null||f==='none')&&(st==null||st==='none'||sw==='0')){const c=e.cloneNode(false);['id','fill','stroke','stroke-width','filter','mask','clip-path','opacity','style','data-grad','data-grads','stroke-dasharray','marker-start','marker-end'].forEach(k=>c.removeAttribute(k));
         c.setAttribute('fill','none');c.setAttribute('stroke','#8C8C8C');c.setAttribute('stroke-width',s);c.setAttribute('pointer-events','none');
         const gt=el('g',{});const tr=o.g.getAttribute('transform');if(tr)gt.setAttribute('transform',tr);const et=e.getAttribute('transform');if(et)c.setAttribute('transform',et);gt.appendChild(c);selg.append(gt)}})}catch(_){}});
-  selg.append(el('rect',{x:u.x,y:u.y,width:u.w,height:u.h,fill:'none',stroke:'#8C8C8C','stroke-width':s,'pointer-events':'none'}));
+  /* Rotate / Scale / Reflect / Shear (Illustrator): no bounding box, the selected paths themselves are highlighted and turn with the object */
+  if(XT.includes(tool)&&!L.some(isText)){L.forEach(o=>{if(o.g.style.display!=='none')try{drawCreate(o)}catch(_){}})}
+  else selg.append(el('rect',{x:u.x,y:u.y,width:u.w,height:u.h,fill:'none',stroke:'#8C8C8C','stroke-width':s,'pointer-events':'none'}));
   drawAreaUI(L,s);
   if(!((tool==='v'||SG.includes(tool))&&L.length===1))L.forEach(o=>{if(isText(o)&&o.g.querySelector('text[data-tpov]'))tpOvMark(selg,o,s)});
   /* Magic Wand (Illustrator): every object it picked shows its own highlighted path and anchor points */
@@ -622,7 +624,7 @@ let ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:800,h:600}],ABI=0,ABN=1,ABX=0,ABY=0,ABW
 function abSync(){const a=ARTS[ABI]||ARTS[0];ABX=a.x;ABY=a.y;ABW=a.w;ABH=a.h}
 function abRender(){const g=document.getElementById('abg');if(!g)return;g.replaceChildren();const NS2='http://www.w3.org/2000/svg';
   ARTS.forEach((a,i)=>{const r=document.createElementNS(NS2,'rect');r.setAttribute('class','abr');r.setAttribute('data-i',i);r.setAttribute('x',a.x);r.setAttribute('y',a.y);r.setAttribute('width',a.w);r.setAttribute('height',a.h);r.setAttribute('fill','#fff');r.setAttribute('stroke','#000');r.setAttribute('stroke-opacity',i===ABI?'.85':'.35');r.setAttribute('vector-effect','non-scaling-stroke');g.appendChild(r);
-    const t=document.createElementNS(NS2,'text');t.setAttribute('class','abt');t.setAttribute('data-i',i);t.setAttribute('x',a.x);t.setAttribute('y',a.y-6);t.setAttribute('fill','#9a9a9a');t.setAttribute('pointer-events','none');t.textContent=(i+1)+' '+a.n;g.appendChild(t)});
+    const t=document.createElementNS(NS2,'text');t.setAttribute('class','abt');t.setAttribute('data-i',i);t.setAttribute('x',a.x);t.setAttribute('y',a.y-6);t.setAttribute('fill','#9a9a9a');t.setAttribute('pointer-events','none');t.textContent=String(i+1).padStart(2,'0')+' - '+a.n;g.appendChild(t)});
   /* Show Center Mark / Cross Hairs / Video Safe Areas (per artboard, never exported) */
   ARTS.forEach((a,i)=>{const mk=(t,at)=>{const e=document.createElementNS(NS2,t);for(const k in at)e.setAttribute(k,at[k]);e.setAttribute('class','abm');e.setAttribute('pointer-events','none');e.setAttribute('vector-effect','non-scaling-stroke');e.setAttribute('fill','none');e.setAttribute('stroke','#8a8a8a');e.setAttribute('stroke-width','1');g.appendChild(e);return e},cx=a.x+a.w/2,cy=a.y+a.h/2;
     if(a.ch){mk('line',{x1:a.x,y1:cy,x2:a.x+a.w,y2:cy});mk('line',{x1:cx,y1:a.y,x2:cx,y2:a.y+a.h})}
@@ -11012,6 +11014,17 @@ const mv=e=>{if(tool!=='ft'||!st)return;if(st.mode==='ftd'&&(S.m==='pd'||S.m==='
 const reset=()=>{try{if(!PDOWN&&st&&!['flare2'].includes(st.mode)){st=null;try{peng.replaceChildren()}catch(_){}cv.classList.remove('hg');try{draw()}catch(_){}}}catch(_){}};
 addEventListener('error',()=>setTimeout(reset,0));addEventListener('unhandledrejection',()=>setTimeout(reset,0));
 addEventListener('blur',()=>setTimeout(()=>{PDOWN=false;reset()},0));
+})();
+
+
+/* ======================= build 248: Artboard tool look (Illustrator) ======================= */
+(()=>{/* the active artboard gets a black-and-white dashed frame, its name label turns white, the others stay dimmed */
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{
+  document.querySelectorAll('#abg text.abt').forEach(t=>{const on=tool==='abt'&&+t.getAttribute('data-i')===ABI;t.setAttribute('fill',on?'#f2f2f2':'#9a9a9a');t.setAttribute('font-weight',on?'600':'400')});
+  if(tool==='abt'){const a=ARTS[ABI];if(a){const s=1/z,P={x:a.x,y:a.y,width:a.w,height:a.h,fill:'none','pointer-events':'none'};
+    selg.insertBefore(el('rect',{...P,stroke:'#fff','stroke-width':2*s,'data-abframe':'1'}),selg.firstChild);
+    selg.insertBefore(el('rect',{...P,stroke:'#111','stroke-width':1.2*s,'stroke-dasharray':(4*s)+' '+(3*s)}),selg.children[1]||null)}}
+}catch(_){}return r}}
 })();
 
 /*TOOLS-END*/
