@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 258</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 259</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8500,7 +8500,7 @@ if(!DK.restore())wsApply('Essentials');
    ['Window',()=>{const PN=(t,id,k)=>({t,k,c:()=>DK.isOpen(id),f:()=>DK.toggle(id)});return[
     {t:'Workspace',sub:()=>wsMenu()},sep,
     {t:'Control',c:()=>!document.body.classList.contains('hide-ctrl'),f:()=>document.body.classList.toggle('hide-ctrl')},{t:'Tools',c:()=>!document.body.classList.contains('hide-tools'),f:()=>document.body.classList.toggle('hide-tools')},sep,
-    ...[PN('Align','align','Shift+F7'),PN('Appearance','appearance','Shift+F6'),PN('Color','color','F6'),PN('Gradient','gradient','Ctrl+F9'),PN('Graphic Styles','gstyles','Shift+F5'),PN('Layers','layers','F7'),PN('Pathfinder','pathfinder','Shift+Ctrl+F9'),PN('Properties','props'),PN('Stroke','stroke','Ctrl+F10'),PN('Symbols','symbols','Shift+Ctrl+F11'),PN('Transform','transform','Shift+F8'),PN('Transparency','transparency','Shift+Ctrl+F10'),...(window.PANELX||[]).map(q=>PN(q.title,q.id,q.key))].sort((a,b)=>a.t.localeCompare(b.t)),
+    ...[PN('Align','align','Shift+F7'),PN('Appearance','appearance','Shift+F6'),PN('Brushes','brushes','F5'),PN('Color','color','F6'),PN('Gradient','gradient','Ctrl+F9'),PN('Graphic Styles','gstyles','Shift+F5'),PN('Layers','layers','F7'),PN('Pathfinder','pathfinder','Shift+Ctrl+F9'),PN('Properties','props'),PN('Stroke','stroke','Ctrl+F10'),PN('Symbols','symbols','Shift+Ctrl+F11'),PN('Transform','transform','Shift+F8'),PN('Transparency','transparency','Shift+Ctrl+F10'),...(window.PANELX||[]).map(q=>PN(q.title,q.id,q.key))].sort((a,b)=>a.t.localeCompare(b.t)),
     {t:'Type',sub:()=>[{t:'Character',k:'Ctrl+T',c:()=>DK.isOpen('character'),f:()=>DK.toggle('character')},{t:'Paragraph',k:'Ctrl+Alt+T',c:()=>DK.isOpen('paragraph'),f:()=>DK.toggle('paragraph')},
       {t:'Tabs',k:'Ctrl+Shift+T',c:()=>DK.isOpen('tabs'),f:()=>DK.toggle('tabs')}]},sep,
     {t:'Edit Toolbar…',f:()=>$('#tbedb').click()},sep,
@@ -11240,6 +11240,49 @@ DK.reg('symbols','Symbols','<svg width="18" height="18" viewBox="0 0 24 24" fill
 {const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(P.style.display!=='none'&&!dr)render()}catch(_){}return r}}
 addEventListener('keydown',e=>{if(e.key==='F11'&&e.shiftKey&&(e.ctrlKey||e.metaKey)&&!e.altKey){e.preventDefault();e.stopImmediatePropagation();DK.toggle?DK.toggle('symbols'):DK.open('symbols')}},true);
 window.SYMS={list:()=>SY,place,redefine,breakLink,newSymbol,instOf,select:i=>{SEL=i;render()}};
+})();
+
+
+/* ======================= build 259: Brushes panel (Window > Brushes, F5) ======================= */
+(()=>{
+const KEY='masar.brushes.v1',BUILTIN=new Set(Object.keys(BRUSHES));
+let CU=[];try{CU=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(_){CU=[]}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(CU))}catch(_){}};
+const pbs=$('#pbs');
+const syncSelect=()=>{const cur=pbs.value;[...pbs.options].forEach(o=>{if(!BUILTIN.has(o.value))o.remove()});CU.forEach(b=>{const o=document.createElement('option');o.value=b.id;o.textContent=b.n;pbs.appendChild(o)});if([...pbs.options].some(o=>o.value===cur))pbs.value=cur};
+const load=()=>{CU.forEach(b=>{BRUSHES[b.id]={n:b.n,k:b.k,d:b.d,a:b.a,r:b.r}});syncSelect()};load();
+let SEL=pbs.value||'basic';
+const P=document.createElement('div');P.id='bsp';P.className='dkpn';P.style.display='none';document.body.appendChild(P);
+{const st=document.createElement('style');st.textContent='#bsp{padding:6px 8px;font:12px "Segoe UI",Cairo,sans-serif;color:var(--ink)}#bsp .bl{display:flex;flex-direction:column;gap:2px}#bsp .bi{display:flex;align-items:center;gap:8px;height:30px;padding:0 6px;border:0;border-radius:3px;background:none;color:var(--ink);text-align:left;cursor:default;font:inherit}#bsp .bi:hover{background:#ffffff12}#bsp .bi.on{background:#ffffff22;box-shadow:inset 2px 0 #f0c374}#bsp .bi svg{flex:none;width:120px;height:24px}#bsp .bi span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}#bsp .bf{display:flex;gap:4px;justify-content:flex-end;margin-top:6px;border-top:1px solid var(--line);padding-top:6px}#bsp .bf button{height:24px;min-width:26px;border:0;background:none;color:var(--ink);border-radius:3px;cursor:default;font-size:13px}#bsp .bf button:hover{background:#ffffff18}#bsp .bf button:disabled{opacity:.35}';document.head.appendChild(st)}
+const SAMPLE=[{x:6,y:16,i:null,o:[30,2]},{x:60,y:12,i:[40,22],o:[80,2]},{x:114,y:8,i:[100,20],o:null}];
+function thumb(k){const B=BRUSHES[k];let d;if(!B||!B.k)return'<svg viewBox="0 0 120 24"><path d="M6 16C30 2 40 22 60 12S100 20 114 8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
+  try{d=spD(brOutline([{pts:SAMPLE,closed:false}],{...B,d:Math.min(B.d,9)},1))}catch(_){d=''}return'<svg viewBox="0 0 120 24"><path d="'+d+'" fill="currentColor"/></svg>'}
+function render(){if(P.style.display==='none')return;const ks=[...pbs.options].map(o=>o.value);
+  P.innerHTML='<div class="bl">'+ks.map(k=>'<button type="button" class="bi'+(k===SEL?' on':'')+'" data-k="'+k+'" title="'+esc(BRUSHES[k].n)+'">'+thumb(k)+'<span>'+esc(BRUSHES[k].n)+'</span></button>').join('')+'</div>'+
+  '<div class="bf"><button type="button" data-a="rm" title="Remove Brush Stroke">&#10005;</button><button type="button" data-a="opt" title="Options of Selected Object / Brush">&#9881;</button><button type="button" data-a="new" title="New Brush">&#65291;</button><button type="button" data-a="del" title="Delete Brush">&#128465;</button></div>';
+  P.querySelector('[data-a=del]').disabled=BUILTIN.has(SEL);P.querySelector('[data-a=opt]').disabled=!(BRUSHES[SEL]&&BRUSHES[SEL].k)}
+const applySel=k=>{let any=false;[...sel].forEach(o=>{if(brSetBrush(o,k))any=true});if(any){commit();draw()}};
+function dialog(b0,isNew){const b=b0||{n:'Calligraphic Brush '+(CU.length+1),k:'cal',d:8,a:30,r:.5};
+  const M=dkModal(isNew?'New Brush':'Brush Options','<label>Name<input type="text" data-k="n" value="'+esc(b.n)+'" style="min-width:180px"></label><label>Type<select data-k="k"><option value="cal"'+(b.k==='cal'?' selected':'')+'>Calligraphic Brush</option><option value="taper"'+(b.k==='taper'?' selected':'')+'>Tapered (Art) Brush</option></select></label><label>Size<input type="number" data-k="d" min="0.5" max="100" step="0.5" value="'+b.d+'"> px</label><label>Angle<input type="number" data-k="a" min="-180" max="180" step="1" value="'+(b.a||0)+'"> °</label><label>Roundness<input type="number" data-k="r" min="1" max="100" step="1" value="'+Math.round((b.r==null?1:b.r)*100)+'"> %</label><div id="bspv" style="background:#fff;color:#000;border-radius:3px;margin-top:6px"></div>',
+   [{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{const v=k=>box.querySelector('[data-k="'+k+'"]').value,nb={n:v('n').trim()||'Brush',k:v('k'),d:Math.max(.5,+v('d')||5),a:+v('a')||0,r:Math.max(.01,Math.min(1,(+v('r')||100)/100))};
+     if(isNew){nb.id='cb'+Date.now().toString(36);CU.push(nb);SEL=nb.id}else{const c=CU.find(x=>x.id===SEL);Object.assign(c,nb)}save();load();
+     /* every path that uses the brush is redrawn with the new settings */objs.forEach(o=>{const c=o.g.querySelector('path[data-bc="'+SEL+'"]');if(c)brRender(o)});commit();draw();render()}}]);
+  const pv=()=>{const v=k=>M.box.querySelector('[data-k="'+k+'"]').value,B={k:v('k'),d:Math.min(+v('d')||5,12),a:+v('a')||0,r:Math.max(.01,(+v('r')||100)/100)};let d='';try{d=spD(brOutline([{pts:SAMPLE,closed:false}],B,1))}catch(_){}M.box.querySelector('#bspv').innerHTML='<svg viewBox="0 0 120 24" style="width:100%;height:40px"><path d="'+d+'" fill="#000"/></svg>'};
+  M.box.addEventListener('input',pv);pv()}
+P.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.k){SEL=b.dataset.k;pbs.value=SEL;applySel(SEL);render();return}
+  const a=b.dataset.a;if(a==='rm'){applySel('basic');return}if(a==='new'){dialog(null,true);return}
+  if(a==='opt'){if(BUILTIN.has(SEL)){dialog({...BRUSHES[SEL],n:BRUSHES[SEL].n+' copy'},true)}else dialog(CU.find(x=>x.id===SEL),false);return}
+  if(a==='del'&&!BUILTIN.has(SEL)){const used=objs.filter(o=>o.g.querySelector('path[data-bc="'+SEL+'"]'));dkModal('Delete Brush',used.length?'The brush is used by '+used.length+' object(s). Remove the brush strokes and delete it?':'Delete the brush "'+esc(BRUSHES[SEL].n)+'"?',[{t:'No',c:1},{t:'Yes',p:1,f:()=>{const k0=sel;sel=new Set(used);applySel('basic');sel=k0;CU=CU.filter(x=>x.id!==SEL);delete BRUSHES[SEL];save();syncSelect();SEL='basic';pbs.value='basic';render()}}])}});
+/* the list is rebuilt on every click, so the browser never sends dblclick: two presses on the same brush = double-click */
+let lk=null,lt=0;P.addEventListener('pointerdown',e=>{const b=e.target.closest('.bi');if(!b||e.button!==0)return;const k=b.dataset.k,now=Date.now();if(k===lk&&now-lt<450){lk=null;e.preventDefault();setTimeout(()=>{SEL=k;if(BUILTIN.has(k))dialog({...BRUSHES[k],n:BRUSHES[k].n+' copy'},true);else dialog(CU.find(x=>x.id===k),false)},0);return}lk=k;lt=now},true);
+pbs.addEventListener('change',()=>{SEL=pbs.value;render()});
+DK.reg('brushes','Brushes','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 20c3 0 5-1 5-4 0-1.7 1.3-3 3-3s3 1.3 3 3"/><path d="M12 13L20 4"/></svg>',P,
+  {dw:260,open:()=>{P.style.display='block';render()},close:()=>{P.style.display='none'},refresh:render,
+   menu:()=>[{t:'New Brush…',f:()=>dialog(null,true)},{t:'Duplicate Brush',f:()=>dialog({...BRUSHES[SEL],n:BRUSHES[SEL].n+' copy'},true),en:!!(BRUSHES[SEL]&&BRUSHES[SEL].k)},{t:'Delete Brush',f:()=>P.querySelector('[data-a=del]').click(),en:!BUILTIN.has(SEL)},{t:'Remove Brush Stroke',f:()=>applySel('basic'),en:sel.size>0},{sep:1},{t:'Brush Options…',f:()=>P.querySelector('[data-a=opt]').click(),en:!BUILTIN.has(SEL)}]});
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(P.style.display!=='none'){const c=[...sel].map(o=>o.g.querySelector('path[data-bc]')).filter(Boolean)[0],k=c?c.getAttribute('data-bc'):null;if(k&&k!==SEL){SEL=k}render()}}catch(_){}return r}}
+addEventListener('keydown',e=>{if(e.key==='F5'&&!e.shiftKey&&!e.ctrlKey&&!e.altKey&&!e.metaKey){const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return;e.preventDefault();e.stopImmediatePropagation();DK.toggle?DK.toggle('brushes'):DK.open('brushes')}},true);
+window.BRP={custom:()=>CU,select:k=>{SEL=k;render()}};
 })();
 
 /*TOOLS-END*/

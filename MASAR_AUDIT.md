@@ -510,3 +510,7 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 258: لوحة Symbols (Window > Symbols، Shift+Ctrl+F11)
 - New Symbol من المتحدد (الرسم بيتحول لنسخة Instance في نفس مكانه زي اليستريتور)، Place Symbol Instance، السحب من اللوحة للـ Artboard (النسخة بتنزل تحت الماوس)، Break Link (ترجع رسم عادي قابل للتعديل)، Redefine Symbol (كل النسخ بتتحدث وتفضل في أماكنها وحجمها)، Select All Instances، Delete Symbol (لو مستخدم بيفك النسخ الأول)، دبل كليك لتغيير الاسم. الرموز بتتحفظ في المتصفح، والنسخ بتتحفظ جوه الملف نفسه. النسخة المتحددة بيظهر لها المربع والنقطة اللي في النص بس زي اليستريتور. (tests/symbols.js)
+
+## build 259: لوحة Brushes (Window > Brushes، F5)
+- قايمة الفرش بصورة لكل فرشة (Basic، 5 pt. Round، Calligraphic، Tapered، وأي فرشة جديدة). ضغطة = تطبيق على المسار المتحدد وكمان بتختارها للـ Paintbrush. New Brush (Calligraphic أو Tapered: الحجم، الزاوية، الاستدارة، مع معاينة حية)، دبل كليك = Brush Options (كل المسارات اللي مستخدماها بتتحدث)، Duplicate، Delete (لو مستخدمة بيرجّع الخطوط Basic)، Remove Brush Stroke. الفرش الجديدة بتتحفظ في المتصفح. F5 مبقاش بيعمل Reload للصفحة. (tests/brushes.js)
+- لسه مش موجود: Art Brush بصورة/رسمة على طول المسار، Scatter و Pattern brushes.
