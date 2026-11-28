@@ -497,7 +497,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 269</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 270</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -618,7 +618,8 @@ function info(L){
   const on=L.length>0,u=on?uni(L):{x:'',y:'',w:'',h:''};
   for(const k in F){F[k].disabled=!on;if(document.activeElement!==F[k])F[k].value=on?(+(k==='x'?u.x+REF[0]*u.w:k==='y'?u.y+REF[1]*u.h:u[k])).toFixed(2):''}
 }
-function view(){world.setAttribute('transform',`translate(${px} ${py}) scale(${z})`);zm.textContent=Math.round(z*100)+'%';$('#tab').textContent=(window.DOCNAME||'Untitled-1')+' @ '+Math.round(z*100)+'% '+(cv.classList.contains('outlv')?'('+(window.DOCMODE||'RGB')+'/Outline)':'('+(window.DOCMODE||'RGB')+'/Preview)');draw();penDraw();cuDraw();placeEditor();if(typeof tbView==='function')tbView();try{abLabels()}catch(_){}}
+var VROT=window.VROT||0;/* build 270: Rotate View angle (degrees), about the artwork origin so zoom-at-cursor and panning keep their maths */
+function view(){world.setAttribute('transform',`translate(${px} ${py})`+(VROT?` rotate(${VROT})`:'')+` scale(${z})`);zm.textContent=Math.round(z*100)+'%';$('#tab').textContent=(window.DOCNAME||'Untitled-1')+' @ '+Math.round(z*100)+'% '+(cv.classList.contains('outlv')?'('+(window.DOCMODE||'RGB')+'/Outline)':'('+(window.DOCMODE||'RGB')+'/Preview)');draw();penDraw();cuDraw();placeEditor();if(typeof tbView==='function')tbView();try{abLabels()}catch(_){}}
 /* ---- artboards: ARTS = [{id,n,x,y,w,h}] in artwork coordinates; ABI = the active one, ABX/ABY/ABW/ABH its rectangle ---- */
 let ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:800,h:600}],ABI=0,ABN=1,ABX=0,ABY=0,ABW=800,ABH=600;
 function abSync(){const a=ARTS[ABI]||ARTS[0];ABX=a.x;ABY=a.y;ABW=a.w;ABH=a.h}
@@ -637,7 +638,7 @@ function abSet(w,h){w=Math.max(1,Math.min(16383,Math.round(+w||800)));h=Math.max
 window.abSet=abSet;window.abSize=()=>[ABW,ABH];window.abGo=abGo;window.abRender=abRender;try{abRender()}catch(_){}
 function fit(){const r=cv.getBoundingClientRect();z=Math.max(.03125,Math.min((r.width-60)/ABW,(r.height-60)/ABH));px=(r.width-ABW*z)/2-ABX*z;py=(r.height-ABH*z)/2-ABY*z;view()}
 function zoomAt(f,cx,cy){const wx=(cx-px)/z,wy=(cy-py)/z;z=Math.min(64,Math.max(.03125,z*f));px=cx-wx*z;py=cy-wy*z;view()}
-function pt(e){const r=cv.getBoundingClientRect();return{x:(e.clientX-r.left-px)/z,y:(e.clientY-r.top-py)/z}}
+function pt(e){const r=cv.getBoundingClientRect();if(!VROT)return{x:(e.clientX-r.left-px)/z,y:(e.clientY-r.top-py)/z};const a=-VROT*Math.PI/180,X=e.clientX-r.left-px,Y=e.clientY-r.top-py;return{x:(X*Math.cos(a)-Y*Math.sin(a))/z,y:(X*Math.sin(a)+Y*Math.cos(a))/z}}
 
 const r3=v=>Math.round(v*1000)/1000;
 function penCons(p,last,shift){if(!shift||!last)return p;const dx=p.x-last[0],dy=p.y-last[1],a=Math.round(Math.atan2(dy,dx)/(Math.PI/4))*(Math.PI/4),l=dx*Math.cos(a)+dy*Math.sin(a);return{x:last[0]+Math.cos(a)*l,y:last[1]+Math.sin(a)*l}}
@@ -11820,6 +11821,31 @@ window.__KSPRE.unshift(e=>{const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.te
   if(G.on&&(tool==='pg'||tool==='pgs')&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&/^Digit[1-4]$/.test(e.code)){G.act=['L','F','R','N'][+e.code[5]-1];save();e.preventDefault();e.stopImmediatePropagation();draw();return true}return false});
 if(window.MENUS){const vm=MENUS.find(m=>m[0]==='View');if(vm){const g=vm[1];vm[1]=()=>{const it=g();it.push({t:'Perspective Grid',__p:'View>Perspective Grid',sub:()=>[{t:G.on?'Hide Grid':'Show Grid',k:'Ctrl+Shift+I',__p:'View>Perspective Grid>Show Grid',f:()=>show()},{t:'Reset Grid',__p:'View>Perspective Grid>Reset',f:()=>{const on=G.on;G=DEFG();G.on=on;upd();objs.forEach(o=>{if(hostE(o))reproj(o)});commit();draw()}},{t:'Release with Perspective',__p:'View>Perspective Grid>Release',f:()=>{[...sel].forEach(o=>{const e=hostE(o);if(e)e.removeAttribute('data-psp')});commit()},en:()=>[...sel].some(hostE)}]});return it}}}
 window.PGRID={get:()=>G,set:o=>{Object.assign(G,o);upd();draw()},toW,toP,attach,reproj,show};
+})();
+
+
+/* ======================= build 270: Rotate View Tool (Shift+H) ======================= */
+(()=>{/* rotates the view, never the artwork. The rotation is about the artwork origin (screen = translate * rotate * scale), so zoom at the
+   pointer and the Hand tool keep working; rotating keeps the canvas centre where it is. */
+const C=()=>{const r=cv.getBoundingClientRect();return[r.width/2,r.height/2]};
+function setRot(deg){deg=((deg%360)+540)%360-180;if(Math.abs(deg)<.01)deg=0;const[cx,cy]=C(),a0=VROT*Math.PI/180,a1=deg*Math.PI/180;
+  /* world point under the canvas centre stays there */const X=cx-px,Y=cy-py,wx=(X*Math.cos(-a0)-Y*Math.sin(-a0))/z,wy=(X*Math.sin(-a0)+Y*Math.cos(-a0))/z;
+  VROT=deg;px=cx-(wx*Math.cos(a1)-wy*Math.sin(a1))*z;py=cy-(wx*Math.sin(a1)+wy*Math.cos(a1))*z;view();ind()}
+const ind=()=>{let b=document.getElementById('rvind');if(!b){b=document.createElement('button');b.id='rvind';b.type='button';b.title='Reset Rotate View (Shift+Ctrl+1)';b.style.cssText='position:fixed;z-index:58;height:22px;padding:0 8px;border:1px solid #1b1b1b;border-radius:11px;background:var(--panel);color:var(--ink);font:11px "Segoe UI",sans-serif;cursor:default';b.onclick=()=>setRot(0);document.body.appendChild(b)}
+  const r=cv.getBoundingClientRect();b.style.display=VROT?'':'none';b.textContent='↻ '+Math.round(-VROT)+'°';b.style.right=(innerWidth-r.right+10)+'px';b.style.top=(r.top+10)+'px'};
+/* Fit Artboard keeps the rotation and centres the artboard */
+{const _f=fit;window.fit=fit=function(){const r=_f.apply(this,arguments);if(VROT){const A=ARTS[ABI]||{x:0,y:0,w:ABW,h:ABH},[cx,cy]=C(),a=VROT*Math.PI/180,wx=A.x+A.w/2,wy=A.y+A.h/2;px=cx-(wx*Math.cos(a)-wy*Math.sin(a))*z;py=cy-(wx*Math.sin(a)+wy*Math.cos(a))*z;view()}return r}}
+addTool({id:'rv',name:'Rotate View Tool',key:'Shift+H',after:'h',svg:'<circle cx="12" cy="12" r="3"/><path d="M4.5 9A8 8 0 0 1 18 6.2M19.5 15A8 8 0 0 1 6 17.8"/><path d="M18 2.5v4h-4M6 21.5v-4h4"/>',dbl:()=>setRot(0),
+  hint:'Rotate View · drag around the centre to turn the view (the artwork does not rotate) · Shift: 15° steps · double-click the tool or press Shift+Ctrl+1 to reset',
+  card:{d:'Turns the canvas view, like turning a sheet of paper',m:['Drag to rotate the view','Shift snaps to 15°','The artwork itself is not rotated','Double-click the tool / View > Reset Rotate View']}});
+let D=null;
+tlDrag('rv',{down:(p,e)=>{const r=cv.getBoundingClientRect(),[cx,cy]=C();D={a0:Math.atan2(e.clientY-r.top-cy,e.clientX-r.left-cx),r0:VROT};return true},
+  move:(p,e)=>{if(!D)return;const r=cv.getBoundingClientRect(),[cx,cy]=C(),a=Math.atan2(e.clientY-r.top-cy,e.clientX-r.left-cx);let d=D.r0+(a-D.a0)*180/Math.PI;if(e.shiftKey)d=Math.round(d/15)*15;setRot(d)},
+  up:()=>{D=null},esc:()=>{if(D){setRot(D.r0);D=null}}});
+window.__KSPRE.push(e=>{if((e.ctrlKey||e.metaKey)&&e.shiftKey&&!e.altKey&&(e.code==='Digit1'||e.code==='Numpad1')){const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))return false;e.preventDefault();e.stopImmediatePropagation();setRot(0);return true}return false});
+if(window.MENUS){const vm=MENUS.find(m=>m[0]==='View');if(vm){const g=vm[1];vm[1]=()=>{const it=g();it.push({t:'Rotate View',__p:'View>Rotate View',sub:()=>[0,-15,-30,-45,-60,-90,-180,90,60,45,30,15].map(d=>({t:(d?(-d)+'°':'0° (reset)'),__p:'View>Rotate View>'+d,c:()=>Math.round(VROT)===d,f:()=>setRot(d)}))},{t:'Reset Rotate View',k:'Shift+Ctrl+1',__p:'View>Reset Rotate View',f:()=>setRot(0),en:()=>!!VROT});return it}}}
+addEventListener('resize',ind);
+window.RVIEW={set:setRot,get:()=>VROT};
 })();
 
 /*TOOLS-END*/
