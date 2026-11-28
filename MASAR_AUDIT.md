@@ -504,3 +504,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 256: لوحة Transform (Window > Transform، Shift+F8)
 - نقطة المرجع (9 نقط، مشتركة مع شريط التحكم والـ Properties)، X/Y/W/H، ربط النسب، الدوران، الـ Shear، خصائص المستطيل (نصف قطر الزوايا) والمضلع/النجمة (عدد الأضلاع)، Scale Strokes & Effects، وقايمة اللوحة فيها Flip Horizontal / Vertical. الأسهم فوق/تحت بتزوّد وتنقّص (Shift ×10)، وكل تغيير ليه Undo. (tests/tfpanel.js)
+
+## build 257: لوحة Graphic Styles (Window > Graphic Styles، Shift+F5)
+- ستايلات جاهزة (Default، Drop Shadow، Black Outline، Dashed، Gold، Soft Glow). ضغطة على الستايل بتطبق اللون والحدود والشفافية والـ Effects والـ Gradient على المتحدد (بـ Undo). زرار ➕ بيحفظ شكل العنصر المتحدد كستايل جديد باسم، دبل كليك لتغيير الاسم، حذف بتأكيد، Break Link، والستايلات بتتحفظ في المتصفح. (tests/gstyles.js)

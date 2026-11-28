@@ -1,0 +1,23 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
+await pg.evaluate(()=>{z=1;view();localStorage.removeItem('masar.gstyles.v1')});
+await pg.keyboard.press('m');await H.drag(300,200,420,300);await pg.keyboard.press('v');
+await pg.keyboard.press('Shift+F5');await pg.waitForTimeout(300);
+ok('Shift+F5 opens Graphic Styles',await pg.evaluate(()=>{const p=document.getElementById('gsp');return p&&p.offsetParent!==null&&p.querySelectorAll('.gi').length>=6}));
+await pg.click('#gsp .gi[title="Drop Shadow"]');await pg.waitForTimeout(200);
+let r=await pg.evaluate(()=>({fill:fillables(objs[0])[0].getAttribute('fill'),fx:objs[0].g.dataset.fx||'',gs:objs[0].g.dataset.gs}));
+ok('clicking a style applies its fill and effect',r.fill==='#f0c374'&&/"ds"/.test(r.fx)&&r.gs==='Drop Shadow',JSON.stringify(r));
+await pg.keyboard.press('Control+z');await pg.waitForTimeout(200);r=await pg.evaluate(()=>({fill:fillables(objs[0])[0].getAttribute('fill'),fx:objs[0].g.dataset.fx||''}));ok('Undo restores the old look',r.fill==='#ffffff'&&!r.fx,JSON.stringify(r));
+await pg.click('#gsp .gi[title="Dashed"]');await pg.waitForTimeout(150);ok('Dashed style: no fill, dashed stroke',await pg.evaluate(()=>{const e=fillables(objs[0])[0];return e.getAttribute('fill')==='none'&&e.getAttribute('stroke-dasharray')==='8 4'}));
+// new style from a custom object
+await H.reset();await pg.keyboard.press('l');await H.drag(300,200,400,280);await pg.keyboard.press('v');
+await pg.evaluate(()=>{const e=fillables(objs[0])[0];e.setAttribute('fill','#123456');e.setAttribute('stroke','#abcdef');e.setAttribute('stroke-width','5');commit();draw()});
+const n0=await pg.evaluate(()=>GSTY.list().length);await pg.click('#gsp [data-a=new]');await pg.waitForTimeout(200);await pg.keyboard.press('Enter');await pg.waitForTimeout(200);
+ok('New Graphic Style saves the selected look',await pg.evaluate(n0=>{const s=GSTY.list();return s.length===n0+1&&s[s.length-1].a.fill==='#123456'&&s[s.length-1].a['stroke-width']==='5'},n0));
+await pg.keyboard.press('m');await H.drag(450,200,520,260);await pg.keyboard.press('v');await pg.waitForTimeout(100);
+await pg.click('#gsp .gi >> nth=-1');await pg.waitForTimeout(200);
+ok('the new style applies to another object',await pg.evaluate(()=>{const e=fillables(objs[1])[0];return e.getAttribute('fill')==='#123456'&&e.getAttribute('stroke')==='#abcdef'&&e.getAttribute('stroke-width')==='5'}));
+await pg.reload();await pg.waitForTimeout(800);await pg.evaluate(()=>DK.open('gstyles'));await pg.waitForTimeout(200);
+ok('styles are remembered after reload',await pg.evaluate(n0=>GSTY.list().length===n0+1,n0));
+await pg.click('#gsp .gi >> nth=-1');await pg.click('#gsp [data-a=del]');await pg.waitForTimeout(150);await pg.keyboard.press('Enter');await pg.waitForTimeout(150);ok('Delete removes it',await pg.evaluate(n0=>GSTY.list().length===n0,n0));
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();
