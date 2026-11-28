@@ -15,8 +15,8 @@ for(const [tool,frame,name] of cases)for(const [lang,txt] of [['EN',EN],['AR',AR
   if(frame==='none')await H.click(b.x,b.y);else if(frame==='path')await H.click(b.x+b.w/2,b.y+b.h/2);else await H.click(b.x+b.w/2,b.y);
   await pg.waitForTimeout(250);await pg.keyboard.type(txt,{delay:4});await pg.waitForTimeout(400);
   const s1=await stat();
-  ok(name+' '+lang+': all '+(s1&&s1.raw)+' characters visible while typing '+JSON.stringify(s1),!!s1&&s1.raw>0&&s1.shown>=s1.raw);
+  const inside=/area|path/.test(name);ok(name+' '+lang+(inside?': typing never stops, all '+(s1&&s1.raw)+' characters kept, the text stays inside the frame ':': all characters visible ')+JSON.stringify(s1),!!s1&&s1.raw>0&&(inside?s1.shown>0&&s1.shown<=s1.raw&&!s1.tail:s1.shown>=s1.raw));
   await pg.keyboard.press('Escape');await pg.waitForTimeout(300);
-  const s2=await stat();ok(name+' '+lang+': still fully visible after leaving the text',!!s2&&s2.shown>=s2.raw);
+  const s2=await stat();ok(name+' '+lang+': unchanged after leaving the text',!!s2&&s2.raw===s1.raw&&(inside?s2.shown===s1.shown:s2.shown>=s2.raw));
 }
 console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();

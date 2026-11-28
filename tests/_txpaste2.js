@@ -1,0 +1,16 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;
+await pg.evaluate(()=>{z=1;view()});
+const shot=async n=>pg.screenshot({path:'/tmp/mdl/'+n+'.png',clip:{x:H.R.x+150,y:H.R.y+120,width:500,height:330}});
+await pg.keyboard.press('m');await H.drag(200,180,460,400);await pg.keyboard.press('v');await pg.evaluate(()=>setTool('at'));
+const b=await pg.evaluate(()=>{const b=wbox(objs[objs.length-1]);return{x:b.x*z+px,y:b.y*z+py,w:b.w*z}});
+await H.click(b.x+b.w/2,b.y);await pg.waitForTimeout(200);await pg.keyboard.type('Normal words then BIG words then normal again. نص عربي هنا ',{delay:3});
+await pg.evaluate(()=>{ted.setSelectionRange(18,27);ted.dispatchEvent(new Event('select'))});
+await pg.evaluate(()=>window.chApply({size:28}));await pg.waitForTimeout(200);
+await pg.evaluate(()=>{ted.focus();ted.setSelectionRange(0,ted.value.length)});await pg.keyboard.press('Control+c');
+await pg.evaluate(()=>{ted.focus();ted.setSelectionRange(ted.value.length,ted.value.length)});
+for(let i=0;i<2;i++)await pg.keyboard.press('Control+v');await pg.waitForTimeout(400);
+await shot('paste3');
+console.log(JSON.stringify(await pg.evaluate(()=>[...objs[objs.length-1].g.querySelectorAll('text tspan')].map(t=>{const q=t.getBBox();return[Math.round(q.x),Math.round(q.y),Math.round(q.width),t.getAttribute('font-size'),t.textContent.slice(0,20)]}))));
+await pg.keyboard.press('Escape');await pg.waitForTimeout(300);await shot('paste4');
+console.log(H.errs);await H.b.close()})();

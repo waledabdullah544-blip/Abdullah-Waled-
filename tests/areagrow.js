@@ -1,0 +1,16 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
+await pg.evaluate(()=>{z=1;view()});
+await pg.keyboard.press('m');await H.drag(300,200,440,280);await pg.keyboard.press('v');await pg.evaluate(()=>setTool('at'));
+let b=await pg.evaluate(()=>{const b=wbox(objs[0]);return{x:b.x*z+px,y:b.y*z+py,w:b.w*z,h:b.h*z}});
+await H.click(b.x+b.w/2,b.y);await pg.waitForTimeout(200);
+await pg.keyboard.type('A long sentence that must stay inside the frame even when it is much longer than the frame. '.repeat(2),{delay:2});
+await pg.keyboard.press('Escape');await pg.waitForTimeout(300);
+const S=()=>pg.evaluate(()=>{const o=objs[objs.length-1],t=o.g.querySelector('text');return{shown:[...t.querySelectorAll('tspan')].map(x=>x.textContent).join('').replace(/\s/g,'').length,raw:t.getAttribute('data-raw').replace(/\s/g,'').length,of:t.hasAttribute('data-of')}});
+const s1=await S();ok('overflow is hidden, text kept',s1.shown<s1.raw&&s1.of,JSON.stringify(s1));
+await pg.keyboard.press('v');await H.click(b.x+5,b.y+5);await pg.waitForTimeout(150);
+b=await pg.evaluate(()=>{const b=wbox(objs[0]);return{x:b.x*z+px,y:b.y*z+py,w:b.w*z,h:b.h*z}});
+await H.drag(b.x+b.w,b.y+b.h,b.x+b.w+120,b.y+b.h+160);await pg.waitForTimeout(300);
+const s2=await S();ok('making the frame bigger shows the rest',s2.shown===s2.raw&&!s2.of,JSON.stringify(s2));
+const fs=await pg.evaluate(()=>objs[0].g.querySelector('text').getAttribute('font-size')+' sx '+objs[0].m.sx);console.log('font/scale',fs);
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();

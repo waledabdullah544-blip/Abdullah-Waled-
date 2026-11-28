@@ -1,0 +1,14 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;
+await pg.evaluate(()=>{z=1;view()});
+await pg.keyboard.press('m');await H.drag(300,200,440,280);await pg.keyboard.press('v');
+await pg.evaluate(()=>setTool('at'));await pg.waitForTimeout(150);
+const b=await pg.evaluate(()=>{const b=wbox(objs[0]);return{x:b.x*z+px,y:b.y*z+py,w:b.w*z,h:b.h*z}});
+await H.click(b.x+b.w/2,b.y);await pg.waitForTimeout(250);
+await pg.keyboard.type('A long sentence that must stay inside the frame even when it is much longer than the frame. '.repeat(2),{delay:3});
+await pg.waitForTimeout(300);
+console.log(await pg.evaluate(()=>{const o=objs[objs.length-1],t=o.g.querySelector('text'),f=o.g.querySelector('path[data-tpath=frame]').getBBox(),tb=t.getBBox();return{frame:[f.y,f.y+f.height].map(Math.round),text:[tb.y,tb.y+tb.height].map(Math.round),of:t.hasAttribute('data-of'),raw:(t.getAttribute('data-raw')||'').length,ted:ted.value.length,ov:document.querySelectorAll('.ov').length}}));
+await pg.screenshot({path:'/tmp/mdl/txo1.png',clip:{x:H.R.x+250,y:H.R.y+150,width:300,height:250}});
+await pg.keyboard.press('Escape');await pg.waitForTimeout(300);await pg.keyboard.press('v');
+await pg.screenshot({path:'/tmp/mdl/txo2.png',clip:{x:H.R.x+250,y:H.R.y+150,width:300,height:250}});
+console.log(H.errs);await H.b.close()})();

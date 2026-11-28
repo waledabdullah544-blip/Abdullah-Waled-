@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 239</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 240</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -3501,7 +3501,7 @@ function areaLayout(raw,size,fam,fd,ao,rtl,ri0,Y,PA,cont,tt,vt){
   else cells.push({R:R0,b:[x0,y0,x1,y1]});
   const lines=[];let ri=ri0||0,done=ri>=raw.length,c0=null,sbFor=-1;const pst=[0];for(let q=raw.indexOf('\n');q>=0;q=raw.indexOf('\n',q+1))pst.push(q+1);
   /* free typing: the last frame does not clip - text keeps flowing below the shape, nothing disappears and no overflow marker (not for threaded or vertical frames) */
-  const GROW=!cont;let lastIv=null,gd=0;
+  const GROW=false;let lastIv=null,gd=0;/* build 240: text stays inside the frame (Illustrator); typing never stops, the rest shows when the frame is made bigger */
   for(const C of cells){if(done)break;const[cx0,cy0,cx1,cy1]=C.b,L0=lines.length,cyL=GROW&&C===cells[cells.length-1]?1e12:cy1;
     let y=cy0+ins+(ao.fb==='lead'?lead:ao.fb==='fixed'?Math.max(0,+ao.fbm||0):asc);
     if(!c0)c0=[rtl?cx1-ins:cx0+ins,y];
@@ -3542,7 +3542,7 @@ function areaLayout(raw,size,fam,fd,ao,rtl,ri0,Y,PA,cont,tt,vt){
 /* data-cont = "len:hash[:h]" of the raw text a frame was cut to by Remove Threading: its last line was mid-paragraph (justified like a non-last line, 'h' = it ended at a hyphen). Only valid while the text is unchanged. */
 function contKey(raw){let h=0;for(let i=0;i<raw.length;i++)h=(h*31+raw.charCodeAt(i))|0;return raw.length+':'+h}
 /* Type on a Path, free typing: text that no longer fits on the path keeps going in a straight line from the path's end (never hidden), until the path is made longer */
-function tpTail(raw,E){const tp={...TPD0,...(E.tp||{})};if(tp.e!=null)return'';const pm=/ d="([^"]*)"/.exec(E.pathHtml||'');if(!pm)return'';
+function tpTail(raw,E){return'';/* build 240: like area type, path text stays on its path (overflow hidden, red + at the end) */const tp={...TPD0,...(E.tp||{})};if(tp.e!=null)return'';const pm=/ d="([^"]*)"/.exec(E.pathHtml||'');if(!pm)return'';
   const tmp=document.createElementNS(NS,'path');tmp.setAttribute('d',tp.fr?revD(pm[1]):pm[1]);let PL=0;try{PL=tmp.getTotalLength()}catch(_){return''}if(!(PL>0))return'';
   const Y=YD(E),size=E.size,txt=raw.replace(/\n/g,' '),n=txt.length,mwp=mkMW(size,E.fam,{...Y,hs:1},true),wp=k=>k<=0?0:mwp(txt.slice(0,k),0)+tp.sp*k,avail=Math.max(0,PL-tp.s);
   let k=0;while(k<n&&wp(k+1)<=avail+1e-6)k++;if(k>=n)return'';
@@ -4460,7 +4460,7 @@ function tpProj(o,p){const I=tpInfo(o);if(!I||!I.L)return{d:0,side:1,dist:0};con
   let lo=Math.max(0,bd-stp),hi=Math.min(I.L,bd+stp);for(let it=0;it<24;it++){const m1=lo+(hi-lo)/3,m2=hi-(hi-lo)/3,q1=I.pa.getPointAtLength(m1),q2=I.pa.getPointAtLength(m2);if((q1.x-lx)**2+(q1.y-ly)**2<(q2.x-lx)**2+(q2.y-ly)**2)hi=m2;else lo=m1}
   const d=(lo+hi)/2,P=tpAt(I,d),side=Math.sign(Math.cos(P.ang)*(ly-P.y)-Math.sin(P.ang)*(lx-P.x))||1;return{d,side,dist:Math.hypot(lx-P.x,ly-P.y)*Math.abs(m.sx)}}
 /* type on a path: the red plus at the end bracket when text does not fit */
-function tpOvMark(g,o,s){return;const I=tpInfo(o);if(!I||!I.L)return;const vis=I.tp.e!=null?Math.min(I.tp.e,I.tp.s+I.fl):Math.min(I.tp.s+I.vl,I.L),P=tpAt(I,vis),c=Math.cos(P.ang),sn=Math.sin(P.ang),nx=-sn,ny=c;
+function tpOvMark(g,o,s){const I=tpInfo(o);if(!I||!I.L)return;const vis=I.tp.e!=null?Math.min(I.tp.e,I.tp.s+I.fl):Math.min(I.tp.s+I.vl,I.L),P=tpAt(I,vis),c=Math.cos(P.ang),sn=Math.sin(P.ang),nx=-sn,ny=c;
   const M=world.getScreenCTM().inverse().multiply(I.pa.getScreenCTM()),sc=Math.hypot(M.a,M.b)||1,h=12*s/sc,off=11*s/sc,q=new DOMPoint(P.x+nx*h+c*off,P.y+ny*h+sn*off).matrixTransform(M);
   g.append(el('rect',{x:q.x-5*s,y:q.y-5*s,width:10*s,height:10*s,fill:'#fff',stroke:'#e03131','stroke-width':1.3*s,'pointer-events':'none',class:'ov'}),el('path',{d:`M${q.x-3*s} ${q.y}H${q.x+3*s}M${q.x} ${q.y-3*s}V${q.y+3*s}`,stroke:'#e03131','stroke-width':1.2*s,'pointer-events':'none',class:'ov'}))}
 function drawTpBr(o){const I=tpInfo(o);if(!I||!I.L)return;const s=1/z,B='#8C8C8C',sc=Math.abs(o.m.sx)||1,sd=I.tp.s,vis=I.tp.e!=null?Math.min(I.tp.e,sd+I.fl):Math.min(sd+I.vl,I.L),mid=(sd+vis)/2;
@@ -10837,6 +10837,20 @@ const tgt=()=>{if(sel.size===1)return[...sel][0];return null};
 {const _cm=commit;commit=function(){const dm=window.drawMode&&window.drawMode(),r=_cm.apply(this,arguments);
   try{if(dm==='i'&&sel.size===1){const o=[...sel][0],cl=o.g.querySelector(':scope > [data-clipmask]'),mem=[...o.g.querySelectorAll(':scope > g[data-mem]')].pop();if(cl&&mem){const B=cl.getBBox(),m=mem.getBBox();if(m.x>B.x+B.width||m.x+m.width<B.x||m.y>B.y+B.height||m.y+m.height<B.y)document.getElementById('hint').textContent='Draw Inside is ON: the new shape is outside the clipping shape, so it is hidden. Press Shift+D for Draw Normal.'}}}catch(_){}return r}}
 })();
+
+/* ======================= build 240: re-lay-out text when a font finishes loading ======================= */
+(()=>{/* line breaks and run positions are measured with a canvas: if a web / system font arrives after the text was laid out with the
+   fallback font, the glyphs overlapped or ran out of the frame. Every font load now re-measures every text object. */
+let tm=0;const relayout=()=>{clearTimeout(tm);tm=setTimeout(()=>{try{
+  if(ted_s&&typeof tedRender==='function')tedRender();
+  const D=new Set();objs.forEach(o=>{if(ted_s&&ted_s.o===o)return;const t=o.g.querySelector(':scope > text');if(!t)return;try{
+    if(o.g.querySelector('path[data-tpath="frame"]'))areaReflow(o);else if(o.g.querySelector('g.tpfx'))tpApply(o,{});else if(t.querySelector('[data-rn],tspan[x]')&&window.chRenderObj)window.chRenderObj(o,{},D);
+    o.bb=BBX(o)}catch(_){}});draw()}catch(_){}},60)};
+try{document.fonts.addEventListener('loadingdone',relayout);document.fonts.ready.then(relayout)}catch(_){}
+/* fonts added from script (uploaded / local fonts) fire no event: watch the number of loaded faces */
+let nL=-1;setInterval(()=>{try{let n=0;document.fonts.forEach(f=>{if(f.status==='loaded')n++});if(nL>=0&&n!==nL)relayout();nL=n}catch(_){}},800);
+window.textRelayout=relayout})();
+
 /*TOOLS-END*/
 })();
 </script>

@@ -1,0 +1,16 @@
+const {chromium}=require('playwright');
+(async()=>{const b=await chromium.launch(),pg=await b.newPage({viewport:{width:1500,height:900}});
+let delay=+(process.argv[2]||0);
+await pg.route('**/fonts.gstatic.com/**',async r=>{await new Promise(s=>setTimeout(s,delay));r.continue()});
+await pg.goto('file://'+require('path').resolve(__dirname,'../masar.html'));await pg.waitForTimeout(300);
+console.log('cairo loaded at start?',await pg.evaluate(()=>document.fonts.check('12px Cairo')));
+const R=await pg.evaluate(()=>{const c=document.getElementById('cv').getBoundingClientRect();return{x:c.left,y:c.top}});
+await pg.evaluate(()=>{z=1;view();const o=add('<rect x="100" y="100" width="180" height="130" fill="none" stroke="#000"/>');commit();draw()});
+await pg.evaluate(()=>setTool('at'));const bb=await pg.evaluate(()=>{const b=wbox(objs[0]);return{x:b.x*z+px,y:b.y*z+py,w:b.w*z}});
+await pg.mouse.click(R.x+bb.x+bb.w/2,R.y+bb.y);await pg.waitForTimeout(200);
+await pg.keyboard.type('Hello world typing here and more words to wrap the line مرحبا بالعالم نص طويل',{delay:3});
+await pg.keyboard.press('Escape');
+await pg.waitForTimeout(delay+2500);
+console.log('cairo loaded now?',await pg.evaluate(()=>document.fonts.check('12px Cairo')));
+console.log(JSON.stringify(await pg.evaluate(()=>[...objs[objs.length-1].g.querySelectorAll('tspan')].map(t=>{const b=t.getBBox();return[Math.round(b.x),Math.round(b.width)]}))));
+await pg.screenshot({path:'/tmp/mdl/txf.png',clip:{x:R.x+bb.x-20,y:R.y+bb.y-20,width:260,height:200}});await b.close()})();

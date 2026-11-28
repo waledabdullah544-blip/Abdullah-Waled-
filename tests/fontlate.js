@@ -1,0 +1,17 @@
+const L=require('./lib.js'),fs=require('fs');
+(async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
+const b64=fs.readFileSync('/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf').toString('base64');
+await pg.evaluate(()=>{z=1;view()});
+await pg.keyboard.press('m');await H.drag(300,200,480,330);await pg.keyboard.press('v');
+await pg.evaluate(()=>{defFam='LateWide'});
+await pg.evaluate(()=>setTool('at'));await pg.waitForTimeout(150);
+const b=await pg.evaluate(()=>{const b=wbox(objs[0]);return{x:b.x*z+px,y:b.y*z+py,w:b.w*z}});
+await H.click(b.x+b.w/2,b.y);await pg.waitForTimeout(250);
+await pg.keyboard.type('Hello world this text was laid out before its font arrived and must be measured again',{delay:3});
+await pg.keyboard.press('Escape');await pg.waitForTimeout(300);
+const W=()=>pg.evaluate(()=>{const o=objs[objs.length-1],f=o.g.querySelector('path[data-tpath=frame]').getBBox();return{fw:Math.round(f.x+f.width),fam:o.g.querySelector('text').getAttribute('font-family'),r:Math.max(...[...o.g.querySelectorAll('tspan')].map(t=>{const q=t.getBBox();return Math.round(q.x+q.width)}))}});
+console.log('before font',JSON.stringify(await W()));
+await pg.evaluate(async b=>{const bin=Uint8Array.from(atob(b),c=>c.charCodeAt(0));const f=new FontFace('LateWide',bin.buffer);await f.load();document.fonts.add(f)},b64);
+await pg.waitForTimeout(2000);const w=await W();
+ok('after the font loads every line fits in the frame again',w.r<=w.fw+1,JSON.stringify(w));
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();
