@@ -549,3 +549,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 265: Symbol Sprayer Tool (Shift+S)
 - بيرش نسخ من الرمز المختار في لوحة الـ Symbols حوالين الماوس وانت بتسحب؛ الرشة كلها Symbol Set واحد (جروب) بـ Undo واحد. Alt+سحب بيمسح نسخ من المجموعة المتحددة بالتدريج. [ و ] للقطر، ودبل كليك على الأداة = Symbolism Tools Options (القطر، الشدة، الكثافة، الحجم وتغييره، الدوران وتغييره). النسخ رموز حقيقية: Redefine Symbol بيحدّثها، و Ungroup بيفكها لنسخ منفصلة. (tests/sprayer.js)
+
+## build 266: Slice Tool (Shift+K) + Slice Selection
+- ارسم مستطيل = Slice، بيظهر بإطار أحمر ورقم (01، 02…) زي اليستريتور، ومبيطلعش في الطباعة ولا في تصدير الـ SVG/PNG. Shift مربع، Alt من النص. Slice Selection بيحدد ويحرك الـ Slices بس. Object > Slice: Make، Create from Selection، Divide Slice، Delete All. View > Hide/Show Slices. File > Export Slices… بيطلّع ZIP فيه PNG لكل Slice بدقة 1× لحد 4×. (tests/slices.js)

@@ -497,7 +497,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 265</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 266</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -11538,6 +11538,63 @@ function dialog(){const f=(k,l,u,min,max)=>'<label>'+l+'<input type="number" dat
   dkModal('Symbolism Tools Options',f('dia','Diameter','px',10,1000)+f('int','Intensity','',1,10)+f('den','Symbol Set Density','',1,10)+'<b>Instances</b>'+f('size','Size','%',5,500)+f('sv','Size variation','± %',0,100)+f('rot','Rotation','°',-180,180)+f('rv','Rotation variation','± °',0,180),
    [{t:'Reset',f:b=>{O={...DEFO};save();return true}},{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{b.querySelectorAll('[data-k]').forEach(i=>{const v=parseFloat(i.value);if(isFinite(v))O[i.dataset.k]=Math.max(+i.min,Math.min(+i.max,v))});save()}}])}
 window.SPRAY={opts:()=>O};
+})();
+
+
+/* ======================= build 266: Slice Tool (Shift+K), Slice Selection, Object > Slice, File > Export > Export Slices ======================= */
+(()=>{
+/* a slice is an object holding one <rect data-slice>: drawn as a red frame with its number, never printed or exported as artwork */
+const isSlice=o=>!!(o&&o.g.querySelector(':scope > rect[data-slice]'));
+const slices=()=>objs.filter(isSlice);
+const css=document.createElement('style');css.textContent='body.hide-slices #layer > g > rect[data-slice]{display:none}body.hide-slices .slbl{display:none}';document.head.appendChild(css);
+function mkSlice(x,y,w,h){x=Math.round(x);y=Math.round(y);w=Math.max(1,Math.round(w));h=Math.max(1,Math.round(h));
+  const o=add('<rect data-slice="1" x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" fill="none" stroke="#e8423c" stroke-width="1" vector-effect="non-scaling-stroke" pointer-events="all" style="fill:transparent"/>');o.nm='Slice';try{if(typeof LAYACT!=='undefined')o.ly=LAYACT}catch(_){}return o}
+/* numbers in the top-left corner, like Illustrator */
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(document.body.classList.contains('hide-slices'))return r;const s=1/z;slices().forEach((o,i)=>{if(o.g.style.display==='none')return;const b=wbox(o),t=String(i+1).padStart(2,'0'),w=(t.length*6+8)*s,h=13*s;
+  const g=el('g',{class:'slbl','pointer-events':'none'});g.append(el('rect',{x:b.x,y:b.y,width:w,height:h,fill:'#e8423c'}));const tx=el('text',{x:b.x+4*s,y:b.y+10*s,'font-size':10*s,fill:'#fff','font-family':'Segoe UI,Arial,sans-serif'});tx.textContent=t;g.append(tx);selg.insertBefore(g,selg.firstChild)})}catch(_){}return r}}
+/* artwork export never contains slices */
+{const _f=fileSVGString;window.fileSVGString=fileSVGString=function(){const hid=slices().filter(o=>o.g.style.display!=='none');hid.forEach(o=>o.g.style.display='none');try{return _f.apply(this,arguments)}finally{hid.forEach(o=>o.g.style.display='')}}}
+addTool({id:'slc',name:'Slice Tool',key:'Shift+K',after:'syn',svg:'<path d="M4 20L17 7"/><path d="M14 4l6 6-3 3-6-6z"/><path d="M3 9h5M9 3v5" stroke-dasharray="1.5 1.5"/>',
+  hint:'Slice · drag to draw a slice (export region) · Shift: square · Alt: from the centre · File > Export > Export Slices saves them as PNG',
+  card:{d:'Divides the artwork into images for export',m:['Drag to draw a slice','Slices are numbered and never printed','Object > Slice > Make makes one from the selection','File > Export > Export Slices… saves every slice as a PNG']}});
+let st0=null;
+tlDrag('slc',{down:(p,e)=>{st0={x:p.x,y:p.y,o:null};return true},
+  move:(p,e)=>{if(!st0)return;let x0=st0.x,y0=st0.y,w=p.x-x0,h=p.y-y0;if(e.shiftKey){const m=Math.max(Math.abs(w),Math.abs(h));w=Math.sign(w||1)*m;h=Math.sign(h||1)*m}if(e.altKey){x0-=w;y0-=h;w*=2;h*=2}
+    const x=Math.min(x0,x0+w),y=Math.min(y0,y0+h);peng.replaceChildren(el('rect',{x,y,width:Math.abs(w),height:Math.abs(h),fill:'rgba(232,66,60,.08)',stroke:'#e8423c','stroke-width':1/z,'pointer-events':'none'}));st0.r=[x,y,Math.abs(w),Math.abs(h)]},
+  up:(p,e,moved)=>{peng.replaceChildren();if(!st0||!st0.r||st0.r[2]*z<3||st0.r[3]*z<3){st0=null;return}const o=mkSlice(...st0.r);sel=new Set([o]);commit();draw();st0=null},
+  esc:()=>{peng.replaceChildren();st0=null}});
+/* Slice Selection: the selection tool already picks slices; this tool picks ONLY slices (Illustrator Shift+K flyout) */
+addTool({id:'slcs',name:'Slice Selection Tool',after:'slc',svg:'<path d="M5 3l11 6-5 1.5L9 16z"/><rect x="12" y="13" width="8" height="7" stroke-dasharray="2 1.5"/>',hint:'Slice Selection · click a slice to select it, drag to move it'});
+tlDrag('slcs',{down:(p,e)=>{const hit=slices().slice().reverse().find(o=>{const b=wbox(o);return p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h});if(!hit){sel=new Set();draw();return false}
+    if(e.shiftKey){sel.has(hit)?sel.delete(hit):sel.add(hit)}else if(!sel.has(hit))sel=new Set([hit]);st0={p,orig:[...sel].map(o=>({o,tx:o.m.tx,ty:o.m.ty}))};draw();return true},
+  move:(p)=>{if(!st0)return;const dx=p.x-st0.p.x,dy=p.y-st0.p.y;st0.orig.forEach(a=>{a.o.m.tx=a.tx+dx;a.o.m.ty=a.ty+dy;apply(a.o)});draw()},
+  up:(p,e,moved)=>{if(st0&&moved){st0.orig.forEach(a=>touch(a.o));commit()}st0=null;draw()},esc:()=>{st0=null}});
+try{addGroup({id:'slcBtn',lab:'Slice tools',t:['slc','slcs']})}catch(_){}
+/* Object > Slice */
+function makeFromSel(){const L=[...sel].filter(o=>!isSlice(o));if(!L.length)return;const u=uni(L),o=mkSlice(u.x,u.y,u.w,u.h);sel=new Set([o]);commit();draw()}
+function eachFromSel(){const L=[...sel].filter(o=>!isSlice(o));if(!L.length)return;const N=L.map(q=>{const b=wbox(q);return mkSlice(b.x,b.y,b.w,b.h)});sel=new Set(N);commit();draw()}
+function delAll(){const S=slices();if(!S.length)return;S.forEach(o=>{o.g.remove();objs.splice(objs.indexOf(o),1);sel.delete(o)});commit();draw()}
+function divide(){const o=[...sel].find(isSlice);if(!o)return;dkModal('Divide Slice','<label>Rows<input type="number" data-k="r" value="2" min="1" max="50"></label><label>Columns<input type="number" data-k="c" value="2" min="1" max="50"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{const R=Math.max(1,+b.querySelector('[data-k=r]').value|0),C=Math.max(1,+b.querySelector('[data-k=c]').value|0),bb=wbox(o),N=[];
+  o.g.remove();objs.splice(objs.indexOf(o),1);for(let r=0;r<R;r++)for(let c=0;c<C;c++)N.push(mkSlice(bb.x+bb.w*c/C,bb.y+bb.h*r/R,bb.w/C,bb.h/R));sel=new Set(N);commit();draw()}}])}
+/* ---- export: every slice as a PNG, packed in one ZIP (stored, no compression library needed) ---- */
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=t[(c^b[i])&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0}})();
+function zip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;const u16=v=>[v&255,(v>>8)&255],u32=v=>[v&255,(v>>8)&255,(v>>16)&255,(v>>>24)&255];
+  files.forEach(f=>{const nm=enc.encode(f.name),crc=CRC(f.data),sz=f.data.length;const h=new Uint8Array([0x50,0x4b,3,4,...u16(20),0,0,0,0,0,0,0,0x21,...u32(crc),...u32(sz),...u32(sz),...u16(nm.length),0,0]);parts.push(h,nm,f.data);
+    cen.push(new Uint8Array([0x50,0x4b,1,2,...u16(20),...u16(20),0,0,0,0,0,0,0,0x21,...u32(crc),...u32(sz),...u32(sz),...u16(nm.length),0,0,0,0,0,0,0,0,0,0,0,0,...u32(off)]),nm);off+=h.length+nm.length+sz});
+  const cs=cen.reduce((a,b)=>a+b.length,0);return new Blob([...parts,...cen,new Uint8Array([0x50,0x4b,5,6,0,0,0,0,...u16(files.length),...u16(files.length),...u32(cs),...u32(off),0,0])],{type:'application/zip'})}
+async function renderSlice(o,k){const b=wbox(o),s=fileSVGString().replace(/<svg([^>]*?) width="[^"]*" height="[^"]*" viewBox="[^"]*"/,'<svg$1 width="'+Math.round(b.w*k)+'" height="'+Math.round(b.h*k)+'" viewBox="'+b.x+' '+b.y+' '+b.w+' '+b.h+'"');
+  const u=URL.createObjectURL(new Blob([s],{type:'image/svg+xml'})),i=new Image();i.src=u;await i.decode();const c=document.createElement('canvas');c.width=Math.max(1,Math.round(b.w*k));c.height=Math.max(1,Math.round(b.h*k));c.getContext('2d').drawImage(i,0,0,c.width,c.height);URL.revokeObjectURL(u);
+  const bl=await new Promise(r=>c.toBlob(r,'image/png'));return new Uint8Array(await bl.arrayBuffer())}
+async function exportSlices(k){const S=slices();if(!S.length){tb5Msg('No slices: draw some with the Slice Tool (Shift+K)');return}
+  const F=[];for(let i=0;i<S.length;i++){F.push({name:'masar_'+String(i+1).padStart(2,'0')+'.png',data:await renderSlice(S[i],k)})}
+  const z0=zip(F);fileDownload(z0,'masar-slices.zip');tb5Msg('Exported '+S.length+' slice'+(S.length>1?'s':'')+' (masar-slices.zip)');return z0}
+const exportDlg=()=>dkModal('Export Slices','<label>Resolution<select data-k="k"><option value="1">1× (72 ppi)</option><option value="2" selected>2× (144 ppi)</option><option value="3">3×</option><option value="4">4× (300 ppi)</option></select></label><div style="opacity:.75;margin-top:6px">'+slices().length+' slice(s) → one ZIP with a PNG per slice</div>',[{t:'Cancel',c:1},{t:'Export',p:1,f:b=>{exportSlices(+b.querySelector('[data-k=k]').value)}}]);
+/* menus */
+if(window.MENUS){const objM=MENUS.find(m=>m[0]==='Object'),fileM=MENUS.find(m=>m[0]==='File'),viewM=MENUS.find(m=>m[0]==='View');
+  if(objM){const g=objM[1];objM[1]=()=>{const it=g();const i=it.findIndex(x=>x&&x.t==='Compound Path');it.splice(i>=0?i+1:it.length,0,{t:'Slice',__p:'Object>Slice',sub:()=>[{t:'Make',__p:'Object>Slice>Make',f:makeFromSel,en:()=>sel.size>0},{t:'Create from Selection',__p:'Object>Slice>Create from Selection',f:eachFromSel,en:()=>sel.size>0},{t:'Divide Slice…',__p:'Object>Slice>Divide Slice',f:divide,en:()=>[...sel].some(isSlice)},{t:'Delete All',__p:'Object>Slice>Delete All',f:delAll,en:()=>slices().length>0}]});return it}}
+  if(fileM){const g=fileM[1];fileM[1]=()=>{const it=g();const i=it.findIndex(x=>x&&x.t==='Export As PNG…');it.splice(i>=0?i+1:it.length,0,{t:'Export Slices…',__p:'File>Export Slices',f:exportDlg,en:()=>slices().length>0});return it}}
+  if(viewM){const g=viewM[1];viewM[1]=()=>{const it=g();it.push({t:document.body.classList.contains('hide-slices')?'Show Slices':'Hide Slices',__p:'View>Show Slices',f:()=>{document.body.classList.toggle('hide-slices');draw()}});return it}}}
+window.SLICES={list:slices,exportSlices,makeFromSel,eachFromSel,divide,delAll,zip};
 })();
 
 /*TOOLS-END*/
