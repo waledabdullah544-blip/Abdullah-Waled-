@@ -1,7 +1,7 @@
 const {open}=require('./lib');
 (async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
 const pg=H.pg;pg.setDefaultTimeout(5000);
-const bb=()=>pg.evaluate(()=>{const b=wbox(objs[0]);return{x:+b.x.toFixed(1),y:+b.y.toFixed(1),w:+b.w.toFixed(1),h:+b.h.toFixed(1),n:objs.length}});
+const bb=()=>pg.evaluate(()=>{const v=objs[0].g.querySelector('[data-pxo]'),b=v?(()=>{const q=v.getBBox();return{x:q.x,y:q.y,w:q.width,h:q.height}})():wbox(objs[0]);/* visible (effect) bounds */return{x:+b.x.toFixed(1),y:+b.y.toFixed(1),w:+b.w.toFixed(1),h:+b.h.toFixed(1),n:objs.length}});
 const eff=async(grp,it,set)=>{await pg.locator('#mbar button:text-is("Effect")').click();await pg.locator('.mdd button',{hasText:grp}).first().hover();await pg.waitForTimeout(100);await pg.locator('.msub button',{hasText:it}).first().click();await pg.waitForTimeout(250);if(set)await set();await pg.click('.fxb button.pri');await pg.waitForTimeout(250)};
 const fresh=async()=>{await H.reset();await H.key('m');await H.drag(300,200,400,260);await H.key('v')}; // world size 80.65 x 48.4 at 124%
 const z=await pg.evaluate(()=>z);const W=100/z,Hh=60/z;

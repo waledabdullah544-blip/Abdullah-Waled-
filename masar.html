@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 253</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 254</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -563,7 +563,7 @@ let preSel=[],preDs=[];
 const snap=()=>{const a=objs.map(o=>({o,m:{...o.m},h:o.g.innerHTML,r:o.g.dataset.rot,gd:o.g.dataset.gen,lk:o.g.dataset.lock||'',hd:o.g.style.display==='none',ly:o.ly||0,lh:o.lh||0,nm:o.nm||'',fx:o.g.dataset.fx||''}));a.lys=typeof lyJSON==='function'?lyJSON():undefined;a.sel=[...sel];a.ds=[...dsSel];a.arts=ARTS.map(q=>({...q}));a.abi=ABI;a.gd=typeof gdSer==='function'?gdSer():undefined;a.pre=preSel.length?preSel:[...sel];a.preDs=preSel.length?preDs:[...dsSel];return a};
 addEventListener('pointerdown',()=>{preSel=[...sel];preDs=[...dsSel]},true);addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!['z'].includes(e.key.toLowerCase())){preSel=[...sel];preDs=[...dsSel]}},true);
 function commit(){if(typeof lyNorm==='function'){lyNorm();fxAll()}if(typeof syncMasks==='function')syncMasks();if(typeof syncClips==='function')syncClips();if(typeof ISOH!=='undefined')for(let i=ISOH.length-1;i>=0;i--)if(ISOH[i].b>hi)ISOH.splice(i,1);hist.length=hi+1;hist.push(snap());hi++}
-function restore(s,ss,dd){if(s.arts&&s.arts.length){ARTS=s.arts.map(q=>({...q}));ABI=Math.min(s.abi||0,ARTS.length-1);abSync();abRender();try{window.abChanged&&abChanged()}catch(_){}}objs=s.map(x=>x.o);if(s.lys!==undefined&&typeof lyLoad==='function')lyLoad(s.lys);if(typeof isoSync==='function')setTimeout(isoSync,0);layer.replaceChildren(...objs.map(o=>o.g));s.forEach(x=>{x.o.m={...x.m};if(x.r)x.o.g.dataset.rot=x.r;else delete x.o.g.dataset.rot;if(x.gd)x.o.g.dataset.gen=x.gd;else delete x.o.g.dataset.gen;if(x.lk)x.o.g.dataset.lock=x.lk;else delete x.o.g.dataset.lock;x.o.g.style.display=x.hd?'none':'';x.o.ly=x.ly||undefined;x.o.lh=x.lh||0;x.o.nm=x.nm||undefined;if(x.fx)x.o.g.dataset.fx=x.fx;else delete x.o.g.dataset.fx;if(x.o.g.innerHTML!==x.h){x.o.g.innerHTML=x.h;x.o.bb=BBX(x.o)}apply(x.o)});sel=new Set((ss||s.sel||[...sel]).filter(o=>objs.includes(o)));dsSel=new Set((dd||[]).filter(k=>{try{const ob=objs.find(o=>oid(o)===+k.split('|')[0]);if(ob&&sel.has(ob)&&ob.g.querySelector('rect,ellipse'))ensurePath(ob);const r=ref(k);return r&&sel.has(r.ob)}catch(_){return false}}));if(typeof syncMasks==='function')syncMasks();if(typeof syncClips==='function')syncClips();if(typeof gdRestore==='function'&&s.gd!==undefined)gdRestore(s.gd);if(typeof lyApply==='function'){lyNorm();fxAll()}draw()}
+function restore(s,ss,dd){if(s.arts&&s.arts.length){ARTS=s.arts.map(q=>({...q}));ABI=Math.min(s.abi||0,ARTS.length-1);abSync();abRender();try{window.abChanged&&abChanged()}catch(_){}}objs=s.map(x=>x.o);if(s.lys!==undefined&&typeof lyLoad==='function')lyLoad(s.lys);if(typeof isoSync==='function')setTimeout(isoSync,0);layer.replaceChildren(...objs.map(o=>o.g));s.forEach(x=>{x.o.m={...x.m};if(x.r)x.o.g.dataset.rot=x.r;else delete x.o.g.dataset.rot;if(x.gd)x.o.g.dataset.gen=x.gd;else delete x.o.g.dataset.gen;if(x.lk)x.o.g.dataset.lock=x.lk;else delete x.o.g.dataset.lock;x.o.g.style.display=x.hd?'none':'';x.o.ly=x.ly||undefined;x.o.lh=x.lh||0;x.o.nm=x.nm||undefined;if(x.fx)x.o.g.dataset.fx=x.fx;else delete x.o.g.dataset.fx;if(x.o.g.innerHTML!==x.h){x.o.g.innerHTML=x.h;x.o.bb=BBX(x.o)}apply(x.o)});sel=new Set((ss||s.sel||[...sel]).filter(o=>objs.includes(o)));dsSel=new Set((dd||[]).filter(k=>{try{/* build 254: undo never turns a live shape into a plain path just to restore anchor selection */const r=ref(k);return r&&sel.has(r.ob)}catch(_){return false}}));if(typeof syncMasks==='function')syncMasks();if(typeof syncClips==='function')syncClips();if(typeof gdRestore==='function'&&s.gd!==undefined)gdRestore(s.gd);if(typeof lyApply==='function'){lyNorm();fxAll()}draw()}
 
 let PDOWN=false;addEventListener('pointerdown',()=>{PDOWN=true},true);addEventListener('pointerup',()=>{PDOWN=false},true);addEventListener('pointercancel',()=>{PDOWN=false},true);
 /* while a shape is being dragged out: show its path and anchor points only (like Illustrator), no bounding box */
@@ -773,9 +773,11 @@ function drawDS(L){
   const s=1/z,B='#8C8C8C';
   dsSel=new Set([...dsSel].filter(k=>{const r=ref(k);return r&&sel.has(r.ob)}));
   const mwP=tool==='mw'?new Set([...dsSel].map(k=>{const r=ref(k);return r&&r.pe}).filter(Boolean)):null,mwO=ob=>mwP&&eps(ob).some(pe=>mwP.has(pe));
-  L.forEach(ob=>{ensurePath(ob);const only=mwO(ob);eps(ob).forEach(pe=>only&&!mwP.has(pe)?0:selg.append(el('path',{d:pe.getAttribute('d'),transform:`translate(${ob.m.tx} ${ob.m.ty}) scale(${ob.m.sx} ${ob.m.sy})`,fill:'none',stroke:B,'stroke-width':1.5,'vector-effect':'non-scaling-stroke'})))});
+  /* build 254: a live rectangle / ellipse is only SHOWN as a path here (a copy); it becomes a path when an anchor is really edited (dsDown) */
+  const LIVE=new Map();L=L.map(ob=>{if(!ob.g.querySelector('rect,ellipse'))return ob;const fk={...ob,g:ob.g.cloneNode(true)};try{ensurePath(fk)}catch(_){return ob}LIVE.set(fk,ob);return fk});
+  L.forEach(ob=>{if(!LIVE.has(ob))ensurePath(ob);const only=mwO(ob);eps(ob).forEach(pe=>only&&!mwP.has(pe)?0:selg.append(el('path',{d:pe.getAttribute('d'),transform:`translate(${ob.m.tx} ${ob.m.ty}) scale(${ob.m.sx} ${ob.m.sy})`,fill:'none',stroke:B,'stroke-width':1.5,'vector-effect':'non-scaling-stroke'})))});
   const A=[];L.forEach(ob=>A.push(...dsAnchors(ob).filter(a=>!mwO(ob)||mwP.has(a.pe))));
-  if(tool==='a')drawLCW(L);else LCW=[];
+  if(tool==='a')drawLCW(L.map(o=>LIVE.get(o)||o));else LCW=[];
   A.forEach(a=>{if(!dsSel.has(a.key)&&tool!=='cp')return;const[ax,ay]=W(a.ob,a.q.x,a.q.y);['i','o'].forEach(w=>{const h=a.q[w];if(!h)return;const[hx,hy]=W(a.ob,h[0],h[1]);selg.append(el('line',{x1:ax,y1:ay,x2:hx,y2:hy,stroke:B,'stroke-width':s}));selg.append(el('circle',{cx:hx,cy:hy,r:3*s,fill:B}))})});
   A.forEach(a=>{const[ax,ay]=W(a.ob,a.q.x,a.q.y);selg.append(el('rect',{x:ax-3*s,y:ay-3*s,width:6*s,height:6*s,fill:dsSel.has(a.key)?B:'#fff',stroke:B,'stroke-width':1.2*s}))});
 }
@@ -804,6 +806,10 @@ function dsAltCopy(){const keys=[...dsSel],rs=keys.map(k=>ref(k)),byOb=new Map()
   layer.replaceChildren(...objs.map(o=>o.g));sel=nsel;dsSel=new Set(nk);
   st.orig=[...dsSel].map(kk=>{const r=ref(kk);return r&&{r,...cp(r.q)}}).filter(Boolean)}
 function dsDown(e,p){
+  /* a live shape turns into a path only when the press is on one of its anchors or segments */
+  try{const tol=8/z;[...sel].forEach(ob=>{if(!ob.g.querySelector('rect,ellipse'))return;const fk={...ob,g:ob.g.cloneNode(true)};ensurePath(fk);let near=false;
+    eps(fk).forEach(pe=>(getSP(pe)||[]).forEach(sp=>{const P=sp.pts,n=P.length,cnt=sp.closed?n:n-1;for(let k=0;k<cnt&&!near;k++){const A=P[k],B=P[(k+1)%n];for(let j=0;j<=16;j++){const c=bez(A,B,j/16),w=W(ob,c[0],c[1]);if(Math.hypot(p.x-w[0],p.y-w[1])<=tol){near=true;break}}}}));
+    if(near)ensurePath(ob)})}catch(_){}
   if(tool==='a'){const w=lcHit(p);if(w){lcStart(w,p);st.alt=e.altKey;return}}
   if(e.altKey||tool==='gs'){const t=document.elementFromPoint(e.clientX,e.clientY),g=t&&t.closest&&t.closest('#layer > g'),o=g&&g.__o;
     if(o){const ce0=tool==='a'&&t&&t.closest?t.closest('path,rect,ellipse'):null;if(ce0&&o.g.contains(ce0))ce0.setAttribute('data-mk','1');ensurePath(o);
@@ -7006,7 +7012,7 @@ function fileSave(){if(ISO)isoExit();
 function fileLoadMasar(D){if(ISO)isoExit();if(Array.isArray(D.arts)&&D.arts.length){ARTS=D.arts.map(a=>({...a}));ABN=Math.max(...ARTS.map(a=>+a.id||0),ARTS.length);ABI=Math.min(Math.max(+D.abi||0,0),ARTS.length-1);abSync();abRender();fit()}else if(D.ab&&D.ab.length===2){ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:+D.ab[0]||800,h:+D.ab[1]||600}];ABI=0;ABN=1;abSync();abRender();fit()}else if(ABW!==800||ABH!==600||ARTS.length!==1){ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:800,h:600}];ABI=0;ABN=1;abSync();abRender();fit()}objs.slice().forEach(o=>o.g.remove());objs=[];sel=new Set();dsSel=new Set();if(D.lys&&window.lyLoad)lyLoad(D.lys);else if(window.lyReset)lyReset();
   D.objs.forEach(r=>{const g=el('g',{});for(const k in r.a)g.setAttribute(k,r.a[k]);g.innerHTML=r.h;layer.appendChild(g);const o={g,bb:null,m:{sx:1,sy:1,tx:0,ty:0,...r.m},ly:r.ly,nm:r.nm,lh:r.lh};g.__o=o;o.bb=BBX(o);apply(o);objs.push(o)});
   if(window.rbUnpack)window.rbUnpack();if(typeof gdRestore==='function'&&D.gd)gdRestore(D.gd);commit();draw();if(window.dkSaved)dkSaved()}
-function fileSVGString(ai){if(ISO)isoExit();const AA=ARTS[ai==null?ABI:ai]||ARTS[ABI];const XS=new XMLSerializer(),md=document.getElementById('mdefs'),defs=md?[...md.childNodes].map(n=>XS.serializeToString(n)).join(''):'';
+function fileSVGString(ai){if(ISO)isoExit();const AA=ARTS[ai==null?ABI:ai]||ARTS[ABI];const XS=new XMLSerializer(),md=document.getElementById('mdefs'),defs=md?[...md.childNodes].map(n=>XS.serializeToString(n).replace(/^(<[A-Za-z]+) xmlns="http:\/\/www\.w3\.org\/2000\/svg"/,'$1')).join(''):'';
   const body=objs.filter(o=>o.g.style.display!=='none'&&!o.nop).map(o=>{const c=o.g.cloneNode(true);c.removeAttribute('data-iso');{const w=c.querySelector(':scope > g[data-pxo]');if(w){[...c.children].forEach(k=>{if(k!==w)k.remove()});while(w.firstChild)c.insertBefore(w.firstChild,w);w.remove();c.removeAttribute('data-pxon')}}c.querySelectorAll('[data-hf]').forEach(e=>e.setAttribute('fill','none'));c.querySelectorAll('[data-hs]').forEach(e=>e.setAttribute('stroke','none'));['data-lytpl','data-lyol','data-lydim'].forEach(a=>c.removeAttribute(a));if(window.rbExportFix)window.rbExportFix(c);return XS.serializeToString(c)}).join('\n');
   return'<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="'+AA.w+'" height="'+AA.h+'" viewBox="'+AA.x+' '+AA.y+' '+AA.w+' '+AA.h+'"><defs>'+defs+'</defs>\n'+body+'\n</svg>'}
 function fileExportSVG(){fileDownload(new Blob([fileSVGString()],{type:'image/svg+xml'}),'masar-artwork.svg');tb5Msg('Exported masar-artwork.svg')}
@@ -7292,10 +7298,13 @@ function zigSP(sp,P){const Pp=sp.pts,n=Pp.length,cnt=sp.closed?n:n-1,out=[];let 
     for(let j=0;j<m;j++){const t=(j+.5)/m,q=bez(A,B,t),a=bez(A,B,Math.max(0,t-.01)),b=bez(A,B,Math.min(1,t+.01));let dx=b[0]-a[0],dy=b[1]-a[1];const l=Math.hypot(dx,dy)||1;dx/=l;dy/=l;out.push({x:q[0]-dy*amp*sg,y:q[1]+dx*amp*sg});sg=-sg}}
   if(!sp.closed){const L=Pp[n-1];out.push({x:L.x,y:L.y,sharp:!P.smooth})}return build(out,sp.closed,!!P.smooth)}
 /* ---- Pucker & Bloat ---- */
-function pbSP(sp,P,c){const k=Math.max(-2,Math.min(2,P.a/100)),pts=sp.pts,n=pts.length;
-  return{closed:sp.closed,pts:pts.map((q,idx)=>{const dx=q.x-c[0],dy=q.y-c[1],d=Math.hypot(dx,dy)||1,ux=dx/d,uy=dy/d,nx=q.x-dx*.25*k,ny=q.y-dy*.25*k,pv=pts[(idx+n-1)%n],nt=pts[(idx+1)%n];
-    const hv=(h,o)=>{const v=h?[h[0]-q.x,h[1]-q.y]:[(o.x-q.x)/3,(o.y-q.y)/3],l=Math.hypot(v[0],v[1]);return[R3(nx+v[0]+ux*k*.45*l),R3(ny+v[1]+uy*k*.45*l)]};
-    const r=Pt(nx,ny);if(sp.closed||idx>0)r.i=hv(q.i,pv);if(sp.closed||idx<n-1)r.o=hv(q.o,nt);return r})}}
+function pbSP(sp,P,c){/* build 254 (Illustrator): Bloat (+) pulls the anchors toward the centre and pushes the curve handles out (puffy);
+   Pucker (-) pushes the anchors out and pulls the handles in (spiky). Points are scaled radially about the object's centre. */
+  const k=Math.max(-2,Math.min(2,P.a/100)),pts=sp.pts,n=pts.length,ka=1-.5*k,kh=1+k;
+  const S=(x,y,f)=>[R3(c[0]+(x-c[0])*f),R3(c[1]+(y-c[1])*f)];
+  return{closed:sp.closed,pts:pts.map((q,idx)=>{const pv=pts[(idx+n-1)%n],nt=pts[(idx+1)%n],a=S(q.x,q.y,ka);
+    const hv=(h,o)=>{const p=h?h:[q.x+(o.x-q.x)/3,q.y+(o.y-q.y)/3];return S(p[0],p[1],kh)};
+    const r=Pt(a[0],a[1]);if(sp.closed||idx>0)r.i=hv(q.i,pv);if(sp.closed||idx<n-1)r.o=hv(q.o,nt);return r})}}
 /* ---- Offset Path ---- */
 function pip(p,poly){let c=false;for(let i=0,j=poly.length-1;i<poly.length;j=i++){const a=poly[i],b=poly[j];if((a[1]>p[1])!==(b[1]>p[1])&&p[0]<(b[0]-a[0])*(p[1]-a[1])/(b[1]-a[1])+a[0])c=!c}return c}
 function offsetPoly(P,closed,d,join,ml){const n=P.length;if(n<2)return null;let A=0;for(let i=0;i<n;i++){const a=P[i],b=P[(i+1)%n];A+=a[0]*b[1]-b[0]*a[1]}const s=A>=0?1:-1,out=[];
