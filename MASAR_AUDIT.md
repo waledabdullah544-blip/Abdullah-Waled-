@@ -441,3 +441,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 241
 - تصحيح الرسم (Pencil / Paintbrush / Blob Brush): الخط بيتظبط قبل ما يتحول لمسار (إعادة توزيع النقط بالتساوي + تنعيم قوته على حسب مؤشر Accurate↔Smooth)، والخط اللي شبه مستقيم بيبقى مستقيم فعلًا. الإعداد الافتراضي رجع للنص (3) زي اليستريتور. (tests/straight.js, tests/pcfit.js)
+
+## build 242
+- Spiral: الإعدادات الافتراضية زي اليستريتور (Decay 80% و10 segments)؛ زيادة الـ segments بالسهم بتضيف لفات للداخل والطرف الخارجي ثابت تحت الماوس؛ الـ segments الصغيرة جدًا اللي مش بتبان مبقتش بتتراكم في النص؛ Decay أكبر من 100% بيلف للخارج صح. (tests/spiral.js)

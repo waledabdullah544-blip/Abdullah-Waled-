@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 241</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 242</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -4071,7 +4071,7 @@ function openLineDlg(at){
   const l=I('#lnl');l.focus();l.select()}
 /* ---------- Line group: Arc, Spiral, Rectangular Grid, Polar Grid ---------- */
 const GEN=['ar','spi','rgr','pgr'],LG=['ln',...GEN];
-const GOPT={ar:{w:100,h:100,ref:'tl',closed:0,axis:'x',slope:50,fill:0},spi:{r:50,decay:65,seg:16,ccw:1},rgr:{w:100,h:100,ref:'tl',hd:5,hs:0,vd:5,vs:0,frame:1,fill:0},pgr:{w:100,h:100,ref:'tl',cd:5,cs:0,rd:5,rs:0,comp:0,fill:0}};
+const GOPT={ar:{w:100,h:100,ref:'tl',closed:0,axis:'x',slope:50,fill:0},spi:{r:50,decay:80,seg:10,ccw:1},rgr:{w:100,h:100,ref:'tl',hd:5,hs:0,vd:5,vs:0,frame:1,fill:0},pgr:{w:100,h:100,ref:'tl',cd:5,cs:0,rd:5,rs:0,comp:0,fill:0}};
 const KB=.5523,f3=n=>Math.round(n*1000)/1000;
 function arcK(s){const a=Math.abs(s);return a<=50?a/50*KB:KB+(a-50)/50*(1-KB)}
 function geomArc(x0,y0,x1,y1,o){const w=x1-x0,h=y1-y0,k=arcK(o.slope),cn=o.axis==='y'?[x1,y0]:[x0,y1],away=o.slope>=0,toB=(o.axis==='y')!==away;
@@ -4083,8 +4083,9 @@ function geomSpiral(cx,cy,ex,ey,o){const segs=[],t=o.ccw?-1:1,dec=Math.pow(Math.
   let p=[0,0],dir=[1,0],r=1,c0=null;const pts=[p];
   const N=Math.max(1,Math.round(o.seg));
   for(let i=0;i<N+(dec<1?3000:0);i++){const nrm=rot(dir,t*Math.PI/2),c=[p[0]+nrm[0]*r,p[1]+nrm[1]*r];if(!c0)c0=c;const v=[p[0]-c[0],p[1]-c[1]],vr=rot(v,t*Math.PI/2),e=[c[0]+vr[0],c[1]+vr[1]],ed=rot(dir,t*Math.PI/2);
-    if(i<N)segs.push([[p[0]+dir[0]*r*KB,p[1]+dir[1]*r*KB],[e[0]-ed[0]*r*KB,e[1]-ed[1]*r*KB],e]);p=e;dir=ed;r*=dec;if(r<1e-9)break}
-  const L=dec<1?p:c0,v0=[-L[0],-L[1]],len=Math.hypot(...v0)||1,R=Math.hypot(ex-cx,ey-cy),S=R/len,ang=Math.atan2(ey-cy,ex-cx)-Math.atan2(v0[1],v0[0]);
+    if(i<N&&(dec>=1||r>2e-4))segs.push([[p[0]+dir[0]*r*KB,p[1]+dir[1]*r*KB],[e[0]-ed[0]*r*KB,e[1]-ed[1]*r*KB],e]);p=e;dir=ed;r*=dec;if(r<1e-9)break}
+  /* decay over 100% winds outwards: then the last point is the outer end that sits under the pointer */
+  const L=dec<1?p:c0,OE=dec<1?[0,0]:p,v0=[OE[0]-L[0],OE[1]-L[1]],len=Math.hypot(...v0)||1,R=Math.hypot(ex-cx,ey-cy),S=R/len,ang=Math.atan2(ey-cy,ex-cx)-Math.atan2(v0[1],v0[0]);
   const T=q=>{const a=rot([q[0]-L[0],q[1]-L[1]],ang);return[cx+a[0]*S,cy+a[1]*S]};
   const s0=T([0,0]);let d=`M${f3(s0[0])} ${f3(s0[1])}`;segs.forEach(sg=>{const a=T(sg[0]),b=T(sg[1]),e=T(sg[2]);d+=`C${f3(a[0])} ${f3(a[1])} ${f3(b[0])} ${f3(b[1])} ${f3(e[0])} ${f3(e[1])}`});
   return[{d,closed:false,fill:false}]}
