@@ -357,7 +357,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 .lyf{gap:3px!important;margin-top:6px}.lyf.lyh{margin:0 0 6px}.lyf .lysr{flex:1;min-width:60px;display:flex;align-items:center;gap:4px;height:26px;border:1px solid var(--line);border-radius:2px;background:var(--field);padding:0 6px;color:var(--mute)}
 .lyf .lysr input{flex:1;min-width:0;border:0;background:none;color:var(--ink);font:inherit;outline:none;height:22px;padding:0}
 .lyf .lyi{width:26px;height:26px;padding:0;display:grid;place-items:center;flex:none;border:1px solid transparent;border-radius:3px;background:none;color:var(--ink);cursor:default}.lyf .lyi:hover:not(:disabled){background:var(--hov)}.lyf .lyi:disabled{opacity:.35;cursor:default}
-#lycnt{display:none}
+#lycnt{display:inline;font-size:11px;margin-right:auto;padding-left:2px}#lyp .lyf:not(.lyh){flex-wrap:nowrap;gap:1px}#lyp .lyf:not(.lyh) .lyi{flex:none;min-width:23px;width:23px;padding:0}#lyp .lyf:not(.lyh) #lycnt{padding-left:4px}
 /* Align */
 .alsep{width:1px;align-self:stretch;background:var(--line);margin:0 4px;flex:none}.dkpn .alg{justify-content:space-between}
 #alp .pr .pt2{color:var(--mute);flex:none}
@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 254</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 255</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -7249,8 +7249,11 @@ function fxRemove(i){const T=fxTargets();if(!T.length)return;T.forEach(o=>{const
 function dkModal(title,bodyHtml,btns){const bg=document.createElement('div');bg.className='fxm';bg.innerHTML='<div class="fxb" role="dialog" aria-label="'+title+'"><b>'+title+'</b><div class="fxr">'+bodyHtml+'</div><div class="fxf"></div></div>';
   const box=bg.firstChild,ft=box.querySelector('.fxf');{const pv=box.querySelector('#fxpv');if(pv){const lb=pv.closest('label');if(lb)ft.appendChild(lb)}}let closed=false;const close=()=>{if(closed)return;closed=true;bg.remove();removeEventListener('keydown',kd,true)};
   btns.forEach(b=>{const x=document.createElement('button');x.type='button';x.textContent=b.t;x.className=b.p?'pri':'';x.dataset.k=b.k||b.t;x.onclick=()=>{if(b.f&&b.f(box)===false)return;close()};ft.appendChild(x)});
-  const kd=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();const c=btns.find(b=>b.c);if(c&&c.f)c.f(box);close()}else if(e.key==='Enter'&&e.target.tagName!=='BUTTON'){const p=btns.find(b=>b.p);if(p){e.preventDefault();e.stopPropagation();if(!p.f||p.f(box)!==false)close()}}};
-  addEventListener('keydown',kd,true);document.body.appendChild(bg);return{box,close}}
+  const kd=e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();const c=btns.find(b=>b.c);if(c&&c.f)c.f(box);close()}else if(e.key==='Enter'&&e.target.tagName==='BUTTON'&&box.contains(e.target)){e.preventDefault();e.stopPropagation();e.target.click()}else if(e.key==='Enter'&&(e.target.tagName!=='BUTTON'||!box.contains(e.target))){const p=btns.find(b=>b.p);if(p){e.preventDefault();e.stopPropagation();if(!p.f||p.f(box)!==false)close()}}};
+  addEventListener('keydown',kd,true);document.body.appendChild(bg);
+  /* focus moves into the dialog (first field, else the default button) so Enter / Esc act on it, as in Illustrator */
+  try{if(document.activeElement&&!box.contains(document.activeElement))document.activeElement.blur();const f=box.querySelector('input:not([type=hidden]):not([disabled]),select,textarea');if(f)f.focus();else{const pb=ft.querySelector('button.pri');if(pb)pb.focus()}}catch(_){}
+  return{box,close}}
 function fxDlg(kind,ed){const T=fxTargets();if(!T.length)return;if(ed!=null){const e0=fxList(T[0])[ed];if(e0&&e0.t==='px'&&window.pxEdit){window.pxEdit(ed);return}}let base0=ed!=null?fxList(T[0])[ed]:null;if(ed!=null&&!base0)return;kind=ed!=null?base0.t:kind;
   const spec=FXS[kind],def=base0||(FXLAST&&FXLAST.t===kind?FXLAST:FXD[kind]),old=T.map(o=>o.g.dataset.fx||'');
   const rows=spec.map(f=>f[1]==='c'?'<label>'+f[0]+'<input type="color" data-f="c" value="'+def.c+'"></label>':f[2]==='sel'?'<label>'+f[0]+'<select data-f="'+f[1]+'">'+f[3].map(op=>'<option value="'+op[0]+'"'+((def[f[1]]||f[3][0][0])===op[0]?' selected':'')+'>'+op[1]+'</option>').join('')+'</select></label>':f[2]==='chk'?'<label class="fxp"><input type="checkbox" data-f="'+f[1]+'"'+(def[f[1]]?' checked':'')+'> '+f[0]+'</label>':'<label>'+f[0]+'<input type="number" data-f="'+f[1]+'" min="'+f[2]+'" max="'+f[3]+'" step="1" value="'+(def[f[1]]==null?FXD[kind][f[1]]:def[f[1]])+'"></label>').join('')+'<label class="fxp"><input type="checkbox" id="fxpv" checked> Preview</label>';
@@ -7702,7 +7705,7 @@ function refresh(){if(P.style.display==='none'||lyEdit||lyDrag&&lyDrag.on)return
   if(sg===lySig)return;lySig=sg;const sc=LS.scrollTop;LS.innerHTML=build();lyFilt();LS.scrollTop=sc;
   P.querySelector('#lycnt').textContent=LAYERS.length+(LAYERS.length===1?' Layer':' Layers');
   const cg=[...sel].some(o=>clipMG(o));P.querySelector('#lyClip').title=cg&&sel.size===1?'Release Clipping Mask':'Make Clipping Mask';
-  P.querySelector('#lyClip').disabled=!(cg||[...sel].filter(pick).length>1||LYK==='L'&&objsOf(LAYACT).length>1);P.querySelector('#lyLoc').disabled=!sel.size;P.querySelector('#lyDel').disabled=false}
+  P.querySelector('#lyClip').disabled=!(cg||[...sel].filter(pick).length>1||LYK==='L'&&objsOf(LAYACT).length>1);P.querySelector('#lyLoc').disabled=!sel.size;{const d=P.querySelector('#lyDel'),last=LYK==='L'&&!sel.size&&LAYERS.filter(l=>!l.par&&!LYSEL.has(l.id)).length===0&&[...LYSEL].some(id=>{const l=lyBy(id);return l&&!l.par});d.disabled=last;d.title=last?'Delete Selection (the last layer cannot be deleted)':'Delete Selection'}}
 const commitAll=()=>{lyNorm();commit();draw()};
 function mkLayer(sub,props){const a=lyBy(LAYACT)||LAYERS[0],id=++lyId,l={id,name:'Layer '+(++lyN),color:LYC[(id-1)%LYC.length],vis:true,lock:false,par:0,...(props||{})};
   if(sub){l.par=a.id;const O=objsOf(a.id);l.at=O.length;LAYERS.push(l);LYCL.delete(a.id)}
