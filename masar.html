@@ -497,7 +497,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 266</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 267</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -11595,6 +11595,74 @@ if(window.MENUS){const objM=MENUS.find(m=>m[0]==='Object'),fileM=MENUS.find(m=>m
   if(fileM){const g=fileM[1];fileM[1]=()=>{const it=g();const i=it.findIndex(x=>x&&x.t==='Export As PNG…');it.splice(i>=0?i+1:it.length,0,{t:'Export Slices…',__p:'File>Export Slices',f:exportDlg,en:()=>slices().length>0});return it}}
   if(viewM){const g=viewM[1];viewM[1]=()=>{const it=g();it.push({t:document.body.classList.contains('hide-slices')?'Show Slices':'Hide Slices',__p:'View>Show Slices',f:()=>{document.body.classList.toggle('hide-slices');draw()}});return it}}}
 window.SLICES={list:slices,exportSlices,makeFromSel,eachFromSel,divide,delAll,zip};
+})();
+
+
+/* ======================= build 267: Graph Tools (J): column, stacked column, bar, stacked bar, line, area, pie ======================= */
+(()=>{
+const TYPES=[['col','Column Graph Tool','J'],['scol','Stacked Column Graph Tool'],['bar','Bar Graph Tool'],['sbar','Stacked Bar Graph Tool'],['line','Line Graph Tool'],['area','Area Graph Tool'],['pie','Pie Graph Tool']];
+const PAL=['#3a3a3a','#f0c374','#8c8c8c','#c98a3a','#5a5a5a','#e8d2a0','#b0b0b0','#7a5a2a'];
+const DEF={t:'col',labels:['A','B','C','D'],series:['Series 1','Series 2'],v:[[3,5],[6,2],[4,7],[8,4]]};
+const esc2=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nice=m=>{if(m<=0)return 1;const p=Math.pow(10,Math.floor(Math.log10(m))),f=m/p;return(f<=1?1:f<=2?2:f<=5?5:10)*p};
+/* the graph is a group: its members are plain shapes (they can be recoloured); data-graph keeps the data to rebuild it */
+function build(G,x,y,w,h){const t=G.t,L=G.labels,S=G.series,V=G.v,ns=S.length,nl=L.length,parts=[];const fs=Math.max(7,Math.min(12,h/20)),txt=(tx,ty,s,an)=>'<text x="'+tx.toFixed(1)+'" y="'+ty.toFixed(1)+'" font-size="'+fs.toFixed(1)+'" font-family="Segoe UI,Arial,sans-serif" fill="#3a3a3a"'+(an?' text-anchor="'+an+'"':'')+'>'+esc2(s)+'</text>';
+  const mem=(m,nm)=>parts.push('<g data-mem="1"'+(nm?' data-gpart="'+nm+'"':'')+'>'+m+'</g>');
+  const val=(i,j)=>+((V[i]||[])[j])||0;
+  if(t==='pie'){const tot=L.reduce((a,_,i)=>a+Math.max(0,val(i,0)),0)||1,cx=x+w/2,cy=y+h/2,R=Math.min(w,h)/2*.9;let a0=-Math.PI/2;
+    L.forEach((l,i)=>{const v=Math.max(0,val(i,0)),a1=a0+v/tot*Math.PI*2;if(v>0){const lg=a1-a0>Math.PI?1:0,p0=[cx+R*Math.cos(a0),cy+R*Math.sin(a0)],p1=[cx+R*Math.cos(a1),cy+R*Math.sin(a1)];
+      mem(v>=tot-1e-9?'<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+R+'" ry="'+R+'" fill="'+PAL[i%PAL.length]+'" stroke="#fff" stroke-width="1"/>':'<path d="M'+cx.toFixed(2)+' '+cy.toFixed(2)+'L'+p0[0].toFixed(2)+' '+p0[1].toFixed(2)+'A'+R.toFixed(2)+' '+R.toFixed(2)+' 0 '+lg+' 1 '+p1[0].toFixed(2)+' '+p1[1].toFixed(2)+'Z" fill="'+PAL[i%PAL.length]+'" stroke="#fff" stroke-width="1"/>','slice');
+      const am=(a0+a1)/2;mem(txt(cx+R*1.08*Math.cos(am),cy+R*1.08*Math.sin(am)+fs/3,l,Math.cos(am)<-.2?'end':Math.cos(am)>.2?'start':'middle'),'label')}a0=a1});return parts.join('')}
+  const horiz=t==='bar'||t==='sbar',stack=t==='scol'||t==='sbar';
+  let mx=0;for(let i=0;i<nl;i++){if(stack){let s=0;for(let j=0;j<ns;j++)s+=Math.max(0,val(i,j));mx=Math.max(mx,s)}else for(let j=0;j<ns;j++)mx=Math.max(mx,val(i,j))}
+  const top=nice(mx*1.05),ticks=5,ax=x+(horiz?Math.min(w*.25,60):Math.min(w*.12,40)),ay=y+h-fs*2.2,aw=x+w-ax,ah=ay-y-fs;
+  /* axes and value grid */
+  for(let k=0;k<=ticks;k++){const v=top*k/ticks;if(horiz){const gx=ax+aw*k/ticks;mem('<path d="M'+gx.toFixed(1)+' '+(y+fs).toFixed(1)+'V'+ay.toFixed(1)+'" fill="none" stroke="#d0d0d0" stroke-width=".75"/>'+txt(gx,ay+fs*1.3,+v.toFixed(2),'middle'),'grid')}
+    else{const gy=ay-ah*k/ticks;mem('<path d="M'+ax.toFixed(1)+' '+gy.toFixed(1)+'H'+(ax+aw).toFixed(1)+'" fill="none" stroke="#d0d0d0" stroke-width=".75"/>'+txt(ax-4,gy+fs/3,+v.toFixed(2),'end'),'grid')}}
+  mem('<path d="M'+ax.toFixed(1)+' '+(y+fs).toFixed(1)+'V'+ay.toFixed(1)+'H'+(ax+aw).toFixed(1)+'" fill="none" stroke="#3a3a3a" stroke-width="1"/>','axis');
+  const band=(horiz?ah:aw)/nl;
+  if(t==='line'||t==='area'){for(let j=0;j<ns;j++){const P=L.map((_,i)=>[ax+band*(i+.5),ay-ah*val(i,j)/top]);
+      if(t==='area')mem('<path d="M'+P[0][0].toFixed(2)+' '+ay.toFixed(2)+P.map(q=>'L'+q[0].toFixed(2)+' '+q[1].toFixed(2)).join('')+'L'+P[P.length-1][0].toFixed(2)+' '+ay.toFixed(2)+'Z" fill="'+PAL[j%PAL.length]+'" fill-opacity=".55" stroke="'+PAL[j%PAL.length]+'" stroke-width="1"/>','series');
+      else mem('<path d="M'+P.map(q=>q[0].toFixed(2)+' '+q[1].toFixed(2)).join('L')+'" fill="none" stroke="'+PAL[j%PAL.length]+'" stroke-width="2"/>'+P.map(q=>'<ellipse cx="'+q[0].toFixed(2)+'" cy="'+q[1].toFixed(2)+'" rx="3" ry="3" fill="'+PAL[j%PAL.length]+'"/>').join(''),'series')}}
+  else L.forEach((l,i)=>{let base=0;const gw=band*.7,bw=stack?gw:gw/ns;for(let j=0;j<ns;j++){const v=Math.max(0,val(i,j)),len=(horiz?aw:ah)*v/top;let rx,ry,rw,rh;
+      if(horiz){ry=y+fs+band*i+band*.15+(stack?0:bw*j);rh=bw;rx=ax+(stack?(aw*base/top):0);rw=len}else{rx=ax+band*i+band*.15+(stack?0:bw*j);rw=bw;ry=ay-len-(stack?ah*base/top:0);rh=len}
+      if(stack)base+=v;mem('<rect x="'+rx.toFixed(2)+'" y="'+ry.toFixed(2)+'" width="'+Math.max(.01,rw).toFixed(2)+'" height="'+Math.max(.01,rh).toFixed(2)+'" fill="'+PAL[j%PAL.length]+'"/>','bar')}});
+  L.forEach((l,i)=>{if(horiz)mem(txt(ax-4,y+fs+band*(i+.5)+fs/3,l,'end'),'label');else mem(txt(ax+band*(i+.5),ay+fs*1.3,l,'middle'),'label')});
+  /* legend */
+  if(ns>1)S.forEach((s,j)=>{const lx=x+w-90,ly=y+j*(fs+4);mem('<rect x="'+lx+'" y="'+ly+'" width="'+fs+'" height="'+fs+'" fill="'+PAL[j%PAL.length]+'"/>'+txt(lx+fs+4,ly+fs*.85,s),'legend')});
+  return parts.join('')}
+const isGraph=o=>!!(o&&o.g.querySelector(':scope > g[data-graphinfo]'));
+const gOf=o=>{try{return JSON.parse(o.g.querySelector(':scope > g[data-graphinfo]').getAttribute('data-graphinfo'))}catch(_){return null}};
+function render(o,G,box){const inner=build(G,box[0],box[1],box[2],box[3]);o.g.innerHTML='<g data-graphinfo="'+esc2(JSON.stringify({...G,box}))+'" display="none"></g>'+inner;try{touch(o)}catch(_){}}
+/* the data window (a small spreadsheet like Illustrator's graph data window) */
+function dataDlg(G,onOk){let D=JSON.parse(JSON.stringify(G));
+  const grid=()=>'<div style="max-height:300px;overflow:auto"><table class="gdt" style="border-collapse:collapse"><tr><td></td>'+D.series.map((s,j)=>'<td><input data-s="'+j+'" value="'+esc2(s)+'" style="width:78px;font-weight:600"></td>').join('')+'</tr>'+
+    D.labels.map((l,i)=>'<tr><td><input data-l="'+i+'" value="'+esc2(l)+'" style="width:84px;font-weight:600"></td>'+D.series.map((_,j)=>'<td><input data-v="'+i+','+j+'" type="number" step="any" value="'+((D.v[i]||[])[j]??'')+'" style="width:78px"></td>').join('')+'</tr>').join('')+'</table></div>'+
+    '<div style="display:flex;gap:6px;margin-top:6px"><button type="button" data-g="r+">+ Row</button><button type="button" data-g="r-">− Row</button><button type="button" data-g="c+">+ Column</button><button type="button" data-g="c-">− Column</button><button type="button" data-g="paste" title="Paste tab/comma separated values (e.g. from Excel)">Paste Data</button></div>';
+  const types='<label>Type<select data-k="t">'+TYPES.map(t=>'<option value="'+t[0]+'"'+(t[0]===D.t?' selected':'')+'>'+t[1].replace(/ Graph Tool$/,'')+'</option>').join('')+'</select></label>';
+  const M=dkModal('Graph Data',types+'<div id="gdg">'+grid()+'</div>',[{t:'Cancel',c:1},{t:'Apply',p:1,f:b=>{read(b);onOk(D)}}]);
+  const read=b=>{b.querySelectorAll('[data-s]').forEach(i=>D.series[+i.dataset.s]=i.value);b.querySelectorAll('[data-l]').forEach(i=>D.labels[+i.dataset.l]=i.value);b.querySelectorAll('[data-v]').forEach(i=>{const[r,c]=i.dataset.v.split(',').map(Number);(D.v[r]=D.v[r]||[])[c]=i.value===''?0:+i.value});D.t=b.querySelector('[data-k=t]').value};
+  M.box.addEventListener('click',async e=>{const g=e.target.closest('[data-g]');if(!g)return;read(M.box);const a=g.dataset.g;
+    if(a==='r+'){D.labels.push(String.fromCharCode(65+D.labels.length%26));D.v.push(D.series.map(()=>0))}else if(a==='r-'&&D.labels.length>1){D.labels.pop();D.v.pop()}
+    else if(a==='c+'){D.series.push('Series '+(D.series.length+1));D.v.forEach(r=>r.push(0))}else if(a==='c-'&&D.series.length>1){D.series.pop();D.v.forEach(r=>r.pop())}
+    else if(a==='paste'){let t='';try{t=await navigator.clipboard.readText()}catch(_){t=prompt('Paste the data (rows on lines, values separated by tabs or commas):')||''}const R=t.trim().split(/\r?\n/).map(l=>l.split(/\t|,/));if(R.length>1&&R[0].length>1){D.series=R[0].slice(1);D.labels=R.slice(1).map(r=>r[0]);D.v=R.slice(1).map(r=>r.slice(1).map(x=>+x||0))}}
+    M.box.querySelector('#gdg').innerHTML=grid()});return M}
+let st0=null;
+TYPES.forEach(([id,name,key],k)=>addTool({id:'gr_'+id,name,key:k===0?'J':undefined,after:k===0?'slcs':'gr_'+TYPES[k-1][0],svg:{col:'<path d="M4 20V10h3v10M10.5 20V4h3v16M17 20v-7h3v7M3 20h18"/>',scol:'<path d="M4 20v-9h4v9M10 20V5h4v15M16 20v-6h4v6M4 15h4M10 11h4M16 17h4"/>',bar:'<path d="M4 4h10v3H4M4 10.5h16v3H4M4 17h7v3H4M4 3v18"/>',sbar:'<path d="M4 4h12v3H4M4 10h16v3H4M4 16h9v3H4M9 4v3M13 10v3M7 16v3"/>',line:'<path d="M3 20h18M4 16l5-6 4 3 7-8"/>',area:'<path d="M3 20h18M4 18l5-7 4 3 7-8v14H4z"/>',pie:'<circle cx="12" cy="12" r="8"/><path d="M12 12V4M12 12l6 5"/>'}[id],
+  hint:name.replace(' Tool','')+' · drag to set the size of the graph, then type the data (click: exact size) · Object > Graph > Data… edits it later'}));
+try{addGroup({id:'graphBtn',lab:'Graph tools',t:TYPES.map(t=>'gr_'+t[0])})}catch(_){}
+TYPES.forEach(([id])=>tlDrag('gr_'+id,{down:p=>{st0={p,id};return true},move:(p,e)=>{if(!st0)return;let w=p.x-st0.p.x,h=p.y-st0.p.y;if(e.shiftKey){const m=Math.max(Math.abs(w),Math.abs(h));w=Math.sign(w||1)*m;h=Math.sign(h||1)*m}const x=Math.min(st0.p.x,st0.p.x+w),y=Math.min(st0.p.y,st0.p.y+h);st0.r=[x,y,Math.abs(w),Math.abs(h)];peng.replaceChildren(el('rect',{x,y,width:Math.abs(w),height:Math.abs(h),fill:'none',stroke:'#8c8c8c','stroke-width':1/z,'stroke-dasharray':(4/z)+' '+(3/z),'pointer-events':'none'}))},
+  up:(p,e,moved)=>{peng.replaceChildren();const s=st0;st0=null;if(!s)return;let box=s.r&&s.r[2]*z>8&&s.r[3]*z>8?s.r:null;
+    const go=b=>dataDlg({...DEF,t:s.id},D=>{const o=add('');o.nm='Graph';try{if(typeof LAYACT!=='undefined')o.ly=LAYACT}catch(_){}render(o,D,b);sel=new Set([o]);commit();draw()});
+    if(box)go(box);else dkModal('Graph','<label>Width<input type="number" data-k="w" value="300"> px</label><label>Height<input type="number" data-k="h" value="200"> px</label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{go([s.p.x,s.p.y,Math.max(20,+b.querySelector('[data-k=w]').value||300),Math.max(20,+b.querySelector('[data-k=h]').value||200)])}}])},esc:()=>{peng.replaceChildren();st0=null}}));
+/* Object > Graph */
+const sg=()=>[...sel].find(isGraph);
+const editData=()=>{const o=sg();if(!o)return;const G=gOf(o);dataDlg(G,D=>{render(o,D,G.box);commit();draw()})};
+const editType=t=>{const o=sg();if(!o)return;const G=gOf(o);G.t=t;render(o,G,G.box);commit();draw()};
+if(window.MENUS){const objM=MENUS.find(m=>m[0]==='Object');if(objM){const g=objM[1];objM[1]=()=>{const it=g();const i=it.findIndex(x=>x&&x.t==='Slice');it.splice(i>=0?i+1:it.length,0,{t:'Graph',__p:'Object>Graph',sub:()=>[{t:'Type',__p:'Object>Graph>Type',sub:()=>TYPES.map(([id,n])=>({t:n.replace(/ Graph Tool$/,''),__p:'Object>Graph>Type>'+id,c:()=>{const o=sg();return!!o&&gOf(o).t===id},f:()=>editType(id),en:()=>!!sg()}))},{t:'Data…',__p:'Object>Graph>Data',f:editData,en:()=>!!sg()}]});return it}}}
+/* double-clicking a graph with the selection tool opens its data (instead of isolating the group) */
+cv.addEventListener('dblclick',e=>{if(tool!=='v')return;const t=document.elementFromPoint(e.clientX,e.clientY),g=t&&t.closest&&t.closest('#layer > g'),o=g&&g.__o;if(o&&isGraph(o)&&e.altKey){e.preventDefault();e.stopImmediatePropagation();sel=new Set([o]);editData()}},true);
+window.GRAPH={build,render,isGraph,gOf,editData,editType};
 })();
 
 /*TOOLS-END*/

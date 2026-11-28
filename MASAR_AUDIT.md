@@ -552,3 +552,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 266: Slice Tool (Shift+K) + Slice Selection
 - ارسم مستطيل = Slice، بيظهر بإطار أحمر ورقم (01، 02…) زي اليستريتور، ومبيطلعش في الطباعة ولا في تصدير الـ SVG/PNG. Shift مربع، Alt من النص. Slice Selection بيحدد ويحرك الـ Slices بس. Object > Slice: Make، Create from Selection، Divide Slice، Delete All. View > Hide/Show Slices. File > Export Slices… بيطلّع ZIP فيه PNG لكل Slice بدقة 1× لحد 4×. (tests/slices.js)
+
+## build 267: Graph Tools (J)
+- 7 أنواع زي اليستريتور: Column (J)، Stacked Column، Bar، Stacked Bar، Line، Area، Pie. اسحب مكان الرسم (أو اضغط لمقاس بالأرقام) → نافذة Graph Data (جدول: صفوف وأعمدة بأسمائها، + / − صف وعمود، Paste Data من Excel). الرسم جروب من أشكال عادية تتلوّن وتتعدل، فيه محاور وخطوط شبكة وأرقام وأسماء و Legend. Object > Graph > Type بيغيّر النوع، و Data… بيرجّع الجدول ويعيد الرسم، و Alt+دبل كليك على الرسم بيفتح الداتا. (tests/graphs.js)
