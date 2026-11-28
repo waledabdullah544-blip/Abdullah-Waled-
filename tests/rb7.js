@@ -5,8 +5,8 @@ await ctx.route('https://cdn.jsdelivr.net/**',r=>{const f='/tmp/mdl/tf/'+r.reque
 const b64=fs.readFileSync('/tmp/mdl/sun.jpg').toString('base64');
 await pg.evaluate(async b=>{const u='data:image/jpeg;base64,'+b;const o=add('<image href="'+u+'" x="100" y="100" width="300" height="400" preserveAspectRatio="none"/>');sel=new Set([o]);window.__o=o;commit();draw()},b64);
 await pg.waitForTimeout(300);
-ok('default model is Balanced',await pg.evaluate(()=>document.querySelector('#rbctx .rbmd').value==='balanced'));
-ok('model list: Balanced, Studio, Fast',await pg.evaluate(()=>[...document.querySelectorAll('#rbctx .rbmd option')].map(o=>o.value).join()==='balanced,studio,fast'));
+ok('default model: Pro with WebGPU, Balanced on CPU',await pg.evaluate(()=>document.querySelector('#rbctx .rbmd').value===(navigator.gpu?'pro':'balanced')));
+ok('model list: Pro, Balanced, Studio, Fast',await pg.evaluate(()=>[...document.querySelectorAll('#rbctx .rbmd option')].map(o=>o.value).join()==='pro,balanced,studio,fast'));
 // X dismisses the bar for this selection, reselect brings it back
 await pg.click('#rbctx .rbx');await pg.waitForTimeout(150);
 ok('X hides the bar',await pg.evaluate(()=>getComputedStyle(document.getElementById('rbctx')).display==='none'));

@@ -497,7 +497,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 262</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 263</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10280,9 +10280,9 @@ addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!e.altKey||e.code!=='
    Nothing is loaded at start-up: the engine and the chosen model download on the first click, with progress, and are cached by the browser. */
 (()=>{
 const TFU='https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.7.6/dist/';
-const MODELS=[{id:'balanced',n:'Balanced · any subject, works on every computer (IS-Net, 170 MB)'},{id:'studio',n:'Studio · finest hair & detail, needs WebGPU (BiRefNet lite, 110–215 MB)'},{id:'fast',n:'Fast · portraits only (MODNet, 7 MB)'}];
+const MODELS=[{id:'pro',n:'Pro · best edges, hair & fur, any subject (BEN2, 220 MB)'},{id:'balanced',n:'Balanced · any subject, works on every computer (IS-Net, 170 MB)'},{id:'studio',n:'Studio · finest hair & detail, needs WebGPU (BiRefNet lite, 110–215 MB)'},{id:'fast',n:'Fast · portraits only (MODNet, 7 MB)'}];
 function W(){
-  let TF=null;const C={},SPEC={balanced:{id:'BritishWerewolf/IS-Net',dt:()=>'fp32',sig:false,mm:true,pre:{s:1024,m:[.5,.5,.5],d:[1,1,1]}},fast:{id:'Xenova/modnet',dt:d=>d==='webgpu'?'fp32':'q8',sig:false},studio:{id:'onnx-community/BiRefNet_lite-ONNX',dt:(d,h)=>d==='webgpu'&&h?'fp16':'fp32',sig:true}};
+  let TF=null;const C={},SPEC={pro:{id:'onnx-community/BEN2-ONNX',dt:()=>'fp16',sig:false,mm:false},balanced:{id:'BritishWerewolf/IS-Net',dt:()=>'fp32',sig:false,mm:true,pre:{s:1024,m:[.5,.5,.5],d:[1,1,1]}},fast:{id:'Xenova/modnet',dt:d=>d==='webgpu'?'fp32':'q8',sig:false},studio:{id:'onnx-community/BiRefNet_lite-ONNX',dt:(d,h)=>d==='webgpu'&&h?'fp16':'fp32',sig:true}};
   async function tf(){if(!TF){TF=await import(TFU+'transformers.min.js');TF.env.allowLocalModels=false;TF.env.backends.onnx.wasm.wasmPaths=TFU;TF.env.backends.onnx.wasm.numThreads=1}return TF}
   /* the CPU (WASM) build has a hard memory ceiling: no arena, no extra graph copies */
   const so=d=>d==='wasm'?{graphOptimizationLevel:'basic',enableCpuMemArena:false,enableMemPattern:false}:{};
@@ -10357,6 +10357,35 @@ function rbWorker(){if(RB.w)return RB.w;const url=URL.createObjectURL(new Blob([
 async function rbRun(img,model,cb){const S=1024,k=Math.min(1,S/Math.max(img.naturalWidth,img.naturalHeight)),w=Math.max(1,Math.round(img.naturalWidth*k)),h=Math.max(1,Math.round(img.naturalHeight*k)),c=document.createElement('canvas');c.width=w;c.height=h;
   const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);const blob=await new Promise(r=>c.toBlob(r,'image/png'));
   const wk=rbWorker(),id=++RB.n;return new Promise((ok,no)=>{RB.jobs.set(id,{ok,no,cb,files:{}});cb&&cb({phase:'start'});wk.postMessage({cmd:'run',id,model,blob})})}
+/* build 263: stronger matte - a close-up second pass on the subject and edge-aware upsampling on the real photo
+   (the model only ever sees 1024 px; a 4000 px photo used to get a blurry, blocky edge) */
+async function rbBuildMask(img,r,model,prg,W,H){const U=window.RBMASK.U,NW=img.naturalWidth,NH=img.naturalHeight;
+  const gray=(res)=>{const c=document.createElement('canvas');c.width=res.w;c.height=res.h;const x=c.getContext('2d'),d=x.createImageData(res.w,res.h);for(let i=0;i<res.w*res.h;i++){const v=res.data[i];d.data[i*4]=d.data[i*4+1]=d.data[i*4+2]=v;d.data[i*4+3]=255}x.putImageData(d,0,0);return c};
+  const sample=(src,w,h)=>{const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d',{willReadFrequently:true});x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(src,0,0,w,h);return x.getImageData(0,0,w,h).data};
+  /* working resolution for the refinement (memory: about 10 float buffers) */
+  const G=Math.min(1,2560/Math.max(W,H)),gw=Math.max(1,Math.round(W*G)),gh=Math.max(1,Math.round(H*G)),N=gw*gh;
+  const A=new Float32Array(N);{const d=sample(gray(r),gw,gh);for(let i=0;i<N;i++)A[i]=d[i*4]/255}
+  /* pass 2: the subject's box, cut from the full-resolution photo, goes through the model again (more pixels per edge) */
+  let x0=r.w,y0=r.h,x1=-1,y1=-1;for(let y=0;y<r.h;y++)for(let x=0;x<r.w;x++)if(r.data[y*r.w+x]>127){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}
+  if(x1>=0&&Math.max(NW,NH)>1100){const fx=NW/r.w,fy=NH/r.h,bw=(x1-x0+1)*fx,bh=(y1-y0+1)*fy,mg=Math.max(bw,bh)*.08+16;
+    let cx0=Math.max(0,Math.floor(x0*fx-mg)),cy0=Math.max(0,Math.floor(y0*fy-mg)),cx1=Math.min(NW,Math.ceil((x1+1)*fx+mg)),cy1=Math.min(NH,Math.ceil((y1+1)*fy+mg));
+    const cw=cx1-cx0,ch=cy1-cy0;
+    if(Math.max(cw,ch)<.82*Math.max(NW,NH)&&cw>32&&ch>32){try{prg&&prg({phase:'pass2'});
+      const cc=document.createElement('canvas');cc.width=cw;cc.height=ch;cc.getContext('2d').drawImage(img,cx0,cy0,cw,ch,0,0,cw,ch);
+      const url=URL.createObjectURL(await new Promise(ok=>cc.toBlob(ok,'image/png'))),ci=new Image();ci.src=url;await ci.decode();
+      const r2=await rbRun(ci,model,prg);URL.revokeObjectURL(url);
+      /* paste it in, feathered at the crop sides that are inside the photo */
+      const rx0=Math.round(cx0*gw/NW),ry0=Math.round(cy0*gh/NH),rw=Math.max(1,Math.round(cw*gw/NW)),rh=Math.max(1,Math.round(ch*gh/NH)),B=sample(gray(r2),rw,rh),F=Math.max(4,Math.round(mg*gw/NW*.6));
+      for(let y=0;y<rh;y++){const yy=ry0+y;if(yy<0||yy>=gh)continue;for(let x=0;x<rw;x++){const xx=rx0+x;if(xx<0||xx>=gw)continue;
+        let d=1e9;if(cx0>0)d=Math.min(d,x);if(cy0>0)d=Math.min(d,y);if(cx1<NW)d=Math.min(d,rw-1-x);if(cy1<NH)d=Math.min(d,rh-1-y);const w=Math.min(1,d/F),i=yy*gw+xx;A[i]=A[i]*(1-w)+B[(y*rw+x)*4]/255*w}}}catch(e){if(String(e.message)==='Cancelled')throw e}}}
+  /* edge-aware refinement on the photo itself: the matte snaps to the real edges (hair, fur, fine shapes) */
+  prg&&prg({phase:'refine'});const P=sample(img,gw,gh),I=new Float32Array(N);for(let i=0;i<N;i++)I[i]=(P[i*4]*.299+P[i*4+1]*.587+P[i*4+2]*.114)/255;
+  const rad=Math.max(2,Math.round(Math.max(gw,gh)/400)),Q=U.guided(I,A,gw,gh,rad,6e-5),O=new Float32Array(N);
+  /* keep the solid parts solid and the background clean; only the transition band takes the refined values */
+  for(let i=0;i<N;i++){const a=A[i],q=Q[i];let v=a>.985?Math.max(a,q):a<.015?Math.min(a,q):q;v=(v-.015)/.97;O[i]=v<0?0:v>1?1:v}
+  const oc=document.createElement('canvas');oc.width=gw;oc.height=gh;{const ox=oc.getContext('2d'),od=ox.createImageData(gw,gh);for(let i=0;i<N;i++){const v=Math.round(O[i]*255);od.data[i*4]=od.data[i*4+1]=od.data[i*4+2]=v;od.data[i*4+3]=255}ox.putImageData(od,0,0)}
+  if(gw===W&&gh===H)return oc;const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(oc,0,0,W,H);return c}
+window.rbBuildMask=rbBuildMask;
 const IMGLOAD=u=>new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(new Error('The image could not be read.'));i.src=u});
 const say=t=>{try{document.getElementById('hint').textContent=t}catch(_){}};
 const rbTarget=o=>{if(!o||!o.g)return null;if(o.g.querySelector('[data-opmask]'))return null;const im=o.g.querySelectorAll('image');if(im.length!==1)return null;if(o.g.querySelector('path,rect,ellipse,circle,polygon,polyline,line,text'))return null;return im[0]};
@@ -10364,7 +10393,8 @@ function rbApplyMatte(o,im,url){const A=a=>im.getAttribute(a);
   const n=add('<image href="'+url+'" x="'+A('x')+'" y="'+A('y')+'" width="'+A('width')+'" height="'+A('height')+'" preserveAspectRatio="none"/>');
   const t=o.g.getAttribute('transform');if(t)n.g.setAttribute('transform',t);n.m=Object.assign({},o.m);try{n.bb=n.g.getBBox()}catch(_){}
   sel=new Set([o,n]);dsSel=new Set();const ok=opmMake();if(ok){const g=[...sel][0];if(g)g.nm='Background removed'}return ok}
-const mdlKey=()=>{try{const v=localStorage.getItem('masar.rbmodel');if(MODELS.some(m=>m.id===v))return v}catch(_){}return'balanced'};
+/* build 263: Pro (BEN2) is the default where the graphics card can run it (WebGPU); on a CPU-only computer Balanced stays the default (Pro still works there, slower) */
+const mdlKey=()=>{try{const v=localStorage.getItem('masar.rbmodel');if(MODELS.some(m=>m.id===v))return v}catch(_){}return navigator.gpu?'pro':'balanced'};
 /* ---- contextual action bar (shown when exactly one image is selected) ---- */
 const BAR=document.createElement('div');BAR.id='rbctx';BAR.style.display='none';document.body.appendChild(BAR);
 BAR.innerHTML='<button type="button" class="rbgo" title="Remove the background with AI (runs on this computer)">Remove Background</button><select class="rbmd" title="AI model" aria-label="AI model">'+MODELS.map(m=>'<option value="'+m.id+'">'+m.n+'</option>').join('')+'</select><button type="button" class="rbup" title="Upscale: raise the pixel resolution with AI (Real-ESRGAN)">Upscale</button><button type="button" class="rbpk" title="Click the subject you want to keep (AI selection, runs on this computer)">Pick Subject</button><button type="button" class="rbtg" title="Show / hide the mask (the original image is never changed)">Mask: On</button><button type="button" class="rbed" title="Edit the mask: brush, edge, colour fringe">Edit Mask</button><button type="button" class="rbpt" title="Trace the mask into an editable vector path (Pen / Direct Selection)">Mask to Path</button><button type="button" class="rbdc" title="Create a cut line (offset outline) around the subject for stickers and print">Die-Cut</button><button type="button" class="rbrm" title="Delete the mask and go back to the original image">Remove Mask</button><span class="rbst"></span><i class="rbpg"><b></b></i><button type="button" class="rbx" title="Close (while the AI works: cancel)">✕</button>';
@@ -10384,12 +10414,11 @@ addEventListener('resize',()=>{try{rbPos()}catch(_){}});
 async function rbStart(){if(RB.busy)return;const L=[...sel];if(L.length!==1||!rbTarget(L[0])){say('Remove Background: select ONE placed image (one that already has an opacity mask needs Release Opacity Mask first)');try{aiAlert('Select one placed image (not a group, and without an opacity mask), then run Remove Background.')}catch(_){}return}
   const o=L[0],im=rbTarget(o),model=$b('.rbmd').value;RB.busy=true;JOB={o};$b('.rbgo').disabled=true;$b('.rbmd').disabled=true;rbUi('Starting AI…',0);rbPos();
   try{const img=await IMGLOAD(im.getAttribute('href')||im.getAttributeNS('http://www.w3.org/1999/xlink','href'));
-    const prg=p=>{if(p.phase==='download')rbUi('Downloading model '+p.mb.toFixed(0)+(p.tot?' / '+p.tot.toFixed(0):'')+' MB (first time only)',p.f);else if(p.phase==='infer')rbUi('Detecting subject… ('+p.dev+')',null);else rbUi('Preparing AI engine…',null)};
-    let r;try{r=await rbRun(img,model,prg)}catch(e){if(model==='studio'&&String(e.message)!=='Cancelled'){rbUi('Studio is not available on this computer, using Balanced…',null);r=await rbRun(img,'balanced',prg)}else throw e}
+    const prg=p=>{if(p.phase==='download')rbUi('Downloading model '+p.mb.toFixed(0)+(p.tot?' / '+p.tot.toFixed(0):'')+' MB (first time only)',p.f);else if(p.phase==='infer')rbUi((PASS2?'Second pass: close-up of the subject… (':'Detecting subject… (')+p.dev+')',null);else if(p.phase==='pass2'){PASS2=true;rbUi('Second pass: close-up of the subject…',null)}else if(p.phase==='refine')rbUi('Refining edges on the full-resolution photo…',null);else if(!PASS2)rbUi('Preparing AI engine…',null)};let PASS2=false;
+    let r;try{r=await rbRun(img,model,prg)}catch(e){if(model==='studio'&&String(e.message)!=='Cancelled'){rbUi('Studio is not available on this computer, using Balanced…',null);r=await rbRun(img,'balanced',prg);r.model='balanced'}else throw e}
     if(!objs.includes(o))throw new Error('The image was deleted while the AI was working.');
     rbUi('Building mask…',null);const k=Math.min(1,4096/Math.max(img.naturalWidth,img.naturalHeight)),W=Math.max(1,Math.round(img.naturalWidth*k)),H=Math.max(1,Math.round(img.naturalHeight*k));
-    const sm=document.createElement('canvas');sm.width=r.w;sm.height=r.h;const sx=sm.getContext('2d'),id=sx.createImageData(r.w,r.h);for(let i=0;i<r.w*r.h;i++){const v=r.data[i];id.data[i*4]=id.data[i*4+1]=id.data[i*4+2]=v;id.data[i*4+3]=255}sx.putImageData(id,0,0);
-    const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.imageSmoothingEnabled=true;x.imageSmoothingQuality='high';x.drawImage(sm,0,0,W,H);
+    const c=await rbBuildMask(img,r,r.model||model,prg,W,H);
     JOB=null;await RBMASK.make(o,im,c);if(!o.nm)o.nm='Background removed';commit();draw();say('Background removed: non-destructive mask, the original image is untouched. Undo with Ctrl+Z.')}
   catch(e){if(String(e.message)==='Cancelled')say('Remove Background cancelled');else{say('Remove Background: '+(e.message||e));try{aiAlert(String(e.message||e))}catch(_){}}}
   finally{RB.busy=false;JOB=null;$b('.rbgo').disabled=false;$b('.rbmd').disabled=false;rbUi('',null);rbPos()}}
@@ -10460,7 +10489,7 @@ async function make(o,im,maskCanvas){const s=await loadImg(hrefOf(im)),sid='s'+(
   const a=n=>im.getAttribute(n),pos=' x="'+a('x')+'" y="'+a('y')+'" width="'+a('width')+'" height="'+a('height')+'" preserveAspectRatio="none"';
   const src=im.cloneNode(true);src.setAttribute('data-rbsrc','1');src.setAttribute('data-rbsid',sid);
   o.g.innerHTML='<image data-rbo="1"'+pos+'/><g data-rbh="1" style="display:none"></g>';
-  const h=o.g.querySelector('g[data-rbh]');h.appendChild(src);const mk=document.createElementNS(NSV,'image');mk.setAttribute('data-rbmask','1');mk.setAttribute('data-rbm',mid);mk.setAttribute('data-rbon','1');['x','y','width','height'].forEach(n=>mk.setAttribute(n,a(n)));h.appendChild(mk);
+  const h=o.g.querySelector('g[data-rbh]');h.appendChild(src);const mk=document.createElementNS(NSV,'image');mk.setAttribute('data-rbmask','1');mk.setAttribute('data-rbm',mid);mk.setAttribute('data-rbon','1');/* build 263: edge colours are cleaned by default (no sky / wall colour left in hair and fur) */mk.setAttribute('data-rbdc','45');['x','y','width','height'].forEach(n=>mk.setAttribute(n,a(n)));h.appendChild(mk);
   const P=parts(o.g),url=await render(P);URLS.set(mid+'|'+sid+'|0',url);P.mk.setAttribute('data-rbbase',mid);P.out.setAttribute('href',url);try{o.bb=o.g.getBBox()}catch(_){}return mid}
 function toggle(o){const P=o&&parts(o.g);if(!P)return false;P.mk.setAttribute('data-rbon',P.mk.getAttribute('data-rbon')==='0'?'1':'0');commit();draw();return true}
 function remove(o){const P=o&&parts(o.g);if(!P)return false;const s=P.sr.cloneNode(true);['data-rbsrc','data-rbsid'].forEach(n=>s.removeAttribute(n));o.g.innerHTML='';o.g.appendChild(s);try{o.bb=o.g.getBBox()}catch(_){}if(EDIT)EDIT=null;commit();draw();return true}

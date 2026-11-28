@@ -529,3 +529,10 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - اتصلح: Ctrl+F9 (Gradient) مكانش شغال. اتضاف: F8 = New Symbol (زي اليستريتور).
 - لوحات جديدة باختصاراتها: Color Guide (Shift+F3: قواعد Complementary/Analogous/Triad/Tetrad/Shades… + درجات فاتح وغامق، ضغطة تلوّن، وحفظ المجموعة في الـ Swatches)، Attributes (Ctrl+F11: Fill Rule Non-Zero/Even-Odd، Overprint، Show/Don't Show Center، URL، Note)، OpenType (Ctrl+Alt+Shift+T: Ligatures، Fractions، Ordinals، Swash، Alternates، أنواع الأرقام). (tests/ilkeys.js)
 - أدوات اليستريتور اللي لسه مش موجودة في مسار أصلًا (فمفيش اختصار ليها): Perspective Grid (Shift+P)، Perspective Selection (Shift+V)، Symbol Sprayer (Shift+S)، Graph (J)، Mesh (U)، Slice (Shift+K)، Rotate View (Shift+H).
+
+## build 263: حذف الخلفية أقوى (#22)
+- موديل جديد Pro = BEN2 (رخصة MIT، 220 ميجا، بيتنزل أول مرة بس): حواف الشعر والفرو أنضف بكتير من IS-Net (اتقارن على صورة شعر كيرلي: IS-Net سايب هالة رمادي، BEN2 لأ). هو الافتراضي على أي جهاز فيه WebGPU، وعلى جهاز من غير كارت شاشة الافتراضي Balanced (Pro شغال برضه بس أبطأ).
+- تمريرة تانية تلقائية: لو الموضوع واخد جزء من صورة كبيرة، الجزء ده بيتقص من الصورة الأصلية بدقتها الكاملة ويدخل الموديل تاني، والنتيجة بتتركب مع حواف ناعمة (بكسلات أكتر على كل حافة).
+- تنعيم الحواف على الصورة نفسها (Guided Filter على دقة لحد 2560): الماسك بيلزق في حواف الصورة الحقيقية بدل التكبير العادي اللي كان بيطلع حواف مموّعة ومكسّرة.
+- تنضيف ألوان الحواف (Decontaminate 45%) شغال افتراضي: مفيش لون سما أو حيطة في أطراف الشعر. يتغير من Edit Mask.
+- أدوات مقارنة للاختبار: tests/rbcmp_tool.js و tests/rbfull_tool.js.
