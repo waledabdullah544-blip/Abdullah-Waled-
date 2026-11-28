@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 255</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 256</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8500,7 +8500,7 @@ if(!DK.restore())wsApply('Essentials');
    ['Window',()=>{const PN=(t,id,k)=>({t,k,c:()=>DK.isOpen(id),f:()=>DK.toggle(id)});return[
     {t:'Workspace',sub:()=>wsMenu()},sep,
     {t:'Control',c:()=>!document.body.classList.contains('hide-ctrl'),f:()=>document.body.classList.toggle('hide-ctrl')},{t:'Tools',c:()=>!document.body.classList.contains('hide-tools'),f:()=>document.body.classList.toggle('hide-tools')},sep,
-    ...[PN('Align','align','Shift+F7'),PN('Appearance','appearance','Shift+F6'),PN('Color','color','F6'),PN('Gradient','gradient','Ctrl+F9'),PN('Layers','layers','F7'),PN('Pathfinder','pathfinder','Shift+Ctrl+F9'),PN('Properties','props'),PN('Stroke','stroke','Ctrl+F10'),PN('Transparency','transparency','Shift+Ctrl+F10'),...(window.PANELX||[]).map(q=>PN(q.title,q.id,q.key))].sort((a,b)=>a.t.localeCompare(b.t)),
+    ...[PN('Align','align','Shift+F7'),PN('Appearance','appearance','Shift+F6'),PN('Color','color','F6'),PN('Gradient','gradient','Ctrl+F9'),PN('Layers','layers','F7'),PN('Pathfinder','pathfinder','Shift+Ctrl+F9'),PN('Properties','props'),PN('Stroke','stroke','Ctrl+F10'),PN('Transform','transform','Shift+F8'),PN('Transparency','transparency','Shift+Ctrl+F10'),...(window.PANELX||[]).map(q=>PN(q.title,q.id,q.key))].sort((a,b)=>a.t.localeCompare(b.t)),
     {t:'Type',sub:()=>[{t:'Character',k:'Ctrl+T',c:()=>DK.isOpen('character'),f:()=>DK.toggle('character')},{t:'Paragraph',k:'Ctrl+Alt+T',c:()=>DK.isOpen('paragraph'),f:()=>DK.toggle('paragraph')},
       {t:'Tabs',k:'Ctrl+Shift+T',c:()=>DK.isOpen('tabs'),f:()=>DK.toggle('tabs')}]},sep,
     {t:'Edit Toolbar…',f:()=>$('#tbedb').click()},sep,
@@ -11091,6 +11091,52 @@ addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.repeat||ted_
 addEventListener('pointermove',e=>{try{if(!st||st.mode!=='move'||!st.moved||st.copied||!e.altKey||!st.orig)return;st.copied=true;
   const C=[];st.orig.forEach(r=>{const o=r.o;if(!objs.includes(o))return;const g=o.g.cloneNode(true),n={g,bb:o.bb,m:{...o.m,tx:r.tx,ty:r.ty},ly:o.ly};g.__o=n;apply(n);const i=objs.indexOf(o);objs.splice(i,0,n);layer.insertBefore(g,o.g);C.push(n)});
   if(typeof rethreadClones==='function')rethreadClones(C)}catch(_){}},true);
+})();
+
+
+/* ======================= build 256: Transform panel (Window > Transform, Shift+F8) ======================= */
+(()=>{
+const P=document.createElement('div');P.id='tfp';P.className='dkpn';P.style.display='none';document.body.appendChild(P);
+{const st=document.createElement('style');st.textContent='#tfp{padding:8px 10px;font:12px "Segoe UI",Cairo,sans-serif;color:var(--ink)}#tfp .tg{display:grid;grid-template-columns:34px 1fr 1fr 22px;gap:6px 8px;align-items:center}#tfp .ref{grid-row:1/3;display:grid;grid-template-columns:repeat(3,9px);gap:3px}#tfp .ref button{width:9px;height:9px;padding:0;border:1px solid var(--mute);background:none;border-radius:1px;cursor:default}#tfp .ref button.on{background:var(--ink);border-color:var(--ink)}#tfp label{display:flex;align-items:center;gap:4px;min-width:0}#tfp label b{min-width:14px;font-weight:600;color:var(--mute)}#tfp input[type=number]{width:100%;min-width:0;height:22px;background:var(--field);border:1px solid var(--bdr);color:var(--ink);border-radius:2px;padding:0 4px;font:inherit}#tfp .lk{grid-row:1/3;grid-column:4;width:20px;height:40px;border:0;background:none;color:var(--mute);cursor:default;padding:0}#tfp .lk.on{color:var(--ink)}#tfp .row2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}#tfp .sec{margin-top:10px;padding-top:8px;border-top:1px solid var(--line)}#tfp .sec>b{display:block;margin-bottom:6px;font-weight:600;text-align:left}#tfp{text-align:left}#tfp .chk{display:flex;gap:6px;align-items:center;margin-top:6px;color:var(--ink)}#tfp .none{color:var(--mute);padding:6px 0}';document.head.appendChild(st)}
+const LINK='<svg width="14" height="30" viewBox="0 0 14 30" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"><path d="M4 4h5v7M4 26h5v-7"/><path d="M7 12v6"/></svg>';
+P.innerHTML='<div class="none" id="tfNone">No selection</div><div id="tfBody"><div class="tg"><div class="ref" id="tfRef" title="Reference Point">'+[0,.5,1].map(y=>[0,.5,1].map(x=>'<button type="button" data-rx="'+x+'" data-ry="'+y+'" aria-label="Reference point"></button>').join('')).join('')+'</div>'+
+ '<label><b>X:</b><input id="tfx" type="number" step="0.1"></label><label><b>W:</b><input id="tfw" type="number" step="0.1" min="0.1"></label><button type="button" class="lk" id="tfLk" title="Constrain Width and Height Proportions">'+LINK+'</button>'+
+ '<label><b>Y:</b><input id="tfy" type="number" step="0.1"></label><label><b>H:</b><input id="tfh" type="number" step="0.1" min="0.1"></label></div>'+
+ '<div class="row2"><label title="Rotate"><b>&#8635;</b><input id="tfr" type="number" step="1"> °</label><label title="Shear"><b>&#8725;</b><input id="tfs" type="number" step="1" value="0"> °</label></div>'+
+ '<div class="sec" id="tfShape"><b id="tfShN">Rectangle Properties:</b><div class="row2"><label id="tfRw" title="Corner radius (all corners)"><b>&#9698;</b><input id="tfcr" type="number" min="0" step="1"> px</label><label id="tfNw" title="Polygon / Star sides"><b>#</b><input id="tfn" type="number" min="3" max="100" step="1"></label></div></div>'+
+ '<div class="sec"><label class="chk"><input type="checkbox" id="tfss"> Scale Strokes &amp; Effects</label></div></div>';
+const q=s=>P.querySelector(s),T=()=>[...sel].filter(o=>o.g.isConnected);let LINKED=false;
+const setv=(id,v)=>{const e=q(id);if(document.activeElement!==e)e.value=v};
+function refresh(){if(P.style.display==='none')return;const L=T();q('#tfNone').style.display=L.length?'none':'';q('#tfBody').style.display=L.length?'':'none';
+  q('#tfRef').querySelectorAll('button').forEach(b=>b.classList.toggle('on',+b.dataset.rx===REF[0]&&+b.dataset.ry===REF[1]));q('#tfLk').classList.toggle('on',LINKED);
+  q('#tfss').checked=!(window.MGEN&&window.MGEN.ss===false);if(!L.length)return;
+  const u=uni(L);setv('#tfx',+(u.x+REF[0]*u.w).toFixed(2));setv('#tfy',+(u.y+REF[1]*u.h).toFixed(2));setv('#tfw',+(+u.w).toFixed(2));setv('#tfh',+(+u.h).toFixed(2));
+  setv('#tfr',(Math.round(-rotOf(L[0])*180/Math.PI*100)/100)||0);
+  /* shape properties (Illustrator shows them for live rectangles / polygons) */
+  const o=L.length===1?L[0]:null,k=o?shapeEl(o):null,rp=o?lcRectP(o):null,isR=!!rp||k==='rr',isN=k==='po'||k==='sr';
+  q('#tfShape').style.display=isR||isN?'':'none';q('#tfRw').style.display=isR?'':'none';q('#tfNw').style.display=isN?'':'none';
+  q('#tfShN').textContent=isR?'Rectangle Properties:':k==='sr'?'Star Properties:':'Polygon Properties:';
+  if(isR){let r=0;try{const e=o.g.firstElementChild,p=JSON.parse(e.getAttribute('data-p')||'{}');r=p.r!=null?p.r:(rp&&rp.r)||0}catch(_){}setv('#tfcr',+(+r).toFixed(2))}
+  if(isN){try{setv('#tfn',JSON.parse(o.g.firstElementChild.getAttribute('data-p')).n)}catch(_){}}}
+function box(chg){const L=T();if(!L.length)return;const u=uni(L);let x=parseFloat(q('#tfx').value),y=parseFloat(q('#tfy').value),w=parseFloat(q('#tfw').value),h=parseFloat(q('#tfh').value);
+  if(![x,y,w,h].every(isFinite))return refresh();if(chg==='x'||chg==='y'){w=u.w;h=u.h}else if(LINKED&&u.w&&u.h){if(chg==='w')h=w*u.h/u.w;else h&&(w=h*u.w/u.h)}
+  F.x.value=x;F.y.value=y;F.w.value=w;F.h.value=h;setBox();refresh()}
+['x','y','w','h'].forEach(k=>q('#tf'+k).addEventListener('change',()=>box(k)));
+q('#tfLk').addEventListener('click',()=>{LINKED=!LINKED;refresh()});
+q('#tfRef').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;REF=[+b.dataset.rx,+b.dataset.ry];refresh();try{draw()}catch(_){}try{window.prRefresh&&prRefresh()}catch(_){}});
+q('#tfr').addEventListener('change',()=>{const L=T(),nv=parseFloat(q('#tfr').value);if(!L.length||!isFinite(nv))return;const cur=-rotOf(L[0])*180/Math.PI,d=(nv-cur)*Math.PI/180;if(Math.abs(d)<1e-9)return;const u=uni(L);xfSel(rotAff(-d,u.x+REF[0]*u.w,u.y+REF[1]*u.h),false);refresh()});
+q('#tfs').addEventListener('change',()=>{const L=T(),a=parseFloat(q('#tfs').value);q('#tfs').value=0;if(!L.length||!isFinite(a)||Math.abs(a)<1e-9)return;const u=uni(L);xfSel(shearAff(-Math.tan(a*Math.PI/180),0,u.x+REF[0]*u.w,u.y+REF[1]*u.h),false);refresh()});
+q('#tfcr').addEventListener('change',()=>{const v=parseFloat(q('#tfcr').value);if(v>=0){shapeField({r:v});refresh()}});
+q('#tfn').addEventListener('change',()=>{const v=parseFloat(q('#tfn').value);if(v>=3){shapeField({n:Math.min(100,Math.round(v))});refresh()}});
+q('#tfss').addEventListener('change',()=>{const g={...(window.MGEN||{}),ss:q('#tfss').checked};if(window.gsaveGen)window.gsaveGen(g);else window.MGEN=g;try{window.prRefresh&&prRefresh()}catch(_){}});
+['tfx','tfy','tfw','tfh','tfr','tfs','tfcr','tfn'].forEach(id=>q('#'+id).addEventListener('keydown',e=>{if(e.key!=='ArrowUp'&&e.key!=='ArrowDown')return;e.preventDefault();const t=e.currentTarget,s=(e.shiftKey?10:1)*(e.key==='ArrowUp'?1:-1);t.value=+((parseFloat(t.value)||0)+s).toFixed(3);t.dispatchEvent(new Event('change',{bubbles:true}))}));
+const flip=ax=>{const L=T();if(!L.length)return;const u=uni(L),cx=u.x+REF[0]*u.w,cy=u.y+REF[1]*u.h;xfSel(ax==='h'?[-1,0,0,1,2*cx,0]:[1,0,0,-1,0,2*cy],false);refresh()};
+DK.reg('transform','Transform','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="5" width="14" height="14" stroke-dasharray="2.5 2"/><rect x="3.5" y="3.5" width="3" height="3" fill="currentColor"/><rect x="17.5" y="17.5" width="3" height="3" fill="currentColor"/></svg>',P,
+  {dw:280,open:()=>{P.style.display='block';refresh()},close:()=>{P.style.display='none'},refresh,
+   menu:()=>[{t:'Flip Horizontal',f:()=>flip('h'),en:T().length>0},{t:'Flip Vertical',f:()=>flip('v'),en:T().length>0},{sep:1},{t:'Scale Strokes & Effects',c:!(window.MGEN&&window.MGEN.ss===false),f:()=>{q('#tfss').click()}}]});
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(P.style.display!=='none'&&!P.contains(document.activeElement))refresh()}catch(_){}return r}}
+addEventListener('keydown',e=>{if(e.key==='F8'&&e.shiftKey&&!e.ctrlKey&&!e.altKey&&!e.metaKey){e.preventDefault();e.stopImmediatePropagation();DK.toggle?DK.toggle('transform'):DK.open('transform')}},true);
+window.tfFlip=flip;
 })();
 
 /*TOOLS-END*/

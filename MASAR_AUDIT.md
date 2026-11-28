@@ -501,3 +501,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## الدفعة 4: Swatches (من غير تغيير في البرنامج)
 - اتراجعت كلها على لوحة الـ Swatches الحقيقية وطلعت شغالة: دبل كليك = Swatch Options، New Swatch بيسأل على الاسم/النوع/Global، New Color Group، Swatch Libraries، Thumbnail/List views في قايمة اللوحة، الترتيب بالسحب، والـ Global Swatch بيلوّن كل الأشكال اللي مستخدماه. swprobe.js القديم كان بيفحص نافذة اللون الصغيرة مش اللوحة، واتشال (tests/swpanel.js بداله).
+
+## build 256: لوحة Transform (Window > Transform، Shift+F8)
+- نقطة المرجع (9 نقط، مشتركة مع شريط التحكم والـ Properties)، X/Y/W/H، ربط النسب، الدوران، الـ Shear، خصائص المستطيل (نصف قطر الزوايا) والمضلع/النجمة (عدد الأضلاع)، Scale Strokes & Effects، وقايمة اللوحة فيها Flip Horizontal / Vertical. الأسهم فوق/تحت بتزوّد وتنقّص (Shift ×10)، وكل تغيير ليه Undo. (tests/tfpanel.js)
