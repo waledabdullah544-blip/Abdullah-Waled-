@@ -4,7 +4,7 @@ const pos=()=>H.pg.evaluate(()=>{const h=document.querySelector('header').getBou
 let p=await pos();chk('Control bar on top by default (above main)',p.h<p.m,p);
 await H.pg.click('#ctlmenu');await H.pg.click('.mdd:visible >> text=Dock to Bottom');await H.pg.waitForTimeout(200);p=await pos();
 chk('Dock to Bottom: control bar below the canvas area, above status bar',p.h>p.m&&p.h<p.f,p);
-await H.pg.reload();await H.pg.waitForTimeout(800);p=await pos();chk('Dock position persists after reload',p.h>p.m,p);
+await H.pg.reload();await H.pg.waitForTimeout(800);p=await pos();chk('After reload the Control panel is docked at the top again (build 239: always opens at the top)',p.h<p.m,p);
 await H.pg.click('#ctlmenu');await H.pg.click('.mdd:visible >> text=Dock to Top');await H.pg.waitForTimeout(200);p=await pos();chk('Dock to Top restores',p.h<p.m,p);
 // manage workspaces
 await H.pg.evaluate(()=>{wsApply('Typography')});await H.pg.evaluate(()=>{const x={ 'My WS':JSON.parse(JSON.stringify(DK.serialize()))};localStorage.setItem('masar-wsx',JSON.stringify(x))});
