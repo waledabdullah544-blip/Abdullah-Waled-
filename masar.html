@@ -497,7 +497,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 267</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 268</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -11663,6 +11663,84 @@ if(window.MENUS){const objM=MENUS.find(m=>m[0]==='Object');if(objM){const g=objM
 /* double-clicking a graph with the selection tool opens its data (instead of isolating the group) */
 cv.addEventListener('dblclick',e=>{if(tool!=='v')return;const t=document.elementFromPoint(e.clientX,e.clientY),g=t&&t.closest&&t.closest('#layer > g'),o=g&&g.__o;if(o&&isGraph(o)&&e.altKey){e.preventDefault();e.stopImmediatePropagation();sel=new Set([o]);editData()}},true);
 window.GRAPH={build,render,isGraph,gOf,editData,editType};
+})();
+
+
+/* ======================= build 268: Mesh Tool (U) - gradient mesh ======================= */
+(()=>{
+/* the mesh lives in the object: path[data-mesh] keeps the outline and the grid {r,c,P:[[x,y,'#rrggbb']...]} (row-major, local coords);
+   a clipped <image data-meshimg> shows the smooth colour field (SVG has no mesh gradient), rebuilt from the grid whenever it changes */
+const hx=h=>{h=hexOf(h)||'#000000';return[1,3,5].map(i=>parseInt(h.slice(i,i+2),16))},toHex=a=>'#'+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');
+const host=o=>o&&o.g.querySelector(':scope > path[data-mesh]');
+const getM=o=>{const e=host(o);try{return e?JSON.parse(e.getAttribute('data-mesh')):null}catch(_){return null}};
+const setM=(o,M)=>{host(o).setAttribute('data-mesh',JSON.stringify(M));render(o)};
+const at=(M,i,j)=>M.P[i*(M.c+1)+j];
+/* smooth surface through the grid points: Catmull-Rom in both directions (positions and colours) */
+const cr=(a,b,c,d,t)=>{const t2=t*t,t3=t2*t;return .5*(2*b+(-a+c)*t+(2*a-5*b+4*c-d)*t2+(-a+3*b-3*c+d)*t3)};
+function sample(M,u,v){/* u in [0,c], v in [0,r] */const i=Math.min(M.r-1,Math.floor(v)),j=Math.min(M.c-1,Math.floor(u)),tv=v-i,tu=u-j,out=[0,0,0,0,0];
+  const row=k=>Math.max(0,Math.min(M.r,k)),col=k=>Math.max(0,Math.min(M.c,k));
+  const val=(ii,jj,q)=>{const p=at(M,row(ii),col(jj));return q<2?p[q]:hx(p[2])[q-2]};
+  for(let q=0;q<5;q++){const R=[-1,0,1,2].map(di=>cr(val(i+di,j-1,q),val(i+di,j,q),val(i+di,j+1,q),val(i+di,j+2,q),tu));out[q]=cr(R[0],R[1],R[2],R[3],tv)}return out}
+function render(o){const e=host(o);if(!e)return;const M=getM(o);if(!M)return;let im=o.g.querySelector(':scope > image[data-meshimg]'),cp=o.g.querySelector(':scope > defs > clipPath');
+  const b=e.getBBox(),K=Math.min(3,1600/Math.max(b.width,b.height,1)),W=Math.max(2,Math.round(b.width*K)),H=Math.max(2,Math.round(b.height*K));
+  const c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');const n=Math.max(10,Math.round(96/Math.max(M.r,M.c)));
+  for(let i=0;i<M.r;i++)for(let j=0;j<M.c;j++)for(let a=0;a<n;a++)for(let bb=0;bb<n;bb++){const v0=i+a/n,v1=i+(a+1)/n,u0=j+bb/n,u1=j+(bb+1)/n;
+    const P=[sample(M,u0,v0),sample(M,u1,v0),sample(M,u1,v1),sample(M,u0,v1)],col=[0,1,2].map(k=>(P[0][k+2]+P[1][k+2]+P[2][k+2]+P[3][k+2])/4);
+    x.fillStyle='rgb('+col.map(v=>Math.max(0,Math.min(255,Math.round(v)))).join(',')+')';x.beginPath();P.forEach((p,k)=>{const X=(p[0]-b.x)*K,Y=(p[1]-b.y)*K;k?x.lineTo(X,Y):x.moveTo(X,Y)});x.closePath();x.fill();x.strokeStyle=x.fillStyle;x.lineWidth=1;x.stroke()}
+  const c2=document.createElement('canvas');c2.width=W;c2.height=H;const x2=c2.getContext('2d');x2.filter='blur('+Math.max(.6,K*.6)+'px)';x2.drawImage(c,0,0);
+  if(!cp){const id='mc'+Math.random().toString(36).slice(2,9),d=document.createElementNS(NS,'defs');cp=document.createElementNS(NS,'clipPath');cp.id=id;cp.appendChild(document.createElementNS(NS,'path'));d.appendChild(cp);o.g.insertBefore(d,o.g.firstChild)}
+  cp.firstElementChild.setAttribute('d',e.getAttribute('d'));
+  if(!im){im=document.createElementNS(NS,'image');im.setAttribute('data-meshimg','1');im.setAttribute('preserveAspectRatio','none');e.before(im)}
+  im.setAttribute('href',c2.toDataURL('image/png'));im.setAttribute('x',b.x);im.setAttribute('y',b.y);im.setAttribute('width',b.width);im.setAttribute('height',b.height);im.setAttribute('clip-path','url(#'+cp.id+')');
+  e.setAttribute('fill','none');if(!e.getAttribute('stroke'))e.setAttribute('stroke','none')}
+/* a plain filled shape becomes a 1x1 mesh with its fill at the four corners */
+function makeMesh(o){if(host(o))return true;if(isText(o)||isGroup(o))return false;ensurePath(o);const E=eps(o);if(E.length!==1)return false;const e=E[0],b=e.getBBox();let f=e.getAttribute('fill');if(!f||f==='none'||/^url/.test(f))f='#ffffff';
+  e.setAttribute('data-mesh',JSON.stringify({r:1,c:1,P:[[b.x,b.y,hexOf(f)],[b.x+b.width,b.y,hexOf(f)],[b.x,b.y+b.height,hexOf(f)],[b.x+b.width,b.y+b.height,hexOf(f)]]}));e.setAttribute('data-meshfill',f);render(o);return true}
+/* where is a point in the grid: inverse of the bilinear cell (Newton), returns {i,j,u,v} */
+function locate(M,p){for(let i=0;i<M.r;i++)for(let j=0;j<M.c;j++){const A=at(M,i,j),B=at(M,i,j+1),C=at(M,i+1,j+1),D=at(M,i+1,j);let u=.5,v=.5;
+    for(let k=0;k<20;k++){const X=(1-u)*(1-v)*A[0]+u*(1-v)*B[0]+u*v*C[0]+(1-u)*v*D[0]-p[0],Y=(1-u)*(1-v)*A[1]+u*(1-v)*B[1]+u*v*C[1]+(1-u)*v*D[1]-p[1];
+      const xu=(1-v)*(B[0]-A[0])+v*(C[0]-D[0]),xv=(1-u)*(D[0]-A[0])+u*(C[0]-B[0]),yu=(1-v)*(B[1]-A[1])+v*(C[1]-D[1]),yv=(1-u)*(D[1]-A[1])+u*(C[1]-B[1]),det=xu*yv-xv*yu;if(Math.abs(det)<1e-12)break;u-=(X*yv-Y*xv)/det;v-=(Y*xu-X*yu)/det}
+    if(u>=-1e-6&&u<=1+1e-6&&v>=-1e-6&&v<=1+1e-6)return{i,j,u:Math.max(0,Math.min(1,u)),v:Math.max(0,Math.min(1,v))}}return null}
+function addLines(M,L,col){/* a new column at u inside column j and a new row at v inside row i; the crossing point takes the current colour */
+  const lerpP=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,toHex(hx(a[2]).map((v,k)=>v+(hx(b[2])[k]-v)*t))];
+  const N={r:M.r,c:M.c+1,P:[]};for(let i=0;i<=M.r;i++)for(let j=0;j<=M.c;j++){N.P.push(at(M,i,j));if(j===L.j)N.P.push(lerpP(at(M,i,j),at(M,i,j+1),L.u))}
+  const R={r:N.r+1,c:N.c,P:[]};for(let i=0;i<=N.r;i++){for(let j=0;j<=N.c;j++)R.P.push(N.P[i*(N.c+1)+j]);if(i===L.i)for(let j=0;j<=N.c;j++)R.P.push(lerpP(N.P[i*(N.c+1)+j],N.P[(i+1)*(N.c+1)+j],L.v))}
+  const k=(L.i+1)*(R.c+1)+(L.j+1);if(col)R.P[k]=[R.P[k][0],R.P[k][1],hexOf(col)];return{M:R,k}}
+function delLines(M,k){const i=Math.floor(k/(M.c+1)),j=k%(M.c+1);let N=M;
+  if(j>0&&j<M.c){const P=[];for(let a=0;a<=N.r;a++)for(let b=0;b<=N.c;b++)if(b!==j)P.push(N.P[a*(N.c+1)+b]);N={r:N.r,c:N.c-1,P}}
+  if(i>0&&i<M.r){const P=[];for(let a=0;a<=N.r;a++)if(a!==i)for(let b=0;b<=N.c;b++)P.push(N.P[a*(N.c+1)+b]);N={r:N.r-1,c:N.c,P}}return N}
+let MS=null;/* {o,k} selected mesh point */
+const toL=(o,p)=>[(p.x-o.m.tx)/o.m.sx,(p.y-o.m.ty)/o.m.sy];
+const nearPt=(o,M,p)=>{const L=toL(o,p),tol=7/z/Math.abs(o.m.sx);let best=-1,bd=1e9;M.P.forEach((q,k)=>{const d=Math.hypot(q[0]-L[0],q[1]-L[1]);if(d<bd){bd=d;best=k}});return bd<=tol?best:-1};
+addTool({id:'mesh',name:'Mesh Tool',key:'U',after:'gr',svg:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 10c5-2 11 2 16 0M10 4c-2 5 2 11 0 16"/><circle cx="10" cy="10" r="1.6" fill="currentColor"/>',
+  hint:'Mesh · click inside a filled shape to add mesh lines (the new point takes the current fill colour) · drag a point to move it · click a point then a swatch to colour it · Alt+click a point removes its lines',
+  card:{d:'Smooth multi-colour shading with a grid of colour points (gradient mesh)',m:['Click inside a filled shape: mesh lines are added through that point','Drag a mesh point to bend the colours','Select a point and pick a colour from the Swatches / Color panel','Alt+click a point: delete its mesh lines']}});
+let drag=null;
+tlDrag('mesh',{down:(p,e)=>{const hitG=document.elementFromPoint(e.clientX,e.clientY),g=hitG&&hitG.closest&&hitG.closest('#layer > g');let o=g&&g.__o;
+    if(MS&&objs.includes(MS.o)&&!o)o=MS.o;if(!o||!pick(o)){MS=null;draw();return false}
+    let M=getM(o);if(M){const k=nearPt(o,M,p);
+      if(k>=0){if(e.altKey){setM(o,delLines(M,k));MS=null;commit();draw();return false}MS={o,k};sel=new Set([o]);drag={o,k,p0:p,q0:M.P[k].slice(0,2),moved:false};draw();return true}}
+    if(!M){if(!makeMesh(o)){tb5Msg('Mesh: click inside a filled path or shape');return false}M=getM(o)}
+    const L=locate(M,toL(o,p));if(!L){draw();return false}const col=DEF.fill&&DEF.fill!=='none'?DEF.fill:null,r=addLines(M,L,col);setM(o,r.M);MS={o,k:r.k};sel=new Set([o]);commit();draw();return false},
+  move:(p,e)=>{if(!drag)return;const M=getM(drag.o),dx=(p.x-drag.p0.x)/drag.o.m.sx,dy=(p.y-drag.p0.y)/drag.o.m.sy;M.P[drag.k][0]=drag.q0[0]+dx;M.P[drag.k][1]=drag.q0[1]+dy;host(drag.o).setAttribute('data-mesh',JSON.stringify(M));drag.moved=true;draw()},
+  up:()=>{if(drag&&drag.moved){render(drag.o);touch(drag.o);commit()}drag=null;draw()},esc:()=>{drag=null}});
+/* the grid is drawn over a selected mesh object */
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(tool!=='mesh'&&tool!=='a')return r;[...sel].forEach(o=>{const M=getM(o);if(!M)return;const s=1/z,W=q=>[q[0]*o.m.sx+o.m.tx,q[1]*o.m.sy+o.m.ty];let d='';
+    for(let i=0;i<=M.r;i++){d+='M';for(let j=0;j<=M.c;j++){const q=W(at(M,i,j));d+=(j?'L':'')+q[0]+' '+q[1]}}for(let j=0;j<=M.c;j++){d+='M';for(let i=0;i<=M.r;i++){const q=W(at(M,i,j));d+=(i?'L':'')+q[0]+' '+q[1]}}
+    selg.append(el('path',{d,fill:'none',stroke:'#3a3a3a','stroke-width':s,'pointer-events':'none'}),el('path',{d,fill:'none',stroke:'#f0c374','stroke-width':.6*s,'stroke-dasharray':(3*s)+' '+(2*s),'pointer-events':'none'}));
+    M.P.forEach((q,k)=>{const w=W(q),on=MS&&MS.o===o&&MS.k===k;selg.append(el('rect',{x:w[0]-3*s,y:w[1]-3*s,width:6*s,height:6*s,fill:on?'#f0c374':q[2],stroke:'#3a3a3a','stroke-width':s,'pointer-events':'none'}))})})}catch(_){}return r}}
+/* colour of the selected mesh point = the fill the user picks (swatches, colour picker, eyedropper...) */
+{const _a=applyStyle;applyStyle=function(p,done){if(tool==='mesh'&&MS&&objs.includes(MS.o)&&p&&p.fill&&p.fill!=='none'&&!/^url/.test(p.fill)){const M=getM(MS.o);if(M&&M.P[MS.k]){M.P[MS.k][2]=hexOf(p.fill);setM(MS.o,M);touch(MS.o);if(done!==false)commit();draw();return}}return _a.apply(this,arguments)}}
+/* after Undo / Redo / load the colour field is rebuilt if its picture is missing or stale */
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{layer.querySelectorAll(':scope > g > path[data-mesh]').forEach(e=>{const o=e.parentNode.__o,im=e.parentNode.querySelector(':scope > image[data-meshimg]');if(o&&(!im||im.__m!==e.getAttribute('data-mesh'))){render(o);const im2=e.parentNode.querySelector(':scope > image[data-meshimg]');if(im2)im2.__m=e.getAttribute('data-mesh')}})}catch(_){}return r}}
+/* Object > Create Gradient Mesh… (rows x columns) and Expand back to a plain fill */
+function createDlg(){const o=[...sel][0];if(!o)return;dkModal('Create Gradient Mesh','<label>Rows<input type="number" data-k="r" value="4" min="1" max="50"></label><label>Columns<input type="number" data-k="c" value="4" min="1" max="50"></label><label>Appearance<select data-k="a"><option value="flat">Flat</option><option value="center">To Center</option><option value="edge">To Edge</option></select></label><label>Highlight<input type="number" data-k="h" value="100" min="0" max="100"> %</label>',
+  [{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{const R=Math.max(1,+b.querySelector('[data-k=r]').value|0),C=Math.max(1,+b.querySelector('[data-k=c]').value|0),ap=b.querySelector('[data-k=a]').value,hl=(+b.querySelector('[data-k=h]').value||0)/100;
+    if(!makeMesh(o))return;const e=host(o),bb=e.getBBox(),base=hx(getM(o).P[0][2]),P=[];for(let i=0;i<=R;i++)for(let j=0;j<=C;j++){const u=j/C,v=i/R,dc=Math.min(1,Math.hypot(u-.5,v-.5)/.7072);let k=ap==='center'?(1-dc)*hl:ap==='edge'?dc*hl:0;P.push([bb.x+bb.width*u,bb.y+bb.height*v,toHex(base.map(c=>c+(255-c)*k))])}
+    setM(o,{r:R,c:C,P});touch(o);commit();draw()}}])}
+function expand(){[...sel].forEach(o=>{const e=host(o);if(!e)return;e.setAttribute('fill',e.getAttribute('data-meshfill')||'#ffffff');e.removeAttribute('data-mesh');e.removeAttribute('data-meshfill');o.g.querySelectorAll(':scope > image[data-meshimg], :scope > defs').forEach(x=>x.remove());touch(o)});commit();draw()}
+if(window.MENUS){const objM=MENUS.find(m=>m[0]==='Object');if(objM){const g=objM[1];objM[1]=()=>{const it=g();const i=it.findIndex(x=>x&&x.t==='Graph');it.splice(i>=0?i+1:it.length,0,{t:'Create Gradient Mesh…',__p:'Object>Create Gradient Mesh',f:createDlg,en:()=>sel.size===1},{t:'Release Gradient Mesh',__p:'Object>Release Gradient Mesh',f:expand,en:()=>[...sel].some(o=>host(o))});return it}}}
+window.MESH={getM,setM,makeMesh,locate,addLines,delLines,render,createDlg,expand,sel:()=>MS};
 })();
 
 /*TOOLS-END*/

@@ -555,3 +555,7 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 267: Graph Tools (J)
 - 7 أنواع زي اليستريتور: Column (J)، Stacked Column، Bar، Stacked Bar، Line، Area، Pie. اسحب مكان الرسم (أو اضغط لمقاس بالأرقام) → نافذة Graph Data (جدول: صفوف وأعمدة بأسمائها، + / − صف وعمود، Paste Data من Excel). الرسم جروب من أشكال عادية تتلوّن وتتعدل، فيه محاور وخطوط شبكة وأرقام وأسماء و Legend. Object > Graph > Type بيغيّر النوع، و Data… بيرجّع الجدول ويعيد الرسم، و Alt+دبل كليك على الرسم بيفتح الداتا. (tests/graphs.js)
+
+## build 268: Mesh Tool (U) — Gradient Mesh
+- ضغطة جوه شكل مليان = خطوط Mesh بتعدي بالنقطة والنقطة الجديدة بتاخد لون الـ Fill الحالي؛ اسحب أي نقطة تحرك الألوان؛ اختار نقطة واضغط لون من الـ Swatches/Color Picker تتلوّن؛ Alt+ضغطة على نقطة بتمسح خطوطها. الألوان بتسيح بنعومة (Catmull-Rom على الشبكة). Object > Create Gradient Mesh… (صفوف، أعمدة، Flat / To Center / To Edge، Highlight) و Release Gradient Mesh. بيترسم كصورة مقصوصة على شكل الشكل (الـ SVG مفيهوش Mesh)، والشبكة والألوان محفوظة جوه الشكل للتعديل وبتتعاد بعد Undo. (tests/mesh.js)
+- الفرق عن اليستريتور: الشبكة بتبدأ على المربع اللي حوالين الشكل مش ماشية مع انحناءاته.
