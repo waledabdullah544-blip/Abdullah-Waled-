@@ -497,7 +497,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 261</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 262</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8502,9 +8502,9 @@ if(!DK.restore())wsApply('Essentials');
    ['Window',()=>{const PN=(t,id,k)=>({t,k,c:()=>DK.isOpen(id),f:()=>DK.toggle(id)});return[
     {t:'Workspace',sub:()=>wsMenu()},sep,
     {t:'Control',c:()=>!document.body.classList.contains('hide-ctrl'),f:()=>document.body.classList.toggle('hide-ctrl')},{t:'Tools',c:()=>!document.body.classList.contains('hide-tools'),f:()=>document.body.classList.toggle('hide-tools')},sep,
-    ...[PN('Align','align','Shift+F7'),PN('Appearance','appearance','Shift+F6'),PN('Brushes','brushes','F5'),PN('Color','color','F6'),PN('Gradient','gradient','Ctrl+F9'),PN('Graphic Styles','gstyles','Shift+F5'),PN('Layers','layers','F7'),PN('Pathfinder','pathfinder','Shift+Ctrl+F9'),PN('Properties','props'),PN('Stroke','stroke','Ctrl+F10'),PN('Symbols','symbols','Shift+Ctrl+F11'),PN('Transform','transform','Shift+F8'),PN('Transparency','transparency','Shift+Ctrl+F10'),...(window.PANELX||[]).map(q=>PN(q.title,q.id,q.key))].sort((a,b)=>a.t.localeCompare(b.t)),
+    ...[PN('Align','align','Shift+F7'),PN('Appearance','appearance','Shift+F6'),PN('Attributes','attributes','Ctrl+F11'),PN('Brushes','brushes','F5'),PN('Color','color','F6'),PN('Color Guide','colorguide','Shift+F3'),PN('Gradient','gradient','Ctrl+F9'),PN('Graphic Styles','gstyles','Shift+F5'),PN('Layers','layers','F7'),PN('Pathfinder','pathfinder','Shift+Ctrl+F9'),PN('Properties','props'),PN('Stroke','stroke','Ctrl+F10'),PN('Symbols','symbols','Shift+Ctrl+F11'),PN('Transform','transform','Shift+F8'),PN('Transparency','transparency','Shift+Ctrl+F10'),...(window.PANELX||[]).map(q=>PN(q.title,q.id,q.key))].sort((a,b)=>a.t.localeCompare(b.t)),
     {t:'Type',sub:()=>[{t:'Character',k:'Ctrl+T',c:()=>DK.isOpen('character'),f:()=>DK.toggle('character')},{t:'Paragraph',k:'Ctrl+Alt+T',c:()=>DK.isOpen('paragraph'),f:()=>DK.toggle('paragraph')},
-      {t:'Tabs',k:'Ctrl+Shift+T',c:()=>DK.isOpen('tabs'),f:()=>DK.toggle('tabs')}]},sep,
+      {t:'Tabs',k:'Ctrl+Shift+T',c:()=>DK.isOpen('tabs'),f:()=>DK.toggle('tabs')},{t:'OpenType',k:'Ctrl+Alt+Shift+T',c:()=>DK.isOpen('opentype'),f:()=>DK.toggle('opentype')}]},sep,
     {t:'Edit Toolbar…',f:()=>$('#tbedb').click()},sep,
     {t:'Hide All Panels',k:'Tab',c:()=>document.body.classList.contains('hp-all'),f:()=>panelsToggle(true)},{t:'Hide Panels (keep Toolbar)',k:'Shift+Tab',c:()=>document.body.classList.contains('hp-sub'),f:()=>panelsToggle(false)}]}],
    ['Help',()=>[{t:'About Masar…',f:()=>aboutMasar()}]]];
@@ -10028,7 +10028,9 @@ addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!e.altKey||e.code!=='
     refresh:el=>{render()}});
   DK.P.swatches.menu=menu;
   {const st=document.createElement('style');st.textContent='#swatchesP .swx{padding:6px;font:12px "Segoe UI",Cairo,sans-serif}#swatchesP .swxl{display:flex;flex-wrap:wrap;gap:3px;align-content:flex-start;border:1px solid var(--line);background:var(--field);min-height:120px;max-height:320px;overflow:auto;padding:4px}#swatchesP .swxl.list{display:block;padding:0}#swatchesP .sc{position:relative;display:inline-block;border:1px solid #1f1f1f;padding:0;cursor:default;box-sizing:border-box}#swatchesP .sc.none{background:linear-gradient(135deg,#fff 46%,#e03131 46%,#e03131 54%,#fff 54%)}#swatchesP .sc.sel{outline:2px solid #fff;outline-offset:0;z-index:1}#swatchesP .sc.cur{box-shadow:0 0 0 1px var(--brand)}#swatchesP .swgl{position:absolute;right:0;bottom:0;width:0;height:0;border-left:7px solid transparent;border-bottom:7px solid #fff}#swatchesP .swgl.sp::after{content:"";position:absolute;right:1px;bottom:-6px;width:2px;height:2px;background:#000;border-radius:50%}#swatchesP .swreg{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-size:11px;mix-blend-mode:difference}#swatchesP .swfo{display:inline-grid;place-items:center;width:14px;height:16px;color:var(--mute)}#swatchesP .swr{display:flex;align-items:center;gap:6px;padding:0 6px;cursor:default;border-bottom:1px solid var(--line)}#swatchesP .swr.sel{background:var(--sel)}#swatchesP .swr.cur .sc{box-shadow:0 0 0 1px var(--brand)}#swatchesP .swr.swf{color:var(--mute);height:20px}#swatchesP .swfi{width:12px;height:9px;background:currentColor;border-radius:1px}#swatchesP .swdrop{outline:2px solid var(--brand);outline-offset:-2px}#swatchesP .swxb{display:flex;align-items:center;gap:2px;margin-top:6px}#swatchesP .swxb .sp{flex:1}#swatchesP #swxq{width:100%;box-sizing:border-box;margin-bottom:6px;background:var(--field);color:var(--ink);border:1px solid var(--line);height:24px;padding:0 6px}#swatchesP .swem{color:var(--mute);margin:8px}#swlib{position:fixed;z-index:9200;width:210px;background:var(--panel);border:1px solid var(--line);border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.45);font:12px "Segoe UI",Cairo,sans-serif;color:var(--ink)}#swlib .swlh{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-bottom:1px solid var(--line)}#swlib .swlh button{border:0;background:none;color:var(--ink);font-size:16px;cursor:default}#swlib .swlg{display:flex;flex-wrap:wrap;gap:3px;padding:8px}#swlib .sc{width:22px;height:22px;border:1px solid #1f1f1f;padding:0;cursor:default}#swlib .swlf{padding:4px 8px 8px;color:var(--mute);font-size:11px}';document.head.appendChild(st)}
-  window.SWAPI={popList:kind=>SW.filter(s=>kind==='custom'?!s.d:kind==='color'?s.h!=='none':true).map(s=>({id:s.id,n:s.n,h:s.h})),apply,newFromColor,delCurrent,render:panelRefresh,all:()=>SW.slice()};
+  /* build 262: Color Guide 'Save Group to Swatch Panel' */
+  const addGroup=(n,cols)=>{const g={id:'g'+(++UID),n:n||'Color Group'};SG.push(g);const M=cols.map(h=>swAdd({n:rgbName(hx(h)),h:hx(h)}));M.forEach(s=>{SW.splice(SW.indexOf(s),1);s.g=g.id});SW.push(...M);save();panelRefresh();return g};
+  window.SWAPI={addGroup,popList:kind=>SW.filter(s=>kind==='custom'?!s.d:kind==='color'?s.h!=='none':true).map(s=>({id:s.id,n:s.n,h:s.h})),apply,newFromColor,delCurrent,render:panelRefresh,all:()=>SW.slice()};
   /* keep the panel in step with the artwork's colour */
   {const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(EL&&EL.style.display!=='none')render()}catch(_){}return r}}
 })();
@@ -11390,6 +11392,70 @@ window.openKeyboardShortcuts=()=>{if(document.querySelector('.ksm1'))return;
   /* the dialog hears the keys before every other shortcut handler (Ctrl+G, Ctrl+S... must not run while a key is being recorded) */
   window.__KSPRE.unshift(kdw);document.body.appendChild(bg);draw();box.querySelector('#ksq').focus()};
 window.KSM={defaults:()=>({...DEFK}),user:()=>({...UM}),norm,evCombo};
+})();
+
+
+/* ======================= build 262: remaining Illustrator panel keys + Color Guide, Attributes, OpenType ======================= */
+(()=>{
+const css=document.createElement('style');css.textContent='.p3{padding:8px 10px;font:12px "Segoe UI",Cairo,sans-serif;color:var(--ink)}.p3 .row{display:flex;align-items:center;gap:6px;margin:6px 0;flex-wrap:wrap}.p3 select{height:24px;background:var(--field);border:1px solid var(--bdr);color:var(--ink);border-radius:2px;font:inherit}.p3 .sw{width:24px;height:24px;border:1px solid #0006;border-radius:2px;padding:0;cursor:default}.p3 .sw.base{outline:2px solid #f0c374;outline-offset:1px}.p3 .vg{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;margin-top:6px}.p3 .vg button{height:16px;border:0;padding:0;border-radius:1px;cursor:default}.p3 .lbl{color:var(--mute);min-width:64px}.p3 .btn{height:24px;padding:0 8px;background:var(--field);border:1px solid var(--bdr);color:var(--ink);border-radius:2px;cursor:default}.p3 .btn.on{background:#f0c37433;border-color:#f0c374}.p3 textarea{width:100%;min-height:44px;background:var(--field);border:1px solid var(--bdr);color:var(--ink);font:inherit;border-radius:2px}.p3 .none{color:var(--mute);padding:4px 0}';document.head.appendChild(css);
+const mkP=id=>{const P=document.createElement('div');P.id=id;P.className='dkpn p3';P.style.display='none';document.body.appendChild(P);return P};
+const L=()=>[...sel].filter(o=>o.g.isConnected);
+const rgb=h=>{h=hexOf(h)||'#ffffff';return[1,3,5].map(i=>parseInt(h.slice(i,i+2),16))};
+const hex=a=>'#'+a.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');
+const toHsl=([r,g,b])=>{r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),l=(mx+mn)/2;let h=0,s=0;if(mx!==mn){const d=mx-mn;s=l>.5?d/(2-mx-mn):d/(mx+mn);h=mx===r?(g-b)/d+(g<b?6:0):mx===g?(b-r)/d+2:(r-g)/d+4;h*=60}return[h,s,l]};
+const fromHsl=([h,s,l])=>{h=((h%360)+360)%360/360;if(!s)return[l*255,l*255,l*255];const q=l<.5?l*(1+s):l+s-l*s,p=2*l-q,f=t=>{t=(t+1)%1;return t<1/6?p+(q-p)*6*t:t<.5?q:t<2/3?p+(q-p)*(2/3-t)*6:p};return[f(h+1/3)*255,f(h)*255,f(h-1/3)*255]};
+/* ---------------- Color Guide (Shift+F3) ---------------- */
+const CG=mkP('cgp');const RULES={'Complementary':[0,180],'Complementary 2':[0,180,30,210],'Split Complementary':[0,150,210],'Left Complement':[0,-30,180],'Right Complement':[0,30,180],'Analogous':[0,-30,30],'Analogous 2':[0,-30,-60,30,60],'Triad':[0,120,240],'Tetrad':[0,90,180,270],'Pentagram':[0,72,144,216,288],'Compound':[0,30,180,210],'Shades':'sh','Monochromatic':'mono'};
+let cgRule='Complementary',cgBase=null;
+const cgColors=base=>{const H=toHsl(rgb(base)),r=RULES[cgRule];if(r==='sh')return[0,1,2,3,4].map(i=>hex(fromHsl([H[0],H[1],Math.max(.05,H[2]*(1-i*.18))])));if(r==='mono')return[.15,.3,.5,.7,.85].map(l=>hex(fromHsl([H[0],H[1],l])));return r.map(d=>hex(fromHsl([H[0]+d,H[1],H[2]])))};
+function cgRender(){if(CG.style.display==='none')return;const o=L()[0],S=o?styleOf(o):null;const base=cgBase||(S&&S.fill&&S.fill!=='none'&&/^#/.test(hexOf(S.fill)||'')?hexOf(S.fill):(DEF.fill&&DEF.fill!=='none'?hexOf(DEF.fill):'#f0c374'));
+  const C=cgColors(base);CG.innerHTML='<div class="row"><button type="button" class="sw base" title="Set base color to the current color" data-base style="background:'+base+'"></button><select id="cgr">'+Object.keys(RULES).map(k=>'<option'+(k===cgRule?' selected':'')+'>'+k+'</option>').join('')+'</select></div>'+
+   '<div class="row">'+C.map(c=>'<button type="button" class="sw" data-c="'+c+'" title="'+c+'" style="background:'+c+'"></button>').join('')+'</div>'+
+   '<div class="lbl" style="margin-top:6px">Tints / Shades</div><div class="vg">'+C.map(c=>{const H=toHsl(rgb(c));return[.9,.78,.66,.56,0,.4,.3,.2,.1].map(l=>{const v=l===0?c:hex(fromHsl([H[0],H[1],l]));return'<button type="button" data-c="'+v+'" title="'+v+'" style="background:'+v+'"></button>'}).join('')}).join('')+'</div>'+
+   '<div class="row" style="justify-content:flex-end"><button type="button" class="btn" data-save>Save Group to Swatch Panel</button></div>'}
+CG.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.hasAttribute('data-base')){cgBase=null;cgRender();return}
+  if(b.dataset.c){const k=FSA==='stroke'?'stroke':'fill';if(L().length)applyStyle({[k]:b.dataset.c},true);else{DEF[k]=b.dataset.c;try{fsRefresh()}catch(_){}}cgBase=null;draw();return}
+  if(b.hasAttribute('data-save')){const base=CG.querySelector('[data-base]').style.backgroundColor;const cs=[...CG.querySelectorAll('.row .sw[data-c]')].map(x=>x.dataset.c);try{if(window.SWAPI&&SWAPI.addGroup)SWAPI.addGroup(cgRule,cs);else cs.forEach(c=>window.SWAPI&&SWAPI.newFromColor&&SWAPI.newFromColor(c))}catch(_){}tb5Msg('Color group saved: '+cgRule)}});
+CG.addEventListener('change',e=>{if(e.target.id==='cgr'){cgRule=e.target.value;cgRender()}});
+DK.reg('colorguide','Color Guide','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17M3.5 12h17"/></svg>',CG,{dw:280,open:()=>{CG.style.display='block';cgRender()},close:()=>{CG.style.display='none'},refresh:cgRender,menu:()=>Object.keys(RULES).map(k=>({t:k,c:k===cgRule,f:()=>{cgRule=k;cgRender()}}))});
+/* ---------------- Attributes (Ctrl+F11) ---------------- */
+const AT=mkP('atp');
+function atRender(){if(AT.style.display==='none')return;const O=L();if(!O.length){AT.innerHTML='<div class="none">Select an object to see its attributes.</div>';return}
+  const o=O[0],e=fillables(o)[0],fr=e?(e.getAttribute('fill-rule')||'nonzero'):'nonzero';
+  AT.innerHTML='<div class="row"><label><input type="checkbox" id="atof"'+(o.g.querySelector('[data-opf]')?' checked':'')+'> Overprint Fill</label><label><input type="checkbox" id="atos"'+(o.g.querySelector('[data-ops]')?' checked':'')+'> Overprint Stroke</label></div>'+
+   '<div class="row"><span class="lbl">Center</span><button type="button" class="btn'+(o.g.querySelector('[data-nocenter]')?'':' on')+'" data-a="sc">Show Center</button><button type="button" class="btn'+(o.g.querySelector('[data-nocenter]')?' on':'')+'" data-a="hc">Don\'t Show Center</button></div>'+
+   '<div class="row"><span class="lbl">Fill Rule</span><button type="button" class="btn'+(fr!=='evenodd'?' on':'')+'" data-a="nz" title="Use Non-Zero Winding Fill Rule">Non-Zero</button><button type="button" class="btn'+(fr==='evenodd'?' on':'')+'" data-a="eo" title="Use Even-Odd Fill Rule">Even-Odd</button></div>'+
+   '<div class="row"><span class="lbl">URL</span><input type="text" id="aturl" style="flex:1;height:22px" value="'+esc((o.g.querySelector('[data-url]')||{getAttribute:()=>''}).getAttribute('data-url')||'')+'"></div>'+
+   '<div class="lbl">Note</div><textarea id="atnote">'+esc((o.g.querySelector('[data-note]')||{getAttribute:()=>''}).getAttribute('data-note')||'')+'</textarea>'}
+const atSet=(name,v)=>{L().forEach(o=>{const e=o.g.firstElementChild;if(!e)return;if(v==null||v===''||v===false)e.removeAttribute(name);else e.setAttribute(name,v===true?'1':v)});commit();draw()};
+AT.addEventListener('click',e=>{const b=e.target.closest('button[data-a]');if(!b)return;const a=b.dataset.a;
+  if(a==='nz'||a==='eo'){L().forEach(o=>fillables(o).forEach(x=>x.setAttribute('fill-rule',a==='eo'?'evenodd':'nonzero')));commit();draw()}
+  if(a==='sc')atSet('data-nocenter',false);if(a==='hc')atSet('data-nocenter',true);atRender()});
+AT.addEventListener('change',e=>{const t=e.target;if(t.id==='atof')atSet('data-opf',t.checked);if(t.id==='atos')atSet('data-ops',t.checked);if(t.id==='aturl')atSet('data-url',t.value.trim());if(t.id==='atnote')atSet('data-note',t.value)});
+DK.reg('attributes','Attributes','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>',AT,{dw:280,open:()=>{AT.style.display='block';atRender()},close:()=>{AT.style.display='none'},refresh:atRender});
+/* the "Don't Show Center" attribute hides the centre point of the selection highlight */
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(sel.size)[...sel].forEach(o=>{if(o.g.querySelector('[data-nocenter]')){const b=wbox(o),cx=b.x+b.w/2,cy=b.y+b.h/2,t=3/z;selg.querySelectorAll('g[data-selhl] > rect').forEach(q=>{const x=+q.getAttribute('x')+(+q.getAttribute('width'))/2,y=+q.getAttribute('y')+(+q.getAttribute('height'))/2;if(Math.abs(x-cx)<t&&Math.abs(y-cy)<t)q.remove()})}})}catch(_){}
+  try{if(AT.style.display!=='none'&&!AT.contains(document.activeElement))atRender();if(CG.style.display!=='none')cgRender();if(OT.style.display!=='none')otRender()}catch(_){}return r}}
+/* ---------------- OpenType (Ctrl+Alt+Shift+T) ---------------- */
+const OT=mkP('otp');const FEAT=[['liga','Standard Ligatures',1],['dlig','Discretionary Ligatures',0],['frac','Fractions',0],['ordn','Ordinals',0],['swsh','Swash',0],['salt','Stylistic Alternates',0],['titl','Titling Alternates',0],['calt','Contextual Alternates',1]];
+const FIG=[['','Default Figure'],['tnum lnum','Tabular Lining'],['pnum onum','Proportional Oldstyle'],['pnum lnum','Proportional Lining'],['tnum onum','Tabular Oldstyle']];
+const otEls=()=>{const E=[];L().forEach(o=>o.g.querySelectorAll('text').forEach(t=>E.push(t)));if(typeof ted_s!=='undefined'&&ted_s&&ted_s.o)ted_s.o.g.querySelectorAll('text').forEach(t=>E.push(t));return E};
+const otGet=t=>{const m={};(t.getAttribute('data-otf')||'').split(',').filter(Boolean).forEach(x=>{const[k,v]=x.split(':');m[k]=v});return m};
+const otApply=t=>{const m=otGet(t),parts=[];FEAT.forEach(([k,,d])=>{const v=k in m?m[k]:String(d);if(String(d)!==v)parts.push('"'+k+'" '+(v==='1'?1:0))});if(m.fig)m.fig.split(' ').forEach(f=>parts.push('"'+f+'" 1'));
+  t.style.fontFeatureSettings=parts.join(', ');if(!t.getAttribute('style'))t.removeAttribute('style')};
+function otRender(){if(OT.style.display==='none')return;const E=otEls();if(!E.length){OT.innerHTML='<div class="none">Select type to set its OpenType features.</div>';return}const m=otGet(E[0]);
+  OT.innerHTML='<div class="row"><span class="lbl">Figure</span><select id="otfig">'+FIG.map(f=>'<option value="'+f[0]+'"'+((m.fig||'')===f[0]?' selected':'')+'>'+f[1]+'</option>').join('')+'</select></div>'+
+   '<div class="row">'+FEAT.map(([k,n,d])=>{const on=(k in m?m[k]:String(d))==='1';return'<button type="button" class="btn'+(on?' on':'')+'" data-f="'+k+'" title="'+n+'">'+n+'</button>'}).join('')+'</div>'}
+OT.addEventListener('click',e=>{const b=e.target.closest('button[data-f]');if(!b)return;const k=b.dataset.f,E=otEls();if(!E.length)return;const d=String((FEAT.find(f=>f[0]===k)||[,,0])[2]),cur=(k in otGet(E[0])?otGet(E[0])[k]:d)==='1';
+  E.forEach(t=>{const m=otGet(t);m[k]=cur?'0':'1';t.setAttribute('data-otf',Object.entries(m).map(x=>x.join(':')).join(','));otApply(t)});commit();draw();otRender()});
+OT.addEventListener('change',e=>{if(e.target.id!=='otfig')return;const v=e.target.value;otEls().forEach(t=>{const m=otGet(t);if(v)m.fig=v;else delete m.fig;t.setAttribute('data-otf',Object.entries(m).map(x=>x.join(':')).join(','));otApply(t)});commit();draw()});
+DK.reg('opentype','OpenType','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 18L10 6l5 12M7 14h6"/><circle cx="18" cy="15" r="3"/></svg>',OT,{dw:300,open:()=>{OT.style.display='block';otRender()},close:()=>{OT.style.display='none'},refresh:otRender});
+/* ---------------- keys ---------------- */
+const tog=id=>DK.toggle?DK.toggle(id):DK.open(id);
+addEventListener('keydown',e=>{if(document.querySelector('.fxm'))return;const c=e.ctrlKey||e.metaKey,a=e.altKey,s=e.shiftKey,k=e.code;let id=null,f=null;
+  if(k==='F9'&&c&&!a&&!s)id='gradient';else if(k==='F3'&&s&&!c&&!a)id='colorguide';else if(k==='F11'&&c&&!a&&!s)id='attributes';else if(k==='KeyT'&&c&&a&&s)id='opentype';
+  else if(k==='F8'&&!c&&!a&&!s)f=()=>{if(sel.size&&window.SYMS)SYMS.newSymbol()};
+  if(!id&&!f)return;e.preventDefault();e.stopImmediatePropagation();if(id)tog(id);else f()},true);
 })();
 
 /*TOOLS-END*/

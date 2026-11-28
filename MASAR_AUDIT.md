@@ -523,3 +523,9 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 ## build 261: #18 تغيير الاختصارات
 - Edit > Keyboard Shortcuts (Ctrl+Alt+Shift+K) بقى فيه قسمين زي اليستريتور: Menu Commands (كل أوامر القوايم، ~170 أمر، متقسمة على القوايم، مع بحث) و Tools. اختصارات اليستريتور الأساسية محفوظة جوه البرنامج نفسه كأساس ومبتتغيرش؛ العميل بيغيّر براحته وتعديله بيتحفظ في المتصفح.
 - اضغط على الأمر واضغط الاختصار الجديد (Ctrl / Alt / Shift). المتغير بيظهر بالذهبي. لو الاختصار مستخدم في أمر تاني بيتنقل مع رسالة تحذير؛ زرار حرف لوحده محجوز للأدوات. Clear / Default للأمر الواحد، و Reset All to Illustrator يرجّع كله. القوايم نفسها بتعرض الاختصار الجديد، والاختصار القديم بيتقفل فمبيعملش الأمر القديم. (tests/kshort.js)
+
+## build 262: كل اختصارات اليستريتور للأدوات واللوحات
+- اتفحص كل اختصار افتراضي في اليستريتور: 33 أداة موجودة كلها شغالة باختصارها، 19 لوحة كلها بتفتح باختصارها، وحوالي 90 اختصار في القوايم كلهم شغالين، وكمان X / Shift+X / D / / / F / Shift+D / , / .
+- اتصلح: Ctrl+F9 (Gradient) مكانش شغال. اتضاف: F8 = New Symbol (زي اليستريتور).
+- لوحات جديدة باختصاراتها: Color Guide (Shift+F3: قواعد Complementary/Analogous/Triad/Tetrad/Shades… + درجات فاتح وغامق، ضغطة تلوّن، وحفظ المجموعة في الـ Swatches)، Attributes (Ctrl+F11: Fill Rule Non-Zero/Even-Odd، Overprint، Show/Don't Show Center، URL، Note)، OpenType (Ctrl+Alt+Shift+T: Ligatures، Fractions، Ordinals، Swash، Alternates، أنواع الأرقام). (tests/ilkeys.js)
+- أدوات اليستريتور اللي لسه مش موجودة في مسار أصلًا (فمفيش اختصار ليها): Perspective Grid (Shift+P)، Perspective Selection (Shift+V)، Symbol Sprayer (Shift+S)، Graph (J)، Mesh (U)، Slice (Shift+K)، Rotate View (Shift+H).
