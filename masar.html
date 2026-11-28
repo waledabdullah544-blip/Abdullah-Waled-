@@ -503,7 +503,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 281</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 282</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -1176,6 +1176,10 @@ ted.addEventListener('keydown',e=>{const E=ted_s;if(!E)return;
 function tedClipRn(){const E=ted_s;if(!E)return;const a=Math.min(ted.selectionStart,ted.selectionEnd),b=Math.max(ted.selectionStart,ted.selectionEnd);if(a===b)return;
   const raw=ted.value.replace(/\r/g,''),runs=[];for(let i=a;i<b;i++){const r=E.rn&&E.rn[i];runs.push(r?{...r}:null)}TRN={text:raw.slice(a,b),runs,pending:false}}
 ted.addEventListener('copy',tedClipRn);ted.addEventListener('cut',tedClipRn);ted.addEventListener('paste',()=>{if(TRN)TRN.pending=true});
+/* pasting artwork copied in Masar while typing (Illustrator): only its words go in - never the SVG code; a copied shape with no text pastes nothing */
+ted.addEventListener('paste',e=>{const dt=e.clipboardData;if(!dt)return;const t=dt.getData('text/plain')||'';if(!/^\s*<svg[\s>]/i.test(t))return;
+  let words='';try{const d=new DOMParser().parseFromString(t,'image/svg+xml');if(!d.querySelector('parsererror'))words=[...d.querySelectorAll('text')].filter(x=>!x.closest('text text')).map(x=>x.getAttribute('data-raw')!=null?x.getAttribute('data-raw'):x.textContent).join('\n')}catch(_){}
+  e.preventDefault();e.stopImmediatePropagation();if(TRN)TRN.pending=false;if(words)document.execCommand('insertText',false,words)},true);
 document.addEventListener('selectionchange',()=>{if(ted_s&&document.activeElement===ted){const E=ted_s;if(E.pendAt!=null&&!tedPendOn())tedPendClear();placeEditor();tedCtlSync()}});
 
 $('#fs').addEventListener('change',()=>{const v=parseFloat($('#fs').value);if(!(v>0)){tedCtlSync();return}
@@ -3543,7 +3547,7 @@ function areaLayout(raw,size,fam,fd,ao,rtl,ri0,Y,PA,cont,tt,vt){
       const tryHy=base=>{const mm=/^[A-Za-z]+/.exec(text.slice(base));if(!mm||mm[0].length<6)return 0;const wd=mm[0];for(let k=wd.length-3;k>=2;k--)if(mw(text.slice(0,base)+wd.slice(0,k)+'-')<=w)return base+k;return 0};
       while((m=re.exec(text))){const end=m.index+m[0].length;if(e===0||mw(text.slice(0,end).replace(/\s+$/,''))<=w)e=end;else break;if(e===end&&e>0&&mw(text.slice(0,e).replace(/\s+$/,''))>w)break}
       if(mw(text.slice(0,e).replace(/\s+$/,''))>w){/* the first word does not fit: leave this narrow line empty when a wider line can follow, otherwise break the word */
-        if(!ovz&&w<(cx1-cx0-2*ins-P.li-P.ri-(first?Math.max(0,P.fi):0))*.97){y+=lead;continue}let k=1;while(k<text.length&&mw(text.slice(0,k+1))<=w)k++;e=k;if(P.hy){const h=tryHy(0);if(h)e=h,hy=1}}
+        if(!ovz){const need=mw(text.slice(0,e).replace(/\s+$/,''));let fits=false;for(let yy=y+lead;yy+dsc<=cyL-ins+1e-6&&!fits;yy+=lead){let J=[yy-asc*.85,yy-asc*.5,yy-asc*.15,yy+dsc*.85].map(v=>scanX(C.R,v)).reduce(ivX);fits=J.some(v=>v[1]-v[0]-2*ins-P.li-P.ri>=need)}if(fits){y+=lead;continue}}let k=1;while(k<text.length&&mw(text.slice(0,k+1))<=w)k++;e=k;if(P.hy){const h=tryHy(0);if(h)e=h,hy=1}}
       else if(P.hy&&e<text.length){const h=tryHy(e);if(h)e=h,hy=1}
       if(cont&&pe>=raw.length&&ri+e>=raw.length&&cont.h)hy=1;/* Remove Threading: this frame's text was cut mid-paragraph (and at a hyphen) */
       const lt=text.slice(0,e).replace(/\s+$/,''),fin=!hy&&ri+e>=pe&&!(cont&&pe>=raw.length),nsp=(lt.match(/ /g)||[]).length,lw=mw(lt+(hy?'-':'')),tj=lt.indexOf('\t')>=0?tabJus(mw0,lt+(hy?'-':''),ri,w):null,can=tj?!tj.no:nsp>0&&w>lw+1e-6,[A,jus]=paAlign(al0,fin,can,auto),[px0,an]=place(A);

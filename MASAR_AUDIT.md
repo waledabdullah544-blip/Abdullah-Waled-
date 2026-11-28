@@ -655,3 +655,8 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Admin: prices for 1 / 3 / 6 months; customers +1 / +3 / +6 months; dashboard counts per plan.
 - Session renewal: a network or server outage no longer signs the customer out (only a rejected session does).
 - Demo: demo/build-demo.sh makes masar-demo.html + admin-demo.html with an in-page simulated server (DEMO bar: end trial, ends in 2 days, reset). Never deployed.
+
+## build 282 — text fixes from the owner's test
+- Area type inside a shape (star, polygon…): a word longer than the line no longer drops line by line and disappears; Masar looks ahead inside the shape for a line that fits it, otherwise breaks the word there (Illustrator).
+- Paste while typing: artwork copied in Masar (Ctrl+C on objects puts SVG on the clipboard) now pastes only its words; a copied shape with no text pastes nothing; plain text from other apps pastes as before.
+- Test: tests/txfix.js.
