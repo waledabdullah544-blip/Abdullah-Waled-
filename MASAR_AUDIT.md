@@ -567,3 +567,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 ## build 270: Rotate View Tool (Shift+H) — كده كل أدوات اليستريتور موجودة
 - بتلف الشاشة مش الرسمة (زي ما تلف الورقة)، Shift كل 15°، المؤشر فوق يمين بيبين الزاوية وبيرجّع للصفر لو ضغطت عليه، View > Rotate View (زوايا جاهزة) و Reset Rotate View (Shift+Ctrl+1)، ودبل كليك على الأداة بيرجّع. الدوران حوالين أصل الرسمة فالتكبير عند الماوس والـ Hand والتحديد والسحب والرسم كلهم بيشتغلوا صح وهي ملفوفة (اتقاس: سحب 100px يمين = 100px على المحور الملفوف بالظبط، والنقطة تحت الماوس بتفضل ثابتة في الزووم). (tests/rotview.js)
 - معروف: المساطر (Rulers) وشريط حذف الخلفية العائم مش بيلفوا مع الشاشة.
+
+## build 271: Art / Scatter / Pattern Brushes
+- New Brush بقى فيه 5 أنواع: Calligraphic، Tapered، Art، Scatter، Pattern. الـ 3 الجداد بياخدوا الرسمة المتحددة (بألوانها) وبيبقوا فرشة: Art بيشدّها على طول الخط، Scatter بيرش نسخ منها (Spacing، Size/Scatter/Rotation variation)، Pattern بيكررها بلاطات ماشية مع الانحناء. Width % للعرض، معاينة حية، "Use the selected artwork" لتغيير الرسمة، والـ Paintbrush بيرسم بيهم. المسار نفسه بيفضل قابل للتعديل وبيتعاد رسم الفرشة عليه. (tests/artbrush.js)
