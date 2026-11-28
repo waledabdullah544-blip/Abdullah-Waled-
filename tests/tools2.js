@@ -16,7 +16,7 @@ await run('direct',async()=>{await H.key('m');await H.drag(100,100,220,200);awai
  const pts=await H.pg.evaluate(()=>{const e=document.querySelector('#layer path,#layer rect');return null});
  await H.click(100,100);await H.drag(100,100,60,70);const o=await L();chk('A: drag corner anchor moves it (bbox grows left/up)',o&&o.x<100-30&&o.y<100-20,o);
  await ctrl('z');const o2=await L();chk('A: undo restores shape',o2&&Math.abs(o2.x-100)<1.5,o2)});
-await run('rotate',async()=>{await H.key('m');await H.drag(100,100,200,150);await H.key('r');await H.click(150,125);await H.drag(250,125,250,225);const o=await L();
+await run('rotate',async()=>{await H.key('m');await H.drag(100,100,200,150);await H.key('r');await H.click(150,125);await H.drag(250,125,150,225);const o=await L();/* (250,125)->(150,225) around (150,125) = 90° */
  chk('Rotate: drag 90° around center → bbox ~50x100',o&&Math.abs(o.w-50)<3&&Math.abs(o.h-100)<3,o);
  await H.reset();await H.key('m');await H.drag(100,100,200,150);await H.key('r');await H.click(150,125);await H.drag(250,125,250,225,['Alt']);const s=await S();chk('Rotate: Alt+drag makes a rotated copy (n=2)',s.n===2,s.n)});
 await run('reflect',async()=>{await H.key('m');await H.drag(100,100,160,150);await H.key('o');await H.click(200,125);await H.click(200,300);const o=await L();
@@ -31,10 +31,10 @@ await run('hand/zoom',async()=>{const a=await zoomNow();await H.key('z');await H
  await H.key('v');await H.pg.keyboard.down('Space');await H.drag(300,300,340,300);await H.pg.keyboard.up('Space');const p2=await zoomNow();chk('Space+drag pans',Math.abs(p2.px-p1.px-40)<1.5,{p1,p2});
  await ctrl('0');const f=await zoomNow();chk('Ctrl+0 fits artboard',Math.abs(f.z-(await H.pg.evaluate(()=>z)))<1e-9,f)});
 await run('type',async()=>{await H.key('t');await H.click(200,200);await H.pg.keyboard.type('Hi');await H.key('Escape');const s=await S();chk('Type: click+type+Esc creates a text object',s.n===1&&/text/.test(s.o[0].t),s)});
-await run('gradient',async()=>{await H.key('m');await H.drag(100,100,300,200);await H.key('g');await H.drag(100,150,300,150);const has=await H.pg.evaluate(()=>/gradient/i.test(objs[0].g.innerHTML));chk('Gradient tool: drag applies a gradient',has,null)});
+await run('gradient',async()=>{await H.key('m');await H.drag(100,100,300,200);await H.key('g');await H.drag(100,150,300,150);const has=await H.pg.evaluate(()=>/data-grad=|url\(#gr/.test(objs[0].g.innerHTML));chk('Gradient tool: drag applies a gradient',has,null)});
 await run('eyedropper',async()=>{await H.pg.evaluate(()=>{});await H.key('m');await H.drag(100,100,160,160);await H.pg.evaluate(()=>{const e=objs[0].g.querySelector('rect,path');e.setAttribute('fill','#ff0000')});await H.key('m');await H.drag(300,100,360,160);await H.key('i');await H.click(130,130);const f=await H.pg.evaluate(()=>objs[1].g.querySelector('rect,path').getAttribute('fill'));chk('Eyedropper: click copies fill #ff0000 to selected object',/ff0000/i.test(f),f)});
 await run('scissors',async()=>{await H.key('m');await H.drag(100,100,200,200);await H.key('c');await H.click(150,100);await H.click(150,200);const s=await S();chk('Scissors: two cuts on a rectangle make 2 objects',s.n>=2,s.n)});
 await run('mw',async()=>{await H.key('m');await H.drag(100,100,160,160);await H.drag(200,100,260,160);await H.drag(300,100,360,160);await H.key('y');await H.click(130,130);const s=await S();chk('Magic Wand: selects all same-fill objects (3)',s.sel===3,s.sel)});
 await run('lasso',async()=>{await H.key('m');await H.drag(100,100,160,160);await H.key('q');await H.drag(80,80,200,200);const s=await S();chk('Lasso: drag selects (no crash)',true,s)});
-await run('numkeys',async()=>{await H.key('m');await H.drag(100,100,160,160);await H.key('v');await H.key('Digit5');const op=await H.pg.evaluate(()=>objs[0].g.style.opacity||objs[0].g.getAttribute('opacity'));chk('Number key 5 sets opacity 50%  (Illustrator)',op==='0.5'||op==='.5',op)});
+await run('numkeys',async()=>{await H.key('m');await H.drag(100,100,160,160);await H.key('v');await H.key('Digit5');const op=await H.pg.evaluate(()=>styleOf(objs[0]).op);chk('Number key 5 sets opacity 50%  (Illustrator)',op==50,op)});
 console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();

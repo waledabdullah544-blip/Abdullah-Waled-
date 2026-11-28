@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 252</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 253</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -11066,6 +11066,19 @@ function selPaths(o,g,budget){const s=1/z,c=lyc(o),fk={...o,g:o.g.cloneNode(true
   const g=el('g',{'pointer-events':'none','data-selhl':'1'});let budget=3000;for(const o of L)budget=selPaths(o,g,budget);
   selg.insertBefore(g,selg.firstChild)}catch(_){}return r}}
 window.selLayerColor=lyc;
+})();
+
+
+/* ======================= build 253: number keys = opacity, Alt pressed during a move = copy ======================= */
+(()=>{
+/* Illustrator: with an object selected, 1..9 set the opacity to 10..90 % and 0 to 100 % */
+addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.repeat||ted_s||!sel.size)return;const m=/^(Digit|Numpad)(\d)$/.exec(e.code);if(!m)return;
+  const t=e.target,tg=t&&t.tagName;if(tg==='INPUT'||tg==='TEXTAREA'||tg==='SELECT'||(t&&t.isContentEditable))return;if(st)return;
+  const n=+m[2],op=n===0?100:n*10;e.preventDefault();e.stopImmediatePropagation();try{applyStyle({op},true);draw();$('#hint').textContent='Opacity '+op+'%'}catch(_){}},true);
+/* Alt pressed after the drag has started: the originals are copied back to where they were, the dragged ones are the copies */
+addEventListener('pointermove',e=>{try{if(!st||st.mode!=='move'||!st.moved||st.copied||!e.altKey||!st.orig)return;st.copied=true;
+  const C=[];st.orig.forEach(r=>{const o=r.o;if(!objs.includes(o))return;const g=o.g.cloneNode(true),n={g,bb:o.bb,m:{...o.m,tx:r.tx,ty:r.ty},ly:o.ly};g.__o=n;apply(n);const i=objs.indexOf(o);objs.splice(i,0,n);layer.insertBefore(g,o.g);C.push(n)});
+  if(typeof rethreadClones==='function')rethreadClones(C)}catch(_){}},true);
 })();
 
 /*TOOLS-END*/
