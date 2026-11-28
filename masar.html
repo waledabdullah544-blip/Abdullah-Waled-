@@ -299,6 +299,8 @@ body.hide-ctrl header{display:none!important}body.hide-tools nav{display:none!im
 .dkpn input:disabled,.dkpn button:disabled,.dkpn select:disabled{opacity:.4}
 .dkpn .pb{height:24px;min-width:24px;padding:0 7px;border:1px solid var(--line);border-radius:3px;background:var(--field);color:var(--ink);font:inherit;cursor:default;display:inline-flex;align-items:center;justify-content:center}
 .dkpn .pb:hover:not(:disabled){background:var(--hov)}.dkpn .pb.on{background:var(--on2);border-color:var(--on3);color:var(--onink)}
+/* build 273: Properties > Document toggles all look the same; the ones that are on carry a gold tick */
+#prNone .pb.ck::before{content:'\2713';color:#f0c374;font-weight:700;margin-right:6px}
 .dkpn .pr{display:flex;align-items:center;gap:6px;margin:4px 0}.dkpn .pr label{display:flex;align-items:center;gap:4px;color:var(--mute);flex:1;min-width:0}.dkpn .pr label input[type=number]{width:100%;flex:1}
 .dkpn .pt{font-weight:600;margin:10px 0 2px;color:var(--mute)}.dkpn .alg{flex-wrap:wrap}
 #lyp{flex-direction:column;padding:6px}.lyl{flex:1;min-height:150px;border:1px solid var(--line);background:var(--field);overflow:auto}
@@ -497,7 +499,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 272</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 273</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8276,7 +8278,7 @@ const T=()=>[...sel].filter(o=>o.g.isConnected);
 const setv=(id,v)=>{const e=$p(id);if(document.activeElement!==e)e.value=v};
 function prPieSync(L){const w=$p('#prPie'),o=L.length===1?L[0]:null,Q=o?ellP(o):null;w.style.display=Q?'block':'none';if(!Q)return;const sd=((Q.s%360)+360)%360,ed=((Q.e%360)+360)%360;setv('#prps',+sd.toFixed(2));setv('#prpe',+(pieFull(Q)?sd:ed).toFixed(2))}
 function refresh(){if(P.style.display==='none')return;const L=T();vis('#prNone',!L.length);{const q=$p('#prAbs');if(q)q.textContent=(ARTS[ABI]||{n:'Artboard'}).n+' · '+ABW+' × '+ABH+' px'}{const q=$p('#prss');if(q)q.checked=!(window.MGEN&&window.MGEN.ss===false)}vis('#prSel',!!L.length);
-  if(!L.length){const gr=GRIDG.getAttribute('display')!=='none';[['pdR',RLON],['pdG',gr],['pdSG',SNAPG],['pdSP',SNAPP],['pdSm',SGON],['pdGV',GDVIS],['pdGL',GDLOCK]].forEach(([i,v])=>$p('#'+i).classList.toggle('on',!!v));return}
+  if(!L.length){const gr=GRIDG.getAttribute('display')!=='none';[['pdR',RLON],['pdG',gr],['pdSG',SNAPG],['pdSP',SNAPP],['pdSm',SGON],['pdGV',GDVIS],['pdGL',GDLOCK]].forEach(([i,v])=>{const b=$p('#'+i);b.classList.remove('on');b.classList.toggle('ck',!!v);b.setAttribute('aria-pressed',v?'true':'false')});return}
   $p('#prType').textContent=$('#ctl').textContent;prPieSync(L);const u=uni(L);setv('#prx',+(u.x+REF[0]*u.w).toFixed(2));setv('#pry',+(u.y+REF[1]*u.h).toFixed(2));setv('#prw',+(+u.w).toFixed(2));setv('#prh',+(+u.h).toFixed(2));
   setv('#prr',(Math.round(-rotOf(L[0])*180/Math.PI*100)/100)||0);
   const S=styleOf(L[0])||{fill:'none',stroke:'none',sw:0,op:100};const f=$p('#prF'),s=$p('#prS');f.style.background=S.fill==='none'?'':hexOf(S.fill);f.classList.toggle('none',S.fill==='none');s.style.background='';s.style.boxShadow=S.stroke==='none'?'':'inset 0 0 0 3px '+hexOf(S.stroke);s.classList.toggle('none',S.stroke==='none');

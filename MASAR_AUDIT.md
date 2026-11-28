@@ -576,3 +576,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 272 (تكملة): Rotate View مع باقي الواجهة
 - شريط حذف الخلفية العائم بيقف فوق الشكل حتى والشاشة ملفوفة، والزووم بالضغط بأداة الـ Zoom بيكبّر عند النقطة الصح، ومكان الكتابة (IME) بيتحسب بالدوران. المساطر بتبهت وهي ملفوفة (بتقيس الـ Artboard من غير دوران) وعليها توضيح. (tests/rotview.js)
+
+## build 273: زراير Properties > Document بقت كلها بلون واحد
+- Rulers / Grid / Snap to Grid / Snap to Point / Smart Guides / Show Guides / Lock Guides / Clear Guides كلهم بنفس الخلفية والإطار؛ اللي شغال عليه علامة ✓ ذهبي بدل ما يبقى لونه أفتح (اتجرب على الثيمين Dark و Medium Dark). (tests/proptoggles.js)
