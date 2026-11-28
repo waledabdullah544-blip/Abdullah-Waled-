@@ -11,7 +11,7 @@ await pg.evaluate(async b=>{const u='data:image/jpeg;base64,'+b;const o=add('<im
 await pg.waitForTimeout(300);
 ok('bar shows Upscale',await pg.evaluate(()=>getComputedStyle(document.querySelector('#rbctx .rbup')).display!=='none'));
 await pg.click('#rbctx .rbup');await pg.waitForTimeout(400);
-ok('Photo (RealPLKSR) is the default model, strength 90',await pg.evaluate(()=>document.querySelector('.fxm [data-k=mdl]').value==='photo'&&document.querySelector('.fxm [data-k=st]').value==='90'));
+ok('Photo (RealPLKSR) is the default model, strength 100, Keep features on',await pg.evaluate(()=>document.querySelector('.fxm [data-k=mdl]').value==='photo'&&document.querySelector('.fxm [data-k=st]').value==='100'&&document.querySelector('.fxm [data-k=lock]').checked));
 ok('dialog opens with size info',await pg.evaluate(()=>/90 × 112.*360 × 448/.test(document.getElementById('upinfo').textContent)));
 const t0=Date.now();await pg.click('.fxm button[data-k=Upscale]');
 await pg.waitForFunction(()=>!document.querySelector('.fxm'),null,{timeout:300000});

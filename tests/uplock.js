@@ -1,0 +1,11 @@
+const L=require('./lib.js'),fs=require('fs'),path=require('path');
+(async()=>{const H=await L.open({launch:{args:['--host-resolver-rules=MAP huggingface.co 127.0.0.1:8443','--no-sandbox']},page:{ignoreHTTPSErrors:true}}),pg=H.pg,ctx=pg.context();let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
+const ct=f=>/\.(js|mjs)$/.test(f)?'text/javascript':/wasm$/.test(f)?'application/wasm':'application/octet-stream';
+await ctx.route('https://cdn.jsdelivr.net/**',r=>{const u=r.request().url();if(/\/gh\/.*\.onnx/.test(u))return r.fulfill({body:fs.readFileSync(path.resolve(__dirname,'../models/'+u.split('/').pop())),contentType:'application/octet-stream',headers:{'access-control-allow-origin':'*'}});
+  const dir=/onnxruntime-web@1\.20\.1/.test(u)?'/tmp/mdl/ort/':'/tmp/mdl/tf/',f=dir+u.split('/').pop().split('?')[0];if(!fs.existsSync(f))return r.fulfill({status:404,body:'no'});r.fulfill({body:fs.readFileSync(f),contentType:ct(f),headers:{'access-control-allow-origin':'*'}})});
+const b64=fs.readFileSync('/tmp/mdl/face256.png').toString('base64');
+const run=lock=>pg.evaluate(async([b,lock])=>{const blob=await (await fetch('data:image/png;base64,'+b)).blob();const r=await RBUP.run(blob,{model:'photo',scale:4,strength:1,lock},null);const u=URL.createObjectURL(r.blob),i=new Image();i.src=u;await i.decode();const c=document.createElement('canvas');c.width=i.width;c.height=i.height;c.getContext('2d').drawImage(i,0,0);return{d:c.toDataURL('image/png'),w:i.width,h:i.height}},[b64,lock]);
+const t0=Date.now();const A=await run(false),t1=Date.now();const B=await run(true),t2=Date.now();
+fs.writeFileSync('/tmp/mdl/ul_off.png',Buffer.from(A.d.split(',')[1],'base64'));fs.writeFileSync('/tmp/mdl/ul_on.png',Buffer.from(B.d.split(',')[1],'base64'));
+ok('both runs give a 4x image',A.w===1024&&B.w===1024,A.w+' '+B.w);console.log('secs off',(t1-t0)/1000,'on',(t2-t1)/1000);
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();
