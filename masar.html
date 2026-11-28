@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 240</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 241</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10850,6 +10850,35 @@ try{document.fonts.addEventListener('loadingdone',relayout);document.fonts.ready
 /* fonts added from script (uploaded / local fonts) fire no event: watch the number of loaded faces */
 let nL=-1;setInterval(()=>{try{let n=0;document.fonts.forEach(f=>{if(f.status==='loaded')n++});if(nL>=0&&n!==nL)relayout();nL=n}catch(_){}},800);
 window.textRelayout=relayout})();
+
+
+/* ======================= build 241: drawing correction for Pencil / Paintbrush / Blob Brush ======================= */
+(()=>{/* the hand's stroke is cleaned before it is fitted (Illustrator's Fidelity): even resampling, a smoothing pass whose strength
+   follows the Accurate <-> Smooth slider, and a stroke that is almost straight becomes a real straight line. The raw stroke is
+   still stored on the path, so the Accuracy control can re-fit it later. */
+const _pf=pencilFit;
+pencilFit=function(raw,tk,nc){try{
+  if(!raw||raw.length<3)return _pf(raw,tk,nc);const Z=z||1,bi=BRK.indexOf(tk),k=bi>=0&&FIDK.indexOf(tk)<0?FIDK[bi]:(tk||2.5);/* the Paintbrush / Blob Brush scale is finer: same correction for the same slider position */
+  /* 1) resample at an even step (mouse events come at uneven speed) */
+  const st=Math.max(.6,Math.min(2,k*.5))/Z,R=[raw[0].slice()];let acc=0;
+  for(let i=1;i<raw.length;i++){let a=raw[i-1],b=raw[i],d=Math.hypot(b[0]-a[0],b[1]-a[1]);if(d<1e-9)continue;let u=0;
+    while(acc+d*(1-u)>=st){const t=u+(st-acc)/d;R.push([a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t]);u=t;acc=0}acc+=d*(1-u)}
+  const last=raw[raw.length-1];if(Math.hypot(last[0]-R[R.length-1][0],last[1]-R[R.length-1][1])>1e-6)R.push(last.slice());
+  const n=R.length;if(n<3)return _pf(raw,tk,nc);
+  let arc=0;for(let i=1;i<n;i++)arc+=Math.hypot(R[i][0]-R[i-1][0],R[i][1]-R[i-1][1]);
+  /* 3) smoothing: gaussian along the stroke, the window shrinks at the ends so the end points stay where they were drawn */
+  const sg=Math.max(.5,k*1.3/Z/st),W=Math.ceil(sg*2.5),S=[R[0]];
+  for(let i=1;i<n-1;i++){const w=Math.min(W,i,n-1-i);let sx=0,sy=0,sw=0;for(let j=-w;j<=w;j++){const g=Math.exp(-(j*j)/(2*sg*sg));sx+=R[i+j][0]*g;sy+=R[i+j][1]*g;sw+=g}S.push([sx/sw,sy/sw])}
+  S.push(R[n-1]);
+  /* 2) almost straight -> a real straight line (checked after smoothing, the tolerance grows with Smooth) */
+  const A=S[0],B=S[S.length-1],Lc=Math.hypot(B[0]-A[0],B[1]-A[1]);
+  if(Lc>6/Z&&Lc>arc*.9){let dev=0,back=0,pt=-1e9;const ux=(B[0]-A[0])/Lc,uy=(B[1]-A[1])/Lc;
+    for(const q of S){const dx=q[0]-A[0],dy=q[1]-A[1];dev=Math.max(dev,Math.abs(dx*uy-dy*ux));const t=dx*ux+dy*uy;if(t<pt-3/Z)back=1;pt=Math.max(pt,t)}
+    if(!back&&dev<=Math.max(k*1.4/Z,Lc*.018*Math.min(2,k/2)))return[{x:r3(A[0]),y:r3(A[1]),i:null,o:null},{x:r3(B[0]),y:r3(B[1]),i:null,o:null}]}
+  return _pf(S,tk,nc)}catch(_){return _pf(raw,tk,nc)}};
+/* default: the middle of the Fidelity slider (Illustrator's default), not the most accurate end */
+try{if(PCO.fid<3)PCO.fid=3;if(BRO.fid<3)BRO.fid=3;if(BBO.fid<3)BBO.fid=3}catch(_){}
+})();
 
 /*TOOLS-END*/
 })();

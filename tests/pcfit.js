@@ -6,7 +6,7 @@ await pg.evaluate(()=>setTool('pc'));
 ok('Accuracy control visible with the Pencil tool',await pg.evaluate(()=>getComputedStyle(document.getElementById('pcw')).display!=='none'));
 // jittery hand-drawn line
 let seed=3;const rnd=()=>{seed=(seed*16807)%2147483647;return seed/2147483647-.5};const P=[];for(let i=0;i<=60;i++)P.push([200+i*6,300+40*Math.sin(i/9)+rnd()*5]);
-await stroke(P);const a=await segs();ok('stroke stored for re-fitting '+JSON.stringify(a),a.raw&&a.f==='2');
+await stroke(P);const a=await segs();ok('stroke stored for re-fitting '+JSON.stringify(a),a.raw&&a.f==='3');
 await pg.evaluate(()=>{const s=document.getElementById('pcf');s.value=1;s.dispatchEvent(new Event('input',{bubbles:true}));s.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(200);const hi=await segs();
 await pg.evaluate(()=>{const s=document.getElementById('pcf');s.value=5;s.dispatchEvent(new Event('input',{bubbles:true}));s.dispatchEvent(new Event('change',{bubbles:true}))});await pg.waitForTimeout(200);const lo=await segs();
 ok('accuracy 1 uses more segments than 5 ('+hi.n+' vs '+lo.n+')',hi.n>lo.n&&lo.f==='5');
