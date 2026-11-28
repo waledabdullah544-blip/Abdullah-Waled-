@@ -54,7 +54,6 @@
     if (path === '/auth/v1/user') return me ? res(200, { id: me.id, email: me.email }) : res(401, { msg: 'Invalid JWT' });
     if (path === '/auth/v1/recover') { DB.email_log.unshift({ created_at: now(), to_email: body.email, kind: 'recovery', provider: 'brevo', ok: true }); save(); return res(200, {}); }
     if (path === '/auth/v1/logout') return res(204);
-    if (path === '/auth/v1/authorize') { alert('Demo: Google sign-in needs the real server. Use email sign-up in the demo.'); return res(400, {}); }
     // ---- storage ----
     let m = /^\/storage\/v1\/object\/(templates|template-thumbs)\/(.+)$/.exec(path);
     if (m && method === 'GET') { if (!me || status(me) === 'expired') return res(400, { message: 'Object not found' }); const k = m[1] + '/' + decodeURIComponent(m[2]); return k in DB.objects ? res(200, DB.objects[k], 'text/plain') : res(404, { message: 'Object not found' }); }
@@ -123,7 +122,30 @@
   window.MASAR_CLOUD_CONFIG = { url: BASE, key: 'demo-anon-key-0000000' };
   try { localStorage.removeItem('masar.cloud.cfg'); } catch (_) {}
   /* the DEMO label + demo controls */
-  window.MASAR_DEMO = { db: () => DB, reset() { localStorage.removeItem(KEY); localStorage.removeItem('masar.cloud.session'); localStorage.removeItem('masar.sub.v1'); location.href = location.pathname; },
+  /* Google sign-in, simulated: choose a demo account, then come back with #access_token=... exactly like the real Google flow */
+  function google() {
+    const o = document.createElement('div');
+    o.style.cssText = 'position:fixed;inset:0;z-index:99998;background:rgba(0,0,0,.55);display:grid;place-items:center;font:14px Segoe UI,Cairo,sans-serif';
+    const known = DB.users.filter(x => x.google).map(x => x.email);
+    o.innerHTML = '<div style="background:#fff;color:#222;border-radius:10px;padding:26px 28px;width:360px;box-shadow:0 20px 60px rgba(0,0,0,.4)">' +
+      '<div style="font-weight:700;font-size:18px;margin-bottom:4px">Sign in with Google</div><div style="color:#c92a2a;font-size:12px;margin-bottom:14px">DEMO: no real Google account is used</div>' +
+      (known.length ? '<div style="margin-bottom:10px">' + known.map(e => '<button data-e="' + e + '" style="display:block;width:100%;text-align:left;padding:10px;margin:4px 0;border:1px solid #ddd;border-radius:6px;background:#fafafa;cursor:pointer">' + e + '</button>').join('') + '</div>' : '') +
+      '<label style="display:block;margin-bottom:6px;color:#555">Email</label><input id="dge" type="email" value="demo.user@gmail.com" style="width:100%;box-sizing:border-box;padding:9px;border:1px solid #ccc;border-radius:6px">' +
+      '<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px"><button id="dgc" style="padding:8px 16px;border:1px solid #ccc;border-radius:16px;background:#fff;cursor:pointer">Cancel</button><button id="dgo" style="padding:8px 18px;border:0;border-radius:16px;background:#1a73e8;color:#fff;cursor:pointer">Continue</button></div></div>';
+    document.body.appendChild(o);
+    const go = email => { email = (email || '').trim().toLowerCase(); if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { o.querySelector('#dge').style.borderColor = '#c92a2a'; return; }
+      let x = DB.users.find(y => y.email === email);
+      if (!x) { x = { id: uid(), email, pw: null, google: true, name: email.split('@')[0], admin: false, trial_end: new Date(Date.now() + DB.settings.trial_days * DAY).toISOString(), period_end: null, plan: null, canceled: false, created_at: now() }; DB.users.push(x); }
+      x.google = true; save();
+      location.href = location.pathname + '#access_token=demo-' + x.id + '&refresh_token=demor-' + x.id + '&expires_in=3600&token_type=bearer';
+      location.reload(); };
+    o.querySelector('#dgo').onclick = () => go(o.querySelector('#dge').value);
+    o.querySelector('#dge').onkeydown = e => { if (e.key === 'Enter') go(e.target.value); };
+    o.querySelector('#dgc').onclick = () => o.remove();
+    o.querySelectorAll('[data-e]').forEach(b => b.onclick = () => go(b.dataset.e));
+    o.querySelector('#dge').focus();
+  }
+  window.MASAR_DEMO = { google, db: () => DB, reset() { localStorage.removeItem(KEY); localStorage.removeItem('masar.cloud.session'); localStorage.removeItem('masar.sub.v1'); location.href = location.pathname; },
     endTrial() { const s = JSON.parse(localStorage.getItem('masar.cloud.session') || 'null'), x = s && DB.users.find(y => y.id === s.id); if (!x) return alert('Sign in first.'); x.trial_end = new Date(Date.now() - 60e3).toISOString(); if (!x.admin) x.period_end = null; save(); localStorage.removeItem('masar.sub.v1'); location.reload(); },
     endingSoon() { const s = JSON.parse(localStorage.getItem('masar.cloud.session') || 'null'), x = s && DB.users.find(y => y.id === s.id); if (!x) return alert('Sign in first.'); x.plan = x.plan || 'monthly'; x.period_end = new Date(Date.now() + 2 * DAY).toISOString(); save(); localStorage.removeItem('masar.sub.v1'); location.reload(); } };
   addEventListener('DOMContentLoaded', () => {

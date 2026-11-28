@@ -12410,7 +12410,7 @@ function subState(){if(!ME||!ME.me)return null;const m=ME.me,el=Date.now()-ME.at
 async function refreshMe(){if(!S)return null;try{const m=await API.me();meSave(m)}catch(e){if(/sign in/i.test(e.message))meSave(null)}gate();return subState()}
 const money=(c,cur)=>(c/100).toLocaleString('en-US',{minimumFractionDigits:c%100?2:0,maximumFractionDigits:2})+' '+(cur||'EGP');
 /* ---- Google sign-in: Supabase sends the customer back with #access_token=... ---- */
-API.google=()=>{location.href=cfg().url+'/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(location.origin+location.pathname)};
+API.google=()=>{if(window.MASAR_DEMO&&MASAR_DEMO.google)return MASAR_DEMO.google();location.href=cfg().url+'/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(location.origin+location.pathname)};
 async function takeHash(){const h=new URLSearchParams((location.hash||'').replace(/^#/,''));const at=h.get('access_token');if(!at||!ready())return;
   try{const r=await fetch(cfg().url+'/auth/v1/user',{headers:{apikey:cfg().key,Authorization:'Bearer '+at}});if(!r.ok)throw await errOf(r);const u=await r.json();
     saveS(sess({access_token:at,refresh_token:h.get('refresh_token'),expires_in:h.get('expires_in'),user:u}));msg('Signed in as '+u.email)}catch(e){fail(e)}

@@ -70,7 +70,7 @@ function login(note){app.innerHTML='<div id="login"><h1>Masar Admin</h1>'+(C().u
   '<p style="margin-top:12px;text-align:center"><a href="#" id="lg">Sign in with Google</a></p></div>';
   $('#lgo').onclick=async()=>{try{saveS(sess(await auth('token?grant_type=password',{email:$('#le').value.trim(),password:$('#lp').value})));start()}catch(e){login(e.message)}};
   $('#lp').onkeydown=e=>{if(e.key==='Enter')$('#lgo').click()};
-  $('#lg').onclick=e=>{e.preventDefault();location.href=C().url+'/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(location.origin+location.pathname)}}
+  $('#lg').onclick=e=>{e.preventDefault();if(window.MASAR_DEMO&&MASAR_DEMO.google)return MASAR_DEMO.google();location.href=C().url+'/auth/v1/authorize?provider=google&redirect_to='+encodeURIComponent(location.origin+location.pathname)}}
 async function start(){const h=new URLSearchParams(location.hash.slice(1));if(h.get('access_token')){try{const c=C(),r=await fetch(c.url+'/auth/v1/user',{headers:{apikey:c.key,Authorization:'Bearer '+h.get('access_token')}});if(r.ok){const u=await r.json();saveS(sess({access_token:h.get('access_token'),refresh_token:h.get('refresh_token'),expires_in:h.get('expires_in'),user:u}))}}catch(_){}history.replaceState(null,'',location.pathname)}
   if(!S)return login();try{ME=await rpc('masar_me')}catch(e){saveS(null);return login(e.message)}
   if(!ME||!ME.admin)return login('This account is not an admin. Make it admin once in the Supabase SQL editor (see README).');
