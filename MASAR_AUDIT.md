@@ -586,3 +586,9 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Preferences: Keyboard Increment and Scale Strokes & Effects, saved to the real preferences. Scale Corners is not shown because the app has no such feature yet.
 - Quick Actions: Document Setup and Preferences.
 - Test: tests/proptoggles.js (16 checks).
+
+## build 275 — Masar logo + Home in the menu bar, Home screen
+- The menu bar starts like Illustrator's: the Masar logo, a Home (house) button, a divider, then File … Help. The logo left the control bar.
+- Home screen (covers the workspace, menus stay usable; Esc or the Home button closes it): New file (New Document dialog), Open, Quick start presets (A4, Letter, Postcard, Common, HDV/HDTV 1080, Square post, Story, More presets), Recent files with thumbnail, time and size; × removes an entry.
+- Recent files are remembered in this browser when a file is opened or saved (up to 8, 1.5 MB each); clicking one reopens it (asks to save unsaved changes first).
+- window.docCreate(w,h,name,unit) creates a one-artboard document. Test: tests/home.js.

@@ -499,7 +499,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 274</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 275</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -7012,7 +7012,7 @@ function fileDownload(blob,name){const a=document.createElement('a');a.href=URL.
 function fileNew(){if(ISO)isoExit();if(!objs.length)return;objs.slice().forEach(o=>o.g.remove());objs=[];sel=new Set();dsSel=new Set();commit();draw();tb5Msg('New document');if(window.dkSaved)dkSaved()}
 function fileSave(){if(ISO)isoExit();
   const D={masar:1,build:140,ab:[ABW,ABH],arts:ARTS.map(a=>({...a})),abi:ABI,objs:objs.map(o=>{const a={};for(const t of o.g.attributes){if(t.name==='transform')continue;a[t.name]=t.value}return{a,h:(window.rbPack?window.rbPack(o):o.g.innerHTML),m:{...o.m},ly:o.ly,nm:o.nm,lh:o.lh}}),gd:typeof gdSer==='function'?gdSer():'',lys:typeof lyJSON==='function'?lyJSON():''};
-  fileDownload(new Blob([JSON.stringify(D)],{type:'application/json'}),'masar-artwork.masar');if(window.dkSaved)dkSaved();tb5Msg('Saved masar-artwork.masar')}
+  const DS=JSON.stringify(D);fileDownload(new Blob([DS],{type:'application/json'}),'masar-artwork.masar');window.__lastSave=DS;if(window.dkSaved)dkSaved();tb5Msg('Saved masar-artwork.masar')}
 function fileLoadMasar(D){if(ISO)isoExit();if(Array.isArray(D.arts)&&D.arts.length){ARTS=D.arts.map(a=>({...a}));ABN=Math.max(...ARTS.map(a=>+a.id||0),ARTS.length);ABI=Math.min(Math.max(+D.abi||0,0),ARTS.length-1);abSync();abRender();fit()}else if(D.ab&&D.ab.length===2){ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:+D.ab[0]||800,h:+D.ab[1]||600}];ABI=0;ABN=1;abSync();abRender();fit()}else if(ABW!==800||ABH!==600||ARTS.length!==1){ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:800,h:600}];ABI=0;ABN=1;abSync();abRender();fit()}objs.slice().forEach(o=>o.g.remove());objs=[];sel=new Set();dsSel=new Set();if(D.lys&&window.lyLoad)lyLoad(D.lys);else if(window.lyReset)lyReset();
   D.objs.forEach(r=>{const g=el('g',{});for(const k in r.a)g.setAttribute(k,r.a[k]);g.innerHTML=r.h;layer.appendChild(g);const o={g,bb:null,m:{sx:1,sy:1,tx:0,ty:0,...r.m},ly:r.ly,nm:r.nm,lh:r.lh};g.__o=o;o.bb=BBX(o);apply(o);objs.push(o)});
   if(window.rbUnpack)window.rbUnpack();if(typeof gdRestore==='function'&&D.gd)gdRestore(D.gd);commit();draw();if(window.dkSaved)dkSaved()}
@@ -7052,7 +7052,7 @@ function fileImportSVG(txt){const doc=new DOMParser().parseFromString(txt,'image
   out.forEach(r=>{const o=add(new XMLSerializer().serializeToString(r.c).replace(/ xmlns="[^"]*"/,''));if(r.M.some((v,i)=>Math.abs(v-[1,0,0,1,0,0][i])>1e-9))bakeAffine(o,r.M);made.push(o)});
   sel=new Set(made);dsSel=new Set();commit();draw();return{n:made.length,skipped}}
 FOPEN.addEventListener('change',()=>{const f=FOPEN.files&&FOPEN.files[0];if(!f)return;const rd=new FileReader();
-  rd.onload=()=>{const t=String(rd.result||'');let D=null;if(!/^\s*</.test(t)){try{D=JSON.parse(t)}catch(_){}}
+  rd.onload=()=>{const t=String(rd.result||'');try{window.recentAdd&&recentAdd(f.name,t)}catch(_){}let D=null;if(!/^\s*</.test(t)){try{D=JSON.parse(t)}catch(_){}}
     if(D&&D.masar&&Array.isArray(D.objs)){fileLoadMasar(D);tb5Msg('Opened '+f.name);return}
     const r=/^\s*</.test(t)?fileImportSVG(t):null;
     if(r&&r.n){tb5Msg('Opened '+f.name+': '+r.n+' shapes'+(r.skipped?' ('+r.skipped+' text / image elements skipped)':''))}
@@ -9183,7 +9183,7 @@ const ask=(title,label,def,okT,cb)=>{if(document.querySelector('.fxm.fnm'))retur
   const close=()=>{removeEventListener('keydown',kd,true);bg.remove()},done=()=>{const n=clean(inp.value);if(!n){inp.focus();return}close();cb(n)};
   const kd=e=>{if(e.key==='Escape'){e.preventDefault();e.stopImmediatePropagation();close()}else if(e.key==='Enter'){e.preventDefault();e.stopImmediatePropagation();done()}else e.stopPropagation()};
   ok.onclick=done;cn.onclick=close;addEventListener('keydown',kd,true);document.body.appendChild(bg);inp.focus();inp.select()};
-const doSave=(name,rename)=>{FN=name+'.masar';try{_save()}finally{FN=null}if(rename){window.DOCNAME=name;window.DOCNAMED=true;view()}tb5Msg('Saved '+name+'.masar')};
+const doSave=(name,rename)=>{FN=name+'.masar';window.__lastSave=null;try{_save()}finally{FN=null}try{if(window.__lastSave&&window.recentAdd)recentAdd(name+'.masar',window.__lastSave)}catch(_){}window.__lastSave=null;if(rename){window.DOCNAME=name;window.DOCNAMED=true;view()}tb5Msg('Saved '+name+'.masar')};
 fileSave=function(){if(window.DOCNAMED)doSave(window.DOCNAME,false);else window.fileSaveAs()};
 window.fileSaveAs=function(){ask('Save As','File name:',window.DOCNAME,'Save',n=>doSave(n,true))};
 window.fileSaveCopy=function(){ask('Save a Copy','File name:',window.DOCNAME+' copy','Save',n=>doSave(n,false))};
@@ -10156,6 +10156,9 @@ addEventListener('keydown',e=>{if(!(e.ctrlKey||e.metaKey)||!e.altKey||e.code!=='
       img.onerror=()=>aiAlert('This image could not be read.');img.src=url};rd.readAsDataURL(f)});
   const place=()=>{PL.value='';PL.click()};
   function printDoc(){const svg=fileSVGString(),fr=document.createElement('iframe');fr.style.cssText='position:fixed;left:-99999px;top:0;width:'+ABW+'px;height:'+ABH+'px;border:0';document.body.appendChild(fr);const d=fr.contentDocument;d.open();d.write('<!doctype html><html><head><title>'+(window.DOCNAME||'Untitled-1')+'</title><style>@page{margin:0;size:'+ABW+'px '+ABH+'px}html,body{margin:0;background:#fff}svg{display:block;width:100%;height:auto}</style></head><body>'+svg.replace(/^<\?xml[^>]*>\s*/,'')+'</body></html>');d.close();setTimeout(()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}finally{setTimeout(()=>fr.remove(),1500)}},250)}
+  window.docCreate=(w,h,name,unit)=>{const go=()=>{window.docClear();DUNIT=unit||'px';try{localStorage.setItem('masar.docunit',DUNIT)}catch(_){}window.DOCNAME=name||'Untitled-1';
+    ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w,h}];ABN=1;ABI=0;abSync();abRender();fit();try{RLO={x:0,y:0};rlDraw()}catch(_){}if(window.abChanged)abChanged();commit();draw();if(window.dkSaved)dkSaved();tb5Msg('New document: '+w+' × '+h+' px')};
+  if(window.docDirty())dkModal('New Document','Do you want to save changes to '+(window.DOCNAME||'Untitled-1')+' before creating a new document?',[{t:'Cancel',c:1},{t:"Don't Save",f:go},{t:'Save',p:1,f:()=>{fileSave();go()}}]);else go()};
   window.docNew=newDoc;window.docSetup=docSetup;window.docPlace=place;window.docMode=setMode;window.docPrint=printDoc;
   addEventListener('keydown',e=>{if(typing0(e.target)||document.querySelector('.fxm'))return;const c=e.ctrlKey||e.metaKey;
     if(c&&e.shiftKey&&!e.altKey&&e.code==='KeyP'){e.preventDefault();e.stopImmediatePropagation();place()}
@@ -11953,6 +11956,80 @@ window.brArtPaths=artPaths;window.brCaptureArt=captureArt;
   g.innerHTML=(SP?artPaths(B,SP,sw):[]).map(p=>'<path data-bo="" d="'+p.d+'" fill="'+p.fill+'" stroke="'+p.stroke+'" stroke-width="'+(+p.sw).toFixed(3)+'" fill-rule="nonzero"/>').join('')}}
 })();
 
+
+/* ======================= build 275: Masar logo + Home button in the menu bar, and the Home screen (like Illustrator) ======================= */
+(()=>{const bar=document.getElementById('mbar');if(!bar)return;
+const st=document.createElement('style');st.textContent=`
+#mbhw{display:flex;align-items:center;gap:4px;padding:0 8px 0 0;margin-right:6px;border-right:1px solid var(--sep,var(--line))}
+#mblogo{width:24px;height:24px;display:block;line-height:0}#mblogo svg{width:24px;height:24px;display:block;border-radius:3px}
+#mbhome{width:28px;height:22px;border:0;border-radius:3px;background:none;color:var(--ink2,var(--ink));display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:default}
+#mbhome:hover,#mbhome.on{background:var(--hov2,var(--hov));color:var(--onink,var(--ink))}
+header>.brand{display:none!important}
+#home{position:fixed;left:0;right:0;bottom:0;z-index:85;background:var(--bg,#1e1e1e);color:var(--ink);display:none;font:13px "Segoe UI",Cairo,sans-serif;overflow:auto}
+#home.on{display:flex}
+#home .hs{flex:0 0 220px;padding:22px 16px;border-right:1px solid var(--sep,var(--line));background:var(--panel);display:flex;flex-direction:column;gap:10px}
+#home .hs button{height:34px;border-radius:17px;border:1px solid var(--bdr,var(--line));background:transparent;color:var(--ink);font:600 13px inherit;font-family:inherit;cursor:pointer}
+#home .hs button.pri{background:#f0c374;border-color:#f0c374;color:#2a2a2a}
+#home .hs button:hover{filter:brightness(1.08);background-color:color-mix(in srgb,var(--ink) 8%,transparent)}#home .hs button.pri:hover{background:#f5d08c}
+#home .hs .hnav{margin-top:14px;display:flex;flex-direction:column;gap:2px}
+#home .hs .hnav a{padding:7px 10px;border-radius:4px;color:var(--ink2,var(--ink));text-decoration:none;cursor:pointer}#home .hs .hnav a.on,#home .hs .hnav a:hover{background:color-mix(in srgb,var(--ink) 12%,transparent);color:var(--ink)}
+#home .hm{flex:1;padding:28px 40px;min-width:0}
+#home h1{font:600 26px inherit;font-family:inherit;margin:0 0 4px}#home .sub{color:var(--mute);margin:0 0 26px}
+#home h2{font:600 15px inherit;font-family:inherit;margin:26px 0 12px}
+#home .pres{display:flex;flex-wrap:wrap;gap:14px}
+#home .pc{width:128px;border:1px solid var(--bdr,var(--line));border-radius:6px;background:var(--panel);padding:12px 10px 10px;cursor:pointer;text-align:left;color:var(--ink);font:inherit}
+#home .pc:hover{border-color:#f0c374}
+#home .pc .pv{height:70px;display:flex;align-items:center;justify-content:center;margin-bottom:8px}#home .pc .pv i{display:block;background:#fff;border:1px solid #888;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+#home .pc b{display:block;font-weight:600}#home .pc span{color:var(--mute);font-size:11px}
+#home .pc.more .pv{font-size:30px;color:var(--mute)}
+#home table{width:100%;border-collapse:collapse}#home th{text-align:left;color:var(--mute);font-weight:400;padding:6px 8px;border-bottom:1px solid var(--sep,var(--line))}
+#home td{padding:8px;border-bottom:1px solid color-mix(in srgb,var(--ink) 7%,transparent)}#home tr.rf{cursor:pointer}#home tr.rf:hover td{background:color-mix(in srgb,var(--ink) 8%,transparent)}
+#home .rth{width:44px;height:32px;background:#fff;border:1px solid #888;display:flex;align-items:center;justify-content:center;overflow:hidden}#home .rth svg{max-width:100%;max-height:100%}
+#home .empty{color:var(--mute);padding:18px 0}
+#home .rdel{border:0;background:none;color:var(--mute);cursor:pointer;font-size:14px}#home .rdel:hover{color:var(--ink)}
+`;document.head.appendChild(st);
+const HOUSE='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.6L1 7.8l1 1.1 1-.9V14.4h4V10.4h2v4h4V8l1 .9 1-1.1z"/></svg>';
+const w=document.createElement('div');w.id='mbhw';const br=document.querySelector('header>.brand .btile');
+w.innerHTML='<span id="mblogo" title="Masar" aria-label="Masar" role="img">'+(br?br.innerHTML:'')+'</span><button type="button" id="mbhome" title="Home" aria-label="Home" aria-pressed="false">'+HOUSE+'</button>';bar.insertBefore(w,bar.firstChild);
+/* ---- recent files (this browser) ---- */
+const RK='masar.recent.v1',MAXR=8,MAXB=1500000;
+const rget=()=>{try{const a=JSON.parse(localStorage.getItem(RK)||'[]');return Array.isArray(a)?a:[]}catch(_){return[]}};
+const rset=a=>{for(;;){try{localStorage.setItem(RK,JSON.stringify(a));return}catch(_){if(!a.length)return;a=a.slice(0,-1)}}};
+window.recentAdd=(name,text)=>{if(!text||text.length>MAXB)return;let a=rget().filter(r=>r.n!==name);a.unshift({n:name,t:Date.now(),s:text.length,d:text});rset(a.slice(0,MAXR));if(H.classList.contains('on'))render()};
+window.recentList=()=>rget().map(r=>({n:r.n,t:r.t,s:r.s}));
+const openRecent=i=>{const r=rget()[i];if(!r)return;let D=null;if(!/^\s*</.test(r.d)){try{D=JSON.parse(r.d)}catch(_){}}
+  const go=()=>{if(D&&D.masar&&Array.isArray(D.objs)){fileLoadMasar(D);tb5Msg('Opened '+r.n)}else{const q=fileImportSVG(r.d);tb5Msg(q&&q.n?'Opened '+r.n:'Could not open '+r.n)}const a=rget();const k=a.findIndex(x=>x.n===r.n);if(k>=0){const[x]=a.splice(k,1);x.t=Date.now();a.unshift(x);rset(a)}};
+  close();if(window.docDirty())dkModal('Open','Do you want to save changes to '+(window.DOCNAME||'Untitled-1')+' before opening '+r.n.replace(/</g,'&lt;')+'?',[{t:'Cancel',c:1},{t:"Don't Save",f:go},{t:'Save',p:1,f:()=>{fileSave();go()}}]);else go()};
+/* ---- the screen ---- */
+const PRE=[['A4','210 × 297 mm',595,842,'mm'],['Letter','8.5 × 11 in',612,792,'in'],['Postcard','288 × 560 pt',288,560,'pt'],['Common','1366 × 768 px',1366,768,'px'],['HDV/HDTV 1080','1920 × 1080 px',1920,1080,'px'],['Square post','1080 × 1080 px',1080,1080,'px'],['Story','1080 × 1920 px',1080,1920,'px']];
+const H=document.createElement('div');H.id='home';H.setAttribute('role','dialog');H.setAttribute('aria-label','Home');document.body.appendChild(H);
+const esc=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');
+const ago=t=>{const s=(Date.now()-t)/1000;if(s<60)return'Just now';if(s<3600)return Math.round(s/60)+' min ago';if(s<86400)return Math.round(s/3600)+' hr ago';return Math.round(s/86400)+' days ago'};
+const kb=n=>n<1024?n+' B':n<1048576?(n/1024).toFixed(1)+' KB':(n/1048576).toFixed(1)+' MB';
+const thumb=r=>{if(/^\s*</.test(r.d)&&r.d.length<200000){const m=r.d.match(/<svg[\s\S]*<\/svg>/i);if(m&&!/<script/i.test(m[0]))return m[0].replace(/<svg/i,'<svg preserveAspectRatio="xMidYMid meet"').replace(/\s(width|height)="[^"]*"/g,'').replace(/\son\w+\s*=\s*("[^"]*"|'[^']*')/gi,'').replace(/(href\s*=\s*["'])\s*javascript:/gi,'$1#')}
+  return'<svg viewBox="0 0 16 16" width="18" height="18" fill="none" stroke="#888" stroke-width="1.2"><path d="M4 1.5h6l3 3v10H4z M10 1.5v3h3"/></svg>'};
+let tab='home';
+function render(){const R=rget();const pv=(w,h)=>{const k=60/Math.max(w,h);return'<i style="width:'+Math.round(w*k)+'px;height:'+Math.round(h*k)+'px"></i>'};
+  H.innerHTML='<div class="hs"><button type="button" class="pri" data-a="new">New file</button><button type="button" data-a="open">Open</button><div class="hnav"><a data-t="home" class="'+(tab==='home'?'on':'')+'">Home</a><a data-t="files" class="'+(tab==='files'?'on':'')+'">Recent files</a></div></div>'+
+   '<div class="hm">'+(tab==='home'?'<h1>Welcome to Masar</h1><p class="sub">Start a new file from a size below, or open a recent file.</p><h2>Quick start a new file</h2><div class="pres">'+
+     PRE.map((p,i)=>'<button type="button" class="pc" data-p="'+i+'"><div class="pv">'+pv(p[2],p[3])+'</div><b>'+p[0]+'</b><span>'+p[1]+'</span></button>').join('')+
+     '<button type="button" class="pc more" data-a="new"><div class="pv">+</div><b>More presets</b><span>Custom size…</span></button></div>':'<h1>Recent files</h1><p class="sub">Files opened or saved in this browser.</p>')+
+   '<h2>Recent</h2>'+(R.length?'<table><thead><tr><th style="width:60px"></th><th>Name</th><th>Opened</th><th>Size</th><th style="width:30px"></th></tr></thead><tbody>'+R.map((r,i)=>'<tr class="rf" data-r="'+i+'" title="Open '+esc(r.n)+'"><td><div class="rth">'+thumb(r)+'</div></td><td>'+esc(r.n)+'</td><td>'+ago(r.t)+'</td><td>'+kb(r.s)+'</td><td><button type="button" class="rdel" data-del="'+i+'" title="Remove from Recent" aria-label="Remove from Recent">×</button></td></tr>').join('')+'</tbody></table>':'<div class="empty">No recent files. Files you open or save appear here.</div>')+'</div>'}
+function place(){const r=bar.getBoundingClientRect();H.style.top=r.bottom+'px'}
+function open(){if(window.mbClose)try{mbClose()}catch(_){}tab='home';render();place();H.classList.add('on');hb.classList.add('on');hb.setAttribute('aria-pressed','true');const b=H.querySelector('.pri');if(b)b.focus()}
+function close(){H.classList.remove('on');hb.classList.remove('on');hb.setAttribute('aria-pressed','false')}
+const hb=w.querySelector('#mbhome');hb.addEventListener('click',e=>{e.stopPropagation();H.classList.contains('on')?close():open()});
+H.addEventListener('click',e=>{const t=e.target.closest('[data-t],[data-a],[data-p],[data-del],[data-r]');if(!t)return;
+  if(t.dataset.t){tab=t.dataset.t;render();return}
+  if(t.dataset.del!=null){e.stopPropagation();const a=rget();a.splice(+t.dataset.del,1);rset(a);render();return}
+  if(t.dataset.a==='new'){close();window.docNew();return}
+  if(t.dataset.a==='open'){close();fileOpen();return}
+  if(t.dataset.p!=null){const p=PRE[+t.dataset.p];close();window.docCreate(p[2],p[3],'Untitled-1',p[4]);return}
+  if(t.dataset.r!=null)openRecent(+t.dataset.r)});
+addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('on')&&!document.querySelector('.fxm')){e.preventDefault();e.stopImmediatePropagation();close()}},true);
+addEventListener('resize',place);
+window.HOME={open,close,isOpen:()=>H.classList.contains('on')};
+})();
 /*TOOLS-END*/
 })();
 </script>
