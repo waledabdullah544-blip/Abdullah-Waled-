@@ -2,7 +2,14 @@ const L=require('./lib.js'),M=require('./cloudmock.js');
 (async()=>{const {srv,url}=await M.start();let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x!==undefined&&!c?' '+JSON.stringify(x):''));if(!c)bad++};
 // a copy that is not connected to a server works with no paywall (old behaviour)
 {const H=await L.open();ok('no server set up: no paywall',await H.pg.evaluate(()=>!document.getElementById('paywall').classList.contains('on')));await H.b.close()}
-const H=await L.open(),pg=H.pg;await pg.addInitScript(u=>{localStorage.setItem('masar.cloud.cfg',JSON.stringify({url:u,key:'anon-key-for-tests'}))},url);await pg.reload();await pg.waitForTimeout(700);
+const H=await L.open(),pg=H.pg;
+const setReload=async(fn,arg)=>{for(let k=0;k<4;k++){
+  if(k){/* the test browser lost its storage on the last reload: sign in again (with the server reachable for that moment), then redo the step */
+    console.log('note: the test browser lost its storage on reload, repeating the step');const dn=srv.down;srv.down=false;
+    await pg.evaluate(()=>MCLOUD.api.signIn('mona@example.com','secret123'));await pg.waitForTimeout(400);srv.down=dn}
+  await pg.evaluate(fn,arg);await pg.evaluate(()=>localStorage.setItem('zz.marker',String(Date.now())));await pg.waitForTimeout(1500);await pg.reload();await pg.waitForTimeout(900);
+  if(await pg.evaluate(()=>!!localStorage.getItem('zz.marker')&&!!localStorage.getItem('masar.cloud.session')))return}};
+await pg.addInitScript(u=>{localStorage.setItem('masar.cloud.cfg',JSON.stringify({url:u,key:'anon-key-for-tests'}))},url);await pg.reload();await pg.waitForTimeout(700);
 ok('connected copy: paywall asks to sign up (Google + email)',await pg.evaluate(()=>{const p=document.getElementById('paywall');return p.classList.contains('on')&&/Continue with Google/.test(p.textContent)&&/free trial/i.test(p.textContent)}));
 await pg.screenshot({path:'/tmp/mdl/pw_signin.png'});
 await pg.evaluate(()=>MCLOUD.api.signUp('mona@example.com','secret123'));await pg.waitForTimeout(400);
@@ -10,13 +17,13 @@ ok('after sign-up the trial starts and the app opens',await pg.evaluate(()=>!doc
 await pg.evaluate(()=>HOME.open());await pg.waitForTimeout(300);ok('Home shows "Free trial: 7 days left" + Subscribe',await pg.evaluate(()=>/Free trial: 7 days left/.test(document.querySelector('#home .hban').textContent)));
 // account page
 await pg.click('#home .hban [data-hplans]');await pg.waitForTimeout(400);
-ok('Account page: email, plan, trial end, plans with prices',await pg.evaluate(()=>{const t=document.querySelector('#home .acct').textContent;return /mona@example.com/.test(t)&&/Free trial/.test(t)&&/99 EGP/.test(t)&&/799 EGP/.test(t)&&/Save 33%/.test(t)}));
+ok('Account page: email, plan, trial end, plans with prices',await pg.evaluate(()=>{const t=document.querySelector('#home .acct').textContent;return /mona@example.com/.test(t)&&/Free trial/.test(t)&&/199 EGP/.test(t)&&/399 EGP/.test(t)&&/699 EGP/.test(t)&&/Save 33%/.test(t)&&/Save 41%/.test(t)&&!/[Yy]early/.test(t)}));
 await pg.screenshot({path:'/tmp/mdl/account.png'});
 await pg.fill('#home [data-acn]','Mona Ali');await pg.click('#home [data-acsave]');await pg.waitForTimeout(300);ok('name saved on the server',srv.users[0].name==='Mona Ali');
 await pg.click('#home [data-acrem]');await pg.waitForTimeout(300);ok('turning reminders off is saved',srv.users[0].canceled===true);
 // subscribe: goes to Paymob checkout
-await pg.evaluate(()=>{window.__nav=null;MCLOUD._nav(u=>{window.__nav=u})});await pg.click('#home [data-buy=yearly]');await pg.waitForTimeout(400);
-ok('Subscribe yearly opens Paymob checkout',srv.checkouts.length===1&&srv.checkouts[0].plan==='yearly'&&await pg.evaluate(()=>/unifiedcheckout/.test(window.__nav||'')));
+await pg.evaluate(()=>{window.__nav=null;MCLOUD._nav(u=>{window.__nav=u})});await pg.click('#home [data-buy=semiannual]');await pg.waitForTimeout(400);
+ok('Subscribe 6 months opens Paymob checkout',srv.checkouts.length===1&&srv.checkouts[0].plan==='semiannual'&&await pg.evaluate(()=>/unifiedcheckout/.test(window.__nav||'')));
 // trial over -> paywall with plans
 srv.users[0].trial_end=new Date(Date.now()-864e5).toISOString();await pg.evaluate(()=>MCLOUD.refreshMe());await pg.waitForTimeout(300);
 ok('trial over: paywall with plans, export and sign out',await pg.evaluate(()=>{const p=document.getElementById('paywall');return p.classList.contains('on')&&p.dataset.mode==='expired'&&/trial has ended/.test(p.textContent)&&!!p.querySelector('[data-buy=monthly]')&&!!p.querySelector('[data-pw=export]')}));
@@ -25,14 +32,17 @@ await pg.screenshot({path:'/tmp/mdl/pw_expired.png'});
 srv.users[0].period_end=new Date(Date.now()+30*864e5).toISOString();srv.users[0].plan='monthly';await pg.click('#paywall [data-pw=refresh]');await pg.waitForTimeout(500);
 ok('after paying: "I already paid" opens the app again',await pg.evaluate(()=>!document.getElementById('paywall').classList.contains('on')&&MCLOUD.me().status==='active'));
 // coming back from Paymob with ?paid=1
-srv.T.payments.push({user_id:srv.users[0].id,plan:'monthly',amount_cents:9900,currency:'EGP',success:true,created_at:new Date().toISOString()});
-await pg.evaluate(()=>HOME.open('account'));await pg.waitForTimeout(400);ok('payments history shows the payment',await pg.evaluate(()=>/99 EGP/.test(document.querySelector('#home .acct table').textContent)));
+srv.T.payments.push({user_id:srv.users[0].id,plan:'monthly',amount_cents:19900,currency:'EGP',success:true,created_at:new Date().toISOString()});
+await pg.evaluate(()=>HOME.open('account'));await pg.waitForTimeout(400);ok('payments history shows the payment',await pg.evaluate(()=>/199 EGP/.test(document.querySelector('#home .acct table').textContent)));
 // offline: server unreachable -> keeps working for grace_days, then asks to connect
 srv.down=true;
-await pg.evaluate(()=>{const m=JSON.parse(localStorage.getItem('masar.sub.v1'));m.at=Date.now()-3*864e5;localStorage.setItem('masar.sub.v1',JSON.stringify(m))});await pg.waitForTimeout(1200);await pg.reload();await pg.waitForTimeout(900);
+await setReload(()=>{const m=JSON.parse(localStorage.getItem('masar.sub.v1'));m.at=Date.now()-3*864e5;localStorage.setItem('masar.sub.v1',JSON.stringify(m))});
 ok('offline for 3 days: still works (grace 7 days)',await pg.evaluate(()=>MCLOUD.signedIn()&&!document.getElementById('paywall').classList.contains('on')));
-await pg.evaluate(()=>{const m=JSON.parse(localStorage.getItem('masar.sub.v1'));m.at=Date.now()-8*864e5;localStorage.setItem('masar.sub.v1',JSON.stringify(m))});await pg.waitForTimeout(1200);await pg.reload();await pg.waitForTimeout(900);
+await setReload(()=>{const m=JSON.parse(localStorage.getItem('masar.sub.v1'));m.at=Date.now()-8*864e5;localStorage.setItem('masar.sub.v1',JSON.stringify(m))});
 ok('offline longer than the grace period: paywall asks to connect again',await pg.evaluate(()=>document.getElementById('paywall').classList.contains('on')));
+// the session ran out while offline: renewing fails because of the outage, the customer must stay signed in
+await setReload(()=>{const s=JSON.parse(localStorage.getItem('masar.cloud.session'));s.exp=0;localStorage.setItem('masar.cloud.session',JSON.stringify(s))});
+ok('an outage while the session renews does not sign the customer out',await pg.evaluate(()=>MCLOUD.signedIn()));
 srv.down=false;await pg.evaluate(()=>MCLOUD.refreshMe());await pg.waitForTimeout(300);ok('back online: opens again',await pg.evaluate(()=>!document.getElementById('paywall').classList.contains('on')));
 // ending soon banner
 srv.users[0].period_end=new Date(Date.now()+2*864e5).toISOString();await pg.evaluate(()=>MCLOUD.refreshMe());await pg.evaluate(()=>HOME.open('home'));await pg.waitForTimeout(300);

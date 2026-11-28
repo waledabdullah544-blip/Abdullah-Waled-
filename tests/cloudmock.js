@@ -1,7 +1,7 @@
 // A small stand-in for a Supabase project (Auth + REST with the Masar Cloud row rules), for testing the Masar Cloud client offline.
 const http=require('http'),crypto=require('crypto');
 exports.start=()=>new Promise(ok=>{
-  const users=[],T={files:[],projects:[],shares:[],payments:[],templates:[]},ST={trial_days:7,grace_days:7,currency:'EGP',price_monthly_cents:9900,price_yearly_cents:79900,remind_days:3,announcement:{}},OBJ={};const now=()=>new Date().toISOString();
+  const users=[],T={files:[],projects:[],shares:[],payments:[],templates:[]},ST={trial_days:7,grace_days:7,currency:'EGP',price_monthly_cents:19900,price_quarterly_cents:39900,price_semiannual_cents:69900,remind_days:3,announcement:{}},OBJ={};const now=()=>new Date().toISOString();
   const who=req=>{const a=(req.headers.authorization||'').replace(/^Bearer /,'');const m=/^tok-(.+)$/.exec(a);return m&&users.find(u=>u.id===m[1])};
   const visible=(t,r,u)=>t==='payments'?r.user_id===u.id:t==='files'?(r.owner===u.id||(!r.deleted_at&&T.shares.some(s=>s.file_id===r.id&&s.email.toLowerCase()===u.email.toLowerCase()))):t==='projects'?r.owner===u.id:(T.files.some(f=>f.id===r.file_id&&f.owner===u.id)||r.email.toLowerCase()===u.email.toLowerCase());
   const ownsRow=(t,r,u)=>t==='shares'?T.files.some(f=>f.id===r.file_id&&f.owner===u.id):r.owner===u.id;

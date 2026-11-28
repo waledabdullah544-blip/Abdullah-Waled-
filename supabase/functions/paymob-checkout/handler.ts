@@ -1,6 +1,6 @@
-// POST {plan:'monthly'|'yearly'} with the customer's Authorization header -> {url} of Paymob Unified Checkout.
+// POST {plan:'monthly'|'quarterly'|'semiannual'} with the customer's Authorization header -> {url} of Paymob Unified Checkout.
 import { db, json, CORS, type Env } from '../_shared/db.ts';
-import { intentionBody, makeReference, checkoutUrl, PAYMOB_BASE, type Plan } from '../_shared/paymob.ts';
+import { intentionBody, makeReference, checkoutUrl, PAYMOB_BASE, PLAN_PRICE, isPlan, type Plan } from '../_shared/paymob.ts';
 export async function handle(req: Request, env: Env, f: typeof fetch = fetch): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
   if (req.method !== 'POST') return json({ error: 'POST only' }, 405);
@@ -8,9 +8,9 @@ export async function handle(req: Request, env: Env, f: typeof fetch = fetch): P
   const user = await D.user(req.headers.get('Authorization'));
   if (!user || !user.id) return json({ error: 'Please sign in first.' }, 401);
   let plan: Plan; try { plan = (await req.json()).plan; } catch { return json({ error: 'Bad request' }, 400); }
-  if (plan !== 'monthly' && plan !== 'yearly') return json({ error: 'Choose monthly or yearly.' }, 400);
+  if (!isPlan(plan)) return json({ error: 'Choose a plan: 1 month, 3 months or 6 months.' }, 400);
   const [s] = await D.get('settings?id=eq.1&select=*');
-  const amount = plan === 'yearly' ? s.price_yearly_cents : s.price_monthly_cents;
+  const amount = +s[PLAN_PRICE[plan]] || 0;
   if (!amount) return json({ error: 'Prices are not set yet. The owner sets them on the admin page.' }, 400);
   const ids = (env('PAYMOB_INTEGRATION_IDS') || '').split(',').map(x => parseInt(x.trim(), 10)).filter(Number.isFinite);
   if (!env('PAYMOB_SECRET_KEY') || !env('PAYMOB_PUBLIC_KEY') || !ids.length) return json({ error: 'Payments are not set up yet (Paymob keys).' }, 503);

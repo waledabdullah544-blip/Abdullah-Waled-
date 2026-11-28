@@ -35,7 +35,8 @@ ok('a customer cannot give himself a subscription',(await q(`select period_end f
 e=null;try{await as(A,'a@x.com',()=>q(`select public.masar_admin_grant('${A}','yearly',365)`))}catch(x){e=x.message}ok('a customer cannot call the admin grant',/admin only/.test(e||''));
 ok('a customer sees only his own profile',(await as(A,'a@x.com',()=>q('select id from profiles'))).length===1);
 ok('a customer cannot read the email log',(await as(A,'a@x.com',()=>q('select * from email_log'))).length===0);
-e=null;try{await as(A,'a@x.com',()=>q(`update settings set price_monthly_cents=1`))}catch(x){e=x.message}ok('a customer cannot change prices',(await q('select price_monthly_cents from settings'))[0].price_monthly_cents===0);
+e=null;try{await as(A,'a@x.com',()=>q(`update settings set price_monthly_cents=1`))}catch(x){e=x.message}ok('a customer cannot change prices',(await q('select price_monthly_cents from settings'))[0].price_monthly_cents===19900);
+ok('default prices: 199 / 399 / 699 EGP, no yearly',JSON.stringify(await q('select price_monthly_cents m,price_quarterly_cents q,price_semiannual_cents s,price_yearly_cents y from settings'))==='[{"m":19900,"q":39900,"s":69900,"y":0}]');
 await q(`update profiles set trial_end=now()-interval '1 day' where id='${B}'`);
 ok('trial over -> expired',(await as(B,'b@x.com',()=>q('select public.masar_me() m')))[0].m.status==='expired');
 e=null;try{await as(B,'b@x.com',()=>q(`insert into files(name,data) values('x','{}')`))}catch(x){e=x.message}ok('expired: cannot save new cloud files',!!e);
@@ -43,7 +44,7 @@ await as(D,'admin@x.com',()=>q(`select public.masar_admin_grant('${B}','monthly'
 const mb=(await as(B,'b@x.com',()=>q('select public.masar_me() m')))[0].m;ok('admin grants 30 days -> active monthly',mb.status==='active'&&mb.plan==='monthly',mb);
 ok('active: can save cloud files again',(await as(B,'b@x.com',()=>q(`insert into files(name,data) values('x','{}') returning id`))).length===1);
 const st=(await as(D,'admin@x.com',()=>q('select public.masar_admin_stats() s')))[0].s;ok('admin stats',st.users===4&&st.active===1&&st.trialing===2&&st.expired===0||st.users===4,st);
-await as(D,'admin@x.com',()=>q(`update settings set price_monthly_cents=9900,price_yearly_cents=79900,trial_days=7`));ok('admin sets prices and trial',(await q('select price_monthly_cents p from settings'))[0].p===9900);
+await as(D,'admin@x.com',()=>q(`update settings set price_monthly_cents=24900,price_quarterly_cents=44900,trial_days=7`));ok('admin sets prices and trial',(await q('select price_monthly_cents p from settings'))[0].p===24900);
 ok('admin sees all profiles',(await as(D,'admin@x.com',()=>q('select id from profiles'))).length===4);
 // ---- templates ----
 await as(D,'admin@x.com',()=>q(`insert into templates(title,file_path,published) values('Flyer','t/flyer.masar',true),('Draft','t/draft.masar',false)`));

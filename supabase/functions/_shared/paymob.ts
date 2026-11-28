@@ -38,12 +38,18 @@ export async function verifyTransaction(obj: any, hmac: string, secret: string):
   return sameHex(await hmacSha512Hex(secret, hmacString(obj)), hmac);
 }
 
-export type Plan = 'monthly' | 'yearly';
+export type Plan = 'monthly' | 'quarterly' | 'semiannual';
+/** months each plan adds */
+export const PLAN_MONTHS: Record<Plan, number> = { monthly: 1, quarterly: 3, semiannual: 6 };
+/** where each plan's price lives in the settings row */
+export const PLAN_PRICE: Record<Plan, string> = { monthly: 'price_monthly_cents', quarterly: 'price_quarterly_cents', semiannual: 'price_semiannual_cents' };
+export const PLAN_LABEL: Record<Plan, string> = { monthly: 'Masar Pro - 1 month', quarterly: 'Masar Pro - 3 months', semiannual: 'Masar Pro - 6 months' };
+export const isPlan = (p: unknown): p is Plan => p === 'monthly' || p === 'quarterly' || p === 'semiannual';
 
 /** the reference Paymob carries back to us: <user id>.<plan>.<time> */
 export const makeReference = (uid: string, plan: Plan, now = Date.now()) => `${uid}.${plan}.${now.toString(36)}`;
 export function parseReference(ref: string): { uid: string; plan: Plan } | null {
-  const m = /^([0-9a-f-]{36})\.(monthly|yearly)\.[0-9a-z]+$/.exec(ref || '');
+  const m = /^([0-9a-f-]{36})\.(monthly|quarterly|semiannual)\.[0-9a-z]+$/.exec(ref || '');
   return m ? { uid: m[1], plan: m[2] as Plan } : null;
 }
 
@@ -51,7 +57,7 @@ export function parseReference(ref: string): { uid: string; plan: Plan } | null 
 export function intentionBody(o: { amountCents: number; currency: string; plan: Plan; integrationIds: number[]; email: string; name?: string;
   reference: string; notificationUrl: string; redirectionUrl: string }) {
   const [first, ...rest] = (o.name || o.email.split('@')[0]).trim().split(/\s+/);
-  const label = o.plan === 'yearly' ? 'Masar Pro - yearly' : 'Masar Pro - monthly';
+  const label = PLAN_LABEL[o.plan];
   return {
     amount: o.amountCents,
     currency: o.currency,
@@ -75,11 +81,12 @@ export function referenceOf(obj: any): string {
   return str(pick(obj, 'order.merchant_order_id') || pick(obj, 'special_reference') || pick(obj, 'payment_key_claims.extra.masar_ref') || pick(obj, 'extras.masar_ref'));
 }
 
-/** new paid-until date: from the later of now and the current end, plus one month / one year */
+/** new paid-until date: from the later of now and the current end, plus the plan's months (Jan 31 + 1 month = Feb 28/29) */
 export function extend(periodEnd: string | null, plan: Plan, now = new Date()): string {
   const base = new Date(Math.max(now.getTime(), periodEnd ? Date.parse(periodEnd) || 0 : 0));
-  const d = new Date(base);
-  if (plan === 'yearly') d.setUTCFullYear(d.getUTCFullYear() + 1);
-  else { const day = d.getUTCDate(); d.setUTCMonth(d.getUTCMonth() + 1); if (d.getUTCDate() < day) d.setUTCDate(0); }
+  const d = new Date(base), day = d.getUTCDate();
+  d.setUTCDate(1); d.setUTCMonth(d.getUTCMonth() + PLAN_MONTHS[plan]);
+  const last = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  d.setUTCDate(Math.min(day, last));
   return d.toISOString();
 }

@@ -647,3 +647,11 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - GitHub Actions: server.yml (Supabase migrations + functions on main), reminders.yml (daily), tests.yml (tests/ci.sh on every push), claude.yml (optional "@claude" in issues → pull request).
 - SETUP.md: the whole set-up in Arabic, including what to verify with Paymob.
 - Tests: tests/pwa.js (12 checks), tests/ci.sh runs everything.
+
+## build 281 — plans: 1 month 199 EGP, 3 months 399 EGP, 6 months 699 EGP (no yearly)
+- Migration 0003: price_quarterly_cents / price_semiannual_cents, defaults 19900 / 39900 / 69900, yearly 0; plan values monthly / quarterly / semiannual; masar_me and admin stats include them.
+- Server: plans add 1 / 3 / 6 months (end-of-month safe); checkout refuses any other plan; receipt email names the plan.
+- Masar: three plan cards with "Save 33%" / "Save 41%" and the price per month; account page shows the plan name; plan cards styled on the account page too.
+- Admin: prices for 1 / 3 / 6 months; customers +1 / +3 / +6 months; dashboard counts per plan.
+- Session renewal: a network or server outage no longer signs the customer out (only a rejected session does).
+- Demo: demo/build-demo.sh makes masar-demo.html + admin-demo.html with an in-page simulated server (DEMO bar: end trial, ends in 2 days, reset). Never deployed.

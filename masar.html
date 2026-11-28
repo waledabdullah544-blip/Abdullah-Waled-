@@ -503,7 +503,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 280</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 281</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -12286,10 +12286,11 @@ const ready=()=>{const c=cfg();return/^https?:\/\/[^\s]+$/.test(c.url)&&c.key.le
 let S=null;try{S=JSON.parse(localStorage.getItem(SK)||'null')}catch(_){}
 const saveS=s=>{S=s;try{s?localStorage.setItem(SK,JSON.stringify(s)):localStorage.removeItem(SK)}catch(_){}refreshUI()};
 const sess=d=>({at:d.access_token,rt:d.refresh_token,exp:Date.now()+((+d.expires_in||3600)-60)*1000,id:d.user&&d.user.id,email:d.user&&d.user.email});
-const errOf=async r=>{let m='';try{const j=await r.json();m=j.msg||j.message||j.error_description||j.error||''}catch(_){}if(r.status===413)m='The file is too large for Masar Cloud.';return new Error(m||('Masar Cloud error '+r.status))};
+const errOf=async r=>{let m='';try{const j=await r.json();m=j.msg||j.message||j.error_description||j.error||''}catch(_){}if(r.status===413)m='The file is too large for Masar Cloud.';const e=new Error(m||('Masar Cloud error '+r.status));e.status=r.status;return e};
 async function auth(path,body,tok){const c=cfg();const r=await fetch(c.url+'/auth/v1/'+path,{method:'POST',headers:{'apikey':c.key,'Content-Type':'application/json',...(tok?{'Authorization':'Bearer '+tok}:{})},body:JSON.stringify(body||{})});if(!r.ok)throw await errOf(r);return r.status===204?{}:r.json().catch(()=>({}))}
 let RENEW=null;/* one renewal at a time: refresh tokens are single-use */
-async function token(){if(!S)throw new Error('Sign in to Masar Cloud first.');if(Date.now()>S.exp){RENEW=RENEW||auth('token?grant_type=refresh_token',{refresh_token:S.rt}).then(d=>{saveS(sess(d))},()=>{saveS(null)}).finally(()=>{RENEW=null});await RENEW;if(!S)throw new Error('Your Masar Cloud session ended. Please sign in again.')}return S.at}
+async function token(){if(!S)throw new Error('Sign in to Masar Cloud first.');if(Date.now()>S.exp){/* sign out only when the server says the session is no longer valid; a network or server outage keeps the customer signed in */
+  RENEW=RENEW||auth('token?grant_type=refresh_token',{refresh_token:S.rt}).then(d=>{saveS(sess(d))},e=>{if(e&&(e.status===400||e.status===401||e.status===403))saveS(null);else throw new Error('Masar Cloud is not reachable right now. Check your internet connection.')}).finally(()=>{RENEW=null});await RENEW;if(!S)throw new Error('Your Masar Cloud session ended. Please sign in again.')}return S.at}
 async function rest(method,path,body,prefer){const c=cfg();const go=async t=>fetch(c.url+'/rest/v1/'+path,{method,headers:{'apikey':c.key,'Authorization':'Bearer '+t,'Content-Type':'application/json',...(prefer?{'Prefer':prefer}:{})},body:body==null?undefined:JSON.stringify(body)});
   let r=await go(await token());if(r.status===401&&S){S.exp=0;r=await go(await token())}if(!r.ok)throw await errOf(r);if(r.status===204)return null;const t=await r.text();return t?JSON.parse(t):null}
 const enc=encodeURIComponent,COLS='id,name,size,thumb,updated_at,project_id,owner,owner_email';
@@ -12389,7 +12390,7 @@ function refreshUI(){U()&&U().render()}
 {const _c=window.docClear;window.docClear=function(){window.DOCCLOUD=null;return _c.apply(this,arguments)}}
 {const _fl=fileLoadMasar;fileLoadMasar=function(){window.DOCCLOUD=null;return _fl.apply(this,arguments)}}
 
-/* ---------- build 279: subscriptions (trial -> monthly / yearly), Google sign-in, account, server templates, Home banner ----------
+/* ---------- build 279: subscriptions (trial -> 1 / 3 / 6 months), Google sign-in, account, server templates, Home banner ----------
    Only active when this copy is connected to a Masar server (MASAR_CLOUD_CONFIG). Without a server Masar works as before. */
 const MEK='masar.sub.v1';
 let ME=null;try{ME=JSON.parse(localStorage.getItem(MEK)||'null')}catch(_){}
@@ -12418,34 +12419,37 @@ async function takeHash(){const h=new URLSearchParams((location.hash||'').replac
 const PW=document.createElement('div');PW.id='paywall';PW.setAttribute('role','dialog');PW.setAttribute('aria-label','Masar subscription');document.body.appendChild(PW);
 {const st=document.createElement('style');st.textContent=`
 #paywall{position:fixed;inset:0;z-index:8900;background:var(--bg,#1e1e1e);color:var(--ink);display:none;overflow:auto;font:13px "Segoe UI",Cairo,sans-serif}
-#paywall.on{display:block}#paywall .pw{max-width:860px;margin:0 auto;padding:46px 24px;text-align:center}
+#paywall.on{display:block}#paywall .pw{max-width:900px;margin:0 auto;padding:46px 24px;text-align:center}
 #paywall .pwl{width:64px;height:64px;margin:0 auto 14px;line-height:0}#paywall .pwl svg{width:64px;height:64px;border-radius:12px}
 #paywall h1{font:700 28px inherit;font-family:inherit;margin:0 0 8px}#paywall .sub{color:var(--mute);margin:0 0 26px;font-size:14px}
 #paywall .pwb{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:0 0 10px}
 #paywall button{height:40px;padding:0 22px;border-radius:20px;border:1px solid var(--bdr,var(--line));background:transparent;color:var(--ink);font:600 13px inherit;font-family:inherit;cursor:pointer}
 #paywall button.pri{background:#f0c374;border-color:#f0c374;color:#2a2a2a}#paywall button:hover{filter:brightness(1.08)}
-#paywall .plans{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:20px 0}
-#paywall .plan{width:250px;border:1px solid var(--bdr,var(--line));border-radius:10px;padding:22px;text-align:left;background:var(--panel);position:relative}
-#paywall .plan.best{border-color:#f0c374}#paywall .plan .tag{position:absolute;top:-10px;right:14px;background:#f0c374;color:#2a2a2a;font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px}
-#paywall .plan b{display:block;font-size:15px;margin-bottom:6px}#paywall .plan .pr{font-size:26px;font-weight:700;margin:6px 0}#paywall .plan .pr small{font-size:13px;color:var(--mute);font-weight:400}
-#paywall .plan ul{margin:10px 0 16px;padding-left:18px;color:var(--mute);line-height:1.7}#paywall .plan button{width:100%}
+#paywall .plans,#home .plans{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin:20px 0}
+#paywall .plan,#home .plan{box-sizing:border-box;width:250px;border:1px solid var(--bdr,var(--line));border-radius:10px;padding:22px;text-align:left;background:var(--panel);position:relative}
+#paywall .plan.best,#home .plan.best{border-color:#f0c374}#paywall .plan .tag,#home .plan .tag{position:absolute;top:-10px;right:14px;background:#f0c374;color:#2a2a2a;font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px}
+#paywall .plan b,#home .plan b{display:block;font-size:15px;margin-bottom:6px}#paywall .plan .pr,#home .plan .pr{font-size:26px;font-weight:700;margin:6px 0}#paywall .plan .pr small,#home .plan .pr small{font-size:13px;color:var(--mute);font-weight:400}
+#paywall .plan ul,#home .plan ul{margin:10px 0 16px;padding-left:18px;color:var(--mute);line-height:1.7}#paywall .plan button,#home .plan button{width:100%}
 #paywall .note{color:var(--mute);font-size:12px;margin-top:18px}#paywall a{color:#f0c374;cursor:pointer}
 #paywall .gbtn{display:inline-flex;align-items:center;gap:10px;background:#fff;color:#222;border-color:#ddd}
 #home .hban{display:flex;align-items:center;gap:14px;border:1px solid #f0c374;border-radius:8px;padding:12px 16px;margin:0 0 22px;background:color-mix(in srgb,#f0c374 10%,transparent)}
 #home .hban b{flex:1}#home .hban button{height:30px;padding:0 16px;border-radius:15px;border:0;background:#f0c374;color:#2a2a2a;font:600 12px inherit;font-family:inherit;cursor:pointer}
 #home .hann{display:flex;gap:18px;align-items:center;border-radius:10px;overflow:hidden;background:var(--panel);border:1px solid var(--bdr,var(--line));margin:0 0 26px}
 #home .hann img{width:260px;height:140px;object-fit:cover;display:block}#home .hann div{padding:16px 20px 16px 0}#home .hann h3{margin:0 0 6px;font-size:18px}#home .hann p{margin:0 0 8px;color:var(--mute)}#home .hann a{color:#f0c374}
-#home .acct{max-width:640px}#home .acct .row{display:flex;gap:10px;align-items:center;margin:8px 0}#home .acct .row span{width:150px;color:var(--mute)}
+#home .acct{max-width:900px}#home .acct .plan button{width:100%;height:38px;border-radius:19px;border:1px solid #f0c374;background:#f0c374;color:#2a2a2a;font:600 13px inherit;font-family:inherit;cursor:pointer}#home .acct .plan .note{color:var(--mute);font-size:12px}#home .acct .row{display:flex;gap:10px;align-items:center;margin:8px 0}#home .acct .row span{width:150px;color:var(--mute)}
 #home .acct input[type=text]{height:28px;background:var(--field);border:1px solid var(--bdr,var(--line));border-radius:4px;color:var(--ink);padding:0 8px;min-width:220px}
 #home .stpill{display:inline-block;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700}#home .stpill.active{background:#2f9e44;color:#fff}#home .stpill.trialing{background:#f0c374;color:#2a2a2a}#home .stpill.expired{background:#c92a2a;color:#fff}
 `;document.head.appendChild(st)}
 const GICON='<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.2l7.8 6.1C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.8 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
 const logoH=()=>{const l=document.getElementById('mblogo');return l?l.innerHTML:''};
-function plansHtml(m){const mo=+m.price_monthly_cents||0,yr=+m.price_yearly_cents||0,cur=m.currency||'EGP',save=mo&&yr?Math.round((1-yr/(mo*12))*100):0;
-  if(!mo&&!yr)return'<p class="note">Plans will be available soon.</p>';
+const PLANS=[['monthly',1,'1 month','Monthly'],['quarterly',3,'3 months','3 months'],['semiannual',6,'6 months','6 months']];
+const PLANNAME={monthly:'1 month',quarterly:'3 months',semiannual:'6 months',yearly:'Yearly'};
+function plansHtml(m){const cur=m.currency||'EGP',mo=+m.price_monthly_cents||0,pr=k=>+m['price_'+k+'_cents']||0,L=PLANS.filter(p=>pr(p[0])>0);
+  if(!L.length)return'<p class="note">Plans will be available soon.</p>';
+  const best=L.length>1?L[L.length-1][0]:'';
   const feats='<ul><li>All Masar tools</li><li>All templates</li><li>Remove Background &amp; Upscale</li><li>Masar Cloud</li></ul>';
-  return'<div class="plans">'+(mo?'<div class="plan"><b>Monthly</b><div class="pr">'+money(mo,cur)+' <small>/ month</small></div>'+feats+'<button type="button" class="pri" data-buy="monthly">Subscribe monthly</button></div>':'')+
-    (yr?'<div class="plan best">'+(save>0?'<span class="tag">Save '+save+'%</span>':'')+'<b>Yearly</b><div class="pr">'+money(yr,cur)+' <small>/ year</small></div>'+feats+'<button type="button" class="pri" data-buy="yearly">Subscribe yearly</button></div>':'')+'</div>'}
+  return'<div class="plans">'+L.map(([k,n,lab])=>{const c=pr(k),save=mo&&n>1?Math.round((1-c/(mo*n))*100):0;
+    return'<div class="plan'+(k===best?' best':'')+'">'+(save>0?'<span class="tag">Save '+save+'%</span>':'')+'<b>'+lab+'</b><div class="pr">'+money(c,cur)+(n>1?'':' <small>/ month</small>')+'</div>'+(n>1?'<div class="note" style="margin:0">'+money(Math.round(c/n),cur)+' / month</div>':'<div class="note" style="margin:0">&nbsp;</div>')+feats+'<button type="button" class="pri" data-buy="'+k+'">Subscribe · '+lab+'</button></div>'}).join('')+'</div>'}
 function paywall(mode){const s=subState();let h='<div class="pw"><div class="pwl">'+logoH()+'</div>';
   if(mode==='signin'){h+='<h1>Welcome to Masar</h1><p class="sub">Create your account to start your free trial. No card needed.</p><div class="pwb"><button type="button" class="gbtn" data-pw="google">'+GICON+'Continue with Google</button></div><div class="pwb"><button type="button" class="pri" data-pw="email">Sign up or sign in with email</button></div>'}
   else{h+='<h1>'+(s&&s.plan?'Your subscription has ended':'Your free trial has ended')+'</h1><p class="sub">Choose a plan to keep designing with Masar. Your files stay yours: you can still open them and export them.</p>'+plansHtml(s||{})+
@@ -12461,7 +12465,7 @@ fileIn.onchange=()=>{const f=fileIn.files&&fileIn.files[0];if(!f)return;const rd
   dkModal('Export “'+esc(f.name)+'”','Choose a format.',[{t:'Cancel',c:1},{t:'SVG',f:()=>fileDownload(new Blob([fileSVGString()],{type:'image/svg+xml'}),base+'.svg')},{t:'PNG',p:1,f:()=>{const sv=fileSVGString(),im=new Image();im.onload=()=>{const c=document.createElement('canvas');c.width=im.naturalWidth||ABW;c.height=im.naturalHeight||ABH;c.getContext('2d').drawImage(im,0,0,c.width,c.height);c.toBlob(b=>fileDownload(b,base+'.png'),'image/png')};im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(sv)}}])};rd.readAsText(f);fileIn.value=''};
 let NAV=u=>{location.href=u};
 async function buy(plan,btn){if(!S)return signInDlg(()=>buy(plan));if(btn){btn.disabled=true;btn.textContent='Opening payment…'}
-  try{NAV(await API.checkout(plan))}catch(e){fail(e);if(btn){btn.disabled=false;btn.textContent=plan==='yearly'?'Subscribe yearly':'Subscribe monthly'}}}
+  try{NAV(await API.checkout(plan))}catch(e){fail(e);if(btn){btn.disabled=false;btn.textContent='Subscribe · '+(PLANNAME[plan]||plan)}}}
 PW.addEventListener('click',e=>{const b=e.target.closest('[data-pw],[data-buy]');if(!b)return;
   if(b.dataset.buy){buy(b.dataset.buy,b);return}const a=b.dataset.pw;
   if(a==='google')API.google();else if(a==='email')signInDlg(()=>refreshMe());else if(a==='export')fileIn.click();else if(a==='refresh'){b.textContent='Checking…';refreshMe().then(s=>{b.textContent='I already paid';if(s&&s.status!=='expired')msg('Welcome back! Your subscription is active.')})}
@@ -12481,11 +12485,11 @@ async function accountBox(box){if(!S){box.innerHTML='<h1>Account</h1><p class="s
   const st=s.status||'expired',lab={active:'Active',trialing:'Free trial',expired:'Ended'}[st];
   box.innerHTML='<div class="acct"><h1>Account</h1><p class="sub">'+esc(S.email)+'</p>'+
     '<div class="row"><span>Name</span><input type="text" data-acn value="'+esc(s.name||'')+'" placeholder="Your name"><button type="button" class="hbt" data-acsave>Save</button></div>'+
-    '<div class="row"><span>Plan</span><b>'+(s.admin?'Admin':s.plan==='yearly'?'Yearly':s.plan==='monthly'?'Monthly':'Free trial')+'</b> <i class="stpill '+st+'">'+lab+'</i></div>'+
+    '<div class="row"><span>Plan</span><b>'+(s.admin?'Admin':s.plan?(PLANNAME[s.plan]||s.plan):'Free trial')+'</b> <i class="stpill '+st+'">'+lab+'</i></div>'+
     '<div class="row"><span>'+(st==='active'?'Paid until':'Trial ends')+'</span><b>'+(s.end?new Date(s.end).toLocaleDateString():'–')+'</b>'+(st!=='expired'&&!s.admin?' <span style="width:auto">('+s.daysLeft+' days left)</span>':'')+'</div>'+
     '<div class="row"><span>Reminders</span><label><input type="checkbox" data-acrem'+(s.canceled?'':' checked')+'> Remind me before my subscription ends</label></div>'+
     '<h2>Plans</h2>'+plansHtml(s).replace(/class="plans"/,'class="plans" style="justify-content:flex-start"')+
-    '<h2>Payments</h2>'+(P.length?'<table><thead><tr><th>Date</th><th>Plan</th><th>Amount</th></tr></thead><tbody>'+P.map(p=>'<tr><td>'+new Date(p.created_at).toLocaleDateString()+'</td><td>'+(p.plan==='yearly'?'Yearly':'Monthly')+'</td><td>'+money(p.amount_cents,p.currency)+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">No payments yet.</div>')+
+    '<h2>Payments</h2>'+(P.length?'<table><thead><tr><th>Date</th><th>Plan</th><th>Amount</th></tr></thead><tbody>'+P.map(p=>'<tr><td>'+new Date(p.created_at).toLocaleDateString()+'</td><td>'+(PLANNAME[p.plan]||p.plan)+'</td><td>'+money(p.amount_cents,p.currency)+'</td></tr>').join('')+'</tbody></table>':'<div class="empty">No payments yet.</div>')+
     '<p style="margin-top:22px"><button type="button" class="hbt" data-acout>Sign out</button></p></div>'}
 let TPLS=null;
 async function templatesBox(box,ctx){box.innerHTML='<div class="empty">Loading templates…</div>';try{TPLS=await API.templates()}catch(e){box.innerHTML='<div class="empty">Templates: '+esc(e.message)+'</div>';return}

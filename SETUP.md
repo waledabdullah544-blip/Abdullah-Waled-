@@ -107,7 +107,7 @@ GitHub ──> أي تعديل على main بيتنشر لوحده (الموقع
    ```sql
    update public.profiles set is_admin = true where email = 'إيميلك@example.com';
    ```
-3. افتح `https://masar.app/admin.html` ← **Plans & trial**: حط مدة التجربة وسعر الشهري والسنوي. (السعر 0 = الخطة مخفية.)
+3. افتح `https://masar.app/admin.html` ← **Plans & trial**: حط مدة التجربة والأسعار (الافتراضي: شهر 199، 3 شهور 399، 6 شهور 699 جنيه). السعر 0 = الخطة مخفية.
 4. **Templates**: اسحب ملفات SVG أو `.masar` مرة واحدة، اكتب لكل واحد اسم وتصنيف، واضغط Published.
 
 ## 10) التعديلات بعد كده (أوتوماتيك)

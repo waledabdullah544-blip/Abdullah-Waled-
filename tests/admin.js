@@ -15,12 +15,12 @@ await pg.screenshot({path:'/tmp/mdl/admin_dash.png'});
 // customers
 await pg.click('#side [data-t=cust]');await pg.waitForTimeout(300);ok('customers list with status',await pg.evaluate(()=>document.querySelectorAll('#main tbody tr').length===3&&/expired/.test(document.getElementById('main').textContent)));
 await pg.fill('#cq','ali');await pg.press('#cq','Enter');await pg.waitForTimeout(300);ok('search customers',await pg.evaluate(()=>document.querySelectorAll('#main tbody tr').length===1));
-await pg.click('#main [data-g][data-d="30"]');await pg.waitForTimeout(300);ok('+30 days gives Ali an active monthly subscription',cust2.plan==='monthly'&&Date.parse(cust2.period_end)>Date.now()+29*864e5);
+await pg.click('#main [data-g][data-d="90"]');await pg.waitForTimeout(300);ok('+3 months gives Ali an active 3-months subscription',cust2.plan==='quarterly'&&Date.parse(cust2.period_end)>Date.now()+89*864e5);
 // payments
 await pg.click('#side [data-t=pay]');await pg.waitForTimeout(300);ok('payments with customer email and amount',await pg.evaluate(()=>{const t=document.getElementById('main').textContent;return /mona@example.com/.test(t)&&/99 EGP/.test(t)&&/9001/.test(t)}));
 // plans
-await pg.click('#side [data-t=plans]');await pg.waitForTimeout(300);await pg.fill('[data-k=trial_days]','14');await pg.fill('[data-k=price_monthly]','149');await pg.fill('[data-k=price_yearly]','1199.5');await pg.click('#sv');await pg.waitForTimeout(300);
-ok('prices and trial saved (in piasters)',srv.ST.trial_days===14&&srv.ST.price_monthly_cents===14900&&srv.ST.price_yearly_cents===119950,srv.ST);
+await pg.click('#side [data-t=plans]');await pg.waitForTimeout(300);await pg.fill('[data-k=trial_days]','14');await pg.fill('[data-k=price_monthly]','149');await pg.fill('[data-k=price_quarterly]','449.5');await pg.fill('[data-k=price_semiannual]','799');await pg.click('#sv');await pg.waitForTimeout(300);
+ok('prices and trial saved (in piasters)',srv.ST.trial_days===14&&srv.ST.price_monthly_cents===14900&&srv.ST.price_quarterly_cents===44950&&srv.ST.price_semiannual_cents===79900,srv.ST);
 // templates
 await pg.click('#side [data-t=tpl]');await pg.waitForTimeout(300);
 const dir='/tmp/mdl/tplup';fs.mkdirSync(dir,{recursive:true});fs.writeFileSync(dir+'/ramadan-post.svg','<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1350"><rect width="1080" height="1350" fill="#20323f"/><circle cx="540" cy="500" r="200" fill="#f0c374"/></svg>');

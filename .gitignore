@@ -1,3 +1,4 @@
 dist/
 node_modules/
 .ci/
+demo/*-demo.html

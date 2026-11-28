@@ -12,7 +12,7 @@ let bad = 0; const ok = (n, c, x) => { console.log((c ? 'PASS ' : 'FAIL ') + n +
 
 // ---------- a fake Supabase (REST + auth/v1/user) + Paymob + email providers ----------
 const UID = '11111111-1111-1111-1111-111111111111';
-const T = { settings: [{ id: 1, trial_days: 7, remind_days: 3, currency: 'EGP', price_monthly_cents: 9900, price_yearly_cents: 79900 }],
+const T = { settings: [{ id: 1, trial_days: 7, remind_days: 3, currency: 'EGP', price_monthly_cents: 19900, price_quarterly_cents: 39900, price_semiannual_cents: 69900, price_yearly_cents: 0 }],
   profiles: [{ id: UID, email: 'ali@example.com', name: 'Ali Hassan', period_end: null, trial_end: null, plan: null, canceled: false }], payments: [], email_log: [] };
 const calls = [], down = new Set();
 const filt = (rows, q) => { for (const [k, v] of q) { if (k === 'select') continue; rows = rows.filter(r => { const x = r[k];
@@ -46,18 +46,18 @@ ok('checkout refuses a signed-out request', r.status === 401);
 r = await checkout(post('/', { plan: 'monthly' }, { Authorization: 'Bearer user-jwt' }), env, fake); let j = await r.json();
 ok('checkout returns the Paymob Unified Checkout link', r.status === 200 && j.url === 'https://accept.paymob.com/unifiedcheckout/?publicKey=pk_test&clientSecret=cs_abc', j);
 const ic = calls.find(c => c.url.endsWith('/v1/intention/'));
-ok('intention: price from settings, integration ids, reference, callback + return urls', ic.body.amount === 9900 && ic.body.currency === 'EGP' && JSON.stringify(ic.body.payment_methods) === '[123,456]'
+ok('intention: price from settings, integration ids, reference, callback + return urls', ic.body.amount === 19900 && ic.body.currency === 'EGP' && JSON.stringify(ic.body.payment_methods) === '[123,456]'
   && parseReference(ic.body.special_reference)?.uid === UID && ic.body.notification_url === 'https://db.test/functions/v1/paymob-webhook' && ic.body.redirection_url === 'https://masar.app/?paid=1' && ic.body.billing_data.first_name === 'Ali', ic.body);
-ok('a pending payment row is kept', T.payments.length === 1 && T.payments[0].success === false && T.payments[0].amount_cents === 9900);
-ok('checkout refuses an unknown plan', (await checkout(post('/', { plan: 'lifetime' }, { Authorization: 'Bearer user-jwt' }), env, fake)).status === 400);
+ok('a pending payment row is kept', T.payments.length === 1 && T.payments[0].success === false && T.payments[0].amount_cents === 19900);
+ok('checkout refuses an unknown plan (and the old yearly plan)', (await checkout(post('/', { plan: 'yearly' }, { Authorization: 'Bearer user-jwt' }), env, fake)).status === 400);
 
 // ---------- webhook ----------
 const ref = ic.body.special_reference;
-const txn = (over = {}) => ({ id: 9001, amount_cents: 9900, created_at: '2026-11-28T10:00:00.000000', currency: 'EGP', error_occured: false, has_parent_transaction: false, integration_id: 123,
+const txn = (over = {}) => ({ id: 9001, amount_cents: 19900, created_at: '2026-11-28T10:00:00.000000', currency: 'EGP', error_occured: false, has_parent_transaction: false, integration_id: 123,
   is_3d_secure: true, is_auth: false, is_capture: false, is_refunded: false, is_standalone_payment: true, is_voided: false, owner: 77, pending: false,
   order: { id: 555, merchant_order_id: ref }, source_data: { pan: '2346', sub_type: 'MasterCard', type: 'card' }, success: true, ...over });
 const hook = async o => webhook(post('/?hmac=' + await hmacSha512Hex('HMACSECRET', hmacString(o)), { type: 'TRANSACTION', obj: o }), env, fake);
-ok('HMAC string uses the 20 keys in order', HMAC_KEYS.length === 20 && hmacString(txn()) === '99002026-11-28T10:00:00.000000EGPfalsefalse9001123truefalsefalsefalsetruefalse55577false2346MasterCardcardtrue', hmacString(txn()));
+ok('HMAC string uses the 20 keys in order', HMAC_KEYS.length === 20 && hmacString(txn()) === '199002026-11-28T10:00:00.000000EGPfalsefalse9001123truefalsefalsefalsetruefalse55577false2346MasterCardcardtrue', hmacString(txn()));
 r = await webhook(post('/?hmac=deadbeef', { type: 'TRANSACTION', obj: txn() }), env, fake);
 ok('webhook rejects a wrong HMAC (no subscription)', r.status === 401 && T.profiles[0].period_end === null);
 r = await hook(txn({ amount_cents: 100 })); ok('a tampered amount does not grant', (await r.json()).granted === false && T.profiles[0].period_end === null);
@@ -67,7 +67,7 @@ ok('a successful payment grants one month', j.granted === true && T.profiles[0].
 ok('the payment is marked paid with the Paymob transaction id', T.payments[0].success === true && T.payments[0].provider_txn === '9001');
 ok('a receipt email was sent and logged', T.email_log.some(e => e.kind === 'receipt' && e.ok));
 const end1 = T.profiles[0].period_end; r = await hook(txn()); ok('the same callback twice does not add another month', (await r.json()).duplicate === true && T.profiles[0].period_end === end1);
-ok('renewing early adds to the current end date', extend('2027-01-31T00:00:00.000Z', 'monthly', new Date('2027-01-10')) === '2027-02-28T00:00:00.000Z' && extend('2027-01-10T00:00:00.000Z', 'yearly', new Date('2027-01-01')) === '2028-01-10T00:00:00.000Z');
+ok('renewing early adds to the current end date', extend('2027-01-31T00:00:00.000Z', 'monthly', new Date('2027-01-10')) === '2027-02-28T00:00:00.000Z' && extend('2027-01-10T00:00:00.000Z', 'quarterly', new Date('2027-01-01')) === '2027-04-10T00:00:00.000Z' && extend('2027-08-31T00:00:00.000Z', 'semiannual', new Date('2027-01-01')) === '2028-02-29T00:00:00.000Z');
 
 // ---------- email router ----------
 const log = []; const st = { brevo: 0, mailjet: 0, resend: 0 };

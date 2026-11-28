@@ -95,7 +95,7 @@ export function reminderEmail(endIso: string, days: number, renewUrl: string) {
     text: `Your Masar subscription ends on ${d}. Renew: ${renewUrl}` };
 }
 export function receiptEmail(plan: string, amountCents: number, currency: string, endIso: string, appUrl: string) {
-  const a = (amountCents / 100).toFixed(2) + ' ' + currency, d = new Date(endIso).toISOString().slice(0, 10), p = plan === 'yearly' ? 'Yearly · سنوي' : 'Monthly · شهري';
+  const a = (amountCents / 100).toFixed(2) + ' ' + currency, d = new Date(endIso).toISOString().slice(0, 10), p = ({ monthly: '1 month · شهر', quarterly: '3 months · 3 شهور', semiannual: '6 months · 6 شهور' } as Record<string, string>)[plan] || plan;
   return { subject: 'Payment received · تم الدفع', html: wrap('Thank you · شكراً', `وصلنا ${a} لاشتراك ${p}. اشتراكك شغال لحد <b>${d}</b>.`, `We received ${a} for the ${p} plan. Your subscription is active until <b>${d}</b>.`, { url: appUrl, ar: 'افتح مسار', en: 'Open Masar' }),
     text: `We received ${a} for the ${plan} plan. Active until ${d}. ${appUrl}` };
 }
