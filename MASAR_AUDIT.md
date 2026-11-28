@@ -660,3 +660,9 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Area type inside a shape (star, polygon…): a word longer than the line no longer drops line by line and disappears; Masar looks ahead inside the shape for a line that fits it, otherwise breaks the word there (Illustrator).
 - Paste while typing: artwork copied in Masar (Ctrl+C on objects puts SVG on the clipboard) now pastes only its words; a copied shape with no text pastes nothing; plain text from other apps pastes as before.
 - Test: tests/txfix.js.
+
+## build 283 — selection colours, Lasso, layer audit
+- Selection: lines grey (#8C8C8C: object outline, bounding box, hover outline, drawing outlines); points gold (#F0C374, dark edge): bounding box handles, centre point, selected anchors, Bezier handle dots; unselected anchors white with a gold edge. A layer given its own colour keeps it.
+- Lasso: a drag that starts on a selected anchor now draws a new lasso instead of dragging the point (Illustrator: the Lasso only selects).
+- Layer audit (tests/lyaudit.js, 15 checks): eraser / knife / scissors / Shape Builder / Pathfinder / Select All + Delete with locked and hidden layers, undo, delete layer + undo, new shapes into the active layer. All pass; no loss reproduced.
+- Tests: tests/selcolor.js, tests/lyaudit.js.
