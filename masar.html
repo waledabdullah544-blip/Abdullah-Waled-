@@ -300,7 +300,7 @@ body.hide-ctrl header{display:none!important}body.hide-tools nav{display:none!im
 .dkpn .pb{height:24px;min-width:24px;padding:0 7px;border:1px solid var(--line);border-radius:3px;background:var(--field);color:var(--ink);font:inherit;cursor:default;display:inline-flex;align-items:center;justify-content:center}
 .dkpn .pb:hover:not(:disabled){background:var(--hov)}.dkpn .pb.on{background:var(--on2);border-color:var(--on3);color:var(--onink)}
 /* build 273: Properties > Document toggles all look the same; the ones that are on carry a gold tick */
-#prNone .pb.ck::before{content:'\2713';color:#f0c374;font-weight:700;margin-right:6px}
+#prNone .pdic{display:flex;gap:4px;margin:2px 0 8px}#prNone .pdi{width:30px;height:26px;min-width:0;padding:0;display:inline-flex;align-items:center;justify-content:center;background:transparent;border:1px solid transparent;color:var(--ink)}#prNone .pdi:hover:not(:disabled){background:color-mix(in srgb,var(--ink) 10%,transparent)}#prNone .pdi.ck{background:color-mix(in srgb,var(--ink) 20%,transparent);border-color:color-mix(in srgb,var(--ink) 14%,transparent)}#prNone .pdrow{display:flex;align-items:center;gap:8px;margin:4px 0}#prNone .pdl{flex:0 0 118px;color:var(--mute);white-space:nowrap}#prNone .pdrow select{height:24px}#prNone .pdwide,#prNone .prq .pb{border:1px solid var(--bdr);border-radius:4px;color:var(--ink)}#prNone .pdwide:hover,#prNone .prq .pb:hover{background:color-mix(in srgb,var(--ink) 10%,transparent)}#prNone .pdrow select{flex:1;min-width:0}#prNone .pdwide{width:100%;margin:6px 0 2px}#prNone .prss{margin:4px 0}
 .dkpn .pr{display:flex;align-items:center;gap:6px;margin:4px 0}.dkpn .pr label{display:flex;align-items:center;gap:4px;color:var(--mute);flex:1;min-width:0}.dkpn .pr label input[type=number]{width:100%;flex:1}
 .dkpn .pt{font-weight:600;margin:10px 0 2px;color:var(--mute)}.dkpn .alg{flex-wrap:wrap}
 #lyp{flex-direction:column;padding:6px}.lyl{flex:1;min-height:150px;border:1px solid var(--line);background:var(--field);overflow:auto}
@@ -499,7 +499,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 273</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 274</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8254,7 +8254,27 @@ const pcs=d=>'<svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke
 const prRefHtml=[0,.5,1].map(y=>[0,.5,1].map(x=>'<button type="button" class="prd'+(x===.5&&y===.5?' on':'')+'" data-rx="'+x+'" data-ry="'+y+'" aria-label="Reference point"></button>').join('')).join('');
 const unitIn=(id,u,step,min,max)=>'<span class="pru"><input id="'+id+'" type="number" step="'+step+'"'+(min!=null?' min="'+min+'"':'')+(max!=null?' max="'+max+'"':'')+'><i>'+u+'</i></span>';
 const CHAIN=pcs('<path d="M6.5 9.5l3-3M5 7.5L3.8 8.7a2.2 2.2 0 0 0 3.1 3.1L8 10.7M11 8.5l1.2-1.2a2.2 2.2 0 0 0-3.1-3.1L8 5.3"/>'),ROTI=pcs('<path d="M2.5 13.5h11M2.5 13.5L9 4M5.5 13.5a4 4 0 0 0-.6-2.2"/>'),SHI=pcs('<path d="M3 13h8l2-9H5z"/>'),FLH=pcs('<path d="M8 2v12" stroke-dasharray="1.6 1.6"/><path d="M6.5 4L2 12h4.5zM9.5 4L14 12H9.5z" fill="currentColor" fill-opacity=".35"/>'),FLV=pcs('<path d="M2 8h12" stroke-dasharray="1.6 1.6"/><path d="M4 6.5L12 2v4.5zM4 9.5L12 14V9.5z" fill="currentColor" fill-opacity=".35"/>');
-P.innerHTML='<div id="prNone"><div class="pt" style="margin-top:0">Document</div><div class="pr" style="color:var(--mute)" id="prAbs">Artboard 800 × 600 px</div><div class="pt">Rulers &amp; Grids</div><div class="pr" style="flex-wrap:wrap">'+tg('pdR','Rulers')+tg('pdG','Grid')+tg('pdSG','Snap to Grid')+tg('pdSP','Snap to Point')+'</div><div class="pt">Guides</div><div class="pr" style="flex-wrap:wrap">'+tg('pdSm','Smart Guides')+tg('pdGV','Show Guides')+tg('pdGL','Lock Guides')+tg('pdGC','Clear Guides')+'</div></div>'+
+const ic=(id,t,d)=>'<button type="button" class="pb pdi" id="'+id+'" title="'+t+'" aria-label="'+t.replace(/ \(.*/,'')+'" aria-pressed="false">'+pcs(d)+'</button>';
+P.innerHTML='<div id="prNone"><div class="pt" style="margin-top:0">Document</div>'+
+ '<div class="pdrow"><span class="pdl">Units</span><select id="pdU" aria-label="Units">'+Object.keys(RLUN).map(u=>'<option value="'+u+'">'+RLUN[u].n+'</option>').join('')+'</select></div>'+
+ '<div class="pdrow"><span class="pdl">Artboard</span><select id="pdAB" aria-label="Artboard"></select></div>'+
+ '<button type="button" class="pb pdwide" id="pdEA" title="Artboard Tool (Shift+O)">Edit Artboards</button>'+
+ '<div class="pt">Rulers &amp; Grids</div><div class="pdic">'+
+  ic('pdR','Show Rulers (Ctrl+R)','<path d="M2.5 2.5h11v3.5h-7.5v7.5h-3.5z"/><path d="M6 2.5v1.5M9 2.5v1.5M12 2.5v1.5M2.5 9h1.5M2.5 12h1.5"/>')+
+  ic('pdG','Show Grid (Ctrl+")','<rect x="2.5" y="2.5" width="11" height="11"/><path d="M6.2 2.5v11M9.8 2.5v11M2.5 6.2h11M2.5 9.8h11"/>')+
+  ic('pdTG','Show Transparency Grid (Shift+Ctrl+D)','<rect x="2.5" y="2.5" width="11" height="11"/><path d="M2.5 2.5h3.7v3.7H2.5zM9.8 2.5h3.7v3.7H9.8zM6.2 6.2h3.6v3.6H6.2zM2.5 9.8h3.7v3.7H2.5zM9.8 9.8h3.7v3.7H9.8z" fill="currentColor" stroke="none"/>')+
+  ic('pdSG','Snap to Grid (Shift+Ctrl+")','<path d="M2.5 5.5h11M2.5 10.5h11M5.5 2.5v11M10.5 2.5v11" stroke-opacity=".55"/><circle cx="10.5" cy="10.5" r="2" fill="currentColor"/>')+'</div>'+
+ '<div class="pt">Guides</div><div class="pdic">'+
+  ic('pdGV','Show Guides (Ctrl+;)','<path d="M1.5 5h13M10 1.5v13"/><circle cx="10" cy="5" r="1.5" fill="currentColor"/>')+
+  ic('pdGL','Lock Guides (Ctrl+Alt+;)','<rect x="3.5" y="7.5" width="9" height="6.5" rx="1"/><path d="M5.5 7.5V5.5a2.5 2.5 0 0 1 5 0v2"/>')+
+  ic('pdSm','Smart Guides (Ctrl+U)','<rect x="5" y="5" width="6" height="6"/><path d="M1.5 5h13M5 1.5v13" stroke-dasharray="1.4 1.6"/>')+
+  ic('pdGC','Clear Guides','<path d="M1.5 5h8.5M5 1.5v8.5"/><path d="M9.5 9.5l4 4M13.5 9.5l-4 4"/>')+'</div>'+
+ '<div class="pt">Snap Options</div><div class="pdic">'+
+  ic('pdSP','Snap to Point (Ctrl+Alt+")','<rect x="10" y="2" width="4" height="4" fill="currentColor" stroke="none"/><path d="M2.5 13.5l7-7M9.5 6.5v4M9.5 6.5h-4"/>')+
+  ic('pdSX','Snap to Pixel','<rect x="2.5" y="2.5" width="11" height="11" stroke-opacity=".55"/><rect x="6" y="6" width="4" height="4" fill="currentColor" stroke="none"/>')+'</div>'+
+ '<div class="pt">Preferences</div><div class="pdrow"><span class="pdl">Keyboard Increment</span>'+unitIn('pdKI','px','0.1','0.001')+'</div>'+
+ '<label class="prss" title="Strokes and live effects are scaled with the artwork"><input id="pdSS" type="checkbox"> Scale Strokes &amp; Effects</label>'+
+ '<div class="pt">Quick Actions</div><div class="prq"><button type="button" class="pb" id="pdDS">Document Setup</button><button type="button" class="pb" id="pdPF">Preferences</button></div></div>'+
  '<div id="prSel"><div class="pt" id="prType" style="margin-top:0;color:var(--ink)">Object</div>'+'<div id="prPie"><div class="pt">Live Shape: Ellipse</div><div class="pr"><label title="Pie start angle (degrees)">Pie Start<input id="prps" type="number" step="1"></label><label title="Pie end angle (degrees); equal to the start = full ellipse">Pie End<input id="prpe" type="number" step="1"></label></div></div>'+
  '<div class="pt">Transform</div><div class="prtf"><div class="prref" id="prRef" title="Reference Point">'+prRefHtml+'</div>'+
  '<label class="prf" style="grid-area:x"><b>X:</b>'+unitIn('prx','px','0.1')+'</label><label class="prf" style="grid-area:w"><b>W:</b>'+unitIn('prw','px','0.1','0.1')+'</label>'+
@@ -8278,7 +8298,9 @@ const T=()=>[...sel].filter(o=>o.g.isConnected);
 const setv=(id,v)=>{const e=$p(id);if(document.activeElement!==e)e.value=v};
 function prPieSync(L){const w=$p('#prPie'),o=L.length===1?L[0]:null,Q=o?ellP(o):null;w.style.display=Q?'block':'none';if(!Q)return;const sd=((Q.s%360)+360)%360,ed=((Q.e%360)+360)%360;setv('#prps',+sd.toFixed(2));setv('#prpe',+(pieFull(Q)?sd:ed).toFixed(2))}
 function refresh(){if(P.style.display==='none')return;const L=T();vis('#prNone',!L.length);{const q=$p('#prAbs');if(q)q.textContent=(ARTS[ABI]||{n:'Artboard'}).n+' · '+ABW+' × '+ABH+' px'}{const q=$p('#prss');if(q)q.checked=!(window.MGEN&&window.MGEN.ss===false)}vis('#prSel',!!L.length);
-  if(!L.length){const gr=GRIDG.getAttribute('display')!=='none';[['pdR',RLON],['pdG',gr],['pdSG',SNAPG],['pdSP',SNAPP],['pdSm',SGON],['pdGV',GDVIS],['pdGL',GDLOCK]].forEach(([i,v])=>{const b=$p('#'+i);b.classList.remove('on');b.classList.toggle('ck',!!v);b.setAttribute('aria-pressed',v?'true':'false')});return}
+  if(!L.length){const gr=GRIDG.getAttribute('display')!=='none',vs=k=>!!(window.viewState&&viewState(k));[['pdR',RLON],['pdG',gr],['pdTG',vs('tg')],['pdSG',SNAPG],['pdSP',SNAPP],['pdSX',vs('spx')],['pdSm',SGON],['pdGV',GDVIS],['pdGL',GDLOCK]].forEach(([i,v])=>{const b=$p('#'+i);b.classList.remove('on');b.classList.toggle('ck',!!v);b.setAttribute('aria-pressed',v?'true':'false')});
+    setv('#pdU',RLU);{const a=$p('#pdAB'),o=ARTS.map((A,k)=>String(k+1).padStart(2,'0')+' - '+A.n).join('\n');if(a.dataset.k!==o){a.dataset.k=o;a.innerHTML=ARTS.map((A,k)=>'<option value="'+k+'">'+String(k+1).padStart(2,'0')+' - '+String(A.n).replace(/</g,'&lt;')+'</option>').join('')}setv('#pdAB',String(ABI))}
+    setv('#pdKI',window.MGEN?MGEN.kbi:1);$p('#pdSS').checked=!(window.MGEN&&window.MGEN.ss===false);$p('#pdGC').disabled=!GD.length;return}
   $p('#prType').textContent=$('#ctl').textContent;prPieSync(L);const u=uni(L);setv('#prx',+(u.x+REF[0]*u.w).toFixed(2));setv('#pry',+(u.y+REF[1]*u.h).toFixed(2));setv('#prw',+(+u.w).toFixed(2));setv('#prh',+(+u.h).toFixed(2));
   setv('#prr',(Math.round(-rotOf(L[0])*180/Math.PI*100)/100)||0);
   const S=styleOf(L[0])||{fill:'none',stroke:'none',sw:0,op:100};const f=$p('#prF'),s=$p('#prS');f.style.background=S.fill==='none'?'':hexOf(S.fill);f.classList.toggle('none',S.fill==='none');s.style.background='';s.style.boxShadow=S.stroke==='none'?'':'inset 0 0 0 3px '+hexOf(S.stroke);s.classList.toggle('none',S.stroke==='none');
@@ -8314,7 +8336,7 @@ P.addEventListener('click',e=>{const lk=e.target.closest('.prlk');if(lk){const n
   if(r&&!b){fxDlg(null,+r.dataset.i);return}
   if(!b)return;const id=b.id;
   if(b.dataset.al){alAlign(b.dataset.al);return}
-  const A={pdR:rlToggle,pdG:gridToggle,pdSG:()=>{SNAPG=!SNAPG},pdSP:snapToggle,pdSm:sgToggle,pdGV:gdToggleVis,pdGL:gdToggleLock,pdGC:gdClear,
+  const A={pdR:rlToggle,pdG:gridToggle,pdTG:()=>viewToggle('tg'),pdSX:()=>viewToggle('spx'),pdEA:()=>setTool('abt'),pdDS:()=>window.docSetup(),pdPF:()=>window.prefOpen('gen'),pdSG:()=>{SNAPG=!SNAPG},pdSP:snapToggle,pdSm:sgToggle,pdGV:gdToggleVis,pdGL:gdToggleLock,pdGC:gdClear,
     prCh:()=>window.chToggle&&chToggle(),prPa:()=>window.paToggle&&paToggle(),qG:groupSel,qU:ungroupSel,qM:()=>clipMake(),qR:()=>clipRelease(),qF:()=>arrange('front'),qB:()=>arrange('back'),qA:()=>DK.open('align'),qO:()=>window.pxDlg&&pxDlg('off')}[id];
   if(A){A();refresh();draw()}});
 P.addEventListener('change',e=>{const id=e.target.id;if(id!=='prps'&&id!=='prpe')return;const L=T(),o=L.length===1?L[0]:null;if(!o||!ellP(o))return;
@@ -8329,6 +8351,8 @@ $p('#prsh').addEventListener('change',()=>{const L=T(),a=parseFloat($p('#prsh').
 ['prx','pry','prw','prh','prr','prsh','prsw','prop'].forEach(id=>$p('#'+id).addEventListener('keydown',e=>{if(e.key!=='ArrowUp'&&e.key!=='ArrowDown')return;e.preventDefault();const q=e.currentTarget,s=(e.shiftKey?10:1)*(q.id==='prsw'?.5:1)*(e.key==='ArrowUp'?1:-1),v=(parseFloat(q.value)||0)+s;q.value=+v.toFixed(3);q.dispatchEvent(new Event('change',{bubbles:true}))}));
 DK.reg('props','Properties','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></svg>',P,{dw:270,dh:460,open:()=>{P.style.display='block';refresh()},close:()=>{P.style.display='none'},refresh});
 window.prRefresh=refresh;
+P.addEventListener('change',e=>{const id=e.target.id,v=e.target.value;if(id==='pdU')rlUnits(v);else if(id==='pdAB')abGo(+v,true);
+  else if(id==='pdKI'){const k=parseFloat(v);if(k>0)window.gsaveGen({...(window.MGEN||{}),kbi:k})}else if(id==='pdSS')window.gsaveGen({...(window.MGEN||{}),ss:e.target.checked});else return;refresh()});
 })();
 /* ---------------------------------------------------------------- glue: legacy panels in the dock, shortcuts, document tab, redraw hooks ---------------------------------------------------------------- */
 let SAVEDHI=0;

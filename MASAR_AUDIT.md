@@ -579,3 +579,10 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 273: زراير Properties > Document بقت كلها بلون واحد
 - Rulers / Grid / Snap to Grid / Snap to Point / Smart Guides / Show Guides / Lock Guides / Clear Guides كلهم بنفس الخلفية والإطار؛ اللي شغال عليه علامة ✓ ذهبي بدل ما يبقى لونه أفتح (اتجرب على الثيمين Dark و Medium Dark). (tests/proptoggles.js)
+
+## build 274 — Properties panel with nothing selected, like Illustrator
+- Document: Units dropdown (ruler units), Artboard dropdown ("01 - Artboard 1", jumps and fits), Edit Artboards button (Artboard tool).
+- Rulers & Grids / Guides / Snap Options are small icon toggles with tooltips and shortcuts; the active one gets a subtle grey square (same in every theme). Added Transparency Grid and Snap to Pixel.
+- Preferences: Keyboard Increment and Scale Strokes & Effects, saved to the real preferences. Scale Corners is not shown because the app has no such feature yet.
+- Quick Actions: Document Setup and Preferences.
+- Test: tests/proptoggles.js (16 checks).

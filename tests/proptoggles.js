@@ -1,11 +1,22 @@
 const L=require('./lib.js');
 (async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
 await pg.evaluate(()=>DK.open('props'));await pg.waitForTimeout(300);
-const st=()=>pg.evaluate(()=>[...document.querySelectorAll('#prNone .pb')].map(x=>{const c=getComputedStyle(x);return c.backgroundColor+'|'+c.borderColor+'|'+c.color}));
-let a=await st();ok('all Document toggles look the same (on and off)',new Set(a).size===1,JSON.stringify([...new Set(a)]));
+ok('sections like Illustrator',await pg.evaluate(()=>[...document.querySelectorAll('#prNone .pt')].map(x=>x.textContent).join('|')==='Document|Rulers & Grids|Guides|Snap Options|Preferences|Quick Actions'));
+const st=()=>pg.evaluate(()=>[...document.querySelectorAll('#prNone .pdi:not(.ck)')].map(x=>getComputedStyle(x).backgroundColor));
+ok('off icons are transparent',(await st()).every(c=>c==='rgba(0, 0, 0, 0)'));
+const on=()=>pg.evaluate(()=>[...document.querySelectorAll('#prNone .pdi.ck')].map(x=>getComputedStyle(x).backgroundColor));
+let a=await on();ok('on icons all share one subtle grey square',a.length>0&&new Set(a).size===1&&a[0]!=='rgba(0, 0, 0, 0)',JSON.stringify([...new Set(a)]));
 const r0=await pg.evaluate(()=>RLON);await pg.click('#pdR');await pg.mouse.move(5,5);await pg.waitForTimeout(150);
-ok('clicking Rulers toggles it and the gold tick follows',await pg.evaluate(r0=>RLON!==r0&&document.getElementById('pdR').classList.contains('ck')===!!RLON,r0));
-a=await st();ok('still all the same colour after toggling',new Set(a).size===1);
-for(const th of ['dark','md']){await pg.evaluate(t=>document.documentElement.setAttribute('data-theme',t),th);await pg.waitForTimeout(100);a=await st();ok('same colour in the '+th+' theme',new Set(a).size===1,JSON.stringify([...new Set(a)]));
+ok('Rulers icon toggles rulers',await pg.evaluate(r0=>RLON!==r0&&document.getElementById('pdR').classList.contains('ck')===!!RLON,r0));
+await pg.click('#pdTG');await pg.waitForTimeout(100);ok('Transparency Grid icon works',await pg.evaluate(()=>viewState('tg')&&document.getElementById('pdTG').classList.contains('ck')));await pg.click('#pdTG');
+await pg.click('#pdSX');await pg.waitForTimeout(100);ok('Snap to Pixel icon works',await pg.evaluate(()=>viewState('spx')&&document.getElementById('pdSX').classList.contains('ck')));
+await pg.selectOption('#pdU','mm');ok('Units select sets ruler units',await pg.evaluate(()=>RLU==='mm'));
+ok('Artboard select lists artboards',await pg.evaluate(()=>document.getElementById('pdAB').options[0].textContent.startsWith('01 - ')));
+await pg.fill('#pdKI','5');await pg.press('#pdKI','Tab');ok('Keyboard Increment saved to preferences',await pg.evaluate(()=>MGEN.kbi===5));
+await pg.click('#pdSS');ok('Scale Strokes & Effects toggles the preference',await pg.evaluate(()=>MGEN.ss===false));await pg.click('#pdSS');
+await pg.click('#pdEA');ok('Edit Artboards switches to the Artboard tool',await pg.evaluate(()=>tool==='abt'));await pg.keyboard.press('Escape');await pg.evaluate(()=>setTool('v'));
+await pg.click('#pdPF');await pg.waitForTimeout(150);ok('Preferences opens the dialog',await pg.evaluate(()=>!!document.getElementById('prefd')));await pg.keyboard.press('Escape');
+await pg.click('#pdDS');await pg.waitForTimeout(150);ok('Document Setup opens',await pg.evaluate(()=>/Document Setup/.test(document.body.innerText)));await pg.keyboard.press('Escape');
+for(const th of ['dark','md','light']){await pg.evaluate(t=>document.documentElement.setAttribute('data-theme',t),th);await pg.waitForTimeout(100);a=await on();ok('one on-colour in the '+th+' theme',new Set(a).size===1,JSON.stringify([...new Set(a)]));
   const g=await pg.evaluate(()=>{const r=document.getElementById('prNone').getBoundingClientRect();return[r.x,r.y,r.width,r.height]});await pg.screenshot({path:'/tmp/mdl/prn_'+th+'.png',clip:{x:g[0],y:g[1],width:g[2],height:g[3]}})}
 console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();
