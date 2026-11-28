@@ -6,7 +6,7 @@ Masar Cloud بيحفظ شغل كل عميل على حسابه بالإيميل،
 ## الخطوات
 
 1. اعمل حساب في https://supabase.com واعمل **New project** (اختار أقرب منطقة لعملائك).
-2. من القائمة الشمال افتح **SQL Editor** › New query، وانسخ محتوى الملف `cloud/masar-cloud.sql` كله واضغط **Run**.
+2. من القائمة الشمال افتح **SQL Editor** › New query، وانسخ محتوى الملف `supabase/migrations/` (الملفات بالترتيب) كله واضغط **Run**.
    (الملف آمن تشغله أكتر من مرة.)
 3. افتح **Authentication › Providers** واتأكد إن **Email** شغال.
    - لو عاوز العميل يأكد إيميله قبل ما يدخل، سيب "Confirm email" شغال.
@@ -41,4 +41,4 @@ Masar Cloud بيحفظ شغل كل عميل على حسابه بالإيميل،
 ## الاختبار
 
 - `tests/cloud.js` بيشغّل مسار على سيرفر تجريبي محلي (`tests/cloudmock.js`) بيقلد Supabase: حساب، حفظ، Ctrl+S، مشاركة، Shared with you، Deleted، مشاريع، تجديد الجلسة، خروج.
-- قواعد الأمان في `masar-cloud.sql` اتجربت على Postgres حقيقي (PGlite): العميل التاني ميقدرش يشوف أو يعدل أو يمسح أو يشارك ملفات غيره.
+- قواعد الأمان في `supabase/migrations` اتجربت على Postgres حقيقي (PGlite): العميل التاني ميقدرش يشوف أو يعدل أو يمسح أو يشارك ملفات غيره.
