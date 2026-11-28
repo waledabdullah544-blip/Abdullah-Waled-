@@ -467,3 +467,11 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 ## build 248
 - أداة الـ Artboard: إطار منقط أبيض وأسود حوالين الـ Artboard النشط، والاسم بقى بصيغة اليستريتور "01 - Artboard 1" وبيبقى أبيض للنشط.
 - Rotate / Scale / Reflect / Shear: مبقاش في مربع مستقيم بيكبر حوالين الشكل وهو بيلف؛ الشكل نفسه هو اللي بيتحدد ونقطه بتلف معاه زي اليستريتور.
+
+## build 249–250 (مراجعة اللوحات)
+- أي لوحة بتتفتح (Stroke، Transparency، Appearance، Gradient…) عمود اللوحات بيتحرك لوحده لحد ما تبان كاملة؛ الـ Stroke كان آخره (Profile ومحاذاة الأسهم) مستخبي تحت الشاشة. (tests/dkvis.js)
+- Stroke: اختيار الـ Profile مكانش بيتطبق (اللوحة كانت بتتحدث في النص وتمسح الاختيار) — اتصلح. كل الخانات اتجربت: Weight/Cap/Corner/Limit/Dashed/Arrowheads/Profile/Align. (tests/strokep.js)
+- Transparency: صور مصغرة للشكل وللـ Opacity Mask جنب بعض زي اليستريتور؛ Blend/Opacity/Make Mask/Invert/Release/Undo اتجربوا. (tests/transp.js)
+- Appearance: كلمة Stroke بتفتح لوحة الـ Stroke، وOpacity بتفتح الـ Transparency؛ Add New Fill/Stroke/Effect و Clear و Duplicate و Delete اتجربوا. (tests/appear.js)
+- Pathfinder: الـ 10 عمليات + Undo اتجربت بالألوان والمساحات وكلها مظبوطة. (tests/pfall.js)
+- Layers: الاختبارات القديمة كلها شغالة (الفشلين الباقيين في layers.js من الاختبار نفسه: كان بيضغط بأداة المستطيل).

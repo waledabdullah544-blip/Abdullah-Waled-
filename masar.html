@@ -385,7 +385,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 #app .apf{display:flex;align-items:center;gap:2px;margin-top:6px}#app .apf .sp{flex:1}#app .apf button{width:26px;height:26px;padding:0;display:grid;place-items:center;border:1px solid transparent;border-radius:3px;background:none;color:var(--ink);cursor:default}#app .apf button:hover:not(:disabled){background:var(--hov)}#app .apf button:disabled{opacity:.35}
 #trp .trr{display:flex;align-items:center;gap:6px;margin:6px 0}#trp .trr label{display:flex;align-items:center;gap:6px;color:var(--mute)}
 #trp select{height:24px;min-width:110px;background:var(--field);border:1px solid var(--bdr);border-radius:2px;color:var(--ink);font:inherit}#trp input[type=number]{width:64px;height:24px;background:var(--field);border:1px solid var(--bdr);border-radius:2px;color:var(--ink);font:inherit;padding:0 6px}
-#trp .pb{border:1px solid var(--fldh)}#trp .trmk{height:28px;padding:0 14px}#trp #trRg{width:120px}
+#trp .trth{gap:4px}#trp .trtb{display:inline-block;width:46px;height:46px;border:1px solid var(--bdr);background:#fff}#trp .trtb svg{width:100%;height:100%;display:block}#trp .trln{font-style:normal;font-size:11px;opacity:.7}#trp .pb{border:1px solid var(--fldh)}#trp .trmk{height:28px;padding:0 14px}#trp #trRg{width:120px}
 /* dialogs: Illustrator footer (Preview bottom-left, Copy / Cancel / OK pill buttons) */
 #dlg .dr{display:flex;align-items:center;gap:8px;justify-content:flex-end;margin-top:10px}#dlg .dr>label{margin-right:auto}
 #dlg .dr button{height:26px;padding:0 18px;border:2px solid var(--ink2);border-radius:14px;background:transparent;color:var(--ink);font-weight:600;font-size:12px}#dlg .dr button:hover{background:var(--hov2)}
@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 248</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 250</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8121,7 +8121,7 @@ $s('#stPfa').addEventListener('click',()=>{const L=T();const f=L.length?fillable
   const M=dkModal('Variable Width Profile','<label>Profile Name<input type="text" data-k="n" value="Width Profile '+(UP.length+1)+'" style="width:160px"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{const n=(b.querySelector('[data-k="n"]').value||'').trim();if(!n)return false;UP.push({name:n,pts:w.filter(q=>(q[3]||0)===(w[0][3]||0)).map(q=>[q[0],q[1],q[2]])});upSave();upBuild();$s('#stPf').value='u:'+(UP.length-1);refresh(true)}}]);const i=M.box.querySelector('input');i.focus();i.select()});
 $s('#stPfd').addEventListener('click',()=>{const v=$s('#stPf').value;if(!/^u:/.test(v))return;UP.splice(+v.slice(2),1);upSave();upBuild();$s('#stPf').value='';setAttrAll('data-wpts','','wpts')});
 $s('#stPf').addEventListener('change',()=>{const v=$s('#stPf').value;if(/^u:/.test(v)){const u=UP[+v.slice(2)];if(u){setAttrAll('data-wp','','wp');setAttrAll('data-wpts',JSON.stringify(u.pts.map((q,i)=>[q[0],q[1],q[2],0,'p'+i+Math.random().toString(36).slice(2,5)])),'wpts')}return}
-  if($s('#stPf').value==='__c')return;setAttrAll('data-wpts','','wpts');setAttrAll('data-wp',$s('#stPf').value,'wp')});
+  /* v was read before the first change: that change refreshes the panel and would reset the menu */if(v==='__c')return;setAttrAll('data-wpts','','wpts');setAttrAll('data-wp',v,'wp')});
 function refresh(force){if(P.style.display==='none')return;const L=T(),f=L.length?fillables(L[0])[0]:null,has=!!f,D=DEF.sx;
   P.querySelectorAll('button,#stml,#std,.stdv,input,select').forEach(x=>x.disabled=false);
   const S=L.length?styleOf(L[0]):{sw:DEF.stroke==='none'?0:DEF.sw};const w=$s('#stw');if(document.activeElement!==w)w.value=S.sw;
@@ -8847,7 +8847,15 @@ function trRefresh(){if(TP.style.display==='none')return;const L=tsel(),o=L[0],a
   tq('#trBm').disabled=!o;tq('#trOp').disabled=!o;tq('#trRg').disabled=!o;
   if(o){if(act!==tq('#trBm'))tq('#trBm').value=blendOf(o);const S=styleOf(o);if(S&&act!==tq('#trOp')){tq('#trOp').value=S.op;tq('#trRg').value=S.op}}
   const hm=o&&opmOf(o),mk=tq('#trMk');mk.textContent=hm?'Release':'Make Mask';mk.disabled=!(hm||L.filter(pick).length>=2);
-  tq('#trCl').disabled=!hm;tq('#trIn').disabled=!hm;if(hm){tq('#trCl').checked=opmOf(o).getAttribute('data-opclip')!=='0';tq('#trIn').checked=opmOf(o).getAttribute('data-opinv')==='1'}}
+  tq('#trCl').disabled=!hm;tq('#trIn').disabled=!hm;if(hm){tq('#trCl').checked=opmOf(o).getAttribute('data-opclip')!=='0';tq('#trIn').checked=opmOf(o).getAttribute('data-opinv')==='1'}try{trThumbs(o,hm)}catch(_){}}
+/* thumbnails (Illustrator): the artwork, and the opacity mask next to it when there is one */
+function trThumbs(o,hm){let w=tq('.trth');if(!w){w=document.createElement('div');w.className='trr trth';TP.insertBefore(w,tq('#trMk').closest('.trr'))}
+  if(!o){w.innerHTML='';return}const b=wbox(o),pad=Math.max(b.w,b.h)*.06,vb=[b.x-pad,b.y-pad,b.w+2*pad,b.h+2*pad].join(' '),tr=o.g.getAttribute('transform')||'';
+  const art=o.g.cloneNode(true);art.querySelectorAll(':scope > g[data-opmask]').forEach(e=>e.remove());art.removeAttribute('mask');art.removeAttribute('id');
+  const box=(inner,bg,t)=>'<span class="trtb" title="'+t+'"><svg viewBox="'+vb+'" preserveAspectRatio="xMidYMid meet"><rect x="'+(b.x-pad)+'" y="'+(b.y-pad)+'" width="'+(b.w+2*pad)+'" height="'+(b.h+2*pad)+'" fill="'+bg+'"/><g transform="'+tr+'">'+inner+'</g></svg></span>';
+  let h=box(art.innerHTML,'#fff','Artwork');
+  if(hm){const m=opmOf(o).cloneNode(true);m.removeAttribute('style');m.removeAttribute('display');m.setAttribute('style','filter:grayscale(1)');h+='<i class="trln" title="Linked">&#128279;</i>'+box(m.outerHTML,'#000','Opacity Mask')}
+  w.innerHTML=h}
 tq('#trBm').addEventListener('change',()=>{const v=tq('#trBm').value;let n=0;tsel().forEach(o=>fillables(o).forEach(e=>{if(v==='normal')e.style.removeProperty('mix-blend-mode');else e.style.mixBlendMode=v;if(!e.getAttribute('style'))e.removeAttribute('style');n++}));if(n){commit();draw()}trRefresh()});
 tq('#trOp').addEventListener('change',()=>{const v=parseFloat(tq('#trOp').value);if(v>=0&&v<=100){applyStyle({op:v},true);tq('#trRg').value=v}trRefresh()});
 tq('#trRg').addEventListener('input',()=>{const v=parseFloat(tq('#trRg').value);tq('#trOp').value=v;applyStyle({op:v},false)});tq('#trRg').addEventListener('change',()=>{applyStyle({op:parseFloat(tq('#trRg').value)},true)});
@@ -8889,6 +8897,8 @@ function apRefresh(){if(AP.style.display==='none')return;const L=tsel(),o=L[0];l
   if(sg===APSIG&&AP.firstChild)return;APSIG=sg;apBuild()}
 function apEach(fn){const L=tsel();if(!L.length)return false;L.forEach(o=>{normalizeObj(o);fillables(o).forEach(e=>fn(e,o))});commit();draw();return true}
 AP.addEventListener('click',e=>{const b=e.target.closest('button'),row=e.target.closest('.apr');
+  /* Illustrator: the underlined Stroke / Opacity words open the Stroke / Transparency panels */
+  {const nm=e.target.closest('.apn');if(nm&&row&&!b){const k=row.dataset.k;if(k==='stroke'){DK.open('stroke');return}if(k==='op'){DK.open('transparency');return}if(k==='x'&&/stroke/i.test(nm.textContent)){DK.open('stroke');return}}}
   if(b&&b.dataset.eye&&/^x:/.test(b.dataset.eye)){const id=b.dataset.eye.slice(2);tsel().forEach(o=>{const L=APX.get(o),it=L.find(x=>x&&x.id===id);if(it){it.vis=it.vis===false?true:false;APX.set(o,L)}});commit();draw();APSIG='';apRefresh();return}
   if(b&&b.dataset.eye){const k=b.dataset.eye,a=k==='stroke'?'data-hs':'data-hf';apEach(x=>{if(x.hasAttribute(a))x.removeAttribute(a);else x.setAttribute(a,'1')});APSIG='';apRefresh();return}
   if(b&&b.dataset.eyefx!==undefined){const i=+b.dataset.eyefx;tsel().forEach(o=>{const L=fxList(o);if(L[i]){L[i].off=L[i].off?0:1;if(!L[i].off)delete L[i].off;o.g.dataset.fx=JSON.stringify(L);fxUpd(o)}});commit();draw();APSIG='';apRefresh();return}
@@ -11025,6 +11035,14 @@ addEventListener('blur',()=>setTimeout(()=>{PDOWN=false;reset()},0));
     selg.insertBefore(el('rect',{...P,stroke:'#fff','stroke-width':2*s,'data-abframe':'1'}),selg.firstChild);
     selg.insertBefore(el('rect',{...P,stroke:'#111','stroke-width':1.2*s,'stroke-dasharray':(4*s)+' '+(3*s)}),selg.children[1]||null)}}
 }catch(_){}return r}}
+})();
+
+
+/* ======================= build 249: an opened panel is always fully visible ======================= */
+(()=>{/* the right dock column scrolls: a panel opened low in the column (Stroke, Transparency...) was cut off by the bottom of the window */
+const _o=DK.open.bind(DK);DK.open=function(k){const r=_o.apply(DK,arguments);setTimeout(()=>{try{const p=DK.P&&DK.P[k],el=(p&&(p.el||p.body||p.p))||null,pn=el&&el.nodeType?el:document.getElementById({stroke:'stp',gradient:'grdp',props:'prp'}[k]||'');
+  const g=pn&&pn.closest&&pn.closest('.dkg');const col=g&&g.closest('.dkgs');if(!g||!col)return;const gr=g.getBoundingClientRect(),cr=col.getBoundingClientRect();
+  if(gr.bottom>cr.bottom)col.scrollTop+=Math.min(gr.bottom-cr.bottom+4,gr.top-cr.top);else if(gr.top<cr.top)col.scrollTop-=cr.top-gr.top}catch(_){}},30);return r};
 })();
 
 /*TOOLS-END*/

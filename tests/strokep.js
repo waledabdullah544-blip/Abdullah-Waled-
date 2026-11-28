@@ -1,0 +1,23 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
+await pg.evaluate(()=>{z=1;view()});
+await pg.keyboard.press('p');await H.click(250,300);await H.click(400,250);await H.click(500,320);await pg.keyboard.press('Escape');await pg.keyboard.press('v');
+await pg.evaluate(()=>{sel=new Set(objs);draw();DK.open('stroke')});await pg.waitForTimeout(250);
+const A=()=>pg.evaluate(()=>{const e=objs[0].g.querySelector('path');const o={};for(const a of e.getAttributeNames())o[a]=e.getAttribute(a);o.__html=objs[0].g.innerHTML.length;o.__marker=!!objs[0].g.querySelector('[marker-end],[data-ah],path[data-arrow]')||/marker|data-a[se]/.test(objs[0].g.innerHTML);return o});
+const set=async(id,v)=>{await pg.evaluate(([id,v])=>{const e=document.getElementById(id);e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}))},[id,v]);await pg.waitForTimeout(120)};
+await set('stw','6');let a=await A();ok('Weight 6',a['stroke-width']==='6',a['stroke-width']);
+await pg.click('#stp [title="Round Cap"]');a=await A();ok('Round Cap',a['stroke-linecap']==='round',a['stroke-linecap']);
+await pg.click('#stp [title="Bevel Join"]');a=await A();ok('Bevel Join',a['stroke-linejoin']==='bevel',a['stroke-linejoin']);
+await pg.click('#stp [title="Miter Join"]');await set('stml','4');a=await A();ok('Miter limit',a['stroke-miterlimit']==='4',a['stroke-miterlimit']);
+await pg.evaluate(()=>{const c=document.getElementById('std');if(!c.checked)c.click()});await pg.waitForTimeout(150);a=await A();ok('Dashed Line',!!a['stroke-dasharray']&&a['stroke-dasharray']!=='none',a['stroke-dasharray']);
+await pg.evaluate(()=>{const c=document.getElementById('std');if(c.checked)c.click()});await pg.waitForTimeout(150);a=await A();ok('Dashed Line off',!a['stroke-dasharray']||a['stroke-dasharray']==='none',a['stroke-dasharray']);
+await pg.click('#stAe');await pg.waitForTimeout(150);const items=await pg.$$('#stPk button[data-ar]');
+if(items.length>2)await items[2].click();await pg.waitForTimeout(150);a=await A();ok('End arrowhead',!!a['data-are'],items.length+' '+a['data-are']);
+const pf=await pg.evaluate(()=>{const e=document.getElementById('stPf');return e&&e.options?[...e.options].map(o=>o.value):[]});await set('stPf',pf.find(v=>v&&v!=='__c'));a=await A();const wh=await pg.evaluate(()=>objs[0].g.innerHTML);ok('Width profile applied',/data-wp="p/.test(wh),wh.slice(0,200));
+await set('stPf',pf[0]);
+// align stroke on a closed rect
+await pg.keyboard.press('m');await H.drag(300,350,400,420);await pg.evaluate(()=>{sel=new Set([objs[objs.length-1]]);draw()});
+await set('stw','8');await pg.click('#stp [title^="Align Stroke to Inside"]');await pg.waitForTimeout(150);
+const ins=await pg.evaluate(()=>{const o=objs[objs.length-1];return o.g.innerHTML.slice(0,300)});ok('Align Stroke Inside changes the drawing',/clip|data-sa|stroke-align|mask/.test(ins),ins.slice(0,160));
+await pg.keyboard.press('Control+z');await pg.waitForTimeout(100);
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();

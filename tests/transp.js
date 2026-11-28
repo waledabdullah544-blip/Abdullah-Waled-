@@ -1,0 +1,20 @@
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
+await pg.evaluate(()=>{z=1;view()});
+await pg.keyboard.press('m');await H.drag(300,200,420,300);
+await pg.evaluate(()=>DK.open('transparency'));await pg.waitForTimeout(250);
+const set=async(id,v)=>{await pg.evaluate(([id,v])=>{const e=document.getElementById(id);e.value=v;e.dispatchEvent(new Event('input',{bubbles:true}));e.dispatchEvent(new Event('change',{bubbles:true}))},[id,v]);await pg.waitForTimeout(120)};
+await set('trBm','multiply');ok('blend mode multiply',await pg.evaluate(()=>getComputedStyle(fillables(objs[0])[0]).mixBlendMode==='multiply'));
+await set('trOp','40');ok('opacity 40',await pg.evaluate(()=>styleOf(objs[0]).op==40));
+await pg.keyboard.press('Control+z');await pg.waitForTimeout(120);ok('undo opacity',await pg.evaluate(()=>styleOf(objs[0]).op==100));
+await pg.keyboard.press('Control+z');await pg.waitForTimeout(120);ok('undo blend',await pg.evaluate(()=>getComputedStyle(fillables(objs[0])[0]).mixBlendMode==='normal'));
+// opacity mask
+await pg.keyboard.press('l');await H.drag(320,220,400,280);await pg.keyboard.press('v');await pg.keyboard.press('Control+a');await pg.waitForTimeout(150);
+ok('Make Mask enabled for 2 objects',await pg.evaluate(()=>!document.getElementById('trMk').disabled));
+await pg.click('#trMk');await pg.waitForTimeout(200);
+ok('mask made: one object with a mask',await pg.evaluate(()=>objs.length===1&&!!opmOf(objs[0])));
+ok('thumbnails shown',await pg.evaluate(()=>document.querySelectorAll('#trp .trth svg').length>=2));
+await pg.click('#trIn');await pg.waitForTimeout(150);ok('Invert Mask',await pg.evaluate(()=>opmOf(objs[0]).getAttribute('data-opinv')==='1'));
+await pg.click('#trMk');await pg.waitForTimeout(200);ok('Release gives 2 objects back',await pg.evaluate(()=>objs.length===2&&!objs.some(o=>opmOf(o))));
+await pg.keyboard.press('Control+z');await pg.waitForTimeout(150);ok('Undo release',await pg.evaluate(()=>objs.length===1));
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();
