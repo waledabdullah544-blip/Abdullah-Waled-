@@ -452,3 +452,7 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 ## build 244
 - Magic Wand: كل شكل اتحدد بيبان لوحده بحدوده ونقطه (زي اليستريتور) بدل مربع واحد بس حوالين الكل.
 - Gradient: دبل كليك على نقطة اللون (في لوحة الـ Gradient أو على الشكل بأداة الـ Gradient) بيفتح نافذة صغيرة فيها Color و Swatches والـ Opacity، وفي زرار … للـ Color Picker الكامل. السبب القديم: اللوحة بتتعاد رسمتها مع كل ضغطة فالمتصفح مكانش بيبعت dblclick. (tests/gstop.js)
+
+## build 245
+- Align: لما يكون في شكل واحد متحدد، الـ Align بيرصه على الـ Artboard تلقائيًا زي اليستريتور (كانت الزراير مطفية/رمادي). شكلين أو أكتر بيترصوا على بعض زي الأول.
+- Properties: كلمة Stroke بتفتح لوحة الـ Stroke، وOpacity بتفتح الـ Transparency، وAppearance بتفتح الـ Appearance، وFill بتفتح الـ Swatches (الكلمات عليها خط تحتها). (tests/propal.js)
