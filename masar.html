@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 242</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 243</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -10879,6 +10879,55 @@ pencilFit=function(raw,tk,nc){try{
   return _pf(S,tk,nc)}catch(_){return _pf(raw,tk,nc)}};
 /* default: the middle of the Fidelity slider (Illustrator's default), not the most accurate end */
 try{if(PCO.fid<3)PCO.fid=3;if(BRO.fid<3)BRO.fid=3;if(BBO.fid<3)BBO.fid=3}catch(_){}
+})();
+
+
+/* ======================= build 243: Knife keeps the curves + Scissors shows the cut points ======================= */
+(()=>{
+/* Knife (Illustrator): the freehand cut divides every closed path it fully crosses; the pieces keep the original curves
+   (the old knife flattened curves into short straight lines). Works on compound paths, filled or not. */
+const ringFromPoly=P=>{const n=P.length,S=[],pts=[];for(let i=0;i<n;i++){const a=P[i],b=P[(i+1)%n];S.push({c:[a,a,b,b],cv:false});pts.push([a[0],a[1],i])}return{pts,S,cnt:n}};
+const segHits=(a,b,F)=>{for(const r of F.rings){const P=r.pts,n=P.length;for(let i=0;i<n;i++)if(segX(a,b,P[i],P[(i+1)%n]))return true}return false};
+function sideRegion(cut,F,box){/* the region on one side of the cut: the cut, then out to a big frame and round it back */
+  const[x0,y0,x1,y1]=box,D=Math.max(x1-x0,y1-y0)*4+1e4,cx=(x0+x1)/2,cy=(y0+y1)/2,BX=[cx-D,cy-D,cx+D,cy+D];
+  const out=(p,dir)=>{/* a ray from the end of the cut to the frame that does not touch the shape again */
+    const base=Math.atan2(dir[1],dir[0]);for(let k=0;k<72;k++){const a=base+(k%2?1:-1)*Math.ceil(k/2)*Math.PI/36,e=[p[0]+Math.cos(a)*D*3,p[1]+Math.sin(a)*D*3];
+      if(!segHits([p[0]+Math.cos(a)*1e-3,p[1]+Math.sin(a)*1e-3],e,F))return clip(p,e)}return null};
+  const clip=(p,e)=>{let t=1;const d=[e[0]-p[0],e[1]-p[1]];[[0,BX[0]],[0,BX[2]],[1,BX[1]],[1,BX[3]]].forEach(([ax,v])=>{if(Math.abs(d[ax])>1e-12){const tt=(v-p[ax])/d[ax];if(tt>0&&tt<t)t=tt}});return[p[0]+d[0]*t,p[1]+d[1]*t]};
+  const n=cut.length,a=cut[0],b=cut[n-1],da=[a[0]-cut[1][0],a[1]-cut[1][1]],db=[b[0]-cut[n-2][0],b[1]-cut[n-2][1]];
+  const A=out(a,da),B=out(b,db);if(!A||!B)return null;
+  /* walk the frame from B's side back to A's side (perimeter parameter, clockwise) */
+  const per=q=>{const[X0,Y0,X1,Y1]=BX,W=X1-X0,H=Y1-Y0,e=1e-6*D;if(Math.abs(q[1]-Y0)<e)return q[0]-X0;if(Math.abs(q[0]-X1)<e)return W+q[1]-Y0;if(Math.abs(q[1]-Y1)<e)return W+H+(X1-q[0]);return 2*W+H+(Y1-q[1])};
+  const C=[[BX[2],BX[1]],[BX[2],BX[3]],[BX[0],BX[3]],[BX[0],BX[1]]],Cp=[BX[2]-BX[0],BX[2]-BX[0]+BX[3]-BX[1],2*(BX[2]-BX[0])+BX[3]-BX[1],2*(BX[2]-BX[0]+BX[3]-BX[1])],L=Cp[3];
+  let pb=per(B),pa=per(A);if(pa<=pb)pa+=L;const mid=[];for(let k=0;k<8;k++){const cp_=Cp[k%4]+(k>=4?L:0);if(cp_>pb&&cp_<pa)mid.push(C[k%4])}
+  return[A,...cut,B,...mid]}
+function finishKnife2(raw,straight,shift){
+  let cut=raw.slice();
+  if(straight){let a=raw[0],b=raw[raw.length-1];if(shift){const v=V2.sub(b,a),ang=Math.round(Math.atan2(v[1],v[0])/(Math.PI/4))*(Math.PI/4),l=V2.len(v);b=[a[0]+Math.cos(ang)*l,a[1]+Math.sin(ang)*l]}cut=[a,b]}
+  else cut=rdp(cut,.35/z);
+  if(cut.length<2)return;
+  const xs=cut.map(q=>q[0]),ys=cut.map(q=>q[1]),bx=[Math.min(...xs),Math.min(...ys),Math.max(...xs),Math.max(...ys)];
+  const cand=(sel.size?[...sel]:objs).filter(o=>{const r=wbox(o);return r.x<=bx[2]&&r.x+r.w>=bx[0]&&r.y<=bx[3]&&r.y+r.h>=bx[1]&&objs.includes(o)&&!o.lk&&o.g.style.display!=='none'});
+  const newSel=[];let changed=false;
+  cand.forEach(ob=>{try{
+    if(isText(ob)||ob.g.childElementCount!==1)return;ensurePath(ob);const pe=ob.g.firstElementChild;if(!pe||pe.tagName!=='path'||pe.hasAttribute('data-erase'))return;
+    const S=getSP(pe);if(!S||!S.length||S.some(sp=>!sp.closed))return;
+    const F=boolFlat(ob);if(!F.rings.length)return;
+    /* both ends must be outside the shape (the knife has to go right across it) */
+    if(boolIn(cut[0],F)||boolIn(cut[cut.length-1],F))return;
+    let hit=false;for(let i=0;i+1<cut.length&&!hit;i++)hit=segHits(cut[i],cut[i+1],F);if(!hit)return;
+    const reg=sideRegion(cut,F,boolBox(F));if(!reg)return;const B={rings:[ringFromPoly(reg)],rule:'nonzero'};
+    const parts=[...boolSplit(boolOp('inter',F,B)),...boolSplit(boolOp('diff',F,B))].filter(P=>!boolEmpty(P));if(parts.length<2)return;
+    changed=true;const at=objs.indexOf(ob);
+    parts.forEach((P,j)=>{const g=ob.g.cloneNode(true);const o2={g,bb:ob.bb,m:{sx:1,sy:1,tx:0,ty:0},ly:ob.ly};g.__o=o2;objs.splice(at+1+j,0,o2);layer.insertBefore(g,ob.g.nextSibling);boolApply(o2,P,ob);newSel.push(o2)});
+    ob.g.remove();objs.splice(objs.indexOf(ob),1)}catch(e){console.warn('knife',e)}});
+  if(!changed){$('#hint').textContent='Knife: drag right across a closed shape to divide it';return}
+  layer.replaceChildren(...objs.map(o=>o.g));sel=new Set(newSel);dsSel=new Set();commit();draw()}
+finishKnife=finishKnife2;window.finishKnife=finishKnife2;
+/* Scissors: after the cut the two new end points are selected (solid), as in Illustrator, so it is clear where the path was cut */
+const _sd=scissorsDown;scissorsDown=function(p){const r=_sd.apply(this,arguments);try{const tol=2/z,K=new Set();
+  [...sel].forEach(ob=>dsAnchors(ob).forEach(a=>{if(a.sp.closed)return;const n=a.sp.pts.length;if(a.k!==0&&a.k!==n-1)return;const[ax,ay]=W(ob,a.q.x,a.q.y);if(Math.hypot(ax-p.x,ay-p.y)<=Math.max(tol,7/z))K.add(a.key)}));
+  if(K.size){dsSel=K;draw()}}catch(_){}return r};
 })();
 
 /*TOOLS-END*/
