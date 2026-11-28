@@ -1,14 +1,28 @@
-const {open}=require('./lib');
-(async()=>{const H=await open(),res=[];const chk=(n,ok,d)=>res.push((ok?'PASS ':'FAIL ')+n+(ok?'':'  -> '+JSON.stringify(d)));
-const pg=H.pg;pg.setDefaultTimeout(6000);const run=async(n,f)=>{try{await f()}catch(e){chk(n+' (threw)',false,String(e).slice(0,240))}};
-const area=()=>pg.evaluate(()=>objs.map(o=>{const c=document.createElement('canvas');const b=wbox(o),K=4;c.width=Math.ceil((b.w+4)*K);c.height=Math.ceil((b.h+4)*K);const x=c.getContext('2d');x.scale(K,K);x.translate(-b.x+2,-b.y+2);x.fillStyle='#000';o.g.querySelectorAll('path').forEach(p=>x.fill(new Path2D(p.getAttribute('d')),'evenodd'));const d=x.getImageData(0,0,c.width,c.height).data;let n=0;for(let i=3;i<d.length;i+=4)n+=d[i]/255;return Math.round(n/(K*K))}));
-const two=async()=>{await H.reset();await H.key('l');await H.drag(300,250,420,370);await H.drag(380,250,500,370);await pg.evaluate(()=>{objs[0].g.querySelector('path,ellipse').setAttribute('fill','#3366cc');objs[1].g.querySelector('path,ellipse').setAttribute('fill','#ffaa00');draw()});await H.key('v');await pg.keyboard.press('Control+a')};
-await run('tool',async()=>{await two();await pg.keyboard.press('Shift+m');await pg.waitForTimeout(150);chk('Shift+M picks the Shape Builder Tool',await pg.evaluate('tool')==='sbd',await pg.evaluate('tool'));chk('Status bar says Shape Builder Tool',await pg.evaluate(()=>document.getElementById('tn').textContent)==='Shape Builder Tool',null)});
-await run('hover',async()=>{await pg.mouse.move(H.R.x+340,H.R.y+310);await pg.waitForTimeout(250);const n=await pg.evaluate(()=>document.querySelectorAll('#peng path').length);chk('Hovering a region highlights it (halftone preview)',n===1,n);await pg.mouse.move(H.R.x+700,H.R.y+500);await pg.waitForTimeout(150);chk('No highlight over empty space',await pg.evaluate(()=>document.querySelectorAll('#peng path').length)===0,null)});
-await run('merge',async()=>{await two();const a0=await area();await pg.keyboard.press('Shift+m');await H.drag(340,310,460,310);await pg.waitForTimeout(500);const a=await area();console.log('areas before/after',JSON.stringify(a0),JSON.stringify(a));const tot0=a0[0]+a0[1];chk('Dragging across the left, overlap and right regions merges them into ONE shape (3 objects → 1 union)',a.length===1||(a.length>=1&&Math.abs(a.reduce((x,y)=>x+y,0)-(tot0-(a0[0]+a0[1]-a.reduce((x,y)=>x+y,0))))<2),a)});
-await run('merge2',async()=>{await two();await pg.keyboard.press('Shift+m');const n0=await pg.evaluate(()=>objs.length);await H.drag(340,310,460,310);await pg.waitForTimeout(500);const r=await pg.evaluate(()=>({n:objs.length,fills:objs.map(o=>o.g.querySelector('path').getAttribute('fill'))}));console.log('merge result',JSON.stringify(r));chk('Merging all three regions leaves a single shape (the union)',r.n===1,r)});
-await run('split',async()=>{await two();await pg.keyboard.press('Shift+m');await H.click(400,310);await pg.waitForTimeout(500);const r=await pg.evaluate(()=>objs.length);chk('Click on the overlap region separates it into its own shape (3 objects)',r===3,r);await pg.keyboard.press('Control+z');await pg.waitForTimeout(300);chk('Undo brings back the 2 originals',await pg.evaluate(()=>objs.length)===2,await pg.evaluate(()=>objs.length))});
-await run('delete',async()=>{await two();const a0=await area();await pg.keyboard.press('Shift+m');await pg.keyboard.down('Alt');await H.click(400,310);await pg.keyboard.up('Alt');await pg.waitForTimeout(500);const a=await area();chk('Alt+click deletes the overlap region (both shapes lose area)',a.length===2&&a[0]<a0[0]-100&&a[1]<a0[1]-100,[a0,a]);chk('The overlap is now empty (shapes no longer cover the centre)',true)});
-await run('marquee',async()=>{await two();await pg.keyboard.press('Shift+m');await H.drag(310,260,330,360,['Shift']);await pg.waitForTimeout(400);chk('Shift+drag marquee works without error',true)});
-await run('options',async()=>{await pg.locator('[data-t="sbd"]').first().dblclick().catch(()=>{});await pg.evaluate(()=>{TL.tools.sbd.dbl()});await pg.waitForTimeout(250);const t=await pg.evaluate(()=>(document.querySelector('.fxb')||{}).innerText||'');chk('Options dialog (open paths, pick color, highlight)',/Open Filled Paths/.test(t)&&/Pick Color From/.test(t)&&/Highlight Color/.test(t),t.replace(/\s+/g,' ').slice(0,120));await pg.keyboard.press('Escape')});
-console.log(res.join('\n'));console.log('errors',H.errs);await H.b.close()})();
+const L=require('./lib.js');
+(async()=>{const H=await L.open(),pg=H.pg;let bad=0;const ok=(n,c,x)=>{console.log((c?'PASS ':'FAIL ')+n+(x?' '+x:''));if(!c)bad++};
+await pg.evaluate(()=>{z=1;view()});
+const S=()=>pg.evaluate(()=>objs.map(o=>{const b=wbox(o);return{box:[b.x*z+px,b.y*z+py,b.w*z,b.h*z].map(Math.round),fill:(fillables(o)[0]||{getAttribute:()=>null}).getAttribute('fill')}}));
+const setup=async()=>{await H.reset();await pg.evaluate(()=>{const a=add('<ellipse cx="'+((300-px)/z)+'" cy="'+((250-py)/z)+'" rx="60" ry="60" fill="#e03131"/>');const b=add('<ellipse cx="'+((380-px)/z)+'" cy="'+((250-py)/z)+'" rx="60" ry="60" fill="#1971c2"/>');commit();sel=new Set(objs);setTool('sbd');draw()});await pg.waitForTimeout(150)};
+await setup();
+// fast drag: only 2 move events from the left circle through the overlap into the right circle
+let t0=Date.now();await pg.mouse.move(H.R.x+260,H.R.y+250);await pg.mouse.down();await pg.mouse.move(H.R.x+420,H.R.y+250,{steps:1});await pg.mouse.up();await pg.waitForTimeout(200);
+let s=await S();ok('a fast drag across all three regions merges them all into one shape',s.length===1&&Math.abs(s[0].box[2]-200)<=2,JSON.stringify(s)+' '+(Date.now()-t0)+'ms');
+ok('merged shape takes the colour of the region where the drag started',s[0]&&s[0].fill==='#e03131');
+await pg.keyboard.press('Control+z');await pg.waitForTimeout(200);s=await S();ok('Undo',s.length===2);
+// merge left + overlap only
+await setup();await H.drag(260,250,340,250);await pg.waitForTimeout(200);s=await S();
+ok('left circle + overlap merged, right crescent stays a separate object',s.length===2,JSON.stringify(s));
+// click the overlap: it becomes a separate shape
+await setup();await H.click(340,250);await pg.waitForTimeout(200);s=await S();ok('clicking the overlap separates it (3 objects)',s.length===3,JSON.stringify(s));
+// Alt+click deletes the overlap
+await setup();await pg.keyboard.down('Alt');await H.click(340,250);await pg.keyboard.up('Alt');await pg.waitForTimeout(200);s=await S();
+ok('Alt+click deletes the overlap: 2 crescents',s.length===2&&s.every(q=>q.box[2]<125),JSON.stringify(s));
+// trail line while dragging
+await setup();await pg.mouse.move(H.R.x+260,H.R.y+250);await pg.mouse.down();await pg.mouse.move(H.R.x+300,H.R.y+260,{steps:3});
+ok('a trail line follows the drag',await pg.evaluate(()=>!!peng.querySelector('[data-sbtrail]')));
+await pg.mouse.up();
+// speed: 8 overlapping shapes, hover time
+await H.reset();await pg.evaluate(()=>{for(let i=0;i<8;i++)add('<ellipse cx="'+(i*35)+'" cy="'+(150+(i%2)*30)+'" rx="50" ry="50" fill="#'+(['e03131','1971c2','2f9e44','f08c00'][i%4])+'"/>');commit();sel=new Set(objs);setTool('sbd');draw()});
+t0=Date.now();await pg.mouse.move(H.R.x+250,H.R.y+300);await pg.mouse.move(H.R.x+300,H.R.y+300);const tf=Date.now()-t0;
+ok('first hover with 8 shapes is quick (<1500ms)',tf<1500,tf+'ms');
+console.log('errs',H.errs);console.log(bad?'FAILED '+bad:'ALL OK');await H.b.close()})();
