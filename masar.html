@@ -497,7 +497,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 268</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 269</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -11741,6 +11741,85 @@ function createDlg(){const o=[...sel][0];if(!o)return;dkModal('Create Gradient M
 function expand(){[...sel].forEach(o=>{const e=host(o);if(!e)return;e.setAttribute('fill',e.getAttribute('data-meshfill')||'#ffffff');e.removeAttribute('data-mesh');e.removeAttribute('data-meshfill');o.g.querySelectorAll(':scope > image[data-meshimg], :scope > defs').forEach(x=>x.remove());touch(o)});commit();draw()}
 if(window.MENUS){const objM=MENUS.find(m=>m[0]==='Object');if(objM){const g=objM[1];objM[1]=()=>{const it=g();const i=it.findIndex(x=>x&&x.t==='Graph');it.splice(i>=0?i+1:it.length,0,{t:'Create Gradient Mesh…',__p:'Object>Create Gradient Mesh',f:createDlg,en:()=>sel.size===1},{t:'Release Gradient Mesh',__p:'Object>Release Gradient Mesh',f:expand,en:()=>[...sel].some(o=>host(o))});return it}}}
 window.MESH={getM,setM,makeMesh,locate,addLines,delLines,render,createDlg,expand,sel:()=>MS};
+})();
+
+
+/* ======================= build 269: Perspective Grid (Shift+P), Perspective Selection (Shift+V) ======================= */
+(()=>{
+const KEY='masar.pgrid.v1';
+const DEFG=()=>{const A=ARTS[ABI]||{x:0,y:0,w:800,h:600};return{hY:A.y+A.h*.42,vl:A.x-A.w*.35,vr:A.x+A.w*1.35,ox:A.x+A.w*.5,oy:A.y+A.h*.78,cell:A.h*.06,n:10,m:10,on:false,act:'L'}};
+let G=null;try{G=JSON.parse(localStorage.getItem(KEY)||'null')}catch(_){}if(!G)G=DEFG();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(G))}catch(_){}};
+/* ---- projective maps: plane coords (grid units) -> artboard coords, one 3x3 homography per plane ---- */
+function solveH(src,dst){/* 4 point correspondences -> 3x3 */const A=[],b=[];for(let i=0;i<4;i++){const[x,y]=src[i],[u,v]=dst[i];A.push([x,y,1,0,0,0,-u*x,-u*y]);b.push(u);A.push([0,0,0,x,y,1,-v*x,-v*y]);b.push(v)}
+  for(let c=0;c<8;c++){let p=c;for(let r=c+1;r<8;r++)if(Math.abs(A[r][c])>Math.abs(A[p][c]))p=r;[A[c],A[p]]=[A[p],A[c]];[b[c],b[p]]=[b[p],b[c]];for(let r=0;r<8;r++){if(r===c)continue;const f=A[r][c]/A[c][c];for(let k=c;k<8;k++)A[r][k]-=f*A[c][k];b[r]-=f*b[c]}}
+  const h=b.map((v,i)=>v/A[i][i]);return[h[0],h[1],h[2],h[3],h[4],h[5],h[6],h[7],1]}
+const app=(H,p)=>{const w=H[6]*p[0]+H[7]*p[1]+H[8];return[(H[0]*p[0]+H[1]*p[1]+H[2])/w,(H[3]*p[0]+H[4]*p[1]+H[5])/w]};
+const inv=H=>{const[a,b,c,d,e,f,g,h,i]=H,A=e*i-f*h,B=-(d*i-f*g),C=d*h-e*g,det=a*A+b*B+c*C;return[A/det,-(b*i-c*h)/det,(b*f-c*e)/det,B/det,(a*i-c*g)/det,-(a*f-c*d)/det,C/det,-(a*h-b*g)/det,(a*e-b*d)/det]};
+function planes(){const O=[G.ox,G.oy],VL=[G.vl,G.hY],VR=[G.vr,G.hY],c=G.cell,DL=Math.hypot(VL[0]-O[0],VL[1]-O[1]),DR=Math.hypot(VR[0]-O[0],VR[1]-O[1]);
+  const along=(V,D,a)=>{const t=a*c/(a*c+D);return[O[0]+(V[0]-O[0])*t,O[1]+(V[1]-O[1])*t,1-t]};
+  const wall=(V,D)=>{const g1=along(V,D,1);return solveH([[0,0],[1,0],[0,1],[1,1]],[O,[g1[0],g1[1]],[O[0],O[1]-c],[g1[0],g1[1]-c*g1[2]]])};
+  const X=(p1,p2,p3,p4)=>{const d=(p1[0]-p2[0])*(p3[1]-p4[1])-(p1[1]-p2[1])*(p3[0]-p4[0]),t=((p1[0]-p3[0])*(p3[1]-p4[1])-(p1[1]-p3[1])*(p3[0]-p4[0]))/d;return[p1[0]+t*(p2[0]-p1[0]),p1[1]+t*(p2[1]-p1[1])]};
+  const gl=along(VL,DL,1),gr=along(VR,DR,1),f11=X([gl[0],gl[1]],VR,[gr[0],gr[1]],VL);
+  const F=solveH([[0,0],[1,0],[0,1],[1,1]],[O,[gl[0],gl[1]],[gr[0],gr[1]],f11]);return{L:wall(VL,DL),R:wall(VR,DR),F}}
+let PL=planes();const upd=()=>{PL=planes();save()};
+const toW=(pl,a,b)=>app(PL[pl],[a,b]),toP=(pl,x,y)=>app(inv(PL[pl]),[x,y]);
+/* ---- grid drawing (left blue, right orange, floor green, like Illustrator) ---- */
+const COL={L:'#3c7cf0',R:'#f07a3c',F:'#3cbf5a'};
+function drawGrid(){if(!G.on)return;const s=1/z,g=el('g',{'pointer-events':'none','data-pgrid':'1'});
+  const line=(pl,a0,b0,a1,b1,w,op)=>{const p=toW(pl,a0,b0),q=toW(pl,a1,b1);g.append(el('path',{d:'M'+p[0]+' '+p[1]+'L'+q[0]+' '+q[1],stroke:COL[pl],'stroke-width':w*s,'stroke-opacity':op,fill:'none'}))};
+  ['L','R'].forEach(pl=>{for(let a=0;a<=G.n;a++)line(pl,a,0,a,G.m,1,pl===G.act?.55:.25);for(let b=0;b<=G.m;b++)line(pl,0,b,G.n,b,1,pl===G.act?.55:.25)});
+  for(let a=0;a<=G.n;a++)line('F',a,0,a,G.n,1,G.act==='F'?.5:.2);for(let c=0;c<=G.n;c++)line('F',0,c,G.n,c,1,G.act==='F'?.5:.2);
+  const A=ARTS[ABI]||{x:-1e4,w:2e4};g.append(el('path',{d:'M'+Math.min(G.vl,A.x)+' '+G.hY+'H'+Math.max(G.vr,A.x+A.w),stroke:'#3a3a3a','stroke-width':s,'stroke-dasharray':(5*s)+' '+(3*s),fill:'none'}));
+  if(tool==='pg'){[[G.vl,G.hY,'vl'],[G.vr,G.hY,'vr'],[G.ox,G.oy,'o'],[(G.vl+G.vr)/2,G.hY,'h']].forEach(([x,y,k])=>g.append(el('circle',{cx:x,cy:y,r:6*s,fill:k==='o'?'#f0c374':'#fff',stroke:'#3a3a3a','stroke-width':1.5*s,'data-pgh':k})))}
+  selg.insertBefore(g,selg.firstChild);
+  /* plane switching widget (top-left of the canvas) */
+  wid.style.display='flex'}
+const wid=document.createElement('div');wid.id='pgwid';wid.style.cssText='position:fixed;z-index:58;display:none;gap:3px;padding:4px;background:var(--panel);border:1px solid #1b1b1b;border-radius:4px;box-shadow:0 3px 12px #0007';
+wid.innerHTML=[['L','Left Grid (1)'],['F','Horizontal Grid (2)'],['R','Right Grid (3)'],['N','No Active Grid (4)']].map(([k,t])=>'<button type="button" data-pl="'+k+'" title="'+t+'" style="width:26px;height:24px;border:0;border-radius:3px;background:none;cursor:default;color:var(--ink)"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">'+(k==='L'?'<path d="M3 6l9 3v12L3 18z" fill="'+COL.L+'" fill-opacity=".5"/>':k==='R'?'<path d="M21 6l-9 3v12l9-3z" fill="'+COL.R+'" fill-opacity=".5"/>':k==='F'?'<path d="M12 13l9 3-9 4-9-4z" fill="'+COL.F+'" fill-opacity=".5"/>':'<circle cx="12" cy="12" r="7"/><path d="M7 17L17 7"/>')+'</svg></button>').join('');
+document.body.appendChild(wid);
+const wsync=()=>{wid.querySelectorAll('button').forEach(b=>b.style.background=b.dataset.pl===G.act?'#ffffff2e':'none');const r=cv.getBoundingClientRect();wid.style.left=(r.left+10)+'px';wid.style.top=(r.top+48)+'px';if(!G.on)wid.style.display='none'};
+wid.addEventListener('pointerdown',e=>e.stopPropagation());wid.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;G.act=b.dataset.pl;save();wsync();draw()});
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{drawGrid();wsync()}catch(_){}return r}}
+const show=on=>{G.on=on==null?!G.on:!!on;save();draw();tb5Msg(G.on?'Perspective Grid shown':'Perspective Grid hidden')};
+/* ---- objects on a plane keep their plane coordinates (data-psp) so they can be moved in perspective ---- */
+const hostE=o=>o.g.querySelector(':scope > path[data-psp]');
+function attach(o,pl,box){/* box = [a,b,wa,hb] where the object goes on the plane; its geometry is mapped there */
+  try{ensurePath(o)}catch(_){}const E=eps(o);if(E.length!==1)return false;const e=E[0],S=getSP(e);if(!S)return false;const b=wbox(o);
+  const toPl=(x,y)=>{const wx=x*o.m.sx+o.m.tx,wy=y*o.m.sy+o.m.ty;return[box[0]+(wx-b.x)/(b.w||1)*box[2],box[1]+(1-(wy-b.y)/(b.h||1))*box[3]]};
+  const PS=S.map(sp=>({closed:sp.closed,pts:sp.pts.map(q=>({p:toPl(q.x,q.y),i:q.i&&toPl(q.i[0],q.i[1]),o:q.o&&toPl(q.o[0],q.o[1])}))}));
+  e.setAttribute('data-psp',JSON.stringify({pl,S:PS}));o.m={sx:1,sy:1,tx:0,ty:0};reproj(o);return true}
+function reproj(o){const e=hostE(o);if(!e)return;const D=JSON.parse(e.getAttribute('data-psp')),W=q=>q&&toW(D.pl,q[0],q[1]);
+  e.__sp=D.S.map(sp=>({closed:sp.closed,pts:sp.pts.map(q=>{const p=W(q.p);return{x:r3(p[0]),y:r3(p[1]),i:q.i?W(q.i).map(r3):null,o:q.o?W(q.o).map(r3):null}})}));writeSP(e);apply(o);touch(o)}
+const planeAt=(x,y)=>{if(G.act!=='N')return G.act;return null};
+/* drawing a rectangle / ellipse / rounded rectangle / polygon / star while the grid is on puts it on the active plane */
+let before=null;cv.addEventListener('pointerdown',()=>{before=G.on&&G.act!=='N'&&['m','l','rr','po','sr'].includes(tool)?new Set(objs):null},true);
+{const _cm=commit;commit=function(){try{if(before&&G.on&&G.act!=='N'){const N=objs.filter(o=>!before.has(o));before=null;N.forEach(o=>{const b=wbox(o),pl=G.act,p0=toP(pl,b.x,b.y+b.h),p1=toP(pl,b.x+b.w,b.y);if(!isFinite(p0[0])||!isFinite(p1[0]))return;
+    attach(o,pl,[Math.min(p0[0],p1[0]),Math.min(p0[1],p1[1]),Math.abs(p1[0]-p0[0]),Math.abs(p1[1]-p0[1])])})}}catch(_){}return _cm.apply(this,arguments)}}
+/* ---- tools ---- */
+addTool({id:'pg',name:'Perspective Grid Tool',key:'Shift+P',after:'mesh',svg:'<path d="M2 18L12 6l10 12M5 14.4h14M8 10.8h8M7 18l5-12 5 12"/>',
+  hint:'Perspective Grid · drag the white points to move the vanishing points or the horizon, the gold point to move the ground · 1 / 2 / 3 / 4 pick the plane · Ctrl+Shift+I shows / hides the grid',
+  enter:()=>{if(!G.on){G.on=true;save()}draw()},card:{d:'Two-point perspective grid for drawing in perspective',m:['Drag the vanishing points and the horizon','1 left plane, 2 floor, 3 right plane, 4 none','With the grid on, rectangles / ellipses / polygons are drawn on the active plane','Perspective Selection (Shift+V) moves them in perspective']}});
+addTool({id:'pgs',name:'Perspective Selection Tool',key:'Shift+V',after:'pg',svg:'<path d="M5 3l11 6-5 1.5L9 16z"/><path d="M13 21l3-6 5 2-2 4z" fill="currentColor" fill-opacity=".4"/>',
+  hint:'Perspective Selection · drag an object on the grid to move it in perspective · drag a flat object onto the active plane to attach it · 1 / 2 / 3 / 4 pick the plane'});
+try{addGroup({id:'pgBtn',lab:'Perspective tools',t:['pg','pgs']})}catch(_){}
+let D=null;
+tlDrag('pg',{down:(p,e)=>{const s=10/z;const H=[['vl',G.vl,G.hY],['vr',G.vr,G.hY],['o',G.ox,G.oy],['h',(G.vl+G.vr)/2,G.hY]].find(h=>Math.hypot(p.x-h[1],p.y-h[2])<=s);if(!H)return false;D={k:H[0],p0:p,G0:{...G}};return true},
+  move:p=>{if(!D)return;const dx=p.x-D.p0.x,dy=p.y-D.p0.y,g=D.G0;if(D.k==='vl')G.vl=Math.min(g.vl+dx,G.ox-20);else if(D.k==='vr')G.vr=Math.max(g.vr+dx,G.ox+20);else if(D.k==='h')G.hY=Math.min(g.hY+dy,G.oy-10);else{G.ox=Math.max(G.vl+20,Math.min(G.vr-20,g.ox+dx));G.oy=Math.max(G.hY+10,g.oy+dy)}upd();objs.forEach(o=>{if(hostE(o))reproj(o)});draw()},
+  up:()=>{if(D){D=null;commit();draw()}},esc:()=>{if(D){Object.assign(G,D.G0);upd();D=null;draw()}}});
+tlDrag('pgs',{down:(p,e)=>{const t=document.elementFromPoint(e.clientX,e.clientY),g=t&&t.closest&&t.closest('#layer > g'),o=g&&g.__o;if(!o||!pick(o)){sel=new Set();draw();return false}
+    sel=new Set([o]);const e1=hostE(o);D={o,p0:p,on:!!e1,pl:e1?JSON.parse(e1.getAttribute('data-psp')).pl:(G.act!=='N'?G.act:null),D0:e1?e1.getAttribute('data-psp'):null,m0:{...o.m},moved:false};draw();return true},
+  move:p=>{if(!D)return;D.moved=true;if(D.on){const a=toP(D.pl,D.p0.x,D.p0.y),b=toP(D.pl,p.x,p.y),da=b[0]-a[0],db=b[1]-a[1],J=JSON.parse(D.D0);J.S.forEach(sp=>sp.pts.forEach(q=>{['p','i','o'].forEach(k=>{if(q[k]){q[k][0]+=da;q[k][1]+=db}})}));hostE(D.o).setAttribute('data-psp',JSON.stringify(J));reproj(D.o)}
+    else{D.o.m.tx=D.m0.tx+p.x-D.p0.x;D.o.m.ty=D.m0.ty+p.y-D.p0.y;apply(D.o)}draw()},
+  up:(p)=>{if(!D)return;const d=D;D=null;if(!d.moved){draw();return}
+    if(!d.on&&d.pl){/* a flat object dropped on the active plane is attached there, keeping its size in grid units at the drop point */const b=wbox(d.o),q=toP(d.pl,b.x,b.y+b.h),u=G.cell;attach(d.o,d.pl,[q[0],q[1],b.w/u,b.h/u])}
+    commit();draw()},esc:()=>{D=null}});
+/* keys: 1-4 planes (before the number-key opacity), Ctrl+Shift+I show / hide */
+window.__KSPRE.unshift(e=>{const t=e.target;if(t&&/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)||(typeof ted_s!=='undefined'&&ted_s))return false;
+  if((e.ctrlKey||e.metaKey)&&e.shiftKey&&!e.altKey&&e.code==='KeyI'){e.preventDefault();e.stopImmediatePropagation();show();return true}
+  if(G.on&&(tool==='pg'||tool==='pgs')&&!e.ctrlKey&&!e.altKey&&!e.metaKey&&/^Digit[1-4]$/.test(e.code)){G.act=['L','F','R','N'][+e.code[5]-1];save();e.preventDefault();e.stopImmediatePropagation();draw();return true}return false});
+if(window.MENUS){const vm=MENUS.find(m=>m[0]==='View');if(vm){const g=vm[1];vm[1]=()=>{const it=g();it.push({t:'Perspective Grid',__p:'View>Perspective Grid',sub:()=>[{t:G.on?'Hide Grid':'Show Grid',k:'Ctrl+Shift+I',__p:'View>Perspective Grid>Show Grid',f:()=>show()},{t:'Reset Grid',__p:'View>Perspective Grid>Reset',f:()=>{const on=G.on;G=DEFG();G.on=on;upd();objs.forEach(o=>{if(hostE(o))reproj(o)});commit();draw()}},{t:'Release with Perspective',__p:'View>Perspective Grid>Release',f:()=>{[...sel].forEach(o=>{const e=hostE(o);if(e)e.removeAttribute('data-psp')});commit()},en:()=>[...sel].some(hostE)}]});return it}}}
+window.PGRID={get:()=>G,set:o=>{Object.assign(G,o);upd();draw()},toW,toP,attach,reproj,show};
 })();
 
 /*TOOLS-END*/

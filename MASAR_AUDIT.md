@@ -559,3 +559,7 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 ## build 268: Mesh Tool (U) — Gradient Mesh
 - ضغطة جوه شكل مليان = خطوط Mesh بتعدي بالنقطة والنقطة الجديدة بتاخد لون الـ Fill الحالي؛ اسحب أي نقطة تحرك الألوان؛ اختار نقطة واضغط لون من الـ Swatches/Color Picker تتلوّن؛ Alt+ضغطة على نقطة بتمسح خطوطها. الألوان بتسيح بنعومة (Catmull-Rom على الشبكة). Object > Create Gradient Mesh… (صفوف، أعمدة، Flat / To Center / To Edge، Highlight) و Release Gradient Mesh. بيترسم كصورة مقصوصة على شكل الشكل (الـ SVG مفيهوش Mesh)، والشبكة والألوان محفوظة جوه الشكل للتعديل وبتتعاد بعد Undo. (tests/mesh.js)
 - الفرق عن اليستريتور: الشبكة بتبدأ على المربع اللي حوالين الشكل مش ماشية مع انحناءاته.
+
+## build 269: Perspective Grid (Shift+P) + Perspective Selection (Shift+V)
+- شبكة منظور بنقطتين هروب: حيطة شمال (أزرق)، أرضية (أخضر)، حيطة يمين (برتقالي)، خط أفق، ونقطة أصل. بأداة Perspective Grid بتسحب نقط الهروب والأفق والأصل، والأشكال اللي على الشبكة بتتعاد معاها. شريط صغير + أزرار 1/2/3/4 لاختيار السطح. View > Perspective Grid: Show/Hide (Ctrl+Shift+I)، Reset Grid، Release with Perspective.
+- المستطيل/البيضاوي/المستطيل المدوّر/المضلع/النجمة لما الشبكة ظاهرة بيترسموا على السطح المختار بالمنظور. Perspective Selection بيحرك الشكل على سطحه (بيصغر ناحية نقطة الهروب)، ولو سحبت بيه شكل عادي بيتلزق على السطح المختار. الحسابات Homography حقيقية (اتجربت إن الخطوط البعيدة بتتقابل في نقطة الهروب والتحويل بيرجع لنفسه). (tests/persp.js)
