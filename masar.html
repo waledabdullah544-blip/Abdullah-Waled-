@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 243</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 244</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -587,6 +587,8 @@ function draw(){
   selg.append(el('rect',{x:u.x,y:u.y,width:u.w,height:u.h,fill:'none',stroke:'#8C8C8C','stroke-width':s,'pointer-events':'none'}));
   drawAreaUI(L,s);
   if(!((tool==='v'||SG.includes(tool))&&L.length===1))L.forEach(o=>{if(isText(o)&&o.g.querySelector('text[data-tpov]'))tpOvMark(selg,o,s)});
+  /* Magic Wand (Illustrator): every object it picked shows its own highlighted path and anchor points */
+  if(tool==='mw')L.forEach(o=>{if(!isText(o)&&o.g.style.display!=='none')try{drawCreate(o)}catch(_){}});
   if(TG.includes(tool)||tool==='mw'||tool==='gr'||XT.includes(tool)){if(tool==='tt')drawTT();if(XT.includes(tool))drawOrigin();if(tool==='gr')drawGrad();return}
   {const ro=rotSel();if(ro){selg.lastChild&&selg.lastChild.remove();drawRotBox(ro);if((tool==='v'||SG.includes(tool))&&L.length===1)drawLiveW(L[0]);return}}
   for(const k in HP){if((u.h*z<1.5&&k!=='e'&&k!=='w')||(u.w*z<1.5&&k!=='n'&&k!=='s'))continue;const[fx,fy]=HP[k];const r=el('rect',{x:u.x+u.w*fx-4*s,y:u.y+u.h*fy-4*s,width:8*s,height:8*s,fill:'#fff',stroke:'#8C8C8C','stroke-width':1.5*s,'data-h':k});r.style.cursor=scaleCur(Math.atan2(Math.sign(fy-.5),Math.sign(fx-.5))*180/Math.PI);selg.append(r)}
@@ -10928,6 +10930,42 @@ finishKnife=finishKnife2;window.finishKnife=finishKnife2;
 const _sd=scissorsDown;scissorsDown=function(p){const r=_sd.apply(this,arguments);try{const tol=2/z,K=new Set();
   [...sel].forEach(ob=>dsAnchors(ob).forEach(a=>{if(a.sp.closed)return;const n=a.sp.pts.length;if(a.k!==0&&a.k!==n-1)return;const[ax,ay]=W(ob,a.q.x,a.q.y);if(Math.hypot(ax-p.x,ay-p.y)<=Math.max(tol,7/z))K.add(a.key)}));
   if(K.size){dsSel=K;draw()}}catch(_){}return r};
+})();
+
+
+/* ======================= build 244: Gradient stop colour popup (Illustrator: double-click a colour stop) ======================= */
+(()=>{
+const st=document.createElement('style');st.textContent='#gspop{position:fixed;z-index:400;display:none;width:236px;background:var(--panel);color:var(--ink);border:1px solid #1b1b1b;border-radius:4px;box-shadow:0 6px 22px #0008;padding:6px 8px 8px;font:12px "Segoe UI",Cairo,sans-serif}#gspop .h{display:flex;align-items:center;gap:4px;margin-bottom:6px}#gspop .h button{background:none;border:0;color:var(--ink);padding:3px 6px;border-radius:3px;cursor:default}#gspop .h button.on{background:#ffffff22}#gspop .h .x{margin-left:auto;font-size:15px}#gspop .g{display:grid;grid-template-columns:repeat(10,1fr);gap:2px;max-height:132px;overflow:auto}#gspop .g button{aspect-ratio:1;border:1px solid #0006;border-radius:2px;padding:0;cursor:default}#gspop .g button.cur{outline:2px solid #fff}#gspop .r{display:flex;align-items:center;gap:6px;margin-top:6px}#gspop input[type=color]{width:46px;height:26px;padding:0;border:1px solid #0006;background:none}#gspop input[type=text]{width:70px}#gspop input[type=number]{width:52px}#gspop input[type=range]{flex:1}';document.head.appendChild(st);
+const P=document.createElement('div');P.id='gspop';P.setAttribute('role','dialog');P.setAttribute('aria-label','Gradient stop color');document.body.appendChild(P);
+let tab='co';
+const stop=()=>{try{const T=gradTargets();if(!T.length)return null;const g=gradOf(T[0].e);return g&&g.s[gsi]?g.s[gsi]:null}catch(_){return null}};
+function render(){const s=stop();if(!s){close();return}const h=hexOf(s[1]),op=Math.round((s[3]==null?1:s[3])*100);
+  P.innerHTML='<div class="h"><button data-t="co" class="'+(tab==='co'?'on':'')+'">Color</button><button data-t="sw" class="'+(tab==='sw'?'on':'')+'">Swatches</button><b style="margin-left:6px;opacity:.7">Color Stop</b><button class="x" data-a="x" title="Close" aria-label="Close">×</button></div>'+
+   (tab==='sw'?'<div class="g">'+swList().filter(q=>q.h!=='none').map(q=>'<button data-h="'+q.h+'" title="'+q.n+'" class="'+(q.h.toLowerCase()===h.toLowerCase()?'cur':'')+'" style="background:'+q.h+'"></button>').join('')+'</div>':
+    '<div class="r"><input type="color" id="gspc" value="'+h+'"><span>#</span><input type="text" id="gsph" maxlength="6" value="'+h.slice(1)+'"><button data-a="pk" title="Color Picker">…</button></div>')+
+   '<div class="r"><span>Opacity</span><input type="range" id="gspr" min="0" max="100" value="'+op+'"><input type="number" id="gspo" min="0" max="100" value="'+op+'">%</div>'}
+const set=(fn,done)=>{gradEdit(g=>{const q=g.s[gsi];if(q)fn(q)},!!done);try{draw()}catch(_){}};
+const setOp=(v,done)=>set(q=>{v=Math.max(0,Math.min(100,v))/100;while(q.length<3)q.push(null);q[3]=v>=.999?null:+v.toFixed(3);if(q[3]==null)q.length=Math.min(q.length,3);while(q.length>2&&q[q.length-1]==null)q.pop()},done);
+P.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.t){tab=b.dataset.t;render();return}if(b.dataset.a==='x'){close();return}
+  if(b.dataset.a==='pk'){const s=stop();if(!s)return;const i=document.createElement('input');i.type='color';i.value=hexOf(s[1]);i.style.cssText='position:fixed;left:-99px;top:0';document.body.appendChild(i);i.oninput=()=>set(q=>{q[1]=i.value});i.onchange=()=>{set(q=>{q[1]=i.value},true);i.remove();render()};i.click();return}
+  if(b.dataset.h){set(q=>{q[1]=b.dataset.h},true);render()}});
+P.addEventListener('input',e=>{const t=e.target;if(t.id==='gspc')set(q=>{q[1]=t.value});else if(t.id==='gsph'&&/^[0-9a-f]{6}$/i.test(t.value))set(q=>{q[1]='#'+t.value.toLowerCase()});else if(t.id==='gspr'||t.id==='gspo'){setOp(+t.value||0);const o=P.querySelector(t.id==='gspr'?'#gspo':'#gspr');if(o)o.value=t.value}});
+P.addEventListener('change',e=>{if(/^gsp/.test(e.target.id)){gradEdit(()=>{},true);render();try{draw()}catch(_){}}});
+function close(){P.style.display='none'}
+function open(x,y){P.style.display='block';render();const w=P.offsetWidth,h=P.offsetHeight;P.style.left=Math.max(4,Math.min(innerWidth-w-4,x-w/2))+'px';P.style.top=Math.max(4,y+h+12>innerHeight?y-h-14:y+12)+'px'}
+addEventListener('pointerdown',e=>{if(P.style.display==='none'||P.contains(e.target))return;if(e.target.closest&&e.target.closest('.gs'))return;close()},true);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&P.style.display!=='none'){close();e.stopPropagation()}},true);
+/* Gradient panel: double-click a stop */
+/* the panel rebuilds its stops on every press, so the browser never fires dblclick there: two presses on the same stop = double-click */
+let lastStop=-1,lastT=0,lastXY=[0,0];document.addEventListener('pointerdown',e=>{const s=e.target.closest&&e.target.closest('#grdp .gs');if(!s||e.button!==0)return;const i=+s.dataset.i,now=Date.now();
+  if(i===lastStop&&now-lastT<450&&Math.hypot(e.clientX-lastXY[0],e.clientY-lastXY[1])<5){lastStop=-1;gsi=i;gmi=-1;const r=s.getBoundingClientRect();setTimeout(()=>open(r.left+r.width/2,r.bottom),0);return}
+  lastStop=i;lastT=now;lastXY=[e.clientX,e.clientY]},true);
+/* on the object (Gradient tool annotator): double-click a stop */
+/* the annotator is redrawn on every press too: detect the double press on a stop ourselves */
+let cS=-1,cT=0,cXY=[0,0];cv.addEventListener('pointerdown',e=>{if(tool!=='gr'||!sel.size||e.button!==0)return;let h=null;try{h=grHit(pt(e))}catch(_){}if(!h||h.t!=='stop'){cS=-1;return}const now=Date.now();
+  if(h.i===cS&&now-cT<450&&Math.hypot(e.clientX-cXY[0],e.clientY-cXY[1])<5){cS=-1;gsi=h.i;const x=e.clientX,y=e.clientY;setTimeout(()=>open(x,y),0);return}cS=h.i;cT=now;cXY=[e.clientX,e.clientY]},true);
+cv.addEventListener('dblclick',e=>{if(tool==='gr'&&P.style.display==='block'){e.stopImmediatePropagation()}},true);
+window.gradStopPop=open;
 })();
 
 /*TOOLS-END*/
