@@ -496,7 +496,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 257</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 258</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -8500,7 +8500,7 @@ if(!DK.restore())wsApply('Essentials');
    ['Window',()=>{const PN=(t,id,k)=>({t,k,c:()=>DK.isOpen(id),f:()=>DK.toggle(id)});return[
     {t:'Workspace',sub:()=>wsMenu()},sep,
     {t:'Control',c:()=>!document.body.classList.contains('hide-ctrl'),f:()=>document.body.classList.toggle('hide-ctrl')},{t:'Tools',c:()=>!document.body.classList.contains('hide-tools'),f:()=>document.body.classList.toggle('hide-tools')},sep,
-    ...[PN('Align','align','Shift+F7'),PN('Appearance','appearance','Shift+F6'),PN('Color','color','F6'),PN('Gradient','gradient','Ctrl+F9'),PN('Graphic Styles','gstyles','Shift+F5'),PN('Layers','layers','F7'),PN('Pathfinder','pathfinder','Shift+Ctrl+F9'),PN('Properties','props'),PN('Stroke','stroke','Ctrl+F10'),PN('Transform','transform','Shift+F8'),PN('Transparency','transparency','Shift+Ctrl+F10'),...(window.PANELX||[]).map(q=>PN(q.title,q.id,q.key))].sort((a,b)=>a.t.localeCompare(b.t)),
+    ...[PN('Align','align','Shift+F7'),PN('Appearance','appearance','Shift+F6'),PN('Color','color','F6'),PN('Gradient','gradient','Ctrl+F9'),PN('Graphic Styles','gstyles','Shift+F5'),PN('Layers','layers','F7'),PN('Pathfinder','pathfinder','Shift+Ctrl+F9'),PN('Properties','props'),PN('Stroke','stroke','Ctrl+F10'),PN('Symbols','symbols','Shift+Ctrl+F11'),PN('Transform','transform','Shift+F8'),PN('Transparency','transparency','Shift+Ctrl+F10'),...(window.PANELX||[]).map(q=>PN(q.title,q.id,q.key))].sort((a,b)=>a.t.localeCompare(b.t)),
     {t:'Type',sub:()=>[{t:'Character',k:'Ctrl+T',c:()=>DK.isOpen('character'),f:()=>DK.toggle('character')},{t:'Paragraph',k:'Ctrl+Alt+T',c:()=>DK.isOpen('paragraph'),f:()=>DK.toggle('paragraph')},
       {t:'Tabs',k:'Ctrl+Shift+T',c:()=>DK.isOpen('tabs'),f:()=>DK.toggle('tabs')}]},sep,
     {t:'Edit Toolbar…',f:()=>$('#tbedb').click()},sep,
@@ -11064,9 +11064,12 @@ const ON=new Set(['v','mw','ls','gs']);
 /* selection colour = the Masar logo: gold highlight, dark-grey edge; a layer given its own colour keeps it (Illustrator Layer Color) */
 const SELG='#F0C374',SELD='#3a3a3a';
 const lyc=o=>{try{const l=lyBy(o.ly),c=l&&l.color;return!c||/^#8c8c8c$/i.test(c)?SELG:c}catch(_){return SELG}};
-function selPaths(o,g,budget){const s=1/z,c=lyc(o),fk={...o,g:o.g.cloneNode(true)};try{ensurePath(fk)}catch(_){return budget}
+function selPaths(o,g,budget){const s=1/z,c=lyc(o);
+  /* a symbol instance shows only its box and centre (Illustrator) */
+  if(o.g.querySelector(':scope > [data-sym]')){const b=wbox(o),k=2*s;g.append(el('rect',{x:b.x,y:b.y,width:b.w,height:b.h,fill:'none',stroke:c,'stroke-width':s,'pointer-events':'none'}),el('rect',{x:b.x+b.w/2-k,y:b.y+b.h/2-k,width:2*k,height:2*k,fill:c,stroke:SELD,'stroke-width':.8*s,'pointer-events':'none'}));return budget}
+  const fk={...o,g:o.g.cloneNode(true)};try{ensurePath(fk)}catch(_){return budget}
   let d='';const A=[];
-  eps(fk).forEach(pe=>{if(pe.closest('defs,[data-clipmask],[data-opmask]'))return;const S=getSP(pe);if(!S)return;
+  eps(fk).forEach(pe=>{if(pe.closest('defs,[data-clipmask],[data-opmask]'))return;{let q=pe.parentElement,tr=false;while(q&&q!==fk.g){if(q.getAttribute('transform'))tr=true;q=q.parentElement}if(tr)return}const S=getSP(pe);if(!S)return;
     d+=S.map(sp=>{const P=sp.pts.map(q=>{const w=W(o,q.x,q.y),f=h=>h&&W(o,h[0],h[1]);A.push(w);return{x:w[0],y:w[1],i:f(q.i),o:f(q.o)}});return P.length?penD(P,sp.closed):''}).join('')});
   if(d)g.append(el('path',{d,fill:'none',stroke:c,'stroke-width':1.3*s,'pointer-events':'none'}));
   if(A.length<=budget){const h=3*s;A.forEach(w=>g.append(el('rect',{x:w[0]-h,y:w[1]-h,width:2*h,height:2*h,fill:c,stroke:SELD,'stroke-width':.8*s,'pointer-events':'none'})))}
@@ -11182,6 +11185,61 @@ DK.reg('gstyles','Graphic Styles','<svg width="18" height="18" viewBox="0 0 24 2
 {const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(P.style.display!=='none')render()}catch(_){}return r}}
 addEventListener('keydown',e=>{if(e.key==='F5'&&e.shiftKey&&!e.ctrlKey&&!e.altKey&&!e.metaKey){e.preventDefault();e.stopImmediatePropagation();DK.toggle?DK.toggle('gstyles'):DK.open('gstyles')}},true);
 window.GSTY={list:()=>GS,apply:i=>applyTo([...sel],GS[i],i),capture};
+})();
+
+
+/* ======================= build 258: Symbols panel (Window > Symbols, Shift+Ctrl+F11) ======================= */
+(()=>{
+const KEY='masar.symbols.v1';
+let SY=[];try{SY=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(_){SY=[]}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(SY))}catch(_){}};
+const nid=()=>'s'+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+let SEL=-1;
+const P=document.createElement('div');P.id='syp';P.className='dkpn';P.style.display='none';document.body.appendChild(P);
+{const st=document.createElement('style');st.textContent='#syp{padding:8px;font:12px "Segoe UI",Cairo,sans-serif;color:var(--ink)}#syp .sg{display:grid;grid-template-columns:repeat(auto-fill,44px);gap:6px;min-height:50px}#syp .si{width:44px;height:44px;padding:2px;border:1px solid var(--bdr);border-radius:3px;background:#fff;cursor:grab;touch-action:none}#syp .si.on{outline:2px solid #f0c374;outline-offset:1px}#syp .si svg{width:100%;height:100%;display:block;pointer-events:none}#syp .em{color:var(--mute);padding:6px 2px;line-height:1.5}#syp .sf{display:flex;gap:4px;justify-content:flex-end;margin-top:8px;border-top:1px solid var(--line);padding-top:6px}#syp .sf button{height:24px;min-width:26px;border:0;background:none;color:var(--ink);border-radius:3px;cursor:default;font-size:13px}#syp .sf button:hover{background:#ffffff18}#syp .sf button:disabled{opacity:.35}';document.head.appendChild(st)}
+const instOf=o=>{const c=o.g.firstElementChild;return o.g.children.length===1&&c&&c.getAttribute&&c.getAttribute('data-sym')?c.getAttribute('data-sym'):null};
+const thumb=s=>{const b=s.b,p=Math.max(b[2],b[3])*.06;return'<svg viewBox="'+(b[0]-p)+' '+(b[1]-p)+' '+(b[2]+2*p)+' '+(b[3]+2*p)+'" preserveAspectRatio="xMidYMid meet">'+s.h+'</svg>'};
+function render(){if(P.style.display==='none')return;
+  P.innerHTML=(SY.length?'<div class="sg">'+SY.map((s,i)=>'<button type="button" class="si'+(i===SEL?' on':'')+'" data-i="'+i+'" title="'+esc(s.n)+'">'+thumb(s)+'</button>').join('')+'</div>':'<div class="em">No symbols yet. Select artwork and click ＋ (New Symbol), then drag a symbol onto the artboard.</div>')+
+   '<div class="sf"><button type="button" data-a="place" title="Place Symbol Instance">&#8681;</button><button type="button" data-a="brk" title="Break Link to Symbol">&#9099;</button><button type="button" data-a="new" title="New Symbol (from the selection)">&#65291;</button><button type="button" data-a="del" title="Delete Symbol">&#128465;</button></div>';
+  const q=a=>P.querySelector('[data-a='+a+']');q('place').disabled=SEL<0;q('del').disabled=SEL<0;q('new').disabled=!sel.size;q('brk').disabled=![...sel].some(instOf)}
+/* the selection becomes the symbol's artwork (in document coordinates) and is replaced by an instance */
+function capture(L){const tmp=el('g',{});L.forEach(o=>{const c=o.g.cloneNode(true);c.removeAttribute('id');const m=o.m;c.setAttribute('transform','translate('+m.tx+' '+m.ty+') scale('+m.sx+' '+m.sy+')');tmp.appendChild(c)});
+  layer.appendChild(tmp);const bb=tmp.getBBox();tmp.remove();return{h:tmp.innerHTML,b:[bb.x,bb.y,bb.width,bb.height]}}
+function makeInstance(s,cx,cy){const o=add('<g data-sym="'+s.id+'">'+s.h+'</g>');o.nm=s.n;const c=[s.b[0]+s.b[2]/2,s.b[1]+s.b[3]/2];o.m={sx:1,sy:1,tx:cx-c[0],ty:cy-c[1]};apply(o);touch(o);return o}
+function newSymbol(){const L=[...sel].filter(o=>objs.includes(o));if(!L.length)return;
+  dkModal('Symbol Options','<label>Name<input type="text" data-k="n" value="New Symbol '+(SY.length+1)+'" style="min-width:180px"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{
+    const c=capture(L),s={id:nid(),n:box.querySelector('[data-k=n]').value.trim()||'Symbol',h:c.h,b:c.b};SY.push(s);save();SEL=SY.length-1;
+    /* Illustrator: the original artwork becomes an instance of the new symbol */
+    const at=objs.indexOf(L[0]),ly=L[0].ly;L.forEach(o=>{o.g.remove();objs.splice(objs.indexOf(o),1)});const o=makeInstance(s,c.b[0]+c.b[2]/2,c.b[1]+c.b[3]/2);o.ly=ly;objs.splice(objs.indexOf(o),1);objs.splice(Math.max(0,at),0,o);layer.replaceChildren(...objs.map(q=>q.g));
+    sel=new Set([o]);commit();draw();render()}}])}
+function place(i,cx,cy){const s=SY[i];if(!s)return;if(cx==null){const r=cv.getBoundingClientRect();cx=(r.width/2-px)/z;cy=(r.height/2-py)/z}const o=makeInstance(s,cx,cy);try{if(typeof LAYACT!=='undefined')o.ly=LAYACT}catch(_){}sel=new Set([o]);commit();draw()}
+function breakLink(){const L=[...sel].filter(instOf);if(!L.length)return;L.forEach(o=>{const w=o.g.firstElementChild;while(w.firstChild)o.g.insertBefore(w.firstChild,w);w.remove();
+    /* each original piece keeps its own transform inside: wrap them as a group so they stay one object, like Illustrator's expanded instance */
+    const kids=[...o.g.children];if(kids.length>1){kids.forEach(k=>k.setAttribute('data-mem','1'))}
+    else if(kids.length===1&&kids[0].tagName==='g'){/* one piece: its own translate/scale folds into the object, so it edits like the original */const k=kids[0],t=k.getAttribute('transform')||'',mt=/translate\(([-\d.e]+)[ ,]+([-\d.e]+)\)\s*scale\(([-\d.e]+)[ ,]+([-\d.e]+)\)/.exec(t);
+      if(mt&&!k.hasAttribute('data-mem')&&!k.hasAttribute('data-fx')){const[tx1,ty1,sx1,sy1]=mt.slice(1).map(Number),m=o.m;o.m={sx:m.sx*sx1,sy:m.sy*sy1,tx:m.tx+m.sx*tx1,ty:m.ty+m.sy*ty1};while(k.firstChild)o.g.insertBefore(k.firstChild,k);k.remove();apply(o)}}
+    touch(o)});commit();draw();render()}
+function redefine(){if(SEL<0)return;const L=[...sel].filter(o=>objs.includes(o));if(!L.length)return;const s=SY[SEL],c=capture(L.map(o=>{if(instOf(o)){const f={...o,g:o.g.cloneNode(true)};const w=f.g.firstElementChild;while(w.firstChild)f.g.insertBefore(w.firstChild,w);w.remove();return f}return o}));
+  const oldC=[s.b[0]+s.b[2]/2,s.b[1]+s.b[3]/2],newC=[c.b[0]+c.b[2]/2,c.b[1]+c.b[3]/2];s.h=c.h;s.b=c.b;save();
+  /* every instance gets the new artwork and keeps its place and size */
+  objs.forEach(o=>{if(instOf(o)!==s.id)return;o.g.firstElementChild.innerHTML=s.h;o.m.tx+=(oldC[0]-newC[0])*o.m.sx;o.m.ty+=(oldC[1]-newC[1])*o.m.sy;apply(o);touch(o)});commit();draw();render()}
+function del(){if(SEL<0)return;const s=SY[SEL],used=objs.filter(o=>instOf(o)===s.id);
+  dkModal('Delete Symbol',used.length?'The symbol "'+esc(s.n)+'" is used by '+used.length+' instance(s). Expand the instances and delete the symbol?':'Delete the symbol "'+esc(s.n)+'"?',[{t:'No',c:1},{t:'Yes',p:1,f:()=>{if(used.length){const k=sel;sel=new Set(used);breakLink();sel=k}SY.splice(SEL,1);SEL=-1;save();render()}}])}
+P.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.i!=null){SEL=+b.dataset.i;render();return}
+  ({place:()=>place(SEL),brk:breakLink,new:newSymbol,del})[b.dataset.a]?.()});
+P.addEventListener('dblclick',e=>{const b=e.target.closest('.si');if(!b)return;const s=SY[+b.dataset.i];dkModal('Symbol Options','<label>Name<input type="text" data-k="n" value="'+esc(s.n)+'" style="min-width:180px"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:box=>{s.n=box.querySelector('[data-k=n]').value.trim()||s.n;save();render()}}])});
+/* drag a symbol from the panel onto the artboard */
+let dr=null;P.addEventListener('pointerdown',e=>{const b=e.target.closest('.si');if(!b||e.button!==0)return;dr={i:+b.dataset.i,x:e.clientX,y:e.clientY,on:false};SEL=dr.i});
+addEventListener('pointermove',e=>{if(!dr)return;if(!dr.on&&Math.hypot(e.clientX-dr.x,e.clientY-dr.y)>6){dr.on=true;document.body.style.cursor='copy'}});
+addEventListener('pointerup',e=>{if(!dr)return;const d=dr;dr=null;document.body.style.cursor='';if(!d.on){render();return}const r=cv.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom){render();return}
+  place(d.i,(e.clientX-r.left-px)/z,(e.clientY-r.top-py)/z);render()},true);
+DK.reg('symbols','Symbols','<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.5 6.7 19.4l1.2-6L3.4 9.3l6-.7z"/></svg>',P,
+  {dw:260,open:()=>{P.style.display='block';render()},close:()=>{P.style.display='none'},refresh:render,
+   menu:()=>[{t:'New Symbol…',f:newSymbol,en:sel.size>0},{t:'Place Symbol Instance',f:()=>place(SEL),en:SEL>=0},{t:'Redefine Symbol',f:redefine,en:SEL>=0&&sel.size>0},{t:'Break Link to Symbol',f:breakLink,en:[...sel].some(instOf)},{t:'Select All Instances',f:()=>{if(SEL<0)return;sel=new Set(objs.filter(o=>instOf(o)===SY[SEL].id));draw()},en:SEL>=0},{sep:1},{t:'Delete Symbol',f:del,en:SEL>=0}]});
+{const _d=draw;draw=function(){const r=_d.apply(this,arguments);try{if(P.style.display!=='none'&&!dr)render()}catch(_){}return r}}
+addEventListener('keydown',e=>{if(e.key==='F11'&&e.shiftKey&&(e.ctrlKey||e.metaKey)&&!e.altKey){e.preventDefault();e.stopImmediatePropagation();DK.toggle?DK.toggle('symbols'):DK.open('symbols')}},true);
+window.SYMS={list:()=>SY,place,redefine,breakLink,newSymbol,instOf,select:i=>{SEL=i;render()}};
 })();
 
 /*TOOLS-END*/

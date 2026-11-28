@@ -507,3 +507,6 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 
 ## build 257: لوحة Graphic Styles (Window > Graphic Styles، Shift+F5)
 - ستايلات جاهزة (Default، Drop Shadow، Black Outline، Dashed، Gold، Soft Glow). ضغطة على الستايل بتطبق اللون والحدود والشفافية والـ Effects والـ Gradient على المتحدد (بـ Undo). زرار ➕ بيحفظ شكل العنصر المتحدد كستايل جديد باسم، دبل كليك لتغيير الاسم، حذف بتأكيد، Break Link، والستايلات بتتحفظ في المتصفح. (tests/gstyles.js)
+
+## build 258: لوحة Symbols (Window > Symbols، Shift+Ctrl+F11)
+- New Symbol من المتحدد (الرسم بيتحول لنسخة Instance في نفس مكانه زي اليستريتور)، Place Symbol Instance، السحب من اللوحة للـ Artboard (النسخة بتنزل تحت الماوس)، Break Link (ترجع رسم عادي قابل للتعديل)، Redefine Symbol (كل النسخ بتتحدث وتفضل في أماكنها وحجمها)، Select All Instances، Delete Symbol (لو مستخدم بيفك النسخ الأول)، دبل كليك لتغيير الاسم. الرموز بتتحفظ في المتصفح، والنسخ بتتحفظ جوه الملف نفسه. النسخة المتحددة بيظهر لها المربع والنقطة اللي في النص بس زي اليستريتور. (tests/symbols.js)
