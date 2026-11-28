@@ -609,3 +609,10 @@ Batch B2 (build 237-238): **Artboard tool control bar** was effectively invisibl
 - Projects: create / rename / delete projects; put files in a project from the Project column in Your files.
 - Recent files saved from Masar now get a real thumbnail of the artboard (docThumb).
 - Shared with you and the Masar Cloud button need the cloud (next build).
+
+## build 278 — Masar Cloud
+- Accounts by email (create account, sign in, forgot password, sign out; the session refreshes itself). Home's bottom button shows "Masar Cloud · Sign in / Set up" or "Connected · email".
+- File › Save to Masar Cloud… (name + project) and Open from Masar Cloud…; afterwards Ctrl+S updates the cloud file. A new document or a local file stops being a cloud document.
+- Home: cloud files in Recent and Your files (thumbnail, modified, size, Share, ×), Shared with you (with who shared it; read-only original), Masar Cloud projects (new / rename / delete), Deleted (Restore / Delete for good).
+- Server: Supabase (open source). cloud/masar-cloud.sql makes the tables and the Row Level Security rules; cloud/README.md has the set-up steps. The owner puts the project URL + anon key in MASAR_CLOUD_CONFIG (or Server settings).
+- Tests: tests/cloud.js (19 checks, two users, against tests/cloudmock.js) and tests/cloudsql.mjs (15 checks of the security rules on real Postgres via PGlite).

@@ -499,7 +499,7 @@ select.prfxs{width:44px;height:24px;padding:0 4px;font-style:italic;font-weight:
 <div id="chp" role="dialog" aria-label="Character" style="display:none"></div>
 <div id="pap" role="dialog" aria-label="Paragraph" style="display:none"></div>
 <div id="tbpanel" role="dialog" aria-label="Tabs" style="display:none"></div>
-<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 277</span></footer>
+<footer><button id="zout" type="button" class="zb" title="Zoom Out (Ctrl+-)">−</button><span id="zm" title="Click: 100%" style="cursor:default">100%</span><button id="zin" type="button" class="zb" title="Zoom In (Ctrl++)">+</button><span id="abn" title="Artboard Navigation"><button id="abp" type="button" class="zb" disabled title="Previous Artboard">◀</button><span id="abi" title="Artboard 1 of 1">1</span><button id="abx" type="button" class="zb" disabled title="Next Artboard">▶</button></span><span id="tn">Selection Tool</span><span id="hint" dir="ltr"></span><span id="ver" title="Masar build" style="opacity:.6">build 278</span></footer>
 <script>
 const NS='http://www.w3.org/2000/svg',$=s=>document.querySelector(s);
 const cv=$('#cv'),world=$('#world'),layer=$('#layer'),selg=$('#selg'),peng=$('#peng'),mq=$('#mq'),zm=$('#zm');
@@ -7010,9 +7010,11 @@ addEventListener('keydown',e=>{const tg=e.target.tagName;if(tg==='INPUT'||tg==='
 /* ---- File menu: New / Open (.masar project or .svg) / Save (.masar project) / Export SVG, PNG ---- */
 function fileDownload(blob,name){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
 function fileNew(){if(ISO)isoExit();if(!objs.length)return;objs.slice().forEach(o=>o.g.remove());objs=[];sel=new Set();dsSel=new Set();commit();draw();tb5Msg('New document');if(window.dkSaved)dkSaved()}
-function fileSave(){if(ISO)isoExit();
+function docJSON(){if(ISO)isoExit();
   const D={masar:1,build:140,ab:[ABW,ABH],arts:ARTS.map(a=>({...a})),abi:ABI,objs:objs.map(o=>{const a={};for(const t of o.g.attributes){if(t.name==='transform')continue;a[t.name]=t.value}return{a,h:(window.rbPack?window.rbPack(o):o.g.innerHTML),m:{...o.m},ly:o.ly,nm:o.nm,lh:o.lh}}),gd:typeof gdSer==='function'?gdSer():'',lys:typeof lyJSON==='function'?lyJSON():''};
-  const DS=JSON.stringify(D);fileDownload(new Blob([DS],{type:'application/json'}),'masar-artwork.masar');window.__lastSave=DS;if(window.dkSaved)dkSaved();tb5Msg('Saved masar-artwork.masar')}
+  return JSON.stringify(D)}
+window.docJSON=docJSON;
+function fileSave(){const DS=docJSON();fileDownload(new Blob([DS],{type:'application/json'}),'masar-artwork.masar');window.__lastSave=DS;if(window.dkSaved)dkSaved();tb5Msg('Saved masar-artwork.masar')}
 function fileLoadMasar(D){if(ISO)isoExit();if(Array.isArray(D.arts)&&D.arts.length){ARTS=D.arts.map(a=>({...a}));ABN=Math.max(...ARTS.map(a=>+a.id||0),ARTS.length);ABI=Math.min(Math.max(+D.abi||0,0),ARTS.length-1);abSync();abRender();fit()}else if(D.ab&&D.ab.length===2){ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:+D.ab[0]||800,h:+D.ab[1]||600}];ABI=0;ABN=1;abSync();abRender();fit()}else if(ABW!==800||ABH!==600||ARTS.length!==1){ARTS=[{id:1,n:'Artboard 1',x:0,y:0,w:800,h:600}];ABI=0;ABN=1;abSync();abRender();fit()}objs.slice().forEach(o=>o.g.remove());objs=[];sel=new Set();dsSel=new Set();if(D.lys&&window.lyLoad)lyLoad(D.lys);else if(window.lyReset)lyReset();
   D.objs.forEach(r=>{const g=el('g',{});for(const k in r.a)g.setAttribute(k,r.a[k]);g.innerHTML=r.h;layer.appendChild(g);const o={g,bb:null,m:{sx:1,sy:1,tx:0,ty:0,...r.m},ly:r.ly,nm:r.nm,lh:r.lh};g.__o=o;o.bb=BBX(o);apply(o);objs.push(o)});
   if(window.rbUnpack)window.rbUnpack();if(typeof gdRestore==='function'&&D.gd)gdRestore(D.gd);commit();draw();if(window.dkSaved)dkSaved()}
@@ -12114,6 +12116,7 @@ header>.brand{display:none!important}
 #home .hbt.pri{background:#f0c374;border-color:#f0c374;color:#2a2a2a;font-weight:600}
 #home .crumb{color:var(--mute);margin:0 0 8px}#home .crumb a,#home .sub a{color:#f0c374;cursor:pointer}
 #home td select{height:24px;font-size:12px}
+#home .csec{font:600 13px inherit;font-family:inherit;color:var(--mute);margin:14px 0 6px}#home tr.cf{cursor:pointer}#home tr.cf:hover td{background:color-mix(in srgb,var(--ink) 8%,transparent)}
 
 `;document.head.appendChild(st);
 const HOUSE='<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1.6L1 7.8l1 1.1 1-.9V14.4h4V10.4h2v4h4V8l1 .9 1-1.1z"/></svg>';
@@ -12266,6 +12269,121 @@ addEventListener('keydown',e=>{if(e.key==='Escape'&&H.classList.contains('on')&&
 addEventListener('resize',place);
 window.HOME={open,close,isOpen:()=>H.classList.contains('on'),startOn};
 if(startOn())setTimeout(()=>{if(!H.classList.contains('on')&&!document.querySelector('.fxm'))open()},0);
+})();
+
+/* ======================= build 278: Masar Cloud (accounts by email, save / open / share files, projects, trash) =======================
+   Server: a Supabase project with cloud/masar-cloud.sql (see cloud/README.md). The owner puts the project URL and its public anon key in
+   MASAR_CLOUD_CONFIG below (or in Masar Cloud › Server settings). Talks to the documented Supabase Auth (/auth/v1) and REST (/rest/v1) endpoints. */
+window.MASAR_CLOUD_CONFIG=window.MASAR_CLOUD_CONFIG||{url:'',key:''};
+(()=>{
+const CK='masar.cloud.cfg',SK='masar.cloud.session';
+const cfg=()=>{let c={...window.MASAR_CLOUD_CONFIG};try{const o=JSON.parse(localStorage.getItem(CK)||'null');if(o&&o.url&&o.key)c=o}catch(_){}c.url=String(c.url||'').trim().replace(/\/+$/,'');c.key=String(c.key||'').trim();return c};
+const ready=()=>{const c=cfg();return/^https?:\/\/[^\s]+$/.test(c.url)&&c.key.length>10};
+let S=null;try{S=JSON.parse(localStorage.getItem(SK)||'null')}catch(_){}
+const saveS=s=>{S=s;try{s?localStorage.setItem(SK,JSON.stringify(s)):localStorage.removeItem(SK)}catch(_){}refreshUI()};
+const sess=d=>({at:d.access_token,rt:d.refresh_token,exp:Date.now()+((+d.expires_in||3600)-60)*1000,id:d.user&&d.user.id,email:d.user&&d.user.email});
+const errOf=async r=>{let m='';try{const j=await r.json();m=j.msg||j.message||j.error_description||j.error||''}catch(_){}if(r.status===413)m='The file is too large for Masar Cloud.';return new Error(m||('Masar Cloud error '+r.status))};
+async function auth(path,body,tok){const c=cfg();const r=await fetch(c.url+'/auth/v1/'+path,{method:'POST',headers:{'apikey':c.key,'Content-Type':'application/json',...(tok?{'Authorization':'Bearer '+tok}:{})},body:JSON.stringify(body||{})});if(!r.ok)throw await errOf(r);return r.status===204?{}:r.json().catch(()=>({}))}
+async function token(){if(!S)throw new Error('Sign in to Masar Cloud first.');if(Date.now()>S.exp){try{const d=await auth('token?grant_type=refresh_token',{refresh_token:S.rt});saveS(sess(d))}catch(e){saveS(null);throw new Error('Your Masar Cloud session ended. Please sign in again.')}}return S.at}
+async function rest(method,path,body,prefer){const c=cfg();const go=async t=>fetch(c.url+'/rest/v1/'+path,{method,headers:{'apikey':c.key,'Authorization':'Bearer '+t,'Content-Type':'application/json',...(prefer?{'Prefer':prefer}:{})},body:body==null?undefined:JSON.stringify(body)});
+  let r=await go(await token());if(r.status===401&&S){S.exp=0;r=await go(await token())}if(!r.ok)throw await errOf(r);if(r.status===204)return null;const t=await r.text();return t?JSON.parse(t):null}
+const enc=encodeURIComponent,COLS='id,name,size,thumb,updated_at,project_id,owner,owner_email';
+const API={
+  signIn:async(email,pw)=>{const d=await auth('token?grant_type=password',{email,password:pw});saveS(sess(d));return S},
+  signUp:async(email,pw)=>{const d=await auth('signup',{email,password:pw});if(d.access_token){saveS(sess(d));return'in'}return'confirm'},
+  recover:email=>auth('recover',{email}),
+  signOut:async()=>{try{if(S)await auth('logout',{},S.at)}catch(_){}saveS(null);window.DOCCLOUD=null},
+  mine:()=>rest('GET','files?select='+COLS+'&owner=eq.'+S.id+'&deleted_at=is.null&order=updated_at.desc'),
+  shared:()=>rest('GET','files?select='+COLS+'&owner=neq.'+S.id+'&deleted_at=is.null&order=updated_at.desc'),
+  trash:()=>rest('GET','files?select='+COLS+',deleted_at&owner=eq.'+S.id+'&deleted_at=not.is.null&order=deleted_at.desc'),
+  get:id=>rest('GET','files?select=id,name,data,project_id,owner&id=eq.'+enc(id)).then(a=>a&&a[0]),
+  create:f=>rest('POST','files?select=id',f,'return=representation').then(a=>a&&a[0]),
+  update:(id,f)=>rest('PATCH','files?id=eq.'+enc(id),f,'return=minimal'),
+  remove:id=>rest('PATCH','files?id=eq.'+enc(id),{deleted_at:new Date().toISOString()},'return=minimal'),
+  restore:id=>rest('PATCH','files?id=eq.'+enc(id),{deleted_at:null},'return=minimal'),
+  destroy:id=>rest('DELETE','files?id=eq.'+enc(id)),
+  shares:id=>rest('GET','shares?select=email,created_at&file_id=eq.'+enc(id)+'&order=created_at.asc'),
+  share:(id,email)=>rest('POST','shares',{file_id:id,email:email.trim().toLowerCase()},'return=minimal'),
+  unshare:(id,email)=>rest('DELETE','shares?file_id=eq.'+enc(id)+'&email=eq.'+enc(email)),
+  projects:()=>rest('GET','projects?select=id,name,created_at&order=created_at.asc'),
+  newProject:n=>rest('POST','projects?select=id,name',{name:n},'return=representation').then(a=>a&&a[0]),
+  renameProject:(id,n)=>rest('PATCH','projects?id=eq.'+enc(id),{name:n},'return=minimal'),
+  delProject:id=>rest('DELETE','projects?id=eq.'+enc(id))};
+const U=()=>window.HOMEUI,esc=t=>String(t==null?'':t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');
+const msg=t=>{try{tb5Msg(t)}catch(_){}};
+const fail=e=>dkModal('Masar Cloud',esc(e&&e.message||String(e)),[{t:'OK',p:1}]);
+/* ---- document <-> cloud ---- */
+const docData=()=>{const D=window.docJSON();return D};
+async function saveToCloud(name,projectId){const data=docData(),thumb=await (window.docThumb?docThumb():null);
+  if(window.DOCCLOUD&&window.DOCCLOUD.owner===S.id&&(name==null||name===window.DOCCLOUD.name)){await API.update(DOCCLOUD.id,{data,size:data.length,thumb,...(projectId!==undefined?{project_id:projectId||null}:{})});}
+  else{const r=await API.create({name:name||window.DOCNAME||'Untitled-1',data,size:data.length,thumb,project_id:projectId||null});window.DOCCLOUD={id:r.id,name:name||window.DOCNAME,owner:S.id}}
+  window.DOCNAME=window.DOCCLOUD.name;window.DOCNAMED=true;try{view()}catch(_){}if(window.dkSaved)dkSaved();msg('Saved to Masar Cloud: '+window.DOCCLOUD.name);U()&&U().render()}
+async function openFromCloud(id){const go=async()=>{try{msg('Opening from Masar Cloud…');const f=await API.get(id);if(!f)throw new Error('This file is no longer available.');const D=JSON.parse(f.data);
+    fileLoadMasar(D);window.DOCNAME=f.name;window.DOCNAMED=true;window.DOCCLOUD={id:f.id,name:f.name,owner:f.owner};try{view()}catch(_){}if(window.dkSaved)dkSaved();msg('Opened '+f.name+' from Masar Cloud')}catch(e){fail(e)}};
+  window.HOME&&HOME.close();if(window.docDirty())dkModal('Open','Do you want to save changes to '+esc(window.DOCNAME||'Untitled-1')+' first?',[{t:'Cancel',c:1},{t:"Don't Save",f:go},{t:'Save',p:1,f:()=>{fileSave();go()}}]);else go()}
+/* ---- dialogs ---- */
+function signInDlg(after){if(!ready())return serverDlg(()=>signInDlg(after));
+  const M=dkModal('Masar Cloud','<p style="margin:0 0 10px;max-width:330px;color:var(--mute)">Sign in to save your work to Masar Cloud and open it on any computer.</p><label>Email<input type="email" data-k="e" autocomplete="username" style="min-width:240px"></label><label>Password<input type="password" data-k="p" autocomplete="current-password" style="min-width:240px"></label><p data-k="m" style="margin:6px 0 0;min-height:16px;color:#f0c374;max-width:330px"></p><p style="margin:8px 0 0"><a data-k="fg" style="color:#f0c374;cursor:pointer">Forgot password?</a></p>',
+    [{t:'Cancel',c:1},{t:'Create account',f:b=>{run(b,'up');return false}},{t:'Sign in',p:1,f:b=>{run(b,'in');return false}}]);
+  const Q=k=>M.box.querySelector('[data-k="'+k+'"]');Q('e').focus();
+  const run=async(b,mode)=>{const e=Q('e').value.trim(),p=Q('p').value;if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){Q('m').textContent='Enter a valid email.';return}if(p.length<6){Q('m').textContent='The password must be at least 6 characters.';return}
+    Q('m').textContent=mode==='in'?'Signing in…':'Creating your account…';try{if(mode==='in'){await API.signIn(e,p);M.close();msg('Signed in to Masar Cloud as '+e);after&&after()}else{const r=await API.signUp(e,p);if(r==='in'){M.close();msg('Account created: '+e);after&&after()}else Q('m').textContent='Check your email ('+e+') to confirm your account, then sign in.'}}catch(x){Q('m').textContent=x.message}};
+  Q('fg').onclick=async()=>{const e=Q('e').value.trim();if(!e){Q('m').textContent='Enter your email first.';return}try{await API.recover(e);Q('m').textContent='We sent a password reset link to '+e+'.'}catch(x){Q('m').textContent=x.message}}}
+function serverDlg(after){const c=cfg();const M=dkModal('Masar Cloud server','<p style="margin:0 0 10px;max-width:360px;color:var(--mute)">Masar Cloud is not connected to a server yet. The owner of this copy of Masar enters the Supabase project URL and its public (anon) key once. See cloud/README.md.</p><label>Project URL<input type="url" data-k="u" placeholder="https://xxxx.supabase.co" value="'+esc(c.url)+'" style="min-width:260px"></label><label>Anon key<input type="text" data-k="k" value="'+esc(c.key)+'" style="min-width:260px"></label>',
+  [{t:'Cancel',c:1},{t:'Save',p:1,f:b=>{const u=b.querySelector('[data-k="u"]').value.trim(),k=b.querySelector('[data-k="k"]').value.trim();try{localStorage.setItem(CK,JSON.stringify({url:u,key:k}))}catch(_){}if(ready()&&after)setTimeout(after,0);refreshUI()}}]);M.box.querySelector('[data-k="u"]').focus()}
+async function saveDlg(){if(!S)return signInDlg(saveDlg);let P=[];try{P=await API.projects()}catch(e){return fail(e)}
+  const nm=(window.DOCCLOUD&&window.DOCCLOUD.name)||window.DOCNAME||'Untitled-1';
+  const M=dkModal('Save to Masar Cloud','<label>Name<input type="text" data-k="n" value="'+esc(nm)+'" style="min-width:240px"></label><label>Project<select data-k="p"><option value="">No project</option>'+P.map(p=>'<option value="'+p.id+'">'+esc(p.name)+'</option>').join('')+'</select></label><p style="margin:6px 0 0;color:var(--mute)">Signed in as '+esc(S.email)+'</p>',
+    [{t:'Cancel',c:1},{t:'Save',p:1,f:b=>{const n=b.querySelector('[data-k="n"]').value.trim()||'Untitled-1',p=b.querySelector('[data-k="p"]').value;saveToCloud(n,p||null).catch(fail)}}]);const f=M.box.querySelector('[data-k="n"]');f.focus();f.select()}
+async function shareDlg(id,name){let L=[];try{L=await API.shares(id)}catch(e){return fail(e)}
+  const list=()=>L.length?L.map(s=>'<div style="display:flex;align-items:center;gap:8px;margin:3px 0"><span style="flex:1">'+esc(s.email)+'</span><button type="button" class="hbt" data-un="'+esc(s.email)+'">Remove</button></div>').join(''):'<p style="color:var(--mute);margin:4px 0">Not shared with anyone yet.</p>';
+  const M=dkModal('Share “'+esc(name)+'”','<p style="margin:0 0 8px;color:var(--mute);max-width:340px">People you add can open this file from Shared with you after signing in to Masar Cloud with that email. They can view and save their own copy; only you can change the original.</p><div style="display:flex;gap:6px"><input type="email" data-k="e" placeholder="name@example.com" style="flex:1;min-width:220px"><button type="button" class="hbt" data-k="add">Invite</button></div><p data-k="m" style="color:#f0c374;min-height:14px;margin:6px 0"></p><div data-k="l">'+list()+'</div>',[{t:'Done',p:1}]);
+  const Q=k=>M.box.querySelector('[data-k="'+k+'"]');Q('e').focus();
+  const add=async()=>{const e=Q('e').value.trim().toLowerCase();if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)){Q('m').textContent='Enter a valid email.';return}if(e===S.email.toLowerCase()){Q('m').textContent='That is your own email.';return}
+    try{await API.share(id,e);L=await API.shares(id);Q('l').innerHTML=list();Q('e').value='';Q('m').textContent='Shared with '+e}catch(x){Q('m').textContent=/duplicate|409|23505/i.test(x.message)?'Already shared with '+e:x.message}};
+  Q('add').onclick=add;Q('e').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();ev.stopPropagation();add()}});
+  Q('l').addEventListener('click',async ev=>{const b=ev.target.closest('[data-un]');if(!b)return;try{await API.unshare(id,b.dataset.un);L=await API.shares(id);Q('l').innerHTML=list()}catch(x){Q('m').textContent=x.message}})}
+function acctMenu(btn){const M=dkModal('Masar Cloud','<p style="margin:0 0 6px">Signed in as <b>'+esc(S.email)+'</b></p><p style="margin:0;color:var(--mute)">Server: '+esc(cfg().url.replace(/^https?:\/\//,''))+'</p>',[{t:'Server settings',f:()=>{setTimeout(()=>serverDlg(),0)}},{t:'Sign out',f:()=>{API.signOut().then(()=>{msg('Signed out of Masar Cloud');U()&&U().render()})}},{t:'Close',p:1}])}
+/* ---- Home: cloud sections ---- */
+let cache={};const rows=(L,mode)=>{const u=U();if(!L.length)return'<div class="empty">'+(mode==='shared'?'Nothing has been shared with you yet.':mode==='trash'?'Nothing in Deleted.':'No files in Masar Cloud yet. Use File › Save to Masar Cloud.')+'</div>';
+  return'<table class="ctab"><thead><tr><th style="width:60px"></th><th>Name</th><th>'+(mode==='trash'?'Removed':'Last modified')+'</th><th>Size</th>'+(mode==='shared'?'<th>Shared by</th>':'')+'<th style="width:'+(mode==='mine'?'170':'190')+'px"></th></tr></thead><tbody>'+L.map(f=>'<tr class="'+(mode==='trash'?'':'cf')+'" data-cid="'+f.id+'" tabindex="0" title="'+(mode==='trash'?'':'Open ')+esc(f.name)+'"><td><div class="rth">'+(f.thumb&&/^data:image\//.test(f.thumb)?'<img alt="" src="'+f.thumb+'">':'')+'</div></td><td>'+CL+' '+esc(f.name)+'</td><td>'+u.ago(Date.parse(mode==='trash'?f.deleted_at:f.updated_at))+'</td><td>'+u.kb(f.size||0)+'</td>'+(mode==='shared'?'<td>'+esc(f.owner_email||'')+'</td>':'')+
+    '<td style="text-align:right">'+(mode==='mine'?'<button type="button" class="hbt" data-csh="'+f.id+'" data-cn="'+esc(f.name)+'">Share</button> <button type="button" class="rdel" data-cdel="'+f.id+'" title="Move to Deleted" aria-label="Move to Deleted">×</button>':mode==='trash'?'<button type="button" class="hbt" data-crest="'+f.id+'">Restore</button> <button type="button" class="hbt" data-cdes="'+f.id+'">Delete</button>':'')+'</td></tr>').join('')+'</tbody></table>'};
+const CL='<svg width="14" height="11" viewBox="0 0 18 14" fill="#f0c374" style="vertical-align:-1px" aria-label="Masar Cloud"><path d="M5 13.5a4 4 0 0 1-.5-8A5.5 5.5 0 0 1 15 6.2 3.7 3.7 0 0 1 14 13.5z"/></svg>';
+async function fillBox(box,kind,ctx){if(!S){if(kind==='shared')box.innerHTML='<div class="empty">Sign in to Masar Cloud to see files shared with you. <a data-csign style="color:#f0c374;cursor:pointer">Sign in</a></div>';else box.innerHTML='';return}
+  box.innerHTML='<div class="empty">Loading Masar Cloud…</div>';
+  try{const flt=(ctx.flt||'').toLowerCase(),f=L=>flt?L.filter(x=>x.name.toLowerCase().includes(flt)):L,so=L=>ctx.sort==='n'?L.sort((a,b)=>a.name.localeCompare(b.name)):ctx.sort==='s'?L.sort((a,b)=>b.size-a.size):L;
+    if(kind==='recent'){const L=so(f(await API.mine())).slice(0,8);box.innerHTML=L.length?'<h3 class="csec">'+CL+' Masar Cloud</h3>'+rows(L,'mine')+'<h3 class="csec">On this device</h3>':''}
+    else if(kind==='files')box.innerHTML='<h3 class="csec">'+CL+' Masar Cloud</h3>'+rows(so(f(await API.mine())),'mine');
+    else if(kind==='shared')box.innerHTML=rows(so(f(await API.shared())),'shared');
+    else if(kind==='deleted')box.innerHTML='<h2>'+CL+' Masar Cloud</h2>'+rows(await API.trash(),'trash');
+    else if(kind==='projects'){const[P,F]=await Promise.all([API.projects(),API.mine()]);
+      if(ctx.cproj){const p=P.find(x=>x.id===ctx.cproj);if(p){const L=F.filter(x=>x.project_id===p.id);box.innerHTML='<p class="crumb"><a data-cprj="">Masar Cloud projects</a> › '+esc(p.name)+'</p><p class="sub"><a data-cprn="'+p.id+'" data-cn="'+esc(p.name)+'">Rename</a> · <a data-cpdel="'+p.id+'">Delete project</a></p>'+rows(L,'mine');return}}
+      box.innerHTML='<h2>'+CL+' Masar Cloud projects <button type="button" class="hbt" data-cpnew style="margin-left:8px">New cloud project</button></h2>'+(P.length?'<div class="hgr">'+P.map(p=>{const n=F.filter(x=>x.project_id===p.id).length;return'<div class="hgc prj" data-cprj="'+p.id+'" tabindex="0"><div class="hgt fold"><svg width="54" height="44" viewBox="0 0 54 44"><path d="M2 6a4 4 0 0 1 4-4h14l5 5h23a4 4 0 0 1 4 4v27a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4z" fill="#f0c374"/></svg></div><b>'+esc(p.name)+'</b><span>'+n+' file'+(n===1?'':'s')+'</span></div>'}).join('')+'</div>':'<div class="empty">No cloud projects yet.</div>')+'<h2>On this device</h2>'}}
+  catch(e){box.innerHTML='<div class="empty">Masar Cloud: '+esc(e.message)+'</div>'}}
+let cproj=null;
+function fill(H,tab,ctx){const c=H.querySelector('#hcloud'),u=U();
+  if(c)c.innerHTML=S?'<button type="button" class="hcl ok" data-cacct title="Masar Cloud account">'+u.CLOUDI+'<span>Connected</span><span class="st">'+esc(S.email)+'</span></button>':'<button type="button" class="hcl" data-csign title="Sign in to Masar Cloud">'+u.CLOUDI+'<span>Masar Cloud</span><span class="st">'+(ready()?'Sign in':'Set up')+'</span></button>';
+  if(tab!=='projects')cproj=null;
+  H.querySelectorAll('[data-cloud]').forEach(b=>fillBox(b,b.dataset.cloud,{...ctx,cproj}))}
+document.addEventListener('click',e=>{const H=document.getElementById('home');if(!H||!H.contains(e.target))return;const t=e.target.closest('[data-csign],[data-cacct],[data-csh],[data-cdel],[data-crest],[data-cdes],[data-cpnew],[data-cprj],[data-cprn],[data-cpdel],.cf');if(!t)return;
+  const re=()=>U()&&U().render();
+  if(t.dataset.csign!=null){signInDlg(re);return}if(t.dataset.cacct!=null){acctMenu(t);return}
+  if(t.dataset.csh){e.stopPropagation();shareDlg(t.dataset.csh,t.dataset.cn);return}
+  if(t.dataset.cdel){e.stopPropagation();API.remove(t.dataset.cdel).then(()=>{if(window.DOCCLOUD&&DOCCLOUD.id===t.dataset.cdel)window.DOCCLOUD=null;re()}).catch(fail);return}
+  if(t.dataset.crest){API.restore(t.dataset.crest).then(re).catch(fail);return}
+  if(t.dataset.cdes){const id=t.dataset.cdes;dkModal('Delete for good','Delete this file from Masar Cloud for good? This cannot be undone.',[{t:'Cancel',c:1},{t:'Delete',p:1,f:()=>{API.destroy(id).then(re).catch(fail)}}]);return}
+  if(t.dataset.cpnew!=null){const M=dkModal('New Cloud Project','<label>Project name<input type="text" data-k="v" value="Untitled Project" style="min-width:220px"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{const v=b.querySelector('[data-k="v"]').value.trim();if(v)API.newProject(v).then(re).catch(fail)}}]);const f=M.box.querySelector('[data-k="v"]');f.focus();f.select();return}
+  if(t.dataset.cprn){const id=t.dataset.cprn;const M=dkModal('Rename Project','<label>Project name<input type="text" data-k="v" value="'+esc(t.dataset.cn)+'" style="min-width:220px"></label>',[{t:'Cancel',c:1},{t:'OK',p:1,f:b=>{const v=b.querySelector('[data-k="v"]').value.trim();if(v)API.renameProject(id,v).then(re).catch(fail)}}]);M.box.querySelector('[data-k="v"]').focus();return}
+  if(t.dataset.cpdel){const id=t.dataset.cpdel;dkModal('Delete project','Delete this cloud project? Its files stay in Your files.',[{t:'Cancel',c:1},{t:'Delete',p:1,f:()=>{cproj=null;API.delProject(id).then(re).catch(fail)}}]);return}
+  if(t.dataset.cprj!=null){cproj=t.dataset.cprj||null;re();return}
+  if(t.classList.contains('cf')&&!e.target.closest('button'))openFromCloud(t.dataset.cid)},true);
+/* ---- File menu + Ctrl+S on a cloud document ---- */
+if(window.MENUS){const fm=MENUS.find(m=>m[0]==='File');if(fm){const g=fm[1];fm[1]=()=>{const it=g();const i=it.findIndex(x=>x&&/^Save a Copy/.test(typeof x.t==='string'?x.t:''));const add=[{t:'Save to Masar Cloud…',__p:'File>Save to Masar Cloud',f:()=>saveDlg()},{t:'Open from Masar Cloud…',__p:'File>Open from Masar Cloud',f:()=>{window.HOME&&HOME.open('files')}}];it.splice(i>=0?i+1:Math.min(it.length,6),0,...add);return it}}}
+{const _s=fileSave;fileSave=function(){if(window.DOCCLOUD&&S&&window.DOCCLOUD.owner===S.id){saveToCloud(null).catch(fail);return}return _s.apply(this,arguments)}}
+function refreshUI(){U()&&U().render()}
+{const _c=window.docClear;window.docClear=function(){window.DOCCLOUD=null;return _c.apply(this,arguments)}}
+{const _fl=fileLoadMasar;fileLoadMasar=function(){window.DOCCLOUD=null;return _fl.apply(this,arguments)}}
+window.MCLOUD={fill,ready,signedIn:()=>!!S,user:()=>S&&{id:S.id,email:S.email},api:API,signInDlg,serverDlg,saveDlg,shareDlg,saveToCloud,openFromCloud};
 })();
 /*TOOLS-END*/
 })();
